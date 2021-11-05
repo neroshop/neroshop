@@ -1,0 +1,30 @@
+[HIGH PRIORITY]
+- rewrite renderer.cpp from scratch (if I can't find an experienced graphics programmer)
+- fix GUI focus thingy
+- figure out how to turn qrcode data into png and jpeg
+- host database on decentralized file hosting networking like sia, filecoin/ipfs, etc.
+
+
+
+[LOW PRIORITY]
+- create neroshop domain name (.org preffered)
+- create neroshop onion address
+- neroshop matrix server
+- neroshop subreddit
+- create neroshop reddit account
+      => reddit_username: neroshop_layter (or just layter)
+
+[HIRING]
+- hire graphics programmer to fix and optimize rendering code in "renderer.cpp"
+- hire network programmer to implement communication between applications and servers.
+- hire web developer to help develop website
+- hire social media manager to manage social media accounts
+
+[NOTES]
+since monero uses openssl as a dependency (https://github.com/monero-project/monero#dependencies), I will use openssl's sha-256 for hashing emails.
+
+hashing (pw)   : [bcrypt], scrypt, argon2, PBKDF2
+hashing (email): [SHA256], MD5, SHA1
+encryption     : [openssl], crypto++ (cryptopp), libsodium
+decentralized file hosting: siacoin, filecoin, ipfs (free), bittorent, fleek.co (ipfs)
+

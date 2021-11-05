@@ -1,0 +1,934 @@
+#include "../include/item.hpp"
+
+////////////////////
+//Item::Item() : id(0), quantity(0), price(0.0), weight(1.0), size(std::make_tuple<double, double, double>(0.0, 0.0, 0.0)), discount(0.0), category("unspecified")/* or none */, condition("new") {}// name and desc and empty strings by default{// register this item//Item::register_item(*this);}
+////////////////////
+Item::Item(unsigned int id) {//: Item() { // for registered items that already have an id
+    DB db("neroshop.db");
+    // check if id already exits
+    int temp_id = db.get_column_integer("item", "id", "id = " + std::to_string(id));
+    if(temp_id != 0) {
+        // retrieve data from pre-existing item in the database
+        this->id = id;//set_id(id);
+        // no reason to set anything once you have retrieved the id
+        set_name(db.get_column_text("item", "name", "id = " + std::to_string(id)));
+        set_description(db.get_column_text("item", "description", "id = " + std::to_string(id)));
+        set_quantity(0); // quantity is only for cart to manage
+        set_price(db.get_column_real("item", "price", "id = " + std::to_string(id)));
+        set_weight(db.get_column_real("item", "weight", "id = " + std::to_string(id)));
+    
+        set_discount(db.get_column_real("item", "discount", "id = " + std::to_string(id)));
+        set_condition(db.get_column_text("item", "condition", "id = " + std::to_string(id)));
+        set_product_code(db.get_column_text("item", "product_code", "id = " + std::to_string(id)));
+        /**///this->category = db.get_column_text   ("item", "category", "id = " + std::to_string(id));
+        //this-> = db.get_column_text   ("item", "id", "id = " + std::to_string(id));
+        //this-> = db.get_column_integer("item", "id", "id = " + std::to_string(id));
+        //this-> = db.get_column_real   ("item", "id", "id = " + std::to_string(id));
+#ifdef NEROSHOP_DEBUG0  
+        std::cout << "item size: " << size[0] << " x " << size[1] << " x " << size[2] << std::endl;
+        show_info();
+#endif        
+    }
+    if(temp_id == 0) {
+        std::cout << "could not retrieve item from database so this item will be ignored" << std::endl;//std::cout << "could not retrieve item from database so we will generate a new one for this item" << std::endl;
+        // register the item
+        //Item::register_item(*this);
+        //if(this) delete this;
+        // set default values
+        set_quantity(0);
+    }
+    ////////////
+    db.close();
+}
+////////////////////
+Item::Item(const std::string& name, const std::string& desc, 
+    double price, double weight, double length, double width, double height,
+    const std::string& condition, const std::string& product_code) //: Item() // quantity is set by cart
+{
+    if(!Item::load_item(*this, name)) Item::register_item(*this); // will register item countinously unless I fix it
+
+    set_name(name);
+    set_description(desc);
+    set_price(price); // original price
+    set_weight(weight);
+    set_size(length, width, height); // l x w x h
+    set_discount(0.00); // 0 by default
+    set_condition(condition);
+    set_product_code(product_code);
+        
+}
+////////////////////
+Item::Item(const std::string& name, const std::string& desc, double price, double weight, 
+    const std::tuple<double, double, double>& size,
+    const std::string& condition, const std::string& product_code) //: Item() // quantity is set by cart
+{
+    if(!Item::load_item(*this, name)) Item::register_item(*this); // register an item with empty values
+    // update registered item's values
+    set_name(name);
+    set_description(desc);
+    set_price(price); // original price
+    set_weight(weight);
+    set_size(size); // l x w x h
+    set_discount(0.00); // 0 by default
+    set_condition(condition);
+    set_product_code(product_code);
+    
+}        
+////////////////////
+////////////////////
+////////////////////
+Item::~Item() {}
+////////////////////
+bool Item::load_item(const Item& item, const std::string& item_name) {
+    DB db("neroshop.db");
+    // we are only reading from the db so no need to worry about corrupt db right now
+    ///////////
+    // name is empty
+    if(item_name.empty()) return false;
+    // retrieve id from database
+    int id = db.get_column_integer("item", "id", "name=" + DB::to_sql_string(item_name));
+    if(id <= 0) return false; // item is not registered
+    if(id != 0) {const_cast<Item&>(item).id = id; return true;} // item is registered
+    ///////////
+    db.close();
+    return false;   
+}
+////////////////////
+/*bool Item::load_all() {
+    DB db;if(!db.open("neroshop.db")) {std::cout << "Could not open sql database" << std::endl;}
+    int items_count = db.get_column_integer("item", "COUNT(*)");
+    for(int i = 1; i <= items_count; i++) {
+        std::cout << "id: " << i << std::endl;
+        this->id          = db.get_column_integer("item", "id", "id=" + std::to_string(id));
+        this->name        = db.get_column_text   ("item", "name", "id = " + std::to_string(id));
+        this->description = db.get_column_text   ("item", "description", "id = " + std::to_string(id));
+        this->quantity    = db.get_column_integer("item", "quantity", "id = " + std::to_string(id));
+        this->price       = db.get_column_real   ("item", "price", "id = " + std::to_string(id));
+        this->weight      = db.get_column_real   ("item", "weight", "id = " + std::to_string(id));
+        std::vector<std::string> size = String::split( db.get_column_text ("item", "size", "id = " + std::to_string(id)), "x");
+        std::cout << "item size: " << size[0] << " x " << size[1] << " x " << size[2] << std::endl;
+        this->size        = std::make_tuple(std::stod(size[0]), std::stod(size[1]), std::stod(size[2]));
+        this->discount    = db.get_column_real   ("item", "discount", "id = " + std::to_string(id));
+        this->condition   = db.get_column_text   ("item", "condition", "id = " + std::to_string(id));
+        this->product_code = db.get_column_text   ("item", "product_code", "id = " + std::to_string(id));        
+        //show_info();
+    }
+    db.close();
+    return true;
+}*/
+////////////////////
+////////////////////
+// a seller can create an item and then register it to the database
+void Item::register_item(const Item& item) { 
+    // if item is already registered, then exit function
+    if(item.is_registered()) {std::cout << "\033[0;93m" << "Item " << item.get_name() << " has already been registered" << "\033[0m" << std::endl;return;}
+    DB db("neroshop.db");
+    //db.execute("PRAGMA journal_mode = WAL;"); // this may reduce the incidence of SQLITE_BUSY errors (such as database being locked) // https://www.sqlite.org/pragma.html#pragma_journal_mode
+    ///////////
+    if(!db.table_exists("categories")) {
+	    db.table("categories");
+	    db.column("categories", "ADD", "category_name", "TEXT");
+	    // subcategories
+	    if(!db.table_exists("subcategories")) {
+	        db.table("subcategories");
+	        db.column("subcategories", "ADD", "subcategory_name", "TEXT");
+	        int category_id = 0;
+	        // these categories and subcategories are only created once
+	        db.insert("categories", "category_name", DB::to_sql_string("Appliances")); // Furniture and Appliances
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+
+	        db.insert("categories", "category_name", DB::to_sql_string("Arts, Crafts, & Sewing")); // paints, ceramics, etc
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));	        	        	        	        
+	        
+	        db.insert("categories", "category_name", DB::to_sql_string("Automotive Parts & Accessories")); // Automotive & Powersports, Bikes
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+
+	        db.insert("categories", "category_name", DB::to_sql_string("Baby")); // excluding apparel
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	        
+	        db.insert("categories", "category_name", DB::to_sql_string("Beauty")); // Beauty & Personal Care
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+
+	        db.insert("categories", "category_name", DB::to_sql_string("Books"));
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Book Series") + ", " + std::to_string(category_id));	        
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Children’s Books") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Comics") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Cookbooks") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Journals") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Magazines") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Newspapers") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Poetry") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Textbooks") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Novels") + ", " + std::to_string(category_id));	        
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	        
+	        db.insert("categories", "category_name", DB::to_sql_string("CDs & Vinyl"));
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));	        
+	        
+	        db.insert("categories", "category_name", DB::to_sql_string("Camera & Photo"));
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	        
+	        db.insert("categories", "category_name", DB::to_sql_string("Cell Phones & Accessories"));
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));	
+	               	        	        	        
+	        db.insert("categories", "category_name", DB::to_sql_string("Clothing, Shoes and Jewelry")); // Apparel // https://sewguide.com/types-of-clothes/
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Aprons") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Bras") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Coats, Jackets, and Cardigans") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Dresses") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Footwear") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Shorts, Pants and Jeans") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Skirts") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Socks") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Sweaters, Jackets") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("T-shirts, Tees, Tops") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Traditional clothing") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Underwear") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));	        
+	        
+	        db.insert("categories", "category_name", DB::to_sql_string("Collectible Coins")); // Collectibles & Fine Art, Art - Fine, Art - Home Decor// Currency, Coins, Cash Equivalents, and Gift Cards
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id)); 
+	        
+	        db.insert("categories", "category_name", DB::to_sql_string("Electronics")); // Consumer Electronics
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Consumer Electronics") + ", " + std::to_string(category_id));	        
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Computers·Laptops·PC") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));	
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));	 
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));	
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Smart watches") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));	 
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("TVs") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));	
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));	 
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));	
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));	 	        	        
+	 
+	        db.insert("categories", "category_name", DB::to_sql_string("Entertainment Collectibles"));
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	        
+	        db.insert("categories", "category_name", DB::to_sql_string("Food & Beverage"));
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Cereal + Grains") + ", " + std::to_string(category_id)); // Bread, (Whole Grains), Rice
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Bakery") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Dairy") + ", " + std::to_string(category_id)); // Milk, Yougurt, Cheese 
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Fruits") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Herbs·Spices") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Honey") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Meat·Fish·Poutry·Eggs") + ", " + std::to_string(category_id));	// ·Protein	        
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Nuts·Seeds-Legumes") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Fats·Oils·Sugar·Salt") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Poutry·Eggs") + ", " + std::to_string(category_id)); // ·Protein	        
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Snacks") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Sweets") + ", " + std::to_string(category_id));
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("Vegetables") + ", " + std::to_string(category_id));		                
+	        
+	        db.insert("categories", "category_name", DB::to_sql_string("Fine Art"));
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));	
+	        
+	        db.insert("categories", "category_name", DB::to_sql_string("Grocery & Gourmet Foods"));
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	        
+	        db.insert("categories", "category_name", DB::to_sql_string("Handmade"));
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));	        
+	        
+	        db.insert("categories", "category_name", DB::to_sql_string("Health & Personal Care")); // Health, Household & Baby Care
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));	        	        	        	        
+	        
+	        db.insert("categories", "category_name", DB::to_sql_string("Home & Kitchen")); // furniture, coffee makers, etc.
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));	        
+	        
+	        db.insert("categories", "category_name", DB::to_sql_string("Home & Garden")); // Garden & Outdoor
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	        
+	        db.insert("categories", "category_name", DB::to_sql_string("Independent Design"));
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	 
+	        db.insert("categories", "category_name", DB::to_sql_string("Industrial & Scientific"));
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	        
+	        db.insert("categories", "category_name", DB::to_sql_string("Luggage & Travel Gear"));
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));	        
+	        
+	        db.insert("categories", "category_name", DB::to_sql_string("Major Appliances"));
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));	        	        
+	        
+	        db.insert("categories", "category_name", DB::to_sql_string("Movies & TV"));
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));	        
+	        
+	        db.insert("categories", "category_name", DB::to_sql_string("Music and DVD"));
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	        
+	        db.insert("categories", "category_name", DB::to_sql_string("Musical Instruments"));
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));	        	        	        	        
+	        
+	        db.insert("categories", "category_name", DB::to_sql_string("Office Products"));
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	        
+	        db.insert("categories", "category_name", DB::to_sql_string("Outdoors"));
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	 
+	        db.insert("categories", "category_name", DB::to_sql_string("Personal Computers"));
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	        
+	        db.insert("categories", "category_name", DB::to_sql_string("Pet Supplies"));
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));	        
+	        
+	        db.insert("categories", "category_name", DB::to_sql_string("Software")); // Apps & Games
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	        
+	        db.insert("categories", "category_name", DB::to_sql_string("Sports")); // Sports & Outdoors
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));	        	        	        	        
+	        
+	        db.insert("categories", "category_name", DB::to_sql_string("Sports Collectibles"));
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	        
+	        db.insert("categories", "category_name", DB::to_sql_string("Tools & Home Improvement"));
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	 
+	        db.insert("categories", "category_name", DB::to_sql_string("Toys & Games")); // Toys, Hobbies, DIY
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	        
+	        db.insert("categories", "category_name", DB::to_sql_string("Video, DVD & Blu-ray"));
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+
+	        db.insert("categories", "category_name", DB::to_sql_string("Video Games"));
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	        
+	        db.insert("categories", "category_name", DB::to_sql_string("Watches")); // Jewelry and Watches
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));	        	        
+	        /*
+	        
+	        db.insert("categories", "category_name", DB::to_sql_string(""));
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	        
+	        db.insert("categories", "category_name", DB::to_sql_string(""));
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	 
+	        db.insert("categories", "category_name", DB::to_sql_string(""));
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	        
+	        db.insert("categories", "category_name", DB::to_sql_string(""));
+	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	        */	        	        
+	        // next category + subcategories ...
+	        //db.insert("categories", "category_name", DB::to_sql_string(""));
+	        //category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
+	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
+	    }
+	}
+    ///////////
+    if(!db.table_exists("item")) {
+	    db.table("item"); // item_id is primary key which will be auto generated
+	    db.column("item", "ADD", "name", "TEXT");
+	    db.column("item", "ADD", "description", "TEXT");
+	    //db.column("item", "ADD", "quantity", "INTEGER"); // quantity is for carts only // seller determines how much is in stock
+	    db.column("item", "ADD", "price", "REAL");
+        db.column("item", "ADD", "weight", "REAL");
+	    db.column("item", "ADD", "size", "TEXT");//"REAL");
+	    db.column("item", "ADD", "discount", "REAL");
+	    db.column("item", "ADD", "condition", "TEXT"); // seller determines the item's condition
+	    db.column("item", "ADD", "product_code", "TEXT"); // db.column("item", "ADD", "", "TEXT");
+	}
+	std::string item_size = std::to_string(std::get<0>(item.get_size())) +"x"+ std::to_string(std::get<1>(item.get_size())) +"x"+ std::to_string(std::get<2>(item.get_size()));
+	db.insert("item", "name, description, price, weight, size, discount, condition, product_code", 
+	    DB::to_sql_string(item.get_name()) + ", " + 
+	    DB::to_sql_string(item.get_description()) + ", " + 
+	    //std::to_string(item.get_quantity()) + ", " + 
+	    std::to_string(item.get_price()) + ", " + // original / list price
+	    std::to_string(item.get_weight()) + ", " + 
+	    DB::to_sql_string(item_size) + ", " + 
+	    std::to_string(item.get_discount()) + ", " + 
+	    DB::to_sql_string(item.get_condition()) + ", " + 
+	    DB::to_sql_string(item.get_product_code())/* + ", " + 
+	     + ", " + 
+	     + ", " + 
+	     + ", " + 
+	     + ", " + 
+	     + ", " + 
+	     + ", " +         */  
+	);
+    ///////////
+    const_cast<Item&>(item).show_info();
+    NEROSHOP_TAG std::cout << "\033[1;36m" << item.get_name() << " has been registered" << "\033[0m" << std::endl;
+    ///////////
+    db.close();
+}
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+void Item::set_id(unsigned int id) {
+    this->id = id;
+}
+////////////////////
+void Item::set_quantity(unsigned int quantity) {
+    std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cart.db";
+    DB db(cart_file);
+    if(!db.table_exists("Cart")) {db.close(); return;}
+    db.update("Cart", "item_qty", std::to_string(quantity), "item_id = " + std::to_string(this->id));
+    db.close();
+}
+////////////////////
+void Item::set_quantity(unsigned int item_id, unsigned int quantity) {
+    std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cart.db";
+    DB db(cart_file);
+    if(!db.table_exists("Cart")) {db.close(); return;}
+    db.update("Cart", "item_qty", std::to_string(quantity), "item_id = " + std::to_string(item_id));
+    db.close();
+}
+////////////////////
+void Item::set_name(const std::string& name) {
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return;}
+    db.update("item", "name", DB::to_sql_string(name), "id = " + std::to_string(this->id));
+    db.close();
+}
+////////////////////
+void Item::set_name(unsigned int item_id, const std::string& name) {
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return;}
+    db.update("item", "name", DB::to_sql_string(name), "id = " + std::to_string(item_id));
+    db.close();
+}
+////////////////////
+void Item::set_description(const std::string& description) {
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return;}
+    db.update("item", "description", DB::to_sql_string(description), "id = " + std::to_string(this->id));
+    db.close();
+}
+////////////////////
+void Item::set_description(unsigned int item_id, const std::string& description) {
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return;}
+    db.update("item", "description", DB::to_sql_string(description), "id = " + std::to_string(item_id));
+    db.close();
+}
+////////////////////
+void Item::set_price(double price) {
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return;}
+    db.update("item", "price", std::to_string(price), "id = " + std::to_string(this->id));
+    db.close();
+}
+////////////////////
+void Item::set_price(unsigned int item_id, double price) {
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return;}
+    db.update("item", "price", std::to_string(price), "id = " + std::to_string(item_id));
+    db.close();
+}
+////////////////////
+////////////////////
+void Item::set_weight(double weight) {
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return;}
+    db.update("item", "weight", std::to_string(weight), "id = " + std::to_string(this->id));
+    db.close();
+}
+////////////////////
+void Item::set_weight(unsigned int item_id, double weight) {
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return;}
+    db.update("item", "weight", std::to_string(weight), "id = " + std::to_string(item_id));
+    db.close();
+}
+////////////////////
+void Item::set_size(double l, double w, double h) {
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return;}
+    std::string size = std::to_string(l) + "x" + std::to_string(w) + "x" + std::to_string(h);
+    //std::cout << "item_size set: " << size << std::endl;
+    db.update("item", "size", DB::to_sql_string(size) , "id = " + std::to_string(this->id));
+    db.close();
+}
+////////////////////
+void Item::set_size(unsigned int item_id, double l, double w, double h) {
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return;}
+    std::string size = std::to_string(l) + "x" + std::to_string(w) + "x" + std::to_string(h);
+    //std::cout << "item_size set: " << size << std::endl;
+    db.update("item", "size", DB::to_sql_string(size) , "id = " + std::to_string(item_id));
+    db.close();
+}
+////////////////////
+////////////////////
+void Item::set_size(const std::tuple<double, double, double>& size) {
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return;}
+    std::string item_size = std::to_string(std::get<0>(size)) + "x" + std::to_string(std::get<1>(size)) + "x" + std::to_string(std::get<2>(size));
+    //std::cout << "item_size set: " << item_size << std::endl;
+    db.update("item", "size", DB::to_sql_string(item_size) , "id = " + std::to_string(this->id));
+    db.close();
+}
+////////////////////
+void Item::set_size(unsigned int item_id, const std::tuple<double, double, double>& size) {
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return;}
+    std::string item_size = std::to_string(std::get<0>(size)) + "x" + std::to_string(std::get<1>(size)) + "x" + std::to_string(std::get<2>(size));
+    //std::cout << "item_size set: " << item_size << std::endl;
+    db.update("item", "size", DB::to_sql_string(item_size) , "id = " + std::to_string(item_id));
+    db.close();
+}
+////////////////////
+void Item::set_discount(double discount) {
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return;}
+    db.update("item", "discount", std::to_string(discount), "id = " + std::to_string(this->id));
+    db.close();
+}
+////////////////////
+void Item::set_discount(unsigned int item_id, double discount) {
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return;}
+    db.update("item", "discount", std::to_string(discount), "id = " + std::to_string(item_id));
+    db.close();
+}
+////////////////////
+void Item::set_discount_by_percentage(double percent) { // converts a percentage to a price then sets the price as the discount
+    // convert discount (a percentage) into a decimal
+    double num2dec = percent / 100; //std::cout << percent << "% is " << num2dec << std::endl;
+    double original_price = get_price();
+    std::cout << "original_price: $" << original_price << std::endl;
+    double discount = original_price * num2dec; 
+    std::cout << "discount: $" << discount/* << " = " << percent << "% of " << original_price*/ << std::endl;
+    //double sale_price = original_price - discount;
+    //std::cout << "*new* sales_price: $" << sale_price << std::endl;
+    /////////////////////
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return;}
+    db.update("item", "discount", std::to_string(discount), "id = " + std::to_string(this->id));
+    db.close();    
+}
+////////////////////
+void Item::set_discount_by_percentage(unsigned int item_id, double percent) {
+    // convert discount (a percentage) into a decimal
+    double num2dec = percent / 100; //std::cout << percent << "% is " << num2dec << std::endl;
+    double original_price = get_price(item_id);
+    std::cout << "original_price: $" << original_price << std::endl;
+    double discount = original_price * num2dec; 
+    std::cout << "discount: $" << discount/* << " = " << percent << "% of " << original_price*/ << std::endl;
+    //double sale_price = original_price - discount;
+    //std::cout << "*new* sales_price: $" << sale_price << std::endl;
+    /////////////////////
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return;}
+    db.update("item", "discount", std::to_string(discount), "id = " + std::to_string(item_id));
+    db.close();
+}
+////////////////////
+void Item::set_condition(const std::string& condition) {
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return;}
+    db.update("item", "condition", DB::to_sql_string(condition), "id = " + std::to_string(this->id));
+    db.close();
+}
+////////////////////
+void Item::set_condition(unsigned int item_id, const std::string& condition) {
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return;}
+    db.update("item", "condition", DB::to_sql_string(condition), "id = " + std::to_string(item_id));
+    db.close();
+}
+////////////////////
+void Item::set_product_code(const std::string& product_code) {
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return;}
+    db.update("item", "product_code", DB::to_sql_string(product_code), "id = " + std::to_string(this->id));
+    db.close();
+}
+////////////////////
+void Item::set_product_code(unsigned int item_id, const std::string& product_code) {
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return;}
+    db.update("item", "product_code", DB::to_sql_string(product_code), "id = " + std::to_string(item_id));
+    db.close();
+}
+////////////////////
+////////////////////
+// getters
+////////////////////
+////////////////////
+unsigned int Item::get_id() const {
+    return id; // should be 0 by default for unregistered items
+}
+////////////////////
+std::string Item::get_name() const {
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return "";}
+    std::string item_name = db.get_column_text("item", "name", "id = " + std::to_string(this->id));
+    db.close();
+    return item_name;
+}
+////////////////////
+std::string Item::get_name(unsigned int item_id) {
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return "";}
+    std::string item_name = db.get_column_text("item", "name", "id = " + std::to_string(item_id));
+    db.close();
+    return item_name;
+}
+////////////////////
+std::string Item::get_description() const {
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return "";}
+    std::string item_description = db.get_column_text("item", "description", "id = " + std::to_string(this->id));
+    db.close();
+    return item_description;
+}
+////////////////////
+std::string Item::get_description(unsigned int item_id) {
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return "";}
+    std::string item_description = db.get_column_text("item", "description", "id = " + std::to_string(item_id));
+    db.close();
+    return item_description;
+}
+////////////////////
+double Item::get_price() const {
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return 0.0;}
+    double item_price = db.get_column_real("item", "price", "id = " + std::to_string(this->id));
+    db.close();
+    return item_price;
+}
+////////////////////
+double Item::get_price(unsigned int item_id) { // original price (list price)
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return 0.0;}
+    double item_price = db.get_column_real("item", "price", "id = " + std::to_string(item_id));
+    db.close();
+    return item_price;
+}
+////////////////////
+unsigned int Item::get_quantity() const {
+    std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cart.db";
+    DB db(cart_file);
+    if(!db.table_exists("Cart")) {db.close(); return 0;}
+    unsigned int item_qty = db.get_column_integer("Cart", "item_qty", "item_id = " + std::to_string(this->id));//std::cout << "item_id: " << item_id << " has a quantity of " << item_qty << std::endl;
+    db.close();
+    return item_qty;
+}
+////////////////////
+unsigned int Item::get_quantity(unsigned int item_id) {
+    std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cart.db";
+    DB db(cart_file);
+    if(!db.table_exists("Cart")) {db.close(); return 0;}
+    unsigned int item_qty = db.get_column_integer("Cart", "item_qty", "item_id = " + std::to_string(item_id));//std::cout << "item_id: " << item_id << " has a quantity of " << item_qty << std::endl;
+    db.close();
+    return item_qty;
+}
+////////////////////
+////////////////////
+////////////////////
+double Item::get_weight() const {
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return 0.0;}
+    double item_weight = db.get_column_real("item", "weight", "id = " + std::to_string(this->id));
+    db.close();
+    return item_weight;
+}
+////////////////////
+double Item::get_weight(unsigned int item_id) {
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return 0.0;}
+    double item_weight = db.get_column_real("item", "weight", "id = " + std::to_string(item_id));
+    db.close();
+    return item_weight;
+}
+////////////////////
+std::tuple<double, double, double> Item::get_size() const {
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return std::make_tuple(0, 0, 0);}
+    std::vector<std::string> item_size = String::split(db.get_column_text("item", "size", "id = " + std::to_string(this->id)), "x");
+    db.close();
+    return std::make_tuple(std::stod(item_size[0]), std::stod(item_size[1]), std::stod(item_size[2]));
+}
+////////////////////
+std::tuple<double, double, double> Item::get_size(unsigned int item_id) {
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return std::make_tuple(0, 0, 0);}
+    std::vector<std::string> item_size = String::split(db.get_column_text("item", "size", "id = " + std::to_string(item_id)), "x");
+    db.close();
+    return std::make_tuple(std::stod(item_size[0]), std::stod(item_size[1]), std::stod(item_size[2]));
+}
+////////////////////
+double Item::get_discount() const {
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return 0.0;}
+    double item_discount = db.get_column_real("item", "discount", "id = " + std::to_string(this->id));
+    db.close();
+    return item_discount;
+}
+////////////////////
+double Item::get_discount(unsigned int item_id) {
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return 0.0;}
+    double item_discount = db.get_column_real("item", "discount", "id = " + std::to_string(item_id));
+    db.close();
+    return item_discount;
+}
+////////////////////
+std::string Item::get_condition() const {
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return "";}
+    std::string item_condition = db.get_column_text("item", "condition", "id = " + std::to_string(this->id));
+    db.close();
+    return item_condition;
+}
+////////////////////
+std::string Item::get_condition(unsigned int item_id) {
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return "";}
+    std::string item_condition = db.get_column_text("item", "condition", "id = " + std::to_string(item_id));
+    db.close();
+    return item_condition;
+}
+////////////////////
+//std::string get_subcategory() const {/*return subcategory;*/}
+////////////////////
+std::string Item::get_product_code() const {
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return "";}
+    std::string item_product_code = db.get_column_text("item", "product_code", "id = " + std::to_string(this->id));
+    db.close();
+    return item_product_code;
+}
+////////////////////
+std::string Item::get_product_code(unsigned int item_id) {
+    DB db("neroshop.db");
+    if(!db.table_exists("item")) {db.close(); return "";}
+    std::string item_product_code = db.get_column_text("item", "product_code", "id = " + std::to_string(item_id));
+    db.close();
+    return item_product_code;
+}
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+// seller
+////////////////////
+////////////////////
+double Item::get_seller_price(unsigned int seller_id) const {
+    DB db("neroshop.db");
+    if(!db.table_exists("inventory")) {db.close(); return 0.00;} // make sure table exists first
+    double seller_price = 0.00;
+    if(seller_id > 0) seller_price = db.get_column_real("inventory", "seller_price", "item_id = " + std::to_string(this->id) + " AND seller_id = " + std::to_string(seller_id)); // get a specific seller's price for this item
+    if(seller_id <= 0) seller_price = db.get_column_real("inventory", "seller_price", "item_id = " + std::to_string(this->id)); // get a random seller's price for this item
+    db.close();
+    return seller_price;
+}
+////////////////////
+double Item::get_seller_price(unsigned int item_id, unsigned int seller_id) {// seller price (sales price)
+    DB db("neroshop.db");
+    if(!db.table_exists("inventory")) {db.close(); return 0.00;} // make sure table exists first
+    double seller_price = 0.00;
+    if(seller_id > 0) seller_price = db.get_column_real("inventory", "seller_price", "item_id = " + std::to_string(item_id) + " AND seller_id = " + std::to_string(seller_id));
+    if(seller_id <= 0) seller_price = db.get_column_real("inventory", "seller_price", "item_id = " + std::to_string(item_id));
+    db.close();
+    return seller_price;
+}
+////////////////////
+double Item::get_seller_discount(unsigned int seller_id) const {
+    DB db("neroshop.db");
+    if(!db.table_exists("inventory")) {db.close(); return 0.00;} // make sure table exists first
+    double seller_discount = 0.00;
+    if(seller_id > 0) seller_discount = db.get_column_real("inventory", "seller_discount", "item_id = " + std::to_string(this->id) + " AND seller_id = " + std::to_string(seller_id));
+    if(seller_id <= 0) seller_discount = db.get_column_real("inventory", "seller_discount", "item_id = " + std::to_string(this->id));
+    db.close();
+    return seller_discount;
+}
+////////////////////
+double Item::get_seller_discount(unsigned int item_id, unsigned int seller_id) {
+    DB db("neroshop.db");
+    if(!db.table_exists("inventory")) {db.close(); return 0.00;} // make sure table exists first
+    double seller_discount = 0.00;
+    if(seller_id > 0) seller_discount = db.get_column_real("inventory", "seller_discount", "item_id = " + std::to_string(item_id) + " AND seller_id = " + std::to_string(seller_id));
+    if(seller_id <= 0) seller_discount = db.get_column_real("inventory", "seller_discount", "item_id = " + std::to_string(item_id));
+    db.close();
+    return seller_discount;
+}
+////////////////////
+std::string Item::get_seller_condition(unsigned int seller_id) const {
+    DB db("neroshop.db");
+    if(!db.table_exists("inventory")) {db.close(); return "";} // make sure table exists first
+    std::string seller_condition = db.get_column_text("inventory", "seller_condition", "item_id = " + std::to_string(this->id) + " AND seller_id = " + std::to_string(seller_id));
+    db.close();
+    return seller_condition;
+}
+////////////////////
+std::string Item::get_seller_condition(unsigned int item_id, unsigned int seller_id) {
+    DB db("neroshop.db");
+    if(!db.table_exists("inventory")) {db.close(); return "";} // make sure table exists first
+    std::string seller_condition = db.get_column_text("inventory", "seller_condition", "item_id = " + std::to_string(item_id) + " AND seller_id = " + std::to_string(seller_id));
+    db.close();
+    return seller_condition;
+}
+////////////////////
+unsigned int Item::get_stock_quantity() const {
+    DB db;if(!db.open("neroshop.db")) {std::cout << "Could not open sql database" << std::endl; return 0;}
+    if(!db.table_exists("inventory")) {db.close(); return 0;} // make sure table exists first
+    int stock_qty = db.get_column_integer("inventory", "stock_qty", "item_id=" + std::to_string(this->id)); // check stock_quantity
+    db.close();
+    return stock_qty;
+}
+//////////////////// 
+unsigned int Item::get_stock_quantity(unsigned int item_id) {
+    DB db;if(!db.open("neroshop.db")) {std::cout << "Could not open sql database" << std::endl; return 0;}
+    if(!db.table_exists("inventory")) {db.close(); return 0;} // make sure table exists first
+    int stock_qty = db.get_column_integer("inventory", "stock_qty", "item_id=" + std::to_string(item_id)); // check stock_quantity
+    db.close();
+    return stock_qty;
+}
+////////////////////
+////////////////////
+bool Item::is_registered() const {
+    DB db;if(!db.open("neroshop.db")) {std::cout << "Could not open sql database" << std::endl; return false;}
+    if(!db.table_exists("item")) {db.close(); return false;} // make sure table exists first
+    int id = db.get_column_integer("item", "id", "id=" + std::to_string(this->id));
+    db.close();
+    return (id > 0);
+}
+////////////////////
+bool Item::is_registered(unsigned int item_id) {
+    DB db;if(!db.open("neroshop.db")) {std::cout << "Could not open sql database" << std::endl; return false;}
+    if(!db.table_exists("item")) {db.close(); return false;} // make sure table exists first
+    int id = db.get_column_integer("item", "id", "id=" + std::to_string(item_id));
+    db.close();
+    return (id > 0);
+}
+////////////////////
+////////////////////
+bool Item::in_stock() const {
+    DB db;if(!db.open("neroshop.db")) {std::cout << "Could not open sql database" << std::endl; return false;}
+    if(!db.table_exists("inventory")) {db.close(); return false;} // make sure table exists first
+    int stock_qty = db.get_column_integer("inventory", "stock_qty", "item_id=" + std::to_string(this->id)); // check stock_quantity
+    if(stock_qty < 1) return false;
+    db.close();
+    return true;
+}
+////////////////////
+bool Item::in_stock(unsigned int item_id) {
+    DB db;if(!db.open("neroshop.db")) {std::cout << "Could not open sql database" << std::endl; return false;}
+    if(!db.table_exists("inventory")) {db.close(); return false;} // make sure table exists first
+    int stock_qty = db.get_column_integer("inventory", "stock_qty", "item_id=" + std::to_string(item_id)); // check stock_quantity
+    if(stock_qty < 1) return false;
+    db.close();
+    return true;
+}
+////////////////////
+////////////////////
+bool Item::in_cart(/*unsigned int cart_id*/) const {
+    std::string user = System::get_user();
+    std::string cart_file = std::string("/home/" + user + "/.config/neroshop/") + "cart.db";
+    DB db; if(!db.open(cart_file)) {std::cout << "Could not open sql database" << std::endl; return false;}
+    if(!db.table_exists("Cart")) {db.close(); return false;} // make sure table exists first
+    int id = db.get_column_integer("Cart", "item_id", "item_id = " + std::to_string(this->id));
+    //    "cart_id = " + std::to_string(cart_id) + " AND item_id = " + std::to_string(this->id));
+    if(id <= 0) return false;
+    if(id == this->id) return true; // if this->id matches the item_id in table Cart, return true
+    db.close();
+    return false;
+}
+////////////////////
+bool Item::in_cart(unsigned int item_id/*, unsigned int cart_id*/) {
+    std::string user = System::get_user();
+    std::string cart_file = std::string("/home/" + user + "/.config/neroshop/") + "cart.db";
+    DB db; if(!db.open(cart_file)) {std::cout << "Could not open sql database" << std::endl; return false;}
+    if(!db.table_exists("Cart")) {db.close(); return false;} // make sure table exists first
+    int id = db.get_column_integer("Cart", "item_id", "item_id = " + std::to_string(item_id));
+    //    "cart_id = " + std::to_string(cart_id) + " AND item_id = " + std::to_string(item_id));
+    if(id <= 0) return false;
+    if(id == item_id) return true; // if item_id matches the item_id in table Cart, return true
+    db.close();
+    return false;
+}
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+void Item::show_info() {
+    std::cout << "Item name: " << get_name() << std::endl;
+    std::cout << "id: " << get_id() << std::endl;
+    std::cout << "desc: " << get_description() << std::endl;
+    //std::cout << "quantity: " << get_quantity() << std::endl;
+    std::cout << "price: " << get_price() << std::endl;
+    std::cout << "weight: " << get_weight() << std::endl;
+    //std::cout << "size: " << item.get_size() << std::endl;
+    std::cout << "discount: " << get_discount() << std::endl;
+    std::cout << "condition: " << get_condition() << std::endl;
+    std::cout << "product_code: " << get_product_code() << std::endl;
+    /*std::cout << ": " << item.get_() << std::endl;
+    std::cout << ": " << item.get_() << std::endl;
+    std::cout << ": " << item.get_() << std::endl;
+    std::cout << ": " << item.get_() << std::endl;
+    std::cout << ": " << item.get_() << std::endl;
+    std::cout << ": " << item.get_() << std::endl;
+    std::cout << ": " << item.get_() << std::endl;
+    std::cout << ": " << item.get_() << std::endl;
+    std::cout << ": " << item.get_() << std::endl;*/
+}
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
