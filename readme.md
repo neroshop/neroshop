@@ -12,13 +12,13 @@ Neronero (placeholder name)
 language: `c++`
 
 # dependencies:
-[monero](https://github.com/monero-project/monero) (MIT)
-[monero-cpp](https://github.com/monero-ecosystem/monero-cpp) (MIT)
-[bcrypt](https://github.com/libbcrypt/) (public domain)
-[sqlite3](https://www.sqlite.org/) (public domain)
-[QR Code generator](https://github.com/nayuki/QR-Code-generator) (MIT)
-[json](https://github.com/nlohmann/json/) (MIT)
-[curl](https://curl.se/libcurl/) (The curl license - inspired by MIT/X)
+* [monero](https://github.com/monero-project/monero) (MIT)
+* [monero-cpp](https://github.com/monero-ecosystem/monero-cpp) (MIT)
+* [bcrypt](https://github.com/libbcrypt/) (public domain)
+* [sqlite3](https://www.sqlite.org/) (public domain)
+* [QR Code generator](https://github.com/nayuki/QR-Code-generator) (MIT)
+* [json](https://github.com/nlohmann/json/) (MIT)
+* [curl](https://curl.se/libcurl/) (The curl license - inspired by MIT/X)
 
 
 # features:
