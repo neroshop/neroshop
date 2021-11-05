@@ -4,10 +4,10 @@ An online marketplace for [Monero](https://getmonero.org/) users ("nero" meaning
 [![alt text](res/neroshop-logo.png)](https://github.com/larteyoh/neroshop "neroshop logo")
 
 # names attempts:
-Monazon  (placeholder name)
-Monashop (placeholder name)
-Neroshop (placeholder name)("nero" meaning black + shop) <3
-Neronero (placeholder name)
+* Monazon  (placeholder name)
+* Monashop (placeholder name)
+* Neroshop (placeholder name)("nero" meaning black + shop) <3
+* Neronero (placeholder name)
 
 language: `c++`
 
