@@ -114,7 +114,8 @@ int main() {
 	//QR * qr_code = new QR("test_qr.png", 128, 3, text, true, QrCode::Ecc::HIGH);
 	//if(!qr_code->to_png()) std::cout << "failed to write png\n";
 	////////////////////////////////////////////////
-	//std::string pw = "Password!2";
+	std::string pw = "Password!23";
+	Validator::register_user("layter", pw, pw);
     //Validator::register_user("jack_sparrow3", pw, pw);
     // delete account
     /*User * user0 = nullptr;
@@ -175,9 +176,9 @@ int main() {
 	// register items: ball and ring
 	// currency has to be stable so we will use usd or eur then it will be converted to xmr
 	// we cannot set the price in xmr directly since its highly volatile and the price is always changing
-	Item ball("Ball", "A ball", 8.00, 0.5, std::make_tuple(1, 2, 3), "new", "000000000001");
-	Item ring("Ring", "A ring", 99.00, 0.2, std::make_tuple(3, 2, 1), "new","000000000002");
-	Item game("Game", "A nintendo game card", 60.00, 0.0, std::make_tuple(0, 0, 0), "new", "000000000003");//Item cake(7);
+	//Item ball("Ball", "A ball", 8.00, 0.5, std::make_tuple(1, 2, 3), "new", "000000000001");
+	//Item ring("Ring", "A ring", 99.00, 0.2, std::make_tuple(3, 2, 1), "new","000000000002");
+	//Item game("Game", "A nintendo game card", 60.00, 0.0, std::make_tuple(0, 0, 0), "new", "000000000003");//Item cake(7);
 	//seller->list_item(ball, 50, Converter::usd_to_xmr(8.50)); //adds item to inventory
 	//////////////
 	//cart->add(ball);

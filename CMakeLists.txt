@@ -306,28 +306,28 @@ add_definitions(-DCURL_STATICLIB)
 ######################################
 ######################################
 # dokun-ui_dependencies
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun_ui/external/lua/lua-5.4.1/src) # lua
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun_ui/external/glew/include)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun_ui/external/png ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun_ui/external/zlib)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun_ui/external/freetype/include                   # public headers - ft2build.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun_ui/external/freetype/include/freetype           # public headers
-   ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun_ui/external/freetype/include/freetype/config    # public config headers
-   ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun_ui/external/freetype/include/freetype/internal) # private headers - added 2019-07-29
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun_ui/external/ogg/include)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun_ui/external/vorbis/include
-   ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun_ui/external/vorbis/lib)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun_ui/external/theora/include)
-#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun_ui/external/utf8/source)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun_ui/external/openal/include
-   ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun_ui/external/openal-soft/include)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun_ui/external/jpeg
-   ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun_ui/external/jpeg/jpeg-6b)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun_ui/external/tiff/libtiff)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun_ui/external/gif/lib)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/lua/lua-5.4.1/src) # lua
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/glew/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/png ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/zlib)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/freetype/include                   # public headers - ft2build.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/freetype/include/freetype           # public headers
+   ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/freetype/include/freetype/config    # public config headers
+   ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/freetype/include/freetype/internal) # private headers - added 2019-07-29
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/ogg/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/vorbis/include
+   ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/vorbis/lib)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/theora/include)
+#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/utf8/source)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/openal/include
+   ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/openal-soft/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/jpeg
+   ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/jpeg/jpeg-6b)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/tiff/libtiff)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/gif/lib)
 include_directories(#[[${CMAKE_CURRENT_SOURCE_DIR}/external/flac]] # config.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun_ui/external/flac/include
-   ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun_ui/external/flac/src/libFLAC/include) # for "private/cpu.h"
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun_ui/external/glm)
+   ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/flac/include
+   ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/flac/src/libFLAC/include) # for "private/cpu.h"
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/glm)
 if(WIN32)
 set(opengl_src    opengl32.lib glu32.lib)
 set(openal_src    OpenAL32.lib          ) # not currently in use
@@ -342,9 +342,9 @@ set(x11_src    libX11.a libxcb.a libXau.a libXdmcp.a)
 endif()
 ######################################
 # dokun-ui
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun_ui/include) # include
-set(dokun_ui_src /media/sid/Elements/sid/media/other/code/more/dokun-ui/src/libdokun-ui.a)#libdokun-ui.a) # definitions added: DOKUN_OPENGL, DOKUN_BUILD_LIBRARY
-#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui)#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/include)#set(dokun_ui_src ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/src/libdokun-ui.a)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/include) # include
+set(dokun_ui_src ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/src/libdokun-ui.a)#libdokun-ui.a) # definitions added: DOKUN_OPENGL, DOKUN_BUILD_LIBRARY
+#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui)
 ######################################
 # neroshop
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include) # includes (.hpp)
