@@ -12,25 +12,25 @@ Neronero (placeholder name)
 language: `c++`
 
 # dependencies:
-monero     : (MIT)
-monero-cpp : https://github.com/monero-ecosystem/monero-cpp (MIT)
-bcrypt     : https://github.com/libbcrypt/ | https://www.openwall.com/crypt/ (public domain)
-sqlite3    : https://www.sqlite.org/ (public domain)
-QR Code generator: https://github.com/nayuki/QR-Code-generator (MIT)
-json       : https://github.com/nlohmann/json/ (MIT)
-curl       : https://curl.se/libcurl/ (The curl license - inspired by MIT/X)
+[monero](https://github.com/monero-project/monero) (MIT)
+[monero-cpp](https://github.com/monero-ecosystem/monero-cpp) (MIT)
+[bcrypt](https://github.com/libbcrypt/) (public domain)
+[sqlite3](https://www.sqlite.org/) (public domain)
+[QR Code generator](https://github.com/nayuki/QR-Code-generator) (MIT)
+[json](https://github.com/nlohmann/json/) (MIT)
+[curl](https://curl.se/libcurl/) (The curl license - inspired by MIT/X)
 
 
 # features:
 * buyers are not required to register
-* none of that KYC or AML bull----
+* none KYC or AML
 * buy and sell products with monero (and other "private by default" crypto)
 * generate a subaddress per customer => automatic subaddress generator (a unique monero address is generated from seller's account each time a buyer orders an item)
 * address watcher that tracks incoming txs and notifies the both the user and seller
 ("awaiting payment ..."[red], "payment incoming"[yellow], "payment received!"[green])
 * seller reputation system (score from 0-1)
 * product rating system (stars from 1-5)
-* and more ...
+* and much more ...
 
 # Building neroshop
 ```sh
@@ -49,6 +49,6 @@ make
 ```
 
 NOTE:
-I am an awful programmer and still consider myself a noob at it since I don't know what I'm doing half of the time, so if there's any out there who can help me bring
+I am an awful programmer and still consider myself a noob at it since I don't know what I'm doing half of the time, so if there's anyone out there who can help me bring
 my project to life, I'd highly appreciate it! 
 I am also willing to compensate any contributors with Monero when I become financially stable.
