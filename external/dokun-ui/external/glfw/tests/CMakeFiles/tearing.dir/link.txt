@@ -1,0 +1,1 @@
+/usr/bin/cc    CMakeFiles/tearing.dir/tearing.c.o CMakeFiles/tearing.dir/__/deps/glad_gl.c.o  -o tearing  ../src/libglfw3.a -lm /usr/lib/x86_64-linux-gnu/librt.so -lm -ldl /usr/lib/x86_64-linux-gnu/libX11.so -lpthread 

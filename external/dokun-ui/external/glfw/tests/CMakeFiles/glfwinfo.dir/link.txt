@@ -1,0 +1,1 @@
+/usr/bin/cc    CMakeFiles/glfwinfo.dir/glfwinfo.c.o CMakeFiles/glfwinfo.dir/__/deps/getopt.c.o CMakeFiles/glfwinfo.dir/__/deps/glad_gl.c.o CMakeFiles/glfwinfo.dir/__/deps/glad_vulkan.c.o  -o glfwinfo  ../src/libglfw3.a -lm /usr/lib/x86_64-linux-gnu/librt.so -lm -ldl /usr/lib/x86_64-linux-gnu/libX11.so -lpthread 

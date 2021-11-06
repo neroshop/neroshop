@@ -229,6 +229,7 @@ Order * User::create_order(const std::string& shipping_address) {//const {
 // orders are never deleted, their statuses just change: rejected, failure, delivered, etc.
 void User::load_orders() {
     DB db("neroshop.db");
+    if(!db.table_exists("orders")) return; // user probably has no order history
     // create orders based on user order_ids stored in orders
     // get last inserted order
     int last_order = db.get_column_integer("orders ORDER BY id DESC LIMIT 1", "*");//int orders_count = db.row_count("orders");

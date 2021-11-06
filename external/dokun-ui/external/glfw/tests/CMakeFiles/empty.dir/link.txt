@@ -1,0 +1,1 @@
+/usr/bin/cc    CMakeFiles/empty.dir/empty.c.o CMakeFiles/empty.dir/__/deps/tinycthread.c.o CMakeFiles/empty.dir/__/deps/glad_gl.c.o  -o empty  ../src/libglfw3.a -lm -lpthread /usr/lib/x86_64-linux-gnu/librt.so -ldl /usr/lib/x86_64-linux-gnu/libX11.so -lpthread 

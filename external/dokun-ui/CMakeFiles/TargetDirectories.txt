@@ -1,0 +1,3 @@
+/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles/rebuild_cache.dir
+/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles/edit_cache.dir
+/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles/libdokun-ui.dir

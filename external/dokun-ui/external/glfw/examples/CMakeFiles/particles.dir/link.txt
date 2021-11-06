@@ -1,0 +1,1 @@
+/usr/bin/cc    CMakeFiles/particles.dir/particles.c.o CMakeFiles/particles.dir/__/deps/tinycthread.c.o CMakeFiles/particles.dir/__/deps/getopt.c.o CMakeFiles/particles.dir/__/deps/glad_gl.c.o  -o particles  ../src/libglfw3.a -lm -lpthread /usr/lib/x86_64-linux-gnu/librt.so -ldl /usr/lib/x86_64-linux-gnu/libX11.so -lpthread 
