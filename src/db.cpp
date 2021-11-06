@@ -440,7 +440,7 @@ bool DB::create_config() { // good!
     "localhost = \"127.0.0.1\"\n"
     "neroshop = {\n"
     //"    --general = {\n"
-    //"    currency = \"usd\",\n" // currency that will be displayed alongside xmr: 0.045000000000 XMR ($10 USD)
+    "    currency = \"usd\",\n" // currency that will be displayed alongside xmr: 0.045000000000 XMR ($10 USD)
     //"    theme = \"dark\",\n" // dark, light, default
     //"    --}\n"
     "    window = {\n"

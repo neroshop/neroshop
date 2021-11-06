@@ -10,15 +10,6 @@ Buyer::Buyer(const std::string& name) : Buyer() {
 ////////////////////
 ////////////////////
 ////////////////////
-//void Buyer::convert() {
-//    if(is_guest()) {neroshop::print("Guests must create an account in order to convert to a Seller"); return;}
-    //if(!db.table_exists("users")) {
-        //db.column("users", "ADD", "role_id", "INTEGER");
-        //db.column("users", "ADD", "role_name", "TEXT");
-    //}
-    // update role_id or role
-    //db.update("users", "role", "seller", "id = " + std::string(get_id()));
-//}
 ////////////////////
 ////////////////////
 ////////////////////

@@ -1,13 +1,8 @@
 # neroshop 
 
-An online marketplace for [Monero](https://getmonero.org/) users ("nero" meaning black + shop)
-[![alt text](res/neroshop-logo.png)](https://github.com/larteyoh/neroshop "neroshop logo")
+An attempt to create an online marketplace for [Monero](https://getmonero.org/) users ("nero" meaning black + shop), which is likely to fail
 
-# names attempts:
-* Monazon  (placeholder name)
-* Monashop (placeholder name)
-* Neroshop (placeholder name)("nero" meaning black + shop) <3
-* Neronero (placeholder name)
+[![alt text](res/neroshop-logo.png)](https://github.com/larteyoh/neroshop "neroshop logo")
 
 language: `c++`
 
@@ -23,10 +18,10 @@ language: `c++`
 
 # features:
 * buyers are not required to register
-* none KYC or AML
+* no KYC or AML
 * buy and sell products with monero (and other "private by default" crypto)
 * generate a subaddress per customer => automatic subaddress generator (a unique monero address is generated from seller's account each time a buyer orders an item)
-* address watcher that tracks incoming txs and notifies the both the user and seller
+* address watcher that tracks incoming txs and notifies both the user and seller
 ("awaiting payment ..."[red], "payment incoming"[yellow], "payment received!"[green])
 * seller reputation system (score from 0-1)
 * product rating system (stars from 1-5)

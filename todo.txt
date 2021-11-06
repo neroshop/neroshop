@@ -7,12 +7,12 @@
 
 
 [LOW PRIORITY]
-- create neroshop domain name (.org preffered)
-- create neroshop onion address
-- neroshop matrix server
-- neroshop subreddit
-- create neroshop reddit account
-      => reddit_username: neroshop_layter (or just layter)
+- create neroshop domain name (.org preffered)             []
+- create neroshop onion address                            []
+- neroshop matrix server                                   []
+- neroshop subreddit                                       [x]
+- create neroshop reddit account                           []
+      => reddit_username: neroshop_layter (or just layter) []
 
 [HIRING]
 - hire graphics programmer to fix and optimize rendering code in "renderer.cpp"

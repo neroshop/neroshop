@@ -1,7 +1,7 @@
 #include "../include/user.hpp"
 
 ////////////////////
-User::User() : logged(false), id(0) // name and role are empty strings by default
+User::User() : logged(false), id(0), role(user_role::guest) // name is an empty string by default
 {}
 ////////////////////
 User::~User()
