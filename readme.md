@@ -1,10 +1,13 @@
 # neroshop 
 
-An attempt to create an online marketplace for [Monero](https://getmonero.org/) users ("nero" meaning black + shop), which is likely to fail
+An attempt to create an online marketplace for [Monero](https://getmonero.org/) users, which is likely to fail
 
 [![alt text](res/neroshop-logo.png)](https://github.com/larteyoh/neroshop "neroshop logo")
 
 language: `c++`
+
+# naming: 
+The name neroshop comes from "nero", meaning black combined with the word "shop"
 
 # dependencies:
 * [monero](https://github.com/monero-project/monero) (MIT)
