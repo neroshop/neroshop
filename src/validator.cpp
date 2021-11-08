@@ -185,8 +185,8 @@ bool Validator::validate_username(const std::string& username)
 	    }//std::cout << "name: " << name << " (retrieved from db)" << std::endl;
 	}
 	// make sure any deleted user's name is not re-used
-	if(db.table_exists("graveyard")) {
-	    std::string deleted_user = db.get_column_text("graveyard", "name", "name = " + DB::to_sql_string(username));
+	if(db.table_exists("deleted_users")) {
+	    std::string deleted_user = db.get_column_text("deleted_users", "name", "name = " + DB::to_sql_string(username));
 	    if(deleted_user == String::lower(username)) {
 	        neroshop::print("This username cannot be used"/*re-used"*/, 2);
             return false;

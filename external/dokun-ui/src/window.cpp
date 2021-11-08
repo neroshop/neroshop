@@ -1,10 +1,10 @@
 #include "../include/window.hpp"
 
 ////////////
-WINDOW::WINDOW(void) : width (DOKUN_DEFAULT_WIDTH), height (DOKUN_DEFAULT_HEIGHT), mode (0), x (DOKUN_DEFAULT_POSITION_X), y (DOKUN_DEFAULT_POSITION_Y)
+dokun::Window::Window(void) : width (DOKUN_DEFAULT_WIDTH), height (DOKUN_DEFAULT_HEIGHT), mode (0), x (DOKUN_DEFAULT_POSITION_X), y (DOKUN_DEFAULT_POSITION_Y)
 , color (0.0, 0.0, 0.0, 0.0) // screen properties
 #ifdef __windows__
-, handle (nullptr), instance (nullptr), style (WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN)
+, handle (nullptr), instance (nullptr), style (WS_OVERLAPPEDdokun::Window | WS_CLIPSIBLINGS | WS_CLIPCHILDREN)
 #endif
 #ifdef __gnu_linux__
 #ifdef DOKUN_X11
@@ -14,12 +14,12 @@ WINDOW::WINDOW(void) : width (DOKUN_DEFAULT_WIDTH), height (DOKUN_DEFAULT_HEIGHT
 	Factory::get_window_factory()->store(this);
 }
 ////////////
-WINDOW::~WINDOW(void)
+dokun::Window::~Window(void)
 {
 	Factory::get_window_factory()->release(this);
 }
 ////////////
-void WINDOW::create()
+void dokun::Window::create()
 {
 #ifdef __windows__
 	if (instance == nullptr) // register window once
@@ -27,7 +27,7 @@ void WINDOW::create()
 	    WNDCLASS wc       = { 0 };
 	    instance          = GetModuleHandle(nullptr);
         wc.style          = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
-        wc.lpfnWndProc    = static_cast<WNDPROC>(WINDOW::WndProc);
+        wc.lpfnWndProc    = static_cast<WNDPROC>(dokun::Window::WndProc);
         wc.cbClsExtra     = 0; // no extra data
         wc.cbWndExtra     = 0; 
         wc.hInstance      = instance;
@@ -119,7 +119,7 @@ if(Renderer::get_current_API() == "OpenGL") {
 	GLint visual_attributes[] = { GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None };//{ GLX_RGBA, GLX_DOUBLEBUFFER, GLX_RED_SIZE, 1, GLX_GREEN_SIZE, 1, GLX_BLUE_SIZE, 1, None }; //{ GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None };
 	/*{
       GLX_X_RENDERABLE    , True,
-      GLX_DRAWABLE_TYPE   , GLX_WINDOW_BIT,
+      GLX_DRAWABLE_TYPE   , GLX_dokun::Window_BIT,
       GLX_RENDER_TYPE     , GLX_RGBA_BIT,
       GLX_X_VISUAL_TYPE   , GLX_TRUE_COLOR,
       GLX_RED_SIZE        , 8,
@@ -249,13 +249,13 @@ if(Renderer::get_current_API() == "OpenGL") {
 #endif
 }
 ////////////
-void WINDOW::create(const std::string& title)
+void dokun::Window::create(const std::string& title)
 {
    this->title = title; // using set_title(title) is a bad idea why?: It will crash unless the window is created first. It is better to change the 'title' value than change the actual window string. The same goes for set_width and set_height
    create();
 }
 ////////////
-void WINDOW::create(int width, int height, int mode)
+void dokun::Window::create(int width, int height, int mode)
 {
    this->width  = width;
    this->height = height;
@@ -263,7 +263,7 @@ void WINDOW::create(int width, int height, int mode)
    create();
 }
 ////////////
-void WINDOW::create(const std::string& title, int width, int height, int mode)
+void dokun::Window::create(const std::string& title, int width, int height, int mode)
 {
    this->title = title;
    this->width  = width;
@@ -272,7 +272,7 @@ void WINDOW::create(const std::string& title, int width, int height, int mode)
    create();	
 }
 ////////////
-void WINDOW::create(int x, int y, int width, int height, int mode)
+void dokun::Window::create(int x, int y, int width, int height, int mode)
 {
 	this->x = x;
 	this->y = y;
@@ -281,7 +281,7 @@ void WINDOW::create(int x, int y, int width, int height, int mode)
 	this->mode = mode;
 	create();
 }
-void WINDOW::create(const std::string& title, int x, int y, int width, int height, int mode)
+void dokun::Window::create(const std::string& title, int x, int y, int width, int height, int mode)
 {
 	this->title = title;
 	this->x = x;
@@ -292,7 +292,7 @@ void WINDOW::create(const std::string& title, int x, int y, int width, int heigh
 	create();
 }
 ////////////
-int WINDOW::create(lua_State *L)
+int dokun::Window::create(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	luaL_optstring(L, 2, ""); // title
@@ -302,13 +302,13 @@ int WINDOW::create(lua_State *L)
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));	   
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));	   
 	    window->create(lua_tostring(L, 2), static_cast<int>(lua_tonumber(L, 3)), static_cast<int>(lua_tonumber(L, 4)), static_cast<int>(lua_tonumber(L, 5)));		
 	}
 	return 0;
 }
 ////////////
-void WINDOW::show()
+void dokun::Window::show()
 {
 #ifdef __windows__
     ShowWindow(handle, SW_SHOW);
@@ -323,19 +323,19 @@ void WINDOW::show()
 #endif
 }
 //////////// 
-int WINDOW::show(lua_State *L)
+int dokun::Window::show(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 		window->show();
 	}
 	return 0;
 }
 ////////////
-void WINDOW::hide()
+void dokun::Window::hide()
 {	
 #ifdef __windows__
     ShowWindow(handle, SW_HIDE);
@@ -348,19 +348,19 @@ void WINDOW::hide()
 #endif
 }
 ////////////
-int WINDOW::hide(lua_State *L)
+int dokun::Window::hide(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 		window->hide();
 	}
 	return 0;	
 }
 ////////////
-void WINDOW::update() // retrieves window messages; updates drawing (called in a loop)
+void dokun::Window::update() // retrieves window messages; updates drawing (called in a loop)
 {
 #ifdef __windows__
 	Renderer::set_display_size(get_client_width (), get_client_height ());
@@ -463,19 +463,19 @@ void WINDOW::update() // retrieves window messages; updates drawing (called in a
 #endif
 }
 ////////////
-int WINDOW::update(lua_State *L)
+int dokun::Window::update(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 		window->update();
 	}
 	return 0;
 }
 ////////////
-void WINDOW::destroy()
+void dokun::Window::destroy()
 {
 #ifdef __windows__
 #ifdef DOKUN_OPENGL
@@ -526,20 +526,20 @@ void WINDOW::destroy()
 #endif
 }
 ////////////
-int WINDOW::destroy(lua_State *L)
+int dokun::Window::destroy(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 		window->destroy();
 	}	
 	return 0;
 }
 ////////////
 ////////////
-void WINDOW::clear(double red, double green, double blue, double alpha, double depth, int stencil) // sets the screen color
+void dokun::Window::clear(double red, double green, double blue, double alpha, double depth, int stencil) // sets the screen color
 {
 	color = Vector4(red, green, blue, alpha);
 #ifdef DOKUN_OPENGL
@@ -567,7 +567,7 @@ void WINDOW::clear(double red, double green, double blue, double alpha, double d
 #endif
 }
 ////////////
-int WINDOW::clear(lua_State *L)
+int dokun::Window::clear(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	luaL_optnumber(L, 2, 0); // R
@@ -579,13 +579,13 @@ int WINDOW::clear(lua_State *L)
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 		window->clear( (double)lua_tonumber(L, 2), (double)lua_tonumber(L, 3), (double)lua_tonumber(L, 4), (double)lua_tonumber(L, 5), (double)lua_tonumber(L, 6), (unsigned int)lua_tonumber(L, 7) );
 	}	
 	return 0;
 }
 ////////////
-void WINDOW::iconify()
+void dokun::Window::iconify()
 {
 #ifdef __windows__
 	ShowWindow(get_handle(), SW_MINIMIZE);
@@ -597,18 +597,18 @@ void WINDOW::iconify()
 #endif
 #endif
 }
-int WINDOW::iconify(lua_State * L)
+int dokun::Window::iconify(lua_State * L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 		window->iconify();
 	}	
 	return 0;
 }
-void WINDOW::maximize()
+void dokun::Window::maximize()
 {
 #ifdef __windows__
 	ShowWindow(get_handle(), SW_MAXIMIZE);
@@ -619,18 +619,18 @@ void WINDOW::maximize()
 #endif
 #endif
 }
-int WINDOW::maximize(lua_State * L)
+int dokun::Window::maximize(lua_State * L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 		window->maximize();
 	}		
 	return 0;
 }
-void WINDOW::restore()
+void dokun::Window::restore()
 {
 #ifdef __windows__
 	ShowWindow(get_handle(), SW_RESTORE);
@@ -641,19 +641,19 @@ void WINDOW::restore()
 #endif
 #endif
 }
-int WINDOW::restore(lua_State * L)
+int dokun::Window::restore(lua_State * L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 		window->restore();
 	}		
 	return 0;
 }
 ////////////
-void WINDOW::loop()
+void dokun::Window::loop()
 {
 	/*
 	if(!get_event())
@@ -674,13 +674,13 @@ void WINDOW::loop()
 	*/
 }
 ////////////
-int WINDOW::loop(lua_State * L) // int main ()
+int dokun::Window::loop(lua_State * L) // int main ()
 {	/*
 	luaL_checktype(L, 1, LUA_TTABLE); // 1 st
 	lua_getfield(L, 1, "udata"); // 2 nd
 	if(lua_isuserdata(L, -1))
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 		/////////////////////////	
 		lua_pop(L, 1); // pop userdata
 		/////////////////////////
@@ -727,7 +727,7 @@ int WINDOW::loop(lua_State * L) // int main ()
 //////////// 
 // SETTERS
 ////////////
-void WINDOW::set_title(const std::string& title)
+void dokun::Window::set_title(const std::string& title)
 {
 #ifdef __windows__
     SetWindowText(get_handle(), title.c_str());
@@ -745,20 +745,20 @@ void WINDOW::set_title(const std::string& title)
     (this)-> title = title;
 }
 ////////////
-int WINDOW::set_title(lua_State *L)
+int dokun::Window::set_title(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	luaL_checktype(L, 2, LUA_TSTRING);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 		window->set_title( lua_tostring(L, 2));
 	}
 	return 0;
 }
 ////////////
-void WINDOW::set_width(int width)
+void dokun::Window::set_width(int width)
 {    
 #ifdef __windows__
 	if(MoveWindow(get_handle(), get_x(), get_y(), width, get_height(), FALSE) == 0)
@@ -776,7 +776,7 @@ void WINDOW::set_width(int width)
     this->width     = width;
 }
 ////////////
-int WINDOW::set_width(lua_State *L)
+int dokun::Window::set_width(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	luaL_checktype(L, 2, LUA_TNUMBER);
@@ -784,13 +784,13 @@ int WINDOW::set_width(lua_State *L)
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 		window->set_width(static_cast<int>(lua_tonumber(L, 2)));
 	}	
 	return 0;
 }
 ////////////
-void WINDOW::set_height(int height)
+void dokun::Window::set_height(int height)
 {
 #ifdef __windows__
 	if(MoveWindow(get_handle(), get_x(), get_y(), get_width(), height, false) == 0)
@@ -808,7 +808,7 @@ void WINDOW::set_height(int height)
     this->height    = height;
 }
 ////////////
-int WINDOW::set_height(lua_State *L)
+int dokun::Window::set_height(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	luaL_checktype(L, 2, LUA_TNUMBER);
@@ -816,19 +816,19 @@ int WINDOW::set_height(lua_State *L)
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 		window->set_height( (unsigned int)lua_tonumber(L, 2) );
 	}	
 	return 0;
 }
 ////////////
-void WINDOW::set_size(int width, int height)
+void dokun::Window::set_size(int width, int height)
 {	
     set_width (width );
     set_height(height);
 }
 ////////////
-int WINDOW::set_size(lua_State *L)
+int dokun::Window::set_size(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	luaL_checktype(L, 2, LUA_TNUMBER);
@@ -837,21 +837,21 @@ int WINDOW::set_size(lua_State *L)
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 		window->set_size( (unsigned int)lua_tonumber(L, 2), (unsigned int)lua_tonumber(L, 3));
 	}	
 	return 0;
 }
 //////////// XSetWindowBorderWidth (display, w, width)
 ////////////
-void WINDOW::set_mode(int mode)
+void dokun::Window::set_mode(int mode)
 {
 #ifdef __windows__
     switch(mode) {
 	    case 1: 
 		{   
 			SetWindowLong(handle, GWL_STYLE, 0); 
-	        SetWindowPos (handle, HWND_TOPMOST, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), SWP_FRAMECHANGED | SWP_SHOWWINDOW);
+	        SetWindowPos (handle, HWND_TOPMOST, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), SWP_FRAMECHANGED | SWP_SHOWdokun::Window);
 	    } break;
         case 0: 
 		{
@@ -859,7 +859,7 @@ void WINDOW::set_mode(int mode)
 			set_width (width);
 			set_height(height);
 			set_position(DOKUN_DEFAULT_POSITION_X, DOKUN_DEFAULT_POSITION_Y);	
-            SetWindowPos(handle, HWND_TOP, x, y, width, height, SWP_NOMOVE | SWP_FRAMECHANGED | SWP_SHOWWINDOW);	// show window, ignore new position, set original size
+            SetWindowPos(handle, HWND_TOP, x, y, width, height, SWP_NOMOVE | SWP_FRAMECHANGED | SWP_SHOWdokun::Window);	// show window, ignore new position, set original size
 	    } break;		
 	}	
 #endif	
@@ -880,20 +880,20 @@ void WINDOW::set_mode(int mode)
     this->mode = (mode);
 }
 ////////////
-int WINDOW::set_mode(lua_State *L)
+int dokun::Window::set_mode(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	luaL_checktype(L, 2, LUA_TNUMBER);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 		window->set_mode((int)lua_tonumber(L, 2));
 	}		
 	return 0;
 }
 ////////////
-void WINDOW::set_position(int x, int y)
+void dokun::Window::set_position(int x, int y)
 {
 #ifdef __windows__
 	MoveWindow(handle, x, y, get_width(), get_height(), false);
@@ -908,7 +908,7 @@ void WINDOW::set_position(int x, int y)
 	this->y = y;
 }
 ////////////
-int WINDOW::set_position(lua_State *L)
+int dokun::Window::set_position(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	luaL_checktype(L, 2, LUA_TNUMBER);
@@ -917,84 +917,84 @@ int WINDOW::set_position(lua_State *L)
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 		window->set_position((unsigned int)lua_tonumber(L, 2), (unsigned int)lua_tonumber(L, 3));
 	}			
 	return 0;
 }
 ////////////
-void WINDOW::set_style(long style)
+void dokun::Window::set_style(long style)
 {
 #ifdef __gnu_linux__
 #ifdef DOKUN_X11
 	switch(style)
 	{
 		case 0:
-		    style = XInternAtom(display, "_NET_WM_WINDOW_TYPE_DESKTOP", False);
+		    style = XInternAtom(display, "_NET_WM_dokun::Window_TYPE_DESKTOP", False);
 		break;	
 		case 1:
-		    style = XInternAtom(display, "_NET_WM_WINDOW_TYPE_DOCK", False);
+		    style = XInternAtom(display, "_NET_WM_dokun::Window_TYPE_DOCK", False);
 		break;	
 		case 2:
-		    style = XInternAtom(display, "_NET_WM_WINDOW_TYPE_TOOLBAR", False);
+		    style = XInternAtom(display, "_NET_WM_dokun::Window_TYPE_TOOLBAR", False);
 		break;	
 		case 3:
-		    style = XInternAtom(display, "_NET_WM_WINDOW_TYPE_MENU", False);
+		    style = XInternAtom(display, "_NET_WM_dokun::Window_TYPE_MENU", False);
 		break;	
 		case 4:
-		    style = XInternAtom(display, "_NET_WM_WINDOW_TYPE_UTILITY", False);
+		    style = XInternAtom(display, "_NET_WM_dokun::Window_TYPE_UTILITY", False);
 		break;	
 		case 5:
-		    style = XInternAtom(display, "_NET_WM_WINDOW_TYPE_SPLASH", False);
+		    style = XInternAtom(display, "_NET_WM_dokun::Window_TYPE_SPLASH", False);
 		break;	
 		case 6:
-		    style = XInternAtom(display, "_NET_WM_WINDOW_TYPE_DIALOG", False);
+		    style = XInternAtom(display, "_NET_WM_dokun::Window_TYPE_DIALOG", False);
 		break;	
 		case 7:
-		    style = XInternAtom(display, "_NET_WM_WINDOW_TYPE_DROPDOWN_MENU", False);
+		    style = XInternAtom(display, "_NET_WM_dokun::Window_TYPE_DROPDOWN_MENU", False);
 		break;	
 		case 8:
-		    style = XInternAtom(display, "_NET_WM_WINDOW_TYPE_POPUP_MENU", False);
+		    style = XInternAtom(display, "_NET_WM_dokun::Window_TYPE_POPUP_MENU", False);
 		break;	
 		case 9:
-		    style = XInternAtom(display, "_NET_WM_WINDOW_TYPE_TOOLTIP", False);
+		    style = XInternAtom(display, "_NET_WM_dokun::Window_TYPE_TOOLTIP", False);
 		break;	
 		case 10:
-		    style = XInternAtom(display, "_NET_WM_WINDOW_TYPE_NOTIFICATION", False);
+		    style = XInternAtom(display, "_NET_WM_dokun::Window_TYPE_NOTIFICATION", False);
 		break;	
 		case 11:
-		    style = XInternAtom(display, "_NET_WM_WINDOW_TYPE_COMBO", False);
+		    style = XInternAtom(display, "_NET_WM_dokun::Window_TYPE_COMBO", False);
 		break;	
 		case 12:
-		    style = XInternAtom(display, "_NET_WM_WINDOW_TYPE_DND", False);
+		    style = XInternAtom(display, "_NET_WM_dokun::Window_TYPE_DND", False);
 		break;	
 		case 13:
-		    style = XInternAtom(display, "_NET_WM_WINDOW_TYPE_NORMAL", False);
+		    style = XInternAtom(display, "_NET_WM_dokun::Window_TYPE_NORMAL", False);
 		break;
         default:
             break;		
 	}
-    XChangeProperty(display, window, XInternAtom(display, "_NET_WM_WINDOW_TYPE", False),
+    XChangeProperty(display, window, XInternAtom(display, "_NET_WM_dokun::Window_TYPE", False),
         XA_ATOM, 32, PropModeReplace, (unsigned char *)&style, 1);
     this->style = style;
 #endif   
 #endif    
 }
 ////////////
-int WINDOW::set_style(lua_State *L)
+int dokun::Window::set_style(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	luaL_checktype(L, 2, LUA_TNUMBER);
     lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 		window->set_style((int)lua_tonumber(L, 2));
 	}
     return 0;	
 }
 ////////////
-void WINDOW::set_icon(const std::string& file_name) // from .ICO
+void dokun::Window::set_icon(const std::string& file_name) // from .ICO
 {
 #ifdef __windows__
     HANDLE icon = LoadImage(instance, file_name.c_str(), IMAGE_ICON, 32, 32, LR_LOADFROMFILE);
@@ -1044,20 +1044,20 @@ XFree(win_hints);
 #endif
 }
 ////////////    
-int WINDOW::set_icon(lua_State *L)
+int dokun::Window::set_icon(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	luaL_checktype(L, 2, LUA_TSTRING);
     lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 		window->set_icon(lua_tostring(L, 2));
 	}		
 	return 0;
 } 
 ////////////
-void WINDOW::set_cursor(int cursor) // DWORD = unsigned long
+void dokun::Window::set_cursor(int cursor) // DWORD = unsigned long
 {
 	switch(cursor)
 	{
@@ -1209,7 +1209,7 @@ void WINDOW::set_cursor(int cursor) // DWORD = unsigned long
 	#endif
 }
 ////////////
-void WINDOW::set_cursor(std::string file_name, int width, int height) // from a .CUR or .ANI file
+void dokun::Window::set_cursor(std::string file_name, int width, int height) // from a .CUR or .ANI file
 {
 #ifdef __windows__
 	    if(!width && !height)
@@ -1242,7 +1242,7 @@ void WINDOW::set_cursor(std::string file_name, int width, int height) // from a 
 #endif
 } 
 ////////////
-int WINDOW::set_cursor(lua_State *L)
+int dokun::Window::set_cursor(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	luaL_checkany(L, 2); // string or number
@@ -1251,7 +1251,7 @@ int WINDOW::set_cursor(lua_State *L)
     lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 		if(lua_type(L, 2) == LUA_TNUMBER)
 		{
 			window->set_cursor((int)lua_tonumber(L, 2));
@@ -1266,7 +1266,7 @@ int WINDOW::set_cursor(lua_State *L)
 ////////////
 // XSetWindowBorderWidth (display, w, width)
 //////////// 
-void WINDOW::set_vertical_synchronization(bool v_sync)
+void dokun::Window::set_vertical_synchronization(bool v_sync)
 {
 #ifdef DOKUN_OPENGL
 	if(!is_context())
@@ -1283,20 +1283,20 @@ void WINDOW::set_vertical_synchronization(bool v_sync)
 #endif
 }
 ////////////
-int WINDOW::set_vertical_synchronization(lua_State *L)
+int dokun::Window::set_vertical_synchronization(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	luaL_checktype(L, 2, LUA_TBOOLEAN);
     lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 		window->set_vertical_synchronization((lua_toboolean(L, 2) != 0));
 	}		
 	return 0;
 }
 ////////////
-void WINDOW::set_viewport(int width, int height) // make sure the window's title bar is not included in the viewport by using the Window's client_width and client_height (or else the title bar will overlap[hide] the object)(applies to Win32 NOT Linux)
+void dokun::Window::set_viewport(int width, int height) // make sure the window's title bar is not included in the viewport by using the Window's client_width and client_height (or else the title bar will overlap[hide] the object)(applies to Win32 NOT Linux)
 {
 #ifdef DOKUN_OPENGL
     if(Renderer::get_current_API() == "OpenGL") {
@@ -1319,7 +1319,7 @@ void WINDOW::set_viewport(int width, int height) // make sure the window's title
 #endif
 }
 ////////////
-int WINDOW::set_viewport(lua_State *L)
+int dokun::Window::set_viewport(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	luaL_checktype(L, 2, LUA_TNUMBER);
@@ -1327,20 +1327,20 @@ int WINDOW::set_viewport(lua_State *L)
     lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 		window->set_viewport((int)lua_tonumber(L, 2), (int)lua_tonumber(L, 3));
 	}		
 	return 0;	
 }
 ////////////
 /*
-void WINDOW::set_event(Event * event)
+void dokun::Window::set_event(Event * event)
 {
 	(this)->event = event;
 }
 ////////////
 ////////////
-int WINDOW::set_event(lua_State *L)
+int dokun::Window::set_event(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	luaL_checkany(L, 2); // event obj or number
@@ -1353,7 +1353,7 @@ int WINDOW::set_event(lua_State *L)
 		    lua_getfield(L, 1, "udata");
 	        if(lua_isuserdata(L, -1))
 	        {
-		        WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		        dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 		        window->set_event(event);
 		    }
 	    }
@@ -1362,7 +1362,7 @@ int WINDOW::set_event(lua_State *L)
 }
 */
 ////////////
-void WINDOW::set_context()
+void dokun::Window::set_context()
 {
 #ifdef DOKUN_OPENGL
 	if(Renderer::get_current_API() != "OpenGL")
@@ -1379,7 +1379,7 @@ void WINDOW::set_context()
 	memset(&pfd, 0, sizeof(pfd));
     pfd.nSize        = sizeof(pfd);
     pfd.nVersion     = 1;
-    pfd.dwFlags      = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+    pfd.dwFlags      = PFD_DRAW_TO_dokun::Window | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
     pfd.iPixelType   = PFD_TYPE_RGBA;
  	pfd.cColorBits   = 32; 
 	pfd.cDepthBits   = 24;
@@ -1458,19 +1458,19 @@ void WINDOW::set_context()
 	}*/
 #endif
 }
-int WINDOW::set_context(lua_State *L)
+int dokun::Window::set_context(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1)) 
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 	    window->set_context ();
 	}	
 	return 0;
 }
 /////////////
-void WINDOW::set_surface() // set window as vulkan surface
+void dokun::Window::set_surface() // set window as vulkan surface
 {
 #ifdef DOKUN_VULKAN
 	if(Renderer::get_current_API() != "Vulkan")
@@ -1532,13 +1532,13 @@ void WINDOW::set_surface() // set window as vulkan surface
 #endif
 #endif
 }
-int WINDOW::set_surface(lua_State *L)
+int dokun::Window::set_surface(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1)) 
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 	    window->set_surface ();
 	}	
 	return 0;	
@@ -1547,18 +1547,18 @@ int WINDOW::set_surface(lua_State *L)
 //////////// 
 // GETTERS
 ////////////
-std::string WINDOW::get_name()
+std::string dokun::Window::get_name()
 {
 	return "Window" + std::to_string(get_id());
 }
 ////////////
-int WINDOW::get_name(lua_State *L)
+int dokun::Window::get_name(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1)) 
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 		lua_pushstring(L, window->get_name().c_str());
 		return 1;
 	}
@@ -1566,18 +1566,18 @@ int WINDOW::get_name(lua_State *L)
 	return 1;
 }
 ////////////
-int WINDOW::get_id()
+int dokun::Window::get_id()
 {
 	return Factory::get_window_factory()->get_location(this);
 }
 ////////////                             
-int WINDOW::get_id(lua_State *L)
+int dokun::Window::get_id(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1)) 
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 		lua_pushnumber(L, (int)window->get_id());
 		return 1;
 	}
@@ -1585,18 +1585,18 @@ int WINDOW::get_id(lua_State *L)
 	return 1;
 }
 ////////////
-std::string WINDOW::get_title()const
+std::string dokun::Window::get_title()const
 {
 	return title;
 }
 ////////////
-int WINDOW::get_title(lua_State *L)
+int dokun::Window::get_title(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1)) 
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
         lua_pushstring(L, window->get_title().c_str()); 
 		return 1;		
 	}
@@ -1604,7 +1604,7 @@ int WINDOW::get_title(lua_State *L)
 	return 1;
 }
 ////////////
-int WINDOW::get_width()const
+int dokun::Window::get_width()const
 {
 	int width = 0;
 #ifdef __windows__
@@ -1629,13 +1629,13 @@ int WINDOW::get_width()const
     return width;
 }
 ////////////
-int WINDOW::get_width(lua_State *L)
+int dokun::Window::get_width(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1)) 
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
         lua_pushnumber(L, (lua_Number)window->get_width());
 		return 1;
 	}	
@@ -1643,7 +1643,7 @@ int WINDOW::get_width(lua_State *L)
 	return 1;
 }	
 ////////////
-int WINDOW::get_height()const // returns the height of the window, includes the title bar's height
+int dokun::Window::get_height()const // returns the height of the window, includes the title bar's height
 {
 	int height = 0;
 #ifdef __windows__
@@ -1668,13 +1668,13 @@ int WINDOW::get_height()const // returns the height of the window, includes the 
     return height;
 }
 ////////////
-int WINDOW::get_height(lua_State *L)
+int dokun::Window::get_height(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1)) 
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
         lua_pushnumber(L, window->get_height());
 		return 1;		
 	}	
@@ -1682,18 +1682,18 @@ int WINDOW::get_height(lua_State *L)
 	return 1;
 }
 ////////////
-Vector2 WINDOW::get_size()const // returns size of window in pixels, includes the title bar (if using win32)
+Vector2 dokun::Window::get_size()const // returns size of window in pixels, includes the title bar (if using win32)
 {
 	return Vector2(get_width(), get_height());
 }
 ////////////
-int WINDOW::get_size(lua_State *L)
+int dokun::Window::get_size(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1)) 
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
         lua_pushnumber(L, window->get_size().x);
 		lua_pushnumber(L, window->get_size().y);
 		return 2;        
@@ -1702,7 +1702,7 @@ int WINDOW::get_size(lua_State *L)
 	return 1;
 }
 ////////////
-int WINDOW::get_client_width()const
+int dokun::Window::get_client_width()const
 {
 	int width = 0;
 #ifdef __windows__
@@ -1725,13 +1725,13 @@ int WINDOW::get_client_width()const
     return width;
 }
 ////////////
-int WINDOW::get_client_width(lua_State *L)
+int dokun::Window::get_client_width(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1)) 
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
         lua_pushnumber(L, (lua_Number)window->get_client_width());
 		return 1;
 	}	
@@ -1739,7 +1739,7 @@ int WINDOW::get_client_width(lua_State *L)
 	return 1;
 }	
 ////////////
-int WINDOW::get_client_height()const // returns the height of the window, includes the title bar's height
+int dokun::Window::get_client_height()const // returns the height of the window, includes the title bar's height
 {
 	int height = 0;
 #ifdef __windows__
@@ -1762,13 +1762,13 @@ int WINDOW::get_client_height()const // returns the height of the window, includ
     return height;
 }
 ////////////
-int WINDOW::get_client_height(lua_State *L)
+int dokun::Window::get_client_height(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1)) 
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
         lua_pushnumber(L, window->get_client_height());
 		return 1;		
 	}	
@@ -1776,18 +1776,18 @@ int WINDOW::get_client_height(lua_State *L)
 	return 1;
 }
 ////////////
-Vector2 WINDOW::get_client_size()const // returns size of window in pixels, excludes the title bar (if using win32)
+Vector2 dokun::Window::get_client_size()const // returns size of window in pixels, excludes the title bar (if using win32)
 {
 	return Vector2(get_client_width(), get_client_height());
 }
 ////////////
-int WINDOW::get_client_size(lua_State *L)
+int dokun::Window::get_client_size(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1)) 
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
         lua_pushnumber(L, window->get_client_size().x);
 		lua_pushnumber(L, window->get_client_size().y);
 		return 2;        
@@ -1798,18 +1798,18 @@ int WINDOW::get_client_size(lua_State *L)
 
 ////////////
 ////////////
-int WINDOW::get_mode()const
+int dokun::Window::get_mode()const
 {
     return mode;
 }
 ////////////
-int WINDOW::get_mode(lua_State *L)
+int dokun::Window::get_mode(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1)) 
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
         lua_pushnumber(L, window->get_mode() );
 		return 1;
 	}		
@@ -1817,7 +1817,7 @@ int WINDOW::get_mode(lua_State *L)
 	return 1;
 }
 ////////////
-int WINDOW::get_x()const
+int dokun::Window::get_x()const
 {
 	int x = 0;
 #ifdef __windows__
@@ -1832,7 +1832,7 @@ int WINDOW::get_x()const
 #ifdef DOKUN_X11
     XWindowAttributes xwa;
 	int y;
-	Window child;
+	::Window child;
 	XTranslateCoordinates(display, window, DefaultRootWindow(display), 0, 0, &x, &y, &child );
     XGetWindowAttributes(display, window, &xwa);
     x = x - xwa.x;
@@ -1841,13 +1841,13 @@ int WINDOW::get_x()const
 	return x;
 }
 ////////////
-int WINDOW::get_x(lua_State *L)
+int dokun::Window::get_x(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1)) 
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
         lua_pushnumber(L, window->get_x());
 		return 1;
 	}			
@@ -1855,7 +1855,7 @@ int WINDOW::get_x(lua_State *L)
 	return 1;
 }
 ////////////
-int WINDOW::get_y()const
+int dokun::Window::get_y()const
 {
 	int y = 0;
 #ifdef __windows__
@@ -1870,7 +1870,7 @@ int WINDOW::get_y()const
 #ifdef DOKUN_X11
     XWindowAttributes xwa;
     int x;
-	Window child;
+	::Window child;
 	XTranslateCoordinates(display, window, DefaultRootWindow(display), 0, 0, &x, &y, &child );
     XGetWindowAttributes(display, window, &xwa);
 	y = y - xwa.y;
@@ -1879,13 +1879,13 @@ int WINDOW::get_y()const
 	return y;
 }
 ////////////
-int WINDOW::get_y(lua_State *L)
+int dokun::Window::get_y(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1)) 
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
         lua_pushnumber(L, window->get_y());
 		return 1;
 	}		
@@ -1893,7 +1893,7 @@ int WINDOW::get_y(lua_State *L)
 	return 1;	
 }
 ////////////
-Vector2 WINDOW::get_position()const
+Vector2 dokun::Window::get_position()const
 {
 	int x = 0;
     int	y = 0; 
@@ -1909,7 +1909,7 @@ Vector2 WINDOW::get_position()const
 #ifdef __gnu_linux__
 #ifdef DOKUN_X11
     XWindowAttributes xwa;
-	Window child;
+	::Window child;
 	XTranslateCoordinates(display, window, DefaultRootWindow(display), 0, 0, &x, &y, &child );
     XGetWindowAttributes(display, window, &xwa);
     x = x - xwa.x;
@@ -1919,13 +1919,13 @@ Vector2 WINDOW::get_position()const
 	return Vector2(x, y);
 }
 ////////////
-int WINDOW::get_position(lua_State *L)
+int dokun::Window::get_position(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1)) 
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
         lua_pushnumber(L, window->get_position().x);
 		lua_pushnumber(L, window->get_position().y);
 		return 2;        
@@ -1935,7 +1935,7 @@ int WINDOW::get_position(lua_State *L)
 }
 ////////////
 // get style
-long WINDOW::get_style()const
+long dokun::Window::get_style()const
 {
 #ifdef __gnu_linux__	
 #ifdef DOKUN_X11
@@ -1945,13 +1945,13 @@ long WINDOW::get_style()const
     return 0;
 }
 ////////////
-int WINDOW::get_style(lua_State *L)
+int dokun::Window::get_style(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		WINDOW * window =  *static_cast<WINDOW**>(lua_touserdata(L, -1));
+		dokun::Window * window =  *static_cast<dokun::Window**>(lua_touserdata(L, -1));
 		lua_pushnumber(L, window->get_style());
 		return 1;
 	}
@@ -1963,11 +1963,11 @@ int WINDOW::get_style(lua_State *L)
 ////////////
 // get cursor
 ////////////
-WINDOW * WINDOW::get_active() // returns window with current focus
+dokun::Window * dokun::Window::get_active() // returns window with current focus
 {
     for(int i = 0; i < Factory::get_window_factory()->get_size(); i++)
 	{
-		WINDOW * window = static_cast<WINDOW *>(Factory::get_window_factory()->get_object(i));
+		dokun::Window * window = static_cast<dokun::Window *>(Factory::get_window_factory()->get_object(i));
 		if(window->is_focused())
 		{
 			return window;
@@ -1976,24 +1976,24 @@ WINDOW * WINDOW::get_active() // returns window with current focus
 	return nullptr;
 }
 ////////////
-int WINDOW::get_active(lua_State *L)
+int dokun::Window::get_active(lua_State *L)
 {
     return 0;
 }
 ////////////
 #ifdef __gnu_linux__
 #ifdef DOKUN_X11
-    Display * WINDOW::get_display()const
+    Display * dokun::Window::get_display()const
 	{
 		return display;
 	}
-int WINDOW::get_display(lua_State *L)
+int dokun::Window::get_display(lua_State *L)
 {
     luaL_checktype(L, 1, LUA_TTABLE);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1)) 
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 		lua_pushlightuserdata (L, static_cast<void *>(window->get_display()));
 		return 1;
 	}
@@ -2004,14 +2004,14 @@ int WINDOW::get_display(lua_State *L)
 #endif
 ////////////
 #ifdef __windows__
-HINSTANCE WINDOW::get_instance()const
+HINSTANCE dokun::Window::get_instance()const
 {
 	return instance;
 }
 #endif
 ////////////
 #ifdef __windows__
-    HWND WINDOW::get_handle()const
+    HWND dokun::Window::get_handle()const
     {
 	    return handle;
     }
@@ -2019,7 +2019,7 @@ HINSTANCE WINDOW::get_instance()const
 ////////////
 #ifdef __gnu_linux__
 #ifdef DOKUN_X11
-	Window WINDOW::get_handle()const
+	::Window dokun::Window::get_handle()const
 	{
 		return window;
 	}
@@ -2027,7 +2027,7 @@ HINSTANCE WINDOW::get_instance()const
 #endif
 ////////////
 #ifdef __windows__
-    HGLRC WINDOW::get_context()const
+    HGLRC dokun::Window::get_context()const
     {
 	    return context;
     }
@@ -2036,7 +2036,7 @@ HINSTANCE WINDOW::get_instance()const
 #ifdef __gnu_linux__
 #ifdef DOKUN_X11
 #ifdef DOKUN_OPENGL
-	GLXContext WINDOW::get_context()const
+	GLXContext dokun::Window::get_context()const
     {
 	    return context;
     }	
@@ -2047,7 +2047,7 @@ HINSTANCE WINDOW::get_instance()const
 ////////////
 // BOOLEAN
 ////////////
-bool WINDOW::is_open()const
+bool dokun::Window::is_open()const
 {
 #ifdef __windows__
 	return (IsWindow(get_handle()) != 0);
@@ -2064,13 +2064,13 @@ bool WINDOW::is_open()const
     return false;
 }
 ////////////
-int WINDOW::is_open(lua_State *L)
+int dokun::Window::is_open(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 		lua_pushboolean(L, window->is_open() );
 		return 1;
 	}
@@ -2078,7 +2078,7 @@ int WINDOW::is_open(lua_State *L)
 	return 1;
 }
 ////////////
-bool WINDOW::is_visible()const
+bool dokun::Window::is_visible()const
 {
 #ifdef __windows__
 	return (IsWindowVisible(get_handle()) != 0);
@@ -2091,13 +2091,13 @@ bool WINDOW::is_visible()const
 	return false;
 }
 ////////////
-int WINDOW::is_visible(lua_State *L)
+int dokun::Window::is_visible(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 		lua_pushboolean(L, window->is_visible() );
 		return 1;
 	}	
@@ -2105,7 +2105,7 @@ int WINDOW::is_visible(lua_State *L)
 	return 1;
 }
 ////////////
-bool WINDOW::is_focused()const
+bool dokun::Window::is_focused()const
 {
 #ifdef __windows__
 	return (get_handle() == GetFocus());
@@ -2113,7 +2113,7 @@ bool WINDOW::is_focused()const
 	
 #ifdef __gnu_linux__
 #ifdef DOKUN_X11
-	Window focus ;
+	::Window focus;
     int revert_to;
     XGetInputFocus(display, &focus, &revert_to);
     return (get_handle() == focus);	
@@ -2122,13 +2122,13 @@ bool WINDOW::is_focused()const
 	return false;
 }
 ////////////
-int WINDOW::is_focused(lua_State *L)
+int dokun::Window::is_focused(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 		lua_pushboolean(L, window->is_focused() );
 		return 1;
 	}	
@@ -2136,7 +2136,7 @@ int WINDOW::is_focused(lua_State *L)
 	return 1;
 }
 ////////////
-bool WINDOW::is_iconified()const
+bool dokun::Window::is_iconified()const
 {
 #ifdef __windows__
 	return (IsIconic(get_handle()) != 0);
@@ -2149,13 +2149,13 @@ bool WINDOW::is_iconified()const
 	return false;
 }
 ////////////
-int WINDOW::is_iconified(lua_State *L)
+int dokun::Window::is_iconified(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 		lua_pushboolean(L, window->is_iconified() );
 		return 1;
 	}		
@@ -2163,7 +2163,7 @@ int WINDOW::is_iconified(lua_State *L)
 	return 1;
 }
 ////////////
-bool WINDOW::is_maximized()const
+bool dokun::Window::is_maximized()const
 {
 #ifdef __windows__
 	return (IsZoomed(get_handle()) != 0);
@@ -2175,13 +2175,13 @@ bool WINDOW::is_maximized()const
 #endif
 	return false;	
 }
-int WINDOW::is_maximized(lua_State *L)
+int dokun::Window::is_maximized(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 		lua_pushboolean(L, window->is_maximized());
 		return 1;
 	}		
@@ -2189,18 +2189,18 @@ int WINDOW::is_maximized(lua_State *L)
 	return 1;	
 }
 ////////////
-bool WINDOW::is_window()const
+bool dokun::Window::is_window()const
 {
 	return is_open();
 }
 ////////////
-int WINDOW::is_window(lua_State *L)
+int dokun::Window::is_window(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 		lua_pushboolean(L, window->is_window());
 		return 1;
 	}		
@@ -2208,7 +2208,7 @@ int WINDOW::is_window(lua_State *L)
 	return 1;	
 }
 ////////////
-bool WINDOW::is_context()const
+bool dokun::Window::is_context()const
 {
 #ifdef DOKUN_OPENGL
 #ifdef __windows__
@@ -2223,13 +2223,13 @@ bool WINDOW::is_context()const
 	return false;
 }
 ////////////
-int WINDOW::is_context(lua_State *L)
+int dokun::Window::is_context(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		WINDOW* window = *static_cast<WINDOW**>(lua_touserdata(L, -1));
+		dokun::Window* window = *static_cast<dokun::Window**>(lua_touserdata(L, -1));
 		lua_pushboolean(L, window->is_context());
 		return 1;
 	}		
@@ -2240,8 +2240,8 @@ int WINDOW::is_context(lua_State *L)
 ////////////
 ////////////
 #ifdef __windows__
-HHOOK WINDOW::hMouseHook;
-LRESULT CALLBACK WINDOW::MouseProc(int nCode, WPARAM wParam, LPARAM lParam)
+HHOOK dokun::Window::hMouseHook;
+LRESULT CALLBACK dokun::Window::MouseProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
     MOUSEHOOKSTRUCT * pMouseStruct = (MOUSEHOOKSTRUCT *)lParam;
     if (pMouseStruct != nullptr)
@@ -2254,7 +2254,7 @@ LRESULT CALLBACK WINDOW::MouseProc(int nCode, WPARAM wParam, LPARAM lParam)
 	return CallNextHookEx(hMouseHook, nCode, wParam, lParam);
 }
 /////////////
-    LRESULT CALLBACK WINDOW::WndProc(HWND handle, UINT mes, WPARAM wParam, LPARAM lParam) 
+    LRESULT CALLBACK dokun::Window::WndProc(HWND handle, UINT mes, WPARAM wParam, LPARAM lParam) 
     {   
 	    HDC device;
 	    PAINTSTRUCT ps;
@@ -2399,15 +2399,15 @@ LRESULT CALLBACK WINDOW::MouseProc(int nCode, WPARAM wParam, LPARAM lParam)
 	}
 #endif
 ////////////
-int WINDOW::mouse_button  (0);
-int WINDOW::mouse_pressed (0);
-int WINDOW::mouse_released(0);
-int WINDOW::mouse_dragged (0);
-int WINDOW::mouse_moved   (0);
-int WINDOW::mouse_leave   (0);
-//int WINDOW::mouse_   (0);
+int dokun::Window::mouse_button  (0);
+int dokun::Window::mouse_pressed (0);
+int dokun::Window::mouse_released(0);
+int dokun::Window::mouse_dragged (0);
+int dokun::Window::mouse_moved   (0);
+int dokun::Window::mouse_leave   (0);
+//int dokun::Window::mouse_   (0);
 ////////////
-int WINDOW::window_new(lua_State *L)
+int dokun::Window::window_new(lua_State *L)
 {
 	lua_settop(L, 0); // clear stack
 	// create table
@@ -2416,8 +2416,8 @@ int WINDOW::window_new(lua_State *L)
 	lua_getglobal(L, "Window");
 	lua_setmetatable(L, 1);
 	// set userdata
-	WINDOW ** window = static_cast<WINDOW **>(lua_newuserdata(L, sizeof(WINDOW*)));
-	*window = new WINDOW();
+	dokun::Window ** window = static_cast<dokun::Window **>(lua_newuserdata(L, sizeof(dokun::Window*)));
+	*window = new dokun::Window();
 	lua_setfield(L, 1, "udata");
 	// return table
 	if(lua_istable(L, -1))

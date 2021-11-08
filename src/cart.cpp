@@ -282,7 +282,7 @@ double Cart::get_seller_total_discount(unsigned int seller_id) const {
 double Cart::get_total_discount() const { // ?
     double items_discount = 0.00; // discount of all cart items combined
     for(int i = 0; i < contents.size(); i++) {
-        items_discount += contents[i]->get_discount();
+        items_discount += 0.00;//contents[i]->get_discount(i);//discounts are determined by sellers
     }
     return items_discount;
 }

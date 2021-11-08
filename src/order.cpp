@@ -95,8 +95,10 @@ void Order::create_order(unsigned int user_id, const std::string& shipping_addre
         subtotal += item_qty * item_price;
         // get seller discount - will work on this later
         // if seller does not specify a discount for their item, set the item discount to its original discount which is 0
-        //double seller_discount = db.get_column_real("inventory", "seller_discount", "item_id = " + std::to_string(item_id) + " AND seller_id = " + std::to_string(seller_id));
-        //discount = (seller_discount > 0.00) ? seller_discount : cart.get_item(i)->get_discount();
+        double seller_discount = db.get_column_real("inventory", "seller_discount", "item_id = " + std::to_string(item_id) + " AND seller_id = " + std::to_string(seller_id));
+        unsigned int discounted_items = db.get_column_integer("inventory", "discount_qty", "item_id = " + std::to_string(item_id) + " AND seller_id = " + std::to_string(seller_id));
+        discount += ((item_qty / discounted_items) * seller_discount);
+        NEROSHOP_TAG std::cout << "\033[1;37m" << "for every " << discounted_items << " " << item_name << "s, you get " << Converter::get_currency_symbol(seller_currency) << std::fixed << std::setprecision(2) << seller_discount << " off (since you have x" << item_qty << ", total discount is: " << Converter::get_currency_symbol(seller_currency) << ((item_qty / discounted_items) * seller_discount) << ")\033[0m" << std::endl;
         // check again if item is still in stock
         if(!item->in_stock()) {
             neroshop::print("[error]: order failed  [reason]: The following item is out of stock: " + item_name);
@@ -109,7 +111,7 @@ void Order::create_order(unsigned int user_id, const std::string& shipping_addre
         // reduce stock_qty of each purchased item (subtract stock_qty by item_qty that buyer is purchasing)
         int stock_qty = db.get_column_integer("inventory", "stock_qty", "item_id = " + std::to_string(item_id) + " AND seller_id = " + std::to_string(seller_id));//std::cout << "stock_qty of item BEFORE deletion: " << stock_qty << std::endl; 
         db.update("inventory", "stock_qty", std::to_string(stock_qty - item_qty), "item_id = " + std::to_string(item_id) + " AND seller_id = " + std::to_string(seller_id));//std::cout << "stock_qty of item AFTER deletion: " << db.get_column_integer("inventory", "stock_qty", "item_id = " + std::to_string(item->get_id()) + " AND seller_id = " + std::to_string(seller_id)) << std::endl;
-        // If stock qty goes to 0, delete this item from inventory (row)
+        // If stock qty goes to 0, delete this item from inventory (row) - bad idea because once an item is listed by a seller then the listing is permanent unless the seller's account is deleted
         //stock_qty = db.get_column_integer("inventory", "stock_qty", "item_id = " + std::to_string(item->get_id()) + " AND seller_id = " + std::to_string(seller_id));
         //if(stock_qty <= 0) db.drop("inventory", "stock_qty = " + std::to_string(0));
     }

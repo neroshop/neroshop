@@ -11,7 +11,7 @@
 
 class Item { // or Product or whatever you want to call it
 public:
-    //Item();
+    Item();
     Item(unsigned int id); // copy an already registered item 
     Item(const std::string& name, const std::string& desc, 
         double price, double weight, double length, double width, double height,
@@ -35,8 +35,8 @@ public:
 	static double get_weight(unsigned int item_id);   
 	std::tuple<double, double, double> get_size() const;
 	static std::tuple<double, double, double> get_size(unsigned int item_id);	 
-	double get_discount() const;
-	static double get_discount(unsigned int item_id);        
+	double get_discount(unsigned int seller_id) const;
+	static double get_discount(unsigned int item_id, unsigned int seller_id);        
 	std::string get_condition() const; // condition: new, used, used - good, used - like new, renewed
     static std::string get_condition(unsigned int item_id);
     std::string get_product_code() const;
@@ -92,6 +92,10 @@ public:
 private:
     static bool load_item(const Item& item, const std::string& item_name);  // load items database
     static void register_item(const Item& item); //private so can only be accessed by friend class Seller // will auto generate an id // store in inventory class
+    void register_item(const std::string& name, const std::string& desc, 
+        double price, double weight, double length, double width, double height,
+        const std::string& condition, const std::string& product_code);
+    //static void register_item();
     unsigned int id; // unique id that must be obtained from the database
     std::string category;
     std::string SKU_code; // sellers can generate an SKU for items they are selling (NSKU - neroshop stocking unit)

@@ -1582,7 +1582,7 @@ void Box::on_drag(void)
 {
 	if(!is_draggable())
         return;
-	WINDOW * window = WINDOW::get_active();
+	dokun::Window * window = dokun::Window::get_active();
 	if(window == nullptr)
 		return;
 	if(has_title_bar()) // has title_bar (drag by title_bar)
@@ -1647,7 +1647,7 @@ void Box::on_resize(void)
 {
 	if(!is_resizeable())
         return;
-	WINDOW * window = WINDOW::get_active();
+	dokun::Window * window = dokun::Window::get_active();
 	if(window == nullptr)
 		return;	
     if(Mouse::is_over(0,0)) // mouse over side edges

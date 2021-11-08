@@ -1,5 +1,5 @@
-#ifndef _WINDOW
-#define _WINDOW
+#ifndef WINDOW_HPP_DOKUN
+#define WINDOW_HPP_DOKUN
 
 #include "platform.hpp" // specify platform and graphics api
 #include "types.hpp"
@@ -10,32 +10,14 @@
 #include "renderer.hpp"
 #include "keyboard.hpp"
 #include "logger.hpp"
-#ifdef __cplusplus
-  #include <lua.hpp>
-#else
-  #include <lua.h>
-  #include <lualib.h>
-  #include <lauxlib.h>
-#endif
-
-#ifdef __cplusplus
 #include <iostream>
-// To avoid naming conflictions with X11's "Window" class
-#ifndef __gnu_linux__
-class Window;
-#define WINDOW Window
-#endif
+#include <lua.hpp>
 
-#ifdef __gnu_linux__
-class XWindow;
-#define WINDOW XWindow
-#endif
-
-class WINDOW
-{
-public:
-        WINDOW();                             static int window_new(lua_State *L);
-		~WINDOW();
+namespace dokun {
+    class Window {
+    public:
+        Window();                             static int window_new(lua_State *L);
+		~Window();
         // normal functions
         void create();                            static int create(lua_State *L);  // static int (lua_State *L);
         void create (const std::string& title);    
@@ -88,7 +70,7 @@ public:
 		Vector2 get_position()const;                   static int get_position(lua_State *L);
 		int get_x()const;                              static int get_x(lua_State *L);
 		int get_y()const;                              static int get_y(lua_State *L);
-		static WINDOW * get_active();             static int get_active(lua_State *L);
+		static dokun::Window * get_active();             static int get_active(lua_State *L);
 		//Event * get_event()const;                      static int get_event(lua_State *L);
 		long get_style()const;                         static int get_style(lua_State *L);
 		#ifdef __gnu_linux__
@@ -111,7 +93,7 @@ public:
 		#ifdef DOKUN_X11
 		#ifndef DOKUN_SDL2
         #ifndef DOKUN_GLFW
-		    Window     get_handle ()const;	
+		    ::Window     get_handle ()const;	
 		#ifdef DOKUN_OPENGL
 			GLXContext get_context()const;
 		#endif
@@ -175,7 +157,7 @@ private:
         #ifdef DOKUN_GLFW
             GLFWwindow* window;
         #endif
-		// WINDOWs (Win32)
+		// Windows (Win32)
         #ifdef __windows__
 		    HWND handle;
 	        DWORD style;
@@ -190,9 +172,9 @@ private:
 		#ifdef __gnu_linux__
 		#ifdef DOKUN_X11 // Xlib
 		    Display*                       display;
-            Window                         window;
+            ::Window                         window;
 			unsigned int style;
-			Window root;
+			::Window root;
 			Visual * visual;
 			XEvent                  xev; // next_event
 			XEvent                  nev; // peek_event
@@ -227,31 +209,6 @@ private:
 		#ifdef __android__
 		    ANativeWindow*                    window;
 		#endif
-};
-#endif /* __cplusplus */
-
-// C implementation (to make code work in c)
-
-#ifdef __cplusplus // if c++
-extern "C" {
-#endif
-	// place c code here
-	// example_1
-	struct window;
-	struct window * window_create();
-	void window_destroy(struct window * w);
-	// example_2
-	/*
-	typedef struct {
-		const char * title;
-		int width;
-    	int	height;
-        int x, y;
-    }        WINDOW;
-	
-	*/
-	
-#ifdef __cplusplus
-}
-#endif
+    };
+} // namespace dokun
 #endif

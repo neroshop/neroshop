@@ -183,12 +183,12 @@ void User::delete_account() {
     db.drop("users", "id = " + std::to_string(get_id()) + " AND name = " + DB::to_sql_string(get_name()));
     neroshop::print("Your account has been permanently deleted", 1);
     // send account to graveyard
-    if(!db.table_exists("graveyard")) {
-        db.table("graveyard");
-        db.column("graveyard", "ADD", "name", "TEXT");
-        db.index("idx_graveyard_names", "graveyard", "name"); // graveyard names must be unique
+    if(!db.table_exists("deleted_users")) {
+        db.table("deleted_users");
+        db.column("deleted_users", "ADD", "name", "TEXT");
+        db.index("idx_deleted_users", "deleted_users", "name"); // graveyard names must be unique
     }
-    db.insert("graveyard", "name", DB::to_sql_string(name)); // graveyard only stores deleted usernames and no other information
+    db.insert("deleted_users", "name", DB::to_sql_string(name)); // graveyard only stores deleted usernames and no other information
     // reset user info and then logout user
     set_id(0);
     name.clear();

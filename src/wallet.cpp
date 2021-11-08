@@ -244,7 +244,7 @@ struct : monero_wallet_listener { // listener	- listener to receive notification
             Wallet::sync_label->set_alignment("center");
             Wallet::sync_bar->set_label(*Wallet::sync_label);
         }
-        WINDOW * window = static_cast<WINDOW *>(Factory::get_window_factory()->get_object(0)); // using WINDOW::get_active() causes a seg fault when window loses focus while syncing - since it only gets the window that has focus :(
+        dokun::Window * window = static_cast<dokun::Window *>(Factory::get_window_factory()->get_object(0)); // using dokun::Window::get_active() causes a seg fault when window loses focus while syncing - since it only gets the window that has focus :(
         window->set_viewport(Renderer::get_display_size().x, Renderer::get_display_size().y);//(1280, 720);
         window->clear(32, 32, 32);
         double progress = percent_done * 100; //sync_bar->set_range(0, 100);
@@ -422,7 +422,32 @@ double Wallet::get_unlocked_balance(unsigned int account_index, unsigned int sub
     return get_unlocked_balance_raw(account_index, subaddress_index) * piconero;
 }
 ////////////////////
-std::vector<std::string> Wallet::get_transactions() const {std::vector<std::string> vstr;return vstr;} // "show_transfers"
+std::vector<std::string> Wallet::get_transactions() const {
+    std::vector<std::string> txs_list;
+    /* ****
+    // query incoming transfers to account 0
+    /*monero_transfer_query transfer_query;
+    transfer_query.m_is_incoming = true;
+    transfer_query.m_account_index = 0;
+    vector<shared_ptr<monero_transfer>> transfers = wallet_obj->get_transfers(transfer_query);
+
+    // query unspent outputs
+    monero_output_query output_query;
+    output_query.m_is_spent = false;
+    vector<shared_ptr<monero_output_wallet>> outputs = wallet_restored->get_outputs(output_query);
+
+    // query a transaction by hash
+    monero_tx_query tx_query;
+    tx_query.m_hash = "314a0f1375db31cea4dac4e0a51514a6282b43792269b3660166d4d2b46437ca";
+    shared_ptr<monero_tx_wallet> tx = wallet_restored->get_txs(tx_query)[0];
+    for (const shared_ptr<monero_transfer> transfer : tx->get_transfers()) {
+      bool is_incoming = transfer->is_incoming().get();
+      uint64_t in_amount = transfer->m_amount.get();
+      int account_index = transfer->m_account_index.get();
+    }
+    */
+    return txs_list;
+} // "show_transfers"
 ////////////////////
 unsigned int Wallet::get_transactions_count() const {return 0;}
 ////////////////////

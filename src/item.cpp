@@ -1,131 +1,82 @@
 #include "../include/item.hpp"
 
 ////////////////////
-//Item::Item() : id(0), quantity(0), price(0.0), weight(1.0), size(std::make_tuple<double, double, double>(0.0, 0.0, 0.0)), discount(0.0), category("unspecified")/* or none */, condition("new") {}// name and desc and empty strings by default{// register this item//Item::register_item(*this);}
+Item::Item() : id(0)//, quantity(0), price(0.00), weight(1.0), size(std::make_tuple<double, double, double>(0.0, 0.0, 0.0)), discount(0.0), category("unspecified")/* or none */, condition("new") {}// name and desc and empty strings by default
+{}
 ////////////////////
 Item::Item(unsigned int id) {//: Item() { // for registered items that already have an id
-    DB db("neroshop.db");
-    // check if id already exits
-    int temp_id = db.get_column_integer("item", "id", "id = " + std::to_string(id));
-    if(temp_id != 0) {
-        // retrieve data from pre-existing item in the database
-        this->id = id;//set_id(id);
-        // no reason to set anything once you have retrieved the id
-        set_name(db.get_column_text("item", "name", "id = " + std::to_string(id)));
-        set_description(db.get_column_text("item", "description", "id = " + std::to_string(id)));
-        set_quantity(0); // quantity is only for cart to manage
-        set_price(db.get_column_real("item", "price", "id = " + std::to_string(id)));
-        set_weight(db.get_column_real("item", "weight", "id = " + std::to_string(id)));
-    
-        set_discount(db.get_column_real("item", "discount", "id = " + std::to_string(id)));
-        set_condition(db.get_column_text("item", "condition", "id = " + std::to_string(id)));
-        set_product_code(db.get_column_text("item", "product_code", "id = " + std::to_string(id)));
-        /**///this->category = db.get_column_text   ("item", "category", "id = " + std::to_string(id));
-        //this-> = db.get_column_text   ("item", "id", "id = " + std::to_string(id));
-        //this-> = db.get_column_integer("item", "id", "id = " + std::to_string(id));
-        //this-> = db.get_column_real   ("item", "id", "id = " + std::to_string(id));
-#ifdef NEROSHOP_DEBUG0  
-        std::cout << "item size: " << size[0] << " x " << size[1] << " x " << size[2] << std::endl;
-        show_info();
-#endif        
-    }
-    if(temp_id == 0) {
-        std::cout << "could not retrieve item from database so this item will be ignored" << std::endl;//std::cout << "could not retrieve item from database so we will generate a new one for this item" << std::endl;
-        // register the item
-        //Item::register_item(*this);
-        //if(this) delete this;
-        // set default values
-        set_quantity(0);
-    }
-    ////////////
-    db.close();
+    set_id(id);
 }
 ////////////////////
 Item::Item(const std::string& name, const std::string& desc, 
     double price, double weight, double length, double width, double height,
-    const std::string& condition, const std::string& product_code) //: Item() // quantity is set by cart
+    const std::string& condition, const std::string& product_code) : Item() // quantity is set by cart
 {
-    if(!Item::load_item(*this, name)) Item::register_item(*this); // will register item countinously unless I fix it
-
-    set_name(name);
-    set_description(desc);
-    set_price(price); // original price
-    set_weight(weight);
-    set_size(length, width, height); // l x w x h
-    set_discount(0.00); // 0 by default
-    set_condition(condition);
-    set_product_code(product_code);
-        
+    register_item(name, desc, price, weight, length, width, height, condition, product_code);
 }
 ////////////////////
 Item::Item(const std::string& name, const std::string& desc, double price, double weight, 
     const std::tuple<double, double, double>& size,
-    const std::string& condition, const std::string& product_code) //: Item() // quantity is set by cart
+    const std::string& condition, const std::string& product_code) : Item() // quantity is set by cart
 {
-    if(!Item::load_item(*this, name)) Item::register_item(*this); // register an item with empty values
-    // update registered item's values
-    set_name(name);
-    set_description(desc);
-    set_price(price); // original price
-    set_weight(weight);
-    set_size(size); // l x w x h
-    set_discount(0.00); // 0 by default
-    set_condition(condition);
-    set_product_code(product_code);
-    
+    register_item(name, desc, price, weight, std::get<0>(size), std::get<1>(size), std::get<2>(size), condition, product_code);  
 }        
 ////////////////////
 ////////////////////
 ////////////////////
 Item::~Item() {}
 ////////////////////
-bool Item::load_item(const Item& item, const std::string& item_name) {
-    DB db("neroshop.db");
-    // we are only reading from the db so no need to worry about corrupt db right now
-    ///////////
-    // name is empty
-    if(item_name.empty()) return false;
-    // retrieve id from database
-    int id = db.get_column_integer("item", "id", "name=" + DB::to_sql_string(item_name));
-    if(id <= 0) return false; // item is not registered
-    if(id != 0) {const_cast<Item&>(item).id = id; return true;} // item is registered
-    ///////////
-    db.close();
-    return false;   
-}
-////////////////////
-/*bool Item::load_all() {
-    DB db;if(!db.open("neroshop.db")) {std::cout << "Could not open sql database" << std::endl;}
-    int items_count = db.get_column_integer("item", "COUNT(*)");
-    for(int i = 1; i <= items_count; i++) {
-        std::cout << "id: " << i << std::endl;
-        this->id          = db.get_column_integer("item", "id", "id=" + std::to_string(id));
-        this->name        = db.get_column_text   ("item", "name", "id = " + std::to_string(id));
-        this->description = db.get_column_text   ("item", "description", "id = " + std::to_string(id));
-        this->quantity    = db.get_column_integer("item", "quantity", "id = " + std::to_string(id));
-        this->price       = db.get_column_real   ("item", "price", "id = " + std::to_string(id));
-        this->weight      = db.get_column_real   ("item", "weight", "id = " + std::to_string(id));
-        std::vector<std::string> size = String::split( db.get_column_text ("item", "size", "id = " + std::to_string(id)), "x");
-        std::cout << "item size: " << size[0] << " x " << size[1] << " x " << size[2] << std::endl;
-        this->size        = std::make_tuple(std::stod(size[0]), std::stod(size[1]), std::stod(size[2]));
-        this->discount    = db.get_column_real   ("item", "discount", "id = " + std::to_string(id));
-        this->condition   = db.get_column_text   ("item", "condition", "id = " + std::to_string(id));
-        this->product_code = db.get_column_text   ("item", "product_code", "id = " + std::to_string(id));        
-        //show_info();
-    }
-    db.close();
-    return true;
-}*/
-////////////////////
-////////////////////
-// a seller can create an item and then register it to the database
-void Item::register_item(const Item& item) { 
-    // if item is already registered, then exit function
-    if(item.is_registered()) {std::cout << "\033[0;93m" << "Item " << item.get_name() << " has already been registered" << "\033[0m" << std::endl;return;}
+void Item::register_item(const std::string& name, const std::string& description, double price, double weight, double length, double width, double height, const std::string& condition, const std::string& product_code) {
     DB db("neroshop.db");
     //db.execute("PRAGMA journal_mode = WAL;"); // this may reduce the incidence of SQLITE_BUSY errors (such as database being locked) // https://www.sqlite.org/pragma.html#pragma_journal_mode
     ///////////
-    if(!db.table_exists("categories")) {
+    // if item is already registered, then exit function
+    int registered_item = db.get_column_integer("item", "id", "product_code = " + DB::to_sql_string(product_code));
+    if(registered_item != 0) {
+        neroshop::print("An item with the same product code has already been registered (id will be set regardless)", 2);
+        set_id(registered_item);
+        return; // exit function
+    }
+    // table item
+    if(!db.table_exists("item")) {
+	    db.table("item"); // item_id is primary key which will be auto generated
+	    db.column("item", "ADD", "name", "TEXT");
+	    db.column("item", "ADD", "description", "TEXT"); //db.column("item", "ADD", "quantity", "INTEGER"); // item quantity is managed by cart
+	    db.column("item", "ADD", "price", "REAL");
+        db.column("item", "ADD", "weight", "REAL");
+	    db.column("item", "ADD", "size", "TEXT");//"REAL");//db.column("item", "ADD", "discount", "REAL"); // seller determines the discount
+	    db.column("item", "ADD", "condition", "TEXT"); // seller is able to change the item's condition
+	    db.column("item", "ADD", "product_code", "TEXT");
+	    db.column("item", "ADD", "category_id", "INTEGER");
+	    db.index("idx_product_codes", "item", "product_code"); // item product codes must be unique
+	}
+	std::string item_size = std::to_string(length) + "x" + std::to_string(width) + "x" + std::to_string(height);//std::to_string(std::get<0>(item.size)) +"x"+ std::to_string(std::get<1>(item.size)) +"x"+ std::to_string(std::get<2>(item.size));
+	db.insert("item", "name, description, price, weight, size, condition, product_code", 
+	    DB::to_sql_string(name) + ", " + DB::to_sql_string(description) + ", " + std::to_string(price) + ", " + std::to_string(weight) + ", " + DB::to_sql_string(item_size)  + ", " + DB::to_sql_string(condition)  + ", " + DB::to_sql_string(product_code) //+ ", " + // + ", " + // + ", " + 
+	);
+	// save the item id
+	unsigned int item_id = db.get_column_integer("item ORDER BY id DESC LIMIT 1", "*");
+	set_id(item_id);
+    NEROSHOP_TAG std::cout << "\033[1;36m" << name << " (id: " << get_id() << ") has been registered" << "\033[0m" << std::endl;
+    ///////////
+    db.close();        
+}
+////////////////////
+void Item::register_item(const Item& item) { 
+    // if item is already registered, then exit function
+    /*if(item.is_registered()) {std::cout << "\033[0;93m" << "Item " << item.name << " has already been registered" << "\033[0m" << std::endl;return;}
+    DB db("neroshop.db");
+    //db.execute("PRAGMA journal_mode = WAL;"); // this may reduce the incidence of SQLITE_BUSY errors (such as database being locked) // https://www.sqlite.org/pragma.html#pragma_journal_mode
+    ///////////
+    int reg_item = db.get_column_integer("item", "id", "product_code = " + DB::to_sql_string(item.product_code));
+    if(reg_item != 0) {
+        neroshop::print("Item with the same product code is registered", 1);
+        const_cast<Item&>(item).set_id(reg_item);
+        NEROSHOP_TAG std::cout << "item id set to: " << reg_item << std::endl;
+        return; // exit function
+    }*/
+    ///////////
+    /*if(!db.table_exists("categories")) {
 	    db.table("categories");
 	    db.column("categories", "ADD", "category_name", "TEXT");
 	    // subcategories
@@ -348,66 +299,48 @@ void Item::register_item(const Item& item) {
 	        db.insert("categories", "category_name", DB::to_sql_string("Watches")); // Jewelry and Watches
 	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
 	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));	        	        
-	        /*
-	        
-	        db.insert("categories", "category_name", DB::to_sql_string(""));
-	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
-	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
-	        
-	        db.insert("categories", "category_name", DB::to_sql_string(""));
-	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
-	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
-	 
-	        db.insert("categories", "category_name", DB::to_sql_string(""));
-	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
-	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
-	        
-	        db.insert("categories", "category_name", DB::to_sql_string(""));
-	        category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
-	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
-	        */	        	        
+    	        
 	        // next category + subcategories ...
 	        //db.insert("categories", "category_name", DB::to_sql_string(""));
 	        //category_id = db.get_column_integer("categories ORDER BY id DESC LIMIT 1", "*"); // last inserted category
 	        //db.insert("subcategories", "subcategory_name, category_id", DB::to_sql_string("") + ", " + std::to_string(category_id));
 	    }
-	}
+	}*/
     ///////////
-    if(!db.table_exists("item")) {
+    /*if(!db.table_exists("item")) {
 	    db.table("item"); // item_id is primary key which will be auto generated
 	    db.column("item", "ADD", "name", "TEXT");
-	    db.column("item", "ADD", "description", "TEXT");
-	    //db.column("item", "ADD", "quantity", "INTEGER"); // quantity is for carts only // seller determines how much is in stock
+	    db.column("item", "ADD", "description", "TEXT"); //db.column("item", "ADD", "quantity", "INTEGER"); // item quantity is managed by cart // seller determines how much is in stock
 	    db.column("item", "ADD", "price", "REAL");
         db.column("item", "ADD", "weight", "REAL");
 	    db.column("item", "ADD", "size", "TEXT");//"REAL");
 	    db.column("item", "ADD", "discount", "REAL");
 	    db.column("item", "ADD", "condition", "TEXT"); // seller determines the item's condition
-	    db.column("item", "ADD", "product_code", "TEXT"); // db.column("item", "ADD", "", "TEXT");
+	    db.column("item", "ADD", "product_code", "TEXT");
+	    db.column("item", "ADD", "category_id", "INTEGER");
+	    db.index("idx_product_codes", "item", "product_code"); // item product codes must be unique
 	}
-	std::string item_size = std::to_string(std::get<0>(item.get_size())) +"x"+ std::to_string(std::get<1>(item.get_size())) +"x"+ std::to_string(std::get<2>(item.get_size()));
+	std::string item_size = std::to_string(std::get<0>(item.size)) +"x"+ std::to_string(std::get<1>(item.size)) +"x"+ std::to_string(std::get<2>(item.size));
 	db.insert("item", "name, description, price, weight, size, discount, condition, product_code", 
-	    DB::to_sql_string(item.get_name()) + ", " + 
-	    DB::to_sql_string(item.get_description()) + ", " + 
-	    //std::to_string(item.get_quantity()) + ", " + 
-	    std::to_string(item.get_price()) + ", " + // original / list price
-	    std::to_string(item.get_weight()) + ", " + 
-	    DB::to_sql_string(item_size) + ", " + 
-	    std::to_string(item.get_discount()) + ", " + 
-	    DB::to_sql_string(item.get_condition()) + ", " + 
-	    DB::to_sql_string(item.get_product_code())/* + ", " + 
-	     + ", " + 
-	     + ", " + 
-	     + ", " + 
-	     + ", " + 
-	     + ", " + 
-	     + ", " +         */  
+	    DB::to_sql_string(item.name)         + ", " + 
+	    DB::to_sql_string(item.description)  + ", " + //std::to_string(item.get_quantity()) + ", " + 
+	    std::to_string(item.price)           + ", " + // original / list price
+	    std::to_string(item.weight)          + ", " + 
+	    DB::to_sql_string(item_size)         + ", " + 
+	    std::to_string(item.discount)        + ", " + 
+	    DB::to_sql_string(item.condition)    + ", " + 
+	    DB::to_sql_string(item.product_code) //+ ", " + 
+	    // + ", " + 
+	    // + ", " + 
 	);
+	// save the item id
+	unsigned int item_id = db.get_column_integer("item ORDER BY id DESC LIMIT 1", "*");
+	const_cast<Item&>(item).set_id(item_id);
     ///////////
-    const_cast<Item&>(item).show_info();
-    NEROSHOP_TAG std::cout << "\033[1;36m" << item.get_name() << " has been registered" << "\033[0m" << std::endl;
+    //const_cast<Item&>(item).show_info();
+    NEROSHOP_TAG std::cout << "\033[1;36m" << item.name << " (id: " << item.id << ") has been registered" << "\033[0m" << std::endl;
     ///////////
-    db.close();
+    db.close();*/
 }
 ////////////////////
 ////////////////////
@@ -709,20 +642,12 @@ std::tuple<double, double, double> Item::get_size(unsigned int item_id) {
     return std::make_tuple(std::stod(item_size[0]), std::stod(item_size[1]), std::stod(item_size[2]));
 }
 ////////////////////
-double Item::get_discount() const {
-    DB db("neroshop.db");
-    if(!db.table_exists("item")) {db.close(); return 0.0;}
-    double item_discount = db.get_column_real("item", "discount", "id = " + std::to_string(this->id));
-    db.close();
-    return item_discount;
+double Item::get_discount(unsigned int seller_id) const {
+    return get_seller_discount(seller_id); // item discount is determined by seller
 }
 ////////////////////
-double Item::get_discount(unsigned int item_id) {
-    DB db("neroshop.db");
-    if(!db.table_exists("item")) {db.close(); return 0.0;}
-    double item_discount = db.get_column_real("item", "discount", "id = " + std::to_string(item_id));
-    db.close();
-    return item_discount;
+double Item::get_discount(unsigned int item_id, unsigned int seller_id) {
+    return get_seller_discount(item_id, seller_id); // item discount is determined by seller
 }
 ////////////////////
 std::string Item::get_condition() const {
@@ -911,7 +836,7 @@ void Item::show_info() {
     std::cout << "price: " << get_price() << std::endl;
     std::cout << "weight: " << get_weight() << std::endl;
     //std::cout << "size: " << item.get_size() << std::endl;
-    std::cout << "discount: " << get_discount() << std::endl;
+    //std::cout << "discount: " << get_discount() << std::endl;
     std::cout << "condition: " << get_condition() << std::endl;
     std::cout << "product_code: " << get_product_code() << std::endl;
     /*std::cout << ": " << item.get_() << std::endl;

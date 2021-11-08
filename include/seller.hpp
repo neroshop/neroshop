@@ -18,8 +18,7 @@ public:
 	//Seller(const std::string& name, float reputation, unsigned int total_ratings);
 	~Seller();
 	void list_item(unsigned int item_id, unsigned int stock_qty, double sales_price = 0.00, std::string currency = "usd");
-	void list_item(const Item& item, unsigned int stock_qty, double sales_price = 0.00, std::string currency = "usd", 
-	    std::string condition = "new"); // adds an item to the inventory
+	void list_item(const Item& item, unsigned int stock_qty, double sales_price = 0.00, std::string currency = "usd", double discount = 0.00, unsigned int discounted_items = 0, std::string condition = "new"); // adds an item to the inventory
 	             // images, price, search_terms 
 	void set_stock_quantity(const Item& item, unsigned int stock_qty);
 	void set_stock_quantity(unsigned int item_id, unsigned int stock_qty);

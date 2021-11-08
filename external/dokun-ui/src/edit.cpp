@@ -589,7 +589,7 @@ int Edit::is_edit(lua_State *L)
 /////////////
 void Edit::on_hover()
 {
-	WINDOW * window = WINDOW::get_active();
+	dokun::Window * window = dokun::Window::get_active();
 	if(window == nullptr) return;    
 	if(Mouse::is_over(get_position(), get_size()))
 	{
@@ -627,7 +627,7 @@ void Edit::on_mousepress()
 	{
 		if(Mouse::is_pressed(1))
 		{
-		    WINDOW * window = WINDOW::get_active();
+		    dokun::Window * window = dokun::Window::get_active();
 		    if(window == nullptr) return;
 		    double x = fabs((double)Mouse::get_position(*window).x - (double)(get_x() + cursor_x)); // abs() for int, fabs() for decimals//if(x < 0) x = -x; = makes negative numbers into a positive
 		    set_cursor_position(round(x), cursor_y);//round to the nearest tenth//get_y() - Mouse::get_position(*window).y);//cursor_changed_by_mouse = true; // add chars to location of cursor : get_text().size() / cursor_x

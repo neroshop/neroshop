@@ -353,6 +353,7 @@ link_directories(${CMAKE_CURRENT_SOURCE_DIR}/src) # sources (.cpp, .a)
 set(neroshop_src src/main.cpp src/wallet.cpp src/db.cpp src/validator.cpp src/icon.cpp src/converter.cpp src/qr.cpp src/user.cpp src/buyer.cpp src/seller.cpp src/item.cpp src/cart.cpp src/order.cpp src/message.cpp  )
 add_definitions(-DNEROSHOP_DEBUG) # for more detailed debugging, use -DNEROSHOP_DEBUG0
 add_executable(neroshop ${neroshop_src} ${monero_cpp_src} ${bcrypt_src} ${sqlite_src} ${qr_code_generator_src})
+#add_executable(neroshopd src/daemon.cpp) # server-daemon
 target_link_libraries(neroshop ${monero_src})
 target_link_libraries(neroshop ${dokun_ui_src})
 if(LINUX) 

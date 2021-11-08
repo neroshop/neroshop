@@ -1,5 +1,5 @@
-#ifndef _MOUSE
-#define _MOUSE
+#ifndef MOUSE_HPP_DOKUN
+#define MOUSE_HPP_DOKUN
 
 #include "platform.hpp"// specify the platform
 #include "window.hpp"// allows the mouse to move within the window instead of the desktop
@@ -32,16 +32,16 @@ class Mouse {
         static void restore();                                      static int restore(lua_State *L);
 		// setters
         static void set_position(int x, int y);                     static int set_position(lua_State *L);
-		static void set_position(int x, int y, const WINDOW& window); 
+		static void set_position(int x, int y, const dokun::Window& window); 
 		static void set_position(const Vector2& position);
-        static void set_position(const Vector2& position, const WINDOW& window); 
+        static void set_position(const Vector2& position, const dokun::Window& window); 
         static void set_cursor(unsigned long cursor);                                   static int set_cursor(lua_State * L);// new july 12 2017!
         static void set_cursor(const Image& cursor);
 		static void set_cursor(const std::string& cursor_file, int width=0, int height=0);
 		// getters
         static Vector2 get_position();                              static int get_position(lua_State *L);
-        static Vector2 get_position(const WINDOW& window);  /* local position(on window) */		
-		static Vector3 get_normalized_position(const WINDOW& window);
+        static Vector2 get_position(const dokun::Window& window);  /* local position(on window) */		
+		static Vector3 get_normalized_position(const dokun::Window& window);
 		
 		static int get_delta();                                     static int get_delta(lua_State *L); // returns mouse wheel delta
 		static Vector3 get_color(int x, int y);                     static int get_color(lua_State *L); // returns rgb color in a position in the active window	
@@ -55,7 +55,7 @@ class Mouse {
         static bool is_up();                                        static int is_up(lua_State *L);
 		static bool is_over(double x, double y);                             static int is_over(lua_State *L);
         static bool is_over(const Vector2& position);  
-    	static bool is_over(const WINDOW& window);	 
+    	static bool is_over(const dokun::Window& window);	 
 		// 2d object
 		static bool is_over(double x, double y, int width, int height);
 		static bool is_over(const Vector4& rect);

@@ -241,48 +241,48 @@ int Engine::reg(lua_State *L)
 	Script::global(L, "DOKUN_PLATFORM",         dokun::platform());
 	// window -----------------------------------------------------------
 	Script::table   (L, "Window");
-	Script::function(L, "Window", "new"   ,  WINDOW::window_new );
-	Script::function(L, "Window", "create",  WINDOW::create );
-	Script::function(L, "Window", "show"  ,  WINDOW::show   );
-	Script::function(L, "Window", "update",  WINDOW::update );	
-	Script::function(L, "Window", "clear" ,  WINDOW::clear  );
-	Script::function(L, "Window", "destroy", WINDOW::destroy);
-	Script::function(L, "Window", "iconify", WINDOW::iconify);		
-	Script::function(L, "Window", "maximize", WINDOW::maximize);		
-	Script::function(L, "Window", "restore", WINDOW::restore);				
-	Script::function(L, "Window", "loop", WINDOW::loop); 
-	Script::function(L, "Window", "set_title", WINDOW::set_title);
-	Script::function(L, "Window", "set_width", WINDOW::set_width);
-	Script::function(L, "Window", "set_height", WINDOW::set_height);
-	Script::function(L, "Window", "set_size", WINDOW::set_size);	
-	Script::function(L, "Window", "set_mode", WINDOW::set_mode);
-	Script::function(L, "Window", "set_position", WINDOW::set_position);
-	Script::function(L, "Window", "set_style"  , WINDOW::set_style); // sets the window's style
-	Script::function(L, "Window", "set_icon"   , WINDOW::set_icon);  // sets the window's icon
-	Script::function(L, "Window", "set_cursor" , WINDOW::set_cursor); // sets the window cursor			
-	//Script::function (L, "Window", "set_event"  , WINDOW::set_event);	// sets the how messages are retrieved		
-	Script::function(L, "Window", "set_context", WINDOW::set_context); // set the current context
-	Script::function(L, "Window", "set_vsync", WINDOW::set_vertical_synchronization); // set vertical synchronization	
-	Script::function(L, "Window", "set_viewport", WINDOW::set_viewport);		
-	Script::function(L, "Window", "get_title", WINDOW::get_title);
-	Script::function(L, "Window", "get_width", WINDOW::get_width);
-	Script::function(L, "Window", "get_height", WINDOW::get_height);
-	Script::function(L, "Window", "get_size", WINDOW::get_size);
-	Script::function(L, "Window", "get_client_width", WINDOW::get_client_width);
-	Script::function(L, "Window", "get_client_height", WINDOW::get_client_height);
-	Script::function(L, "Window", "get_client_size", WINDOW::get_client_size);
-	Script::function(L, "Window", "get_mode", WINDOW::get_mode);
-	Script::function(L, "Window", "get_x", WINDOW::get_x);
-	Script::function(L, "Window", "get_y", WINDOW::get_y);
-	Script::function(L, "Window", "get_position", WINDOW::get_position);
-	Script::function(L, "Window", "is_open", WINDOW::is_open);  
-	Script::function(L, "Window", "is_visible", WINDOW::is_visible);	
-	Script::function(L, "Window", "is_focused", WINDOW::is_focused);
-	Script::function(L, "Window", "is_iconified", WINDOW::is_iconified);
-	Script::function(L, "Window", "is_context", WINDOW::is_context);		
+	Script::function(L, "Window", "new"   ,  dokun::Window::window_new );
+	Script::function(L, "Window", "create",  dokun::Window::create );
+	Script::function(L, "Window", "show"  ,  dokun::Window::show   );
+	Script::function(L, "Window", "update",  dokun::Window::update );	
+	Script::function(L, "Window", "clear" ,  dokun::Window::clear  );
+	Script::function(L, "Window", "destroy", dokun::Window::destroy);
+	Script::function(L, "Window", "iconify", dokun::Window::iconify);		
+	Script::function(L, "Window", "maximize", dokun::Window::maximize);		
+	Script::function(L, "Window", "restore", dokun::Window::restore);				
+	Script::function(L, "Window", "loop", dokun::Window::loop); 
+	Script::function(L, "Window", "set_title", dokun::Window::set_title);
+	Script::function(L, "Window", "set_width", dokun::Window::set_width);
+	Script::function(L, "Window", "set_height", dokun::Window::set_height);
+	Script::function(L, "Window", "set_size", dokun::Window::set_size);	
+	Script::function(L, "Window", "set_mode", dokun::Window::set_mode);
+	Script::function(L, "Window", "set_position", dokun::Window::set_position);
+	Script::function(L, "Window", "set_style"  , dokun::Window::set_style); // sets the window's style
+	Script::function(L, "Window", "set_icon"   , dokun::Window::set_icon);  // sets the window's icon
+	Script::function(L, "Window", "set_cursor" , dokun::Window::set_cursor); // sets the window cursor			
+	//Script::function (L, "Window", "set_event"  , dokun::Window::set_event);	// sets the how messages are retrieved		
+	Script::function(L, "Window", "set_context", dokun::Window::set_context); // set the current context
+	Script::function(L, "Window", "set_vsync", dokun::Window::set_vertical_synchronization); // set vertical synchronization	
+	Script::function(L, "Window", "set_viewport", dokun::Window::set_viewport);		
+	Script::function(L, "Window", "get_title", dokun::Window::get_title);
+	Script::function(L, "Window", "get_width", dokun::Window::get_width);
+	Script::function(L, "Window", "get_height", dokun::Window::get_height);
+	Script::function(L, "Window", "get_size", dokun::Window::get_size);
+	Script::function(L, "Window", "get_client_width", dokun::Window::get_client_width);
+	Script::function(L, "Window", "get_client_height", dokun::Window::get_client_height);
+	Script::function(L, "Window", "get_client_size", dokun::Window::get_client_size);
+	Script::function(L, "Window", "get_mode", dokun::Window::get_mode);
+	Script::function(L, "Window", "get_x", dokun::Window::get_x);
+	Script::function(L, "Window", "get_y", dokun::Window::get_y);
+	Script::function(L, "Window", "get_position", dokun::Window::get_position);
+	Script::function(L, "Window", "is_open", dokun::Window::is_open);  
+	Script::function(L, "Window", "is_visible", dokun::Window::is_visible);	
+	Script::function(L, "Window", "is_focused", dokun::Window::is_focused);
+	Script::function(L, "Window", "is_iconified", dokun::Window::is_iconified);
+	Script::function(L, "Window", "is_context", dokun::Window::is_context);		
 	#ifdef __gnu_linux__
 	#ifdef DOKUN_X11
-	    Script::function (L, "Window", "get_display", WINDOW::get_display);
+	    Script::function (L, "Window", "get_display", dokun::Window::get_display);
 	#endif    
 	#endif
 	// texture -----------------------------------------------------------

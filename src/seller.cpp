@@ -31,16 +31,16 @@ void Seller::list_item(unsigned int item_id, unsigned int stock_qty, double sale
 {}
 ////////////////////
 void Seller::list_item(const Item& item, unsigned int stock_qty, double sales_price, std::string currency, 
-    std::string condition/*, double discount = 0.0, discounted_items = 0*/) { // ex. 5% off 10 balls
+    double discount, unsigned int discounted_items, std::string condition) { // ex. 5% off 10 balls
     // seller must be logged in
     if(!is_logged()) {neroshop::print("You must be logged in to list an item", 2); return;}
     // user must be an actual seller, not a buyer
-    if(!is_seller()) {neroshop::print("Must be a seller (id: " + std::to_string(get_id()) + ") to list an item (id: " + std::to_string(item.get_id()) + ")", 2); return;}
+    if(!is_seller()) {neroshop::print("Must be a seller to list an item (id: " + std::to_string(item.get_id()) + ")", 2); return;}
     // a seller can create an item and then register it to the database
     // but if the item is not registered then it cannot be listed
     if(!item.is_registered()) {NEROSHOP_TAG std::cout << "\033[0;91m" << "This item is not registered (invalid Item id)" << "\033[0m" << std::endl; return;}
     // make sure currency is supported
-    if(!Converter::is_supported_currency(currency)) {neroshop::print(String::upper(currency) + " is not a supported currency", 2); return;}
+    if(!Converter::is_supported_currency(currency)) {neroshop::print(currency + " is not a supported currency", 2); return;}
     // store item in database
     DB db("neroshop.db");
 	//db.execute("PRAGMA journal_mode = WAL;"); // this may reduce the incidence of SQLITE_BUSY errors (such as database being locked) // https://www.sqlite.org/pragma.html#pragma_journal_mode
@@ -50,30 +50,36 @@ void Seller::list_item(const Item& item, unsigned int stock_qty, double sales_pr
 	    db.table("inventory"); // inventory_id will be auto generated (primary key)
 	    db.column("inventory", "ADD", "item_id", "INTEGER");
 	    db.column("inventory", "ADD", "seller_id", "INTEGER"); // store_id or seller_id or vendor_id
-	    db.column("inventory", "ADD", "stock_qty", "INTEGER");//db.column("inventory", "ADD", "stock_available", "TEXT"); // or in_stock
-	    db.column("inventory", "ADD", "seller_price", "REAL");//db.index("idx_item_ids", "inventory", "item_id"); actually, don't make item_id unique as multiple sellers can be selling the same item // every item in the inventory must have a unique id //db.execute("CREATE UNIQUE INDEX idx_seller_ids ON Inventory (seller_id);"); // sellers can have multiple items so seller_id should not be unique
-	    db.column("inventory", "ADD", "currency", "TEXT"); // seller's local currency, which will be converted to xmr
-	    //db.column("inventory", "ADD", "seller_condition", "");
-	    //db.column("inventory", "ADD", "seller_discount", "");
-	    //db.column("inventory", "ADD", "", "");
+	    db.column("inventory", "ADD", "stock_qty", "INTEGER"); //db.column("inventory", "ADD", "stock_available", "TEXT"); // or in_stock
+	    db.column("inventory", "ADD", "seller_price", "REAL"); //db.index("idx_item_ids", "inventory", "item_id"); actually, don't make item_id unique as multiple sellers could be selling the same item //db.execute("CREATE UNIQUE INDEX idx_seller_ids ON Inventory (seller_id);"); // sellers can have multiple items so seller_id should not be unique
+	    db.column("inventory", "ADD", "currency", "TEXT"); // seller's currency of choice, which will be converted to xmr
+	    db.column("inventory", "ADD", "seller_discount", "REAL"); // seller_discount per discounted_items
+	    db.column("inventory", "ADD", "discount_qty", "INTEGER");
+	    db.column("inventory", "ADD", "condition", "TEXT"); // seller_condition for each item
 	}
     // to prevent duplicating item_id that is being sold by the same seller_id (a seller cannot list the same item twice, except change the stock amount)
     int item_id = db.get_column_integer("inventory", "item_id", 
         "item_id = " + std::to_string(item.get_id()) + " AND seller_id = " + std::to_string(get_id()));
 	if(item_id == item.get_id()) { neroshop::print("\033[1;33mYou have already listed this item (id: " + std::to_string(item_id) + ")\033[0m");return;}
-	//if(condition.empty()) {neroshop::print("no condition set. setting default item condition ...");condition = item.get_condition();}
+	// say you have 50 of an item, for every 2 of the same item, you get $0.50 off
+	//double total_discount_calc = (50 / 2) * 0.50;
+	double total_discount = (stock_qty / discounted_items) * discount; // stock_qty would be replace with item_qty in this case
+	// if discounted_items is 2 but you have 3 of the item, it will return $0.75, but we need to avoid that and make it $0.50
+	// if qty is not a multiple of "discounted_items"
+	// if there is a remainder then reduce the total discount
+	//if((stock_qty % discounted_items) == 1) total_discount = total_discount - discount;
+#ifdef NEROSHOP_DEBUG0
+	std::cout << "\033[1;37m" << "for every " << discounted_items << " " << item.get_name()/*" of an item"*/ << "s, you get " << Converter::get_currency_symbol(currency) << discount << " off (since you have x" << stock_qty << ", total discount is: " << Converter::get_currency_symbol(currency) << total_discount << ")\033[0m" << std::endl;
+#endif	
 	// insert item in inventory
-	db.insert("inventory", "item_id, seller_id, stock_qty, seller_price, currency", 
-	    std::to_string(item.get_id()) + ", "+ 
-	    std::to_string(get_id())      + ", " + 
-	    std::to_string(stock_qty)     + ", " + 
-	    std::to_string(sales_price)   + ", " +  // per unit (item)
-	    DB::to_sql_string(currency)   //+ ", "
-	);// + ", ");//DB::to_sql_string(
+	db.insert("inventory", "item_id, seller_id, stock_qty, seller_price, currency, seller_discount, discount_qty, condition", 
+	    std::to_string(item.get_id()) + ", " + std::to_string(get_id()) + ", " + std::to_string(stock_qty) + ", " + 
+	    std::to_string(sales_price) + ", " +  // price per unit (of an item)
+	    DB::to_sql_string(String::lower(currency)) + ", " + std::to_string(discount) + ", " + std::to_string(discounted_items) + ", " + DB::to_sql_string(condition));
 	NEROSHOP_TAG std::cout << "\033[1;37m" << item.get_name() << " (id: " << item.get_id() << ", stock_qty: " << stock_qty << ") has been listed by seller \033[1;34m" << get_name() << " (id: " << get_id() << ")" << "\033[0m" << std::endl;
 	db.close();
 }
-// static_cast<Seller *>(user)->list_item(ball, 10, Converter::usd_to_xmr(8.50));
+// static_cast<Seller *>(user)->list_item(ball, 50, 8.50, "usd", 0.50, 2, "new"); // $0.50 cents off every 2 balls
 ////////////////////
 ////////////////////
 ////////////////////

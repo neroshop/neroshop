@@ -14,7 +14,7 @@ int Mouse::y = (int)Mouse::get_position().y;
 // mouse movement
 bool Mouse::is_moved()
 {
-    return WINDOW::mouse_moved;
+    return dokun::Window::mouse_moved;
 }
 /////////////
 int Mouse::is_moved(lua_State *L)
@@ -43,15 +43,15 @@ bool Mouse::is_pressed(int button, int times_pressed) // a specific button is pr
 {
 	if(button == 1) // left
 	{
-		return (WINDOW::mouse_pressed && WINDOW::mouse_button == 1);
+		return (dokun::Window::mouse_pressed && dokun::Window::mouse_button == 1);
 	}
 	if(button == 2) // middle
 	{
-		return (WINDOW::mouse_pressed && WINDOW::mouse_button == 2);
+		return (dokun::Window::mouse_pressed && dokun::Window::mouse_button == 2);
 	}
 	if(button == 3) // right
 	{
-		return (WINDOW::mouse_pressed && WINDOW::mouse_button == 3);
+		return (dokun::Window::mouse_pressed && dokun::Window::mouse_button == 3);
 	}
 	return false; // invalid button
 }
@@ -66,15 +66,15 @@ bool Mouse::is_released(int button) // a specific button is released
 {
     if(button == 1)
 	{
-		return (WINDOW::mouse_released && WINDOW::mouse_button == 1);
+		return (dokun::Window::mouse_released && dokun::Window::mouse_button == 1);
 	}
     if(button == 2)
 	{
-		return (WINDOW::mouse_released && WINDOW::mouse_button == 2);
+		return (dokun::Window::mouse_released && dokun::Window::mouse_button == 2);
 	}
     if(button == 3)
 	{
-		return (WINDOW::mouse_released && WINDOW::mouse_button == 3);
+		return (dokun::Window::mouse_released && dokun::Window::mouse_button == 3);
 	}
 	return false; // invalid button
 }
@@ -119,7 +119,7 @@ bool Mouse::is_over(const Vector2& position)
     return is_over(position.x, position.y);
 }
 /////////////
-bool Mouse::is_over(const WINDOW& window) // hover over a window
+bool Mouse::is_over(const dokun::Window& window) // hover over a window
 {
     if((get_position().x < window.get_position().x + window.get_size().x) && (window.get_position().x < get_position().x) && (get_position().y < window.get_position().y + window.get_size().y) && (window.get_position().y < get_position().y))
         return true;
@@ -128,7 +128,7 @@ bool Mouse::is_over(const WINDOW& window) // hover over a window
 /////////////
 bool Mouse::is_over(double x, double y, int width, int height) // hover over a 2d object
 {
-    WINDOW * window = WINDOW::get_active();
+    dokun::Window * window = dokun::Window::get_active();
 	if(!window) return false;
 	if((get_position(*window).x < x  + width) && (x < get_position(*window).x) && (get_position(*window).y < y + height) && (y < get_position(*window).y)) return true; 
     return false;
@@ -165,7 +165,7 @@ int Mouse::is_over(lua_State *L)
 			lua_getfield(L, 2, "udata");
 			if(lua_isuserdata(L, -1))
 			{
-		        WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		        dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 			    lua_pushboolean(L, Mouse::is_over(*window));
 			    return 1;
 			}
@@ -183,7 +183,7 @@ void Mouse::hide()
 #endif
 #ifdef __gnu_linux__
 #ifdef DOKUN_X11
-    WINDOW * window = WINDOW::get_active();
+    dokun::Window * window = dokun::Window::get_active();
 	if(window)
 	{		
 	Cursor invisibleCursor;
@@ -227,7 +227,7 @@ int Mouse::show(lua_State *L)
 /////////////
 void Mouse::restore() // restore cursor
 {
-	WINDOW * window = WINDOW::get_active();
+	dokun::Window * window = dokun::Window::get_active();
 	if(window)
 	{ 
     #ifdef __windows__
@@ -272,7 +272,7 @@ void Mouse::set_position(const Vector2& position)
 	Mouse::set_position((int)position.x, (int)position.y);
 }
 /////////////
-void Mouse::set_position(int x, int y, const WINDOW& window) // set local position(in window)
+void Mouse::set_position(int x, int y, const dokun::Window& window) // set local position(in window)
 {
     Mouse::x = x;
 	Mouse::y = y;
@@ -291,7 +291,7 @@ void Mouse::set_position(int x, int y, const WINDOW& window) // set local positi
 #endif
 }
 /////////////
-void Mouse::set_position(const Vector2& position, const WINDOW& window)
+void Mouse::set_position(const Vector2& position, const dokun::Window& window)
 {
 	Mouse::set_position(position.x, position.y, window);
 }
@@ -306,7 +306,7 @@ int Mouse::set_position(lua_State *L)
 		lua_getfield(L, 4, "udata");
 		if(lua_isuserdata(L, -1))
 		{
-		    WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		    dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 	        Mouse::set_position((int)lua_tonumber(L, 2), (int)lua_tonumber(L, 3), *window);
 			return 0;
 	    }
@@ -317,7 +317,7 @@ int Mouse::set_position(lua_State *L)
 /////////////
 void Mouse::set_cursor(unsigned long cursor)
 {
-	WINDOW * window = WINDOW::get_active();
+	dokun::Window * window = dokun::Window::get_active();
 	if(window != nullptr)
 	{
 	#ifdef __windows__
@@ -335,7 +335,7 @@ void Mouse::set_cursor(unsigned long cursor)
 }
 void Mouse::set_cursor(const Image& cursor) // doesnt work
 {
-	WINDOW * window = WINDOW::get_active();
+	dokun::Window * window = dokun::Window::get_active();
 	if(window)
 	{
 #ifdef __gnu_linux__
@@ -436,7 +436,7 @@ Vector2 Mouse::get_position() // get global position(on desktop)
     return Vector2(x, y);
 }
 /////////////
-Vector2 Mouse::get_position(const WINDOW& window) // get local position (inside window)
+Vector2 Mouse::get_position(const dokun::Window& window) // get local position (inside window)
 {
     int x = 0;
     int y = 0;
@@ -475,7 +475,7 @@ int Mouse::get_position(lua_State *L)
 		lua_getfield(L, 2, "udata");
 		if(lua_isuserdata(L, -1))
 		{
-		    WINDOW * window = *static_cast<WINDOW **>(lua_touserdata(L, -1));
+		    dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
 	        lua_pushnumber(L, (int)Mouse::get_position(*window).x);
 	        lua_pushnumber(L, (int)Mouse::get_position(*window).y);
 		    return 2;
@@ -486,7 +486,7 @@ int Mouse::get_position(lua_State *L)
 	return 2;
 }
 /////////////
-Vector3 Mouse::get_normalized_position(const WINDOW& window)
+Vector3 Mouse::get_normalized_position(const dokun::Window& window)
 {
 	int width  = 0;
 	int height = 0;
@@ -521,7 +521,7 @@ int Mouse::get_delta() // returns -120 or lower if scrolling down, 120 or higher
 #ifdef __windows__
 #ifndef DOKUN_SDL2
 #ifndef DOKUN_GLFW
-	//return WINDOW::
+	//return dokun::Window::
 	//mouse_delta;
 #endif
 #endif
@@ -537,10 +537,10 @@ int Mouse::get_delta(lua_State *L)
 /////////////
 Vector3 Mouse::get_color(int x, int y) // new function!
 {
-	if(WINDOW::get_active())
+	if(dokun::Window::get_active())
 	{
 	#ifdef __windows__
-	    COLORREF color = GetPixel(GetDC(WINDOW::get_active()->get_handle()), (int)Mouse::get_position(*WINDOW::get_active()).x, (int)Mouse::get_position(*WINDOW::get_active()).y);
+	    COLORREF color = GetPixel(GetDC(dokun::Window::get_active()->get_handle()), (int)Mouse::get_position(*dokun::Window::get_active()).x, (int)Mouse::get_position(*dokun::Window::get_active()).y);
 		return Vector3(GetRValue(color), GetGValue(color), GetBValue(color));
 	#endif
 	}
@@ -585,8 +585,8 @@ int Mouse::get_size(lua_State * L)
 /////////////
 double Mouse::rotate(double x, double y)
 {
-	double mouse_x = get_position(*WINDOW::get_active()).x;
-	double mouse_y = get_position(*WINDOW::get_active()).y;
+	double mouse_x = get_position(*dokun::Window::get_active()).x;
+	double mouse_y = get_position(*dokun::Window::get_active()).y;
     double a = x - mouse_x;                                            // try mouse_x - x
     double b = y - mouse_y;                                            // try mouse_y - y
 	double mouse_angle = atan2(-a, -b) * 180 / 3.14159265358979323846; // try atan2(+a, +b)
