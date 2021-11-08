@@ -97,7 +97,7 @@ void Order::create_order(unsigned int user_id, const std::string& shipping_addre
         // if seller does not specify a discount for their item, set the item discount to its original discount which is 0
         double seller_discount = db.get_column_real("inventory", "seller_discount", "item_id = " + std::to_string(item_id) + " AND seller_id = " + std::to_string(seller_id));
         unsigned int discounted_items = db.get_column_integer("inventory", "discount_qty", "item_id = " + std::to_string(item_id) + " AND seller_id = " + std::to_string(seller_id));
-        discount += ((item_qty / discounted_items) * seller_discount);
+        discount += (item_qty / discounted_items) * seller_discount;
         NEROSHOP_TAG std::cout << "\033[1;37m" << "for every " << discounted_items << " " << item_name << "s, you get " << Converter::get_currency_symbol(seller_currency) << std::fixed << std::setprecision(2) << seller_discount << " off (since you have x" << item_qty << ", total discount is: " << Converter::get_currency_symbol(seller_currency) << ((item_qty / discounted_items) * seller_discount) << ")\033[0m" << std::endl;
         // check again if item is still in stock
         if(!item->in_stock()) {

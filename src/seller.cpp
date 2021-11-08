@@ -1,26 +1,18 @@
 #include "../include/seller.hpp"
 
-Seller::Seller() : wallet(nullptr) {//, inventory(nullptr) {  // not used
-	// add to registry
-    //Registry::get_seller_registry()->add(this);				 
-}
+Seller::Seller() : wallet(nullptr) 
+{}
 ////////////////////
 ////////////////////
 Seller::Seller(const std::string& name) : Seller() {
     set_name(name);
-    //on_create(name);//should be only called when registering an account, not when logging in
 }
 ////////////////////
 ////////////////////
-//Seller::Seller(const std::string& name, float reputation, unsigned int total_ratings) : Seller() { // delegate constructor - inherits default constructor
-//    set_name(name);
-//}
 ////////////////////
 // destructor
 ////////////////////
-Seller::~Seller() {
-    //Registry::get_seller_registry()->remove(this);
-}
+Seller::~Seller() {}
 ////////////////////
 ////////////////////
 ////////////////////
@@ -73,15 +65,17 @@ void Seller::list_item(const Item& item, unsigned int stock_qty, double sales_pr
 #endif	
 	// insert item in inventory
 	db.insert("inventory", "item_id, seller_id, stock_qty, seller_price, currency, seller_discount, discount_qty, condition", 
-	    std::to_string(item.get_id()) + ", " + std::to_string(get_id()) + ", " + std::to_string(stock_qty) + ", " + 
-	    std::to_string(sales_price) + ", " +  // price per unit (of an item)
-	    DB::to_sql_string(String::lower(currency)) + ", " + std::to_string(discount) + ", " + std::to_string(discounted_items) + ", " + DB::to_sql_string(condition));
+	    std::to_string(item.get_id()) + ", " + std::to_string(get_id()) + ", " + std::to_string(stock_qty) + ", " + std::to_string(sales_price) + ", " + /* price per unit (of an item) */DB::to_sql_string(String::lower(currency)) + ", " + std::to_string(discount) + ", " + std::to_string(discounted_items) + ", " + DB::to_sql_string(condition));
 	NEROSHOP_TAG std::cout << "\033[1;37m" << item.get_name() << " (id: " << item.get_id() << ", stock_qty: " << stock_qty << ") has been listed by seller \033[1;34m" << get_name() << " (id: " << get_id() << ")" << "\033[0m" << std::endl;
 	db.close();
 }
 // static_cast<Seller *>(user)->list_item(ball, 50, 8.50, "usd", 0.50, 2, "new"); // $0.50 cents off every 2 balls
 ////////////////////
 ////////////////////
+void Seller::check_for_customer_orders() {
+
+
+}
 ////////////////////
 ////////////////////
 ////////////////////
@@ -119,12 +113,7 @@ void Seller::set_stock_quantity(const Item& item, unsigned int stock_qty) {
 ////////////////////
 ////////////////////
 void Seller::set_wallet(const Wallet& wallet) {
-    // delete old wallet first (as seller cannot use two wallets at once, for now)
-    if(this->wallet) {
-        delete this->wallet;
-        this->wallet = nullptr;
-    }
-    this->wallet = &const_cast<Wallet&>(wallet);
+    this->wallet = &const_cast<Wallet&>(wallet);// be sure to delete old wallet first (as seller cannot use two wallets at a time)
 }
 ////////////////////
 ////////////////////
@@ -179,7 +168,7 @@ unsigned int Seller::get_reputation() const {
         unsigned int good_ratings = db.get_column_integer("seller_ratings", "COUNT(score)", "seller_id = " + std::to_string(get_id()) + " AND score = " + std::to_string(1));
         // calculate seller reputation
         double reputation = (good_ratings / static_cast<double>(ratings_count)) * 100;
-        return static_cast<int>(reputation); // convert reputation to an integer (basically rounding it)
+        return static_cast<int>(reputation); // convert reputation to an integer
     }
     db.close();
     return 0;

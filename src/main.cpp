@@ -114,9 +114,9 @@ int main() {
     // currency has to be stable so we will use usd or eur then it will be converted to xmr
     // we cannot set the price in xmr directly since its highly volatile and the price is always changing
     // creating an item causes a seg fault
-    Item ball(1);//("Ball", "A ball", 8.00, 0.5, std::make_tuple(1, 2, 3), "new", "000000000001");
-    Item ring(2);//("Ring", "A ring", 99.00, 0.2, std::make_tuple(3, 2, 1), "new","000000000002");
-    Item game(3);//("Game", "A nintendo game card", 60.00, 0.0, std::make_tuple(0, 0, 0), "new", "000000000003");//Item cake(7);
+    Item ball("Ball", "A ball", 8.00, 0.5, std::make_tuple(1, 2, 3), "new", "000000000001");
+    Item ring("Ring", "A ring", 99.00, 0.2, std::make_tuple(3, 2, 1), "new","000000000002");
+    Item game("Game", "A nintendo game card", 60.00, 0.0, std::make_tuple(0, 0, 0), "new", "000000000003");//Item cake(7);
     //seller->list_item(ball, 50, 8.50, "USD"); //adds item to inventory
     //////////////
     //cart->add(ball);
@@ -659,9 +659,9 @@ int main() {
                     //std::cout << "is_user_guest: " << user->is_guest() << std::endl;
                     //std::cout << "is_user_buyer: " << user->is_buyer() << std::endl;
                     //std::cout << "is_user_seller: " << user->is_seller() << std::endl;
-                    //static_cast<Seller *>(user)->list_item(ball, 50, 8.50, "USD", 0.50, 2, "new"); //adds item to inventory
-                    //static_cast<Seller *>(user)->list_item(ring, 50, 101.00, "USD", 0.50, 2, "new");
-                    //static_cast<Seller *>(user)->list_item(game, 50, 69.99, "USD", 0.50, 2, "new");
+                    static_cast<Seller *>(user)->list_item(ball, 50, 8.50, "USD", 0.50, 2, "new"); //adds item to inventory
+                    static_cast<Seller *>(user)->list_item(ring, 50, 101.00, "USD", 0.50, 2, "new");
+                    static_cast<Seller *>(user)->list_item(game, 50, 69.99, "USD", 0.50, 2, "new");
                     //std::cout << "(2 % 2) :" << (2 % 2) << std::endl;
                     //std::cout << "(3 % 2) :" << (3 % 2) << std::endl;
                     //std::cout << "(4 % 2) :" << (4 % 2) << std::endl;

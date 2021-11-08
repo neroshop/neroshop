@@ -15,16 +15,16 @@ class Seller : public User { // sellers have unlimited access to the inventory
 public:
 	Seller();
 	Seller(const std::string& name);
-	//Seller(const std::string& name, float reputation, unsigned int total_ratings);
 	~Seller();
 	void list_item(unsigned int item_id, unsigned int stock_qty, double sales_price = 0.00, std::string currency = "usd");
 	void list_item(const Item& item, unsigned int stock_qty, double sales_price = 0.00, std::string currency = "usd", double discount = 0.00, unsigned int discounted_items = 0, std::string condition = "new"); // adds an item to the inventory
-	             // images, price, search_terms 
+	             // images, price, search_terms
+	void check_for_customer_orders();              
+	// setters	
 	void set_stock_quantity(const Item& item, unsigned int stock_qty);
 	void set_stock_quantity(unsigned int item_id, unsigned int stock_qty);
 	// create promotions such as: percent_off, free_shipping, giveaway, buy_one_get_one_free, coupon codes(time_limit, expire_date) => https://tinuiti.com/blog/amazon/amazon-promotions-for-sellers/
 	// coupon_min_percent = 2%, coupon_max_percent = 90% (amazon is 5%-80%)
-	// setters
 	void set_wallet(const Wallet& wallet);// temporary - delete ASAP
 	// getters
 	unsigned int get_good_ratings() const;
