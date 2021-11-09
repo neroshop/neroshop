@@ -107,13 +107,12 @@ int main() {
     User * user = nullptr;
     ////////////////////////////////////////////////
     std::string pw = "Password!23";
-    Validator::register_user("layter", pw, pw);
+    Validator::register_user("layter", pw, pw);//Validator::register_user("laytera", pw+"a", pw+"a");
     // ...   ///////////////////////////////
     Cart * cart = Cart::get_singleton();
     // register items: ball and ring
     // currency has to be stable so we will use usd or eur then it will be converted to xmr
     // we cannot set the price in xmr directly since its highly volatile and the price is always changing
-    // creating an item causes a seg fault
     Item ball("Ball", "A ball", 8.00, 0.5, std::make_tuple(1, 2, 3), "new", "000000000001");
     Item ring("Ring", "A ring", 99.00, 0.2, std::make_tuple(3, 2, 1), "new","000000000002");
     Item game("Game", "A nintendo game card", 60.00, 0.0, std::make_tuple(0, 0, 0), "new", "000000000003");//Item cake(7);
@@ -648,10 +647,21 @@ int main() {
                     if (role_id == 2) user = Seller::on_login(user_edit -> get_text());
                     // only sellers can register for an account (edit: buyers can register for an account too)
                     // make an order
-                    cart->add(ball, 2);
-                    cart->add(ring, 2);
+                    //cart->add(ball, 2);
+                    //cart->add(ring, 2);
                     //cart->add(game, 1);
-                    user->create_order(shipping_addr/*, "layter@protonmail.com"*/);
+                    //user->create_order(shipping_addr/*, "layter@protonmail.com"*/);
+                    if(user->is_seller()) {
+                        // set the wallet if it is opened
+                        if(wallet_opened) static_cast<Seller *>(user)->set_wallet(*wallet);
+                        // check for any incoming orders (pending)
+                        std::vector<int> pending_orders = static_cast<Seller *>(user)->get_pending_customer_orders();
+                        if(pending_orders.size() > 0) {
+                            if(wallet_opened && synced) {
+                                static_cast<Seller *>(user)->on_order_received();
+                            }
+                        }
+                    }
                     // set the wallet
                     //if(user && wallet_opened) static_cast <Seller *>(user)->set_wallet(*wallet);
                     //std::cout << "is_user_logged_in: " << user->is_logged() << std::endl;
@@ -659,9 +669,9 @@ int main() {
                     //std::cout << "is_user_guest: " << user->is_guest() << std::endl;
                     //std::cout << "is_user_buyer: " << user->is_buyer() << std::endl;
                     //std::cout << "is_user_seller: " << user->is_seller() << std::endl;
-                    static_cast<Seller *>(user)->list_item(ball, 50, 8.50, "USD", 0.50, 2, "new"); //adds item to inventory
-                    static_cast<Seller *>(user)->list_item(ring, 50, 101.00, "USD", 0.50, 2, "new");
-                    static_cast<Seller *>(user)->list_item(game, 50, 69.99, "USD", 0.50, 2, "new");
+                    //static_cast<Seller *>(user)->list_item(ball, 50, 8.50, "USD", 0.50, 2, "new"); //adds item to inventory
+                    //static_cast<Seller *>(user)->list_item(ring, 50, 101.00, "USD", 0.50, 2, "new");
+                    //static_cast<Seller *>(user)->list_item(game, 50, 69.99, "USD", 0.50, 2, "new");
                     //std::cout << "(2 % 2) :" << (2 % 2) << std::endl;
                     //std::cout << "(3 % 2) :" << (3 % 2) << std::endl;
                     //std::cout << "(4 % 2) :" << (4 % 2) << std::endl;

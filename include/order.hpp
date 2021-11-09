@@ -14,7 +14,7 @@ enum class payment_status{ PAYMENT_NOT_RECEIVED, // red // https://stackoverflow
     PAYMENT_CONFIRMED,    // yellow
     PAYMENT_RECEIVED,     // green
 };
-enum class order_status : unsigned int {created, pending = created, preparing, shipped, ready_for_pickup, ready = ready_for_pickup, delivered, done = delivered, cancelled, failed, returned,}; // char, short or unsigned int // enum classes help avoid polluting the scope (either global or namespace)
+enum class order_status : unsigned int {incomplete, created, pending = created, preparing, shipped, ready_for_pickup, ready = ready_for_pickup, delivered, done = delivered, cancelled, failed, returned,}; // char, short or unsigned int // enum classes help avoid polluting the scope (either global or namespace)
 enum class payment_method{/*cash, card,*/ crypto,};
 enum class currency{xmr,};
 

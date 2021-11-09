@@ -52,6 +52,6 @@ I am an awful programmer and still consider myself a noob at it since I don't kn
 my project to life, I'd highly appreciate it! 
 I am also willing to compensate any contributors with Monero when I become financially stable.
 
-[//]: # (git add CMakeLists.txt external/ include/ readme.md res/neroshop-logo.png src/ todo.txt)
+[//]: # (git add CMakeLists.txt external/ include/ readme.md res/neroshop-logo.png res/wallets src/ todo.txt)
 [//]: # (git commit -m"empty commit")
 [//]: # (git push -u origin main)

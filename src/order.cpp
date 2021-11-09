@@ -51,7 +51,7 @@ void Order::create_order(unsigned int user_id, const std::string& shipping_addre
     double weight = cart.get_total_weight();
     db.insert("orders", "date, status, user_id, weight, subtotal, discount, shipping_cost, total, payment_method, currency, notes",
         DB::to_sql_string(date)           + ", " + 
-        DB::to_sql_string("Created")      + ", " + // status
+        DB::to_sql_string("Incomplete")      + ", " + // status
         std::to_string(user_id)           + ", " + 
         std::to_string(weight)            + ", " + 
         std::to_string(0.000000000000)    + ", " + // subtotal
@@ -85,24 +85,31 @@ void Order::create_order(unsigned int user_id, const std::string& shipping_addre
         // if seller_id is not specified (0), then choose a random seller who is selling the same product
         int seller_id = db.get_column_integer("inventory", "seller_id", "item_id = " + std::to_string(item_id));
         if(seller_id <= 0) { std::cout << "item seller not found"; return; }     
+        // if the buyer is also the seller XD
+        if(user_id == seller_id) {neroshop::print("You cannot buy from yourself", 1); return;}
         // get the currency that item is priced in
         seller_currency = db.get_column_text("inventory", "currency", "item_id = " + std::to_string(item_id) + " AND seller_id = " + std::to_string(seller_id));
         // get seller_price
         // if seller does not specify a price for their item, set the item price to its original price
         double seller_price = db.get_column_real("inventory", "seller_price", "item_id = " + std::to_string(item_id) + " AND seller_id = " + std::to_string(seller_id));//NEROSHOP_TAG std::cout << "Seller's price for item (id: " << item_id << ") per unit is: " << seller_price << " " << seller_currency << std::endl;
-        double item_price = (seller_price > 0.00) ? seller_price : cart.get_item(i)->get_price(); // set the item price to the seller's price
+        double item_price = (seller_price > 0.00) ? seller_price : item->get_price(); // set the item price to the seller's price
         // calculate subtotal (price of all items combined)
         subtotal += item_qty * item_price;
-        // get seller discount - will work on this later
+        // get seller discount
         // if seller does not specify a discount for their item, set the item discount to its original discount which is 0
         double seller_discount = db.get_column_real("inventory", "seller_discount", "item_id = " + std::to_string(item_id) + " AND seller_id = " + std::to_string(seller_id));
         unsigned int discounted_items = db.get_column_integer("inventory", "discount_qty", "item_id = " + std::to_string(item_id) + " AND seller_id = " + std::to_string(seller_id));
-        discount += (item_qty / discounted_items) * seller_discount;
-        NEROSHOP_TAG std::cout << "\033[1;37m" << "for every " << discounted_items << " " << item_name << "s, you get " << Converter::get_currency_symbol(seller_currency) << std::fixed << std::setprecision(2) << seller_discount << " off (since you have x" << item_qty << ", total discount is: " << Converter::get_currency_symbol(seller_currency) << ((item_qty / discounted_items) * seller_discount) << ")\033[0m" << std::endl;
+        if(seller_discount > 0.00) {
+            discount += (item_qty / discounted_items) * seller_discount;
+            NEROSHOP_TAG std::cout << "\033[1;37m" << "for every " << discounted_items << " " << item_name << "s, you get " << Converter::get_currency_symbol(seller_currency) << std::fixed << std::setprecision(2) << seller_discount << " off (since you have x" << item_qty << ", total discount is: " << Converter::get_currency_symbol(seller_currency) << ((item_qty / discounted_items) * seller_discount) << ")\033[0m" << std::endl;
+        }
+        // get condition of item based on seller
+        std::string item_condition = db.get_column_text("inventory", "condition", "item_id = " + std::to_string(item_id) + " AND seller_id = " + std::to_string(seller_id));
         // check again if item is still in stock
         if(!item->in_stock()) {
             neroshop::print("[error]: order failed  [reason]: The following item is out of stock: " + item_name);
             set_status(order_status::failed); // set order status to failed
+            db.update("orders", "status", DB::to_sql_string(get_status_string()), "id = " + std::to_string(order_id));
             return; // exit function //continue; // skip this item
         }
         // add each item to the same order_id
@@ -111,7 +118,7 @@ void Order::create_order(unsigned int user_id, const std::string& shipping_addre
         // reduce stock_qty of each purchased item (subtract stock_qty by item_qty that buyer is purchasing)
         int stock_qty = db.get_column_integer("inventory", "stock_qty", "item_id = " + std::to_string(item_id) + " AND seller_id = " + std::to_string(seller_id));//std::cout << "stock_qty of item BEFORE deletion: " << stock_qty << std::endl; 
         db.update("inventory", "stock_qty", std::to_string(stock_qty - item_qty), "item_id = " + std::to_string(item_id) + " AND seller_id = " + std::to_string(seller_id));//std::cout << "stock_qty of item AFTER deletion: " << db.get_column_integer("inventory", "stock_qty", "item_id = " + std::to_string(item->get_id()) + " AND seller_id = " + std::to_string(seller_id)) << std::endl;
-        // If stock qty goes to 0, delete this item from inventory (row) - bad idea because once an item is listed by a seller then the listing is permanent unless the seller's account is deleted
+        // If stock qty goes to 0, delete this item from inventory (row) - bad idea because once an item is listed by a seller then the listing is permanent unless the seller's account is deleted or the manufacture of the item has discontinued
         //stock_qty = db.get_column_integer("inventory", "stock_qty", "item_id = " + std::to_string(item->get_id()) + " AND seller_id = " + std::to_string(seller_id));
         //if(stock_qty <= 0) db.drop("inventory", "stock_qty = " + std::to_string(0));
     }
@@ -186,6 +193,7 @@ order_status Order::get_status() const {return status;}
 ////////////////////
 std::string Order::get_status_string() const {
     switch(status) {
+        case order_status::incomplete: return "Incomplete";break; // order was interrupted while using was in the process of creating an order
         case order_status::pending   : return "Pending"  ; break;
         case order_status::preparing : return "Preparing"; break;
         case order_status::shipped   : return "Shipped"  ; break;

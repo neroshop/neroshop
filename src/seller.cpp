@@ -1,28 +1,27 @@
 #include "../include/seller.hpp"
 
-Seller::Seller() : wallet(nullptr) 
+neroshop::Seller::Seller() : wallet(nullptr) 
 {}
 ////////////////////
 ////////////////////
-Seller::Seller(const std::string& name) : Seller() {
+neroshop::Seller::Seller(const std::string& name) : Seller() {
     set_name(name);
 }
 ////////////////////
 ////////////////////
-////////////////////
-// destructor
-////////////////////
-Seller::~Seller() {}
-////////////////////
+neroshop::Seller::~Seller() {
+    customer_order_list.clear();
+}
 ////////////////////
 ////////////////////
 ////////////////////
 ////////////////////
 ////////////////////
-void Seller::list_item(unsigned int item_id, unsigned int stock_qty, double sales_price, std::string currency)
+////////////////////
+void neroshop::Seller::list_item(unsigned int item_id, unsigned int stock_qty, double sales_price, std::string currency)
 {}
 ////////////////////
-void Seller::list_item(const Item& item, unsigned int stock_qty, double sales_price, std::string currency, 
+void neroshop::Seller::list_item(const Item& item, unsigned int stock_qty, double sales_price, std::string currency, 
     double discount, unsigned int discounted_items, std::string condition) { // ex. 5% off 10 balls
     // seller must be logged in
     if(!is_logged()) {neroshop::print("You must be logged in to list an item", 2); return;}
@@ -72,16 +71,48 @@ void Seller::list_item(const Item& item, unsigned int stock_qty, double sales_pr
 // static_cast<Seller *>(user)->list_item(ball, 50, 8.50, "usd", 0.50, 2, "new"); // $0.50 cents off every 2 balls
 ////////////////////
 ////////////////////
-void Seller::check_for_customer_orders() {
-
-
+void neroshop::Seller::load_customer_orders() {
+    DB db("neroshop.db");
+    ///////////
+    if(!db.table_exists("order_item")) return; // seller has probably never received an order from a customer before
+    // check for orders made by customers
+    // get last inserted order item
+    int last_order_item = db.get_column_integer("order_item ORDER BY id DESC LIMIT 1", "*");
+    // get all order_items
+    int customer_order_item_count = db.get_column_integer("order_item", "COUNT(*)", "seller_id = " + std::to_string(get_id()));
+    //std::cout << "number of items that customers have ordered from you: " << customer_order_item_count << std::endl;
+    if(customer_order_item_count < 1) neroshop::print("No buyer has ordered an item from you yet");
+    if(customer_order_item_count > 0) {
+        for(unsigned int i = 1; i <= last_order_item; i++) {
+            //if order_item's order_id is duplicated, then it means there are multiple unique items in the order
+            unsigned int order_item_id = db.get_column_integer("order_item", "id", "id = " + std::to_string(i) + " AND seller_id = " + std::to_string(get_id()));
+            if(order_item_id == 0) continue; // skip 0's
+            // get order_id of the order_item
+            unsigned int order_id = db.get_column_integer("order_item", "order_id", "id = " + std::to_string(i) + " AND seller_id = " + std::to_string(get_id()));//if(order_id == 0) continue; // skip 0's
+            // store order_ids if not already stored
+            if(std::find(customer_order_list.begin(), customer_order_list.end(), order_id) == customer_order_list.end()) {
+                customer_order_list.push_back(order_id); //Order * order = new Order(order_id);//customer_order_list.push_back(order);
+                neroshop::print("Customer order (id: " + std::to_string(order_id) + ") has been loaded");
+            }
+            // get items in the order_item table
+            /*unsigned int item_id = db.get_column_integer("order_item", "item_id", "id = " + std::to_string(i) + " AND seller_id = " + std::to_string(get_id()));
+            unsigned int item_qty = db.get_column_integer("order_item", "item_qty", "id = " + std::to_string(i) + " AND seller_id = " + std::to_string(get_id()));
+            Item item(item_id); // item obj will die at the end of this scope
+            std::cout << "You've received an order (id: " << order_id << ") from a customer " 
+            << "containing items: " << item.get_name() << " (id: " << item_id << ", qty: " << item_qty << ")" << std::endl;*/
+        }
+    }
+    ///////////
+    db.close();
 }
 ////////////////////
 ////////////////////
 ////////////////////
 ////////////////////
 ////////////////////
-void Seller::set_stock_quantity(unsigned int item_id, unsigned int stock_qty) {
+////////////////////
+////////////////////
+void neroshop::Seller::set_stock_quantity(unsigned int item_id, unsigned int stock_qty) {
     // seller must be logged in
     if(!is_logged()) {NEROSHOP_TAG std::cout << "\033[0;91m" << "You must be logged in to list an item" << "\033[0m" << std::endl; return;}
     // a seller can create an item and then register it to the database
@@ -94,7 +125,7 @@ void Seller::set_stock_quantity(unsigned int item_id, unsigned int stock_qty) {
 	db.close();
 }
 ////////////////////
-void Seller::set_stock_quantity(const Item& item, unsigned int stock_qty) {
+void neroshop::Seller::set_stock_quantity(const Item& item, unsigned int stock_qty) {
     // seller must be logged in
     if(!is_logged()) {NEROSHOP_TAG std::cout << "\033[0;91m" << "You must be logged in to list an item" << "\033[0m" << std::endl; return;}
     // a seller can create an item and then register it to the database
@@ -112,7 +143,7 @@ void Seller::set_stock_quantity(const Item& item, unsigned int stock_qty) {
 ////////////////////
 ////////////////////
 ////////////////////
-void Seller::set_wallet(const Wallet& wallet) {
+void neroshop::Seller::set_wallet(const Wallet& wallet) {
     this->wallet = &const_cast<Wallet&>(wallet);// be sure to delete old wallet first (as seller cannot use two wallets at a time)
 }
 ////////////////////
@@ -126,7 +157,7 @@ void Seller::set_wallet(const Wallet& wallet) {
 ////////////////////
 ////////////////////
 ////////////////////
-unsigned int Seller::get_good_ratings() const {
+unsigned int neroshop::Seller::get_good_ratings() const {
     DB db("neroshop.db");
     if(db.table_exists("seller_ratings")) {
         unsigned int good_ratings_count = db.get_column_integer("seller_ratings", "COUNT(score)", "seller_id = " + std::to_string(get_id()) + " AND score = " + std::to_string(1));
@@ -135,7 +166,7 @@ unsigned int Seller::get_good_ratings() const {
     db.close();
     return 0;
 }
-unsigned int Seller::get_bad_ratings() const {
+unsigned int neroshop::Seller::get_bad_ratings() const {
     DB db("neroshop.db");
     if(db.table_exists("seller_ratings")) {
         unsigned int bad_ratings_count = db.get_column_integer("seller_ratings", "COUNT(score)", "seller_id = " + std::to_string(get_id()) + " AND score = " + std::to_string(0));
@@ -145,7 +176,7 @@ unsigned int Seller::get_bad_ratings() const {
     return 0;    
 }
 ////////////////////
-unsigned int Seller::get_ratings_count() const {
+unsigned int neroshop::Seller::get_ratings_count() const {
     DB db("neroshop.db");
     if(db.table_exists("seller_ratings")) {
         unsigned int ratings_count = db.get_column_integer("seller_ratings", "COUNT(*)", "seller_id = " + std::to_string(get_id()));
@@ -155,11 +186,11 @@ unsigned int Seller::get_ratings_count() const {
     return 0;
 }
 ////////////////////
-unsigned int Seller::get_total_ratings() const {
+unsigned int neroshop::Seller::get_total_ratings() const {
     return get_ratings_count();
 }
 ////////////////////
-unsigned int Seller::get_reputation() const {
+unsigned int neroshop::Seller::get_reputation() const {
     DB db("neroshop.db");
     if(db.table_exists("seller_ratings")) {
         unsigned int ratings_count = db.get_column_integer("seller_ratings", "COUNT(*)", "seller_id = " + std::to_string(get_id()));
@@ -178,16 +209,48 @@ unsigned int Seller::get_reputation() const {
 ////////////////////
 ////////////////////
 ////////////////////
-Wallet * Seller::get_wallet() const {
+Wallet * neroshop::Seller::get_wallet() const {
     return wallet;
+}
+////////////////////
+////////////////////
+std::vector<int> neroshop::Seller::get_pending_customer_orders() {
+    std::vector<int> pending_order_list;
+    DB db("neroshop.db");
+    ///////////
+    for(int i = 0; i < customer_order_list.size(); i++) {
+         int pending_orders = db.get_column_integer("orders", "id", "id = " + std::to_string(customer_order_list[i]) + " AND status = " + DB::to_sql_string("Pending"));
+         if(pending_orders != 0) {
+             pending_order_list.push_back(customer_order_list[i]);
+             std::cout << "Pending orders: order#" << pending_orders << std::endl;
+         }  
+    }
+    ///////////
+    db.close();    
+    return pending_order_list;
+}
+////////////////////
+unsigned int neroshop::Seller::get_sold_items_count() const {
+    DB db("neroshop.db");
+    int sold_items_count = db.get_column_integer("order_item", "COUNT(*)", "seller_id = " + std::to_string(get_id()));
+    db.close();
+    return sold_items_count;
+}
+////////////////////
+unsigned int neroshop::Seller::get_customer_order(unsigned int index) const {
+    if(index > (customer_order_list.size()-1)) throw std::runtime_error("(neroshop::Seller::get_customer_order): attempt to access invalid index");
+    return customer_order_list[index];
+}
+////////////////////
+unsigned int neroshop::Seller::get_customer_order_count() const {
+    return customer_order_list.size();
 }
 ////////////////////
 ////////////////////
 ////////////////////
 ////////////////////
 ////////////////////
-////////////////////
-bool Seller::has_listed(unsigned int item_id) const {
+bool neroshop::Seller::has_listed(unsigned int item_id) const {
     if(item_id <= 0) {NEROSHOP_TAG std::cout << "\033[0;91m" << "invalid Item id" << "\033[0m" << std::endl; return false;}
     DB db("neroshop.db");
 	//db.execute("PRAGMA journal_mode = WAL;"); // this may reduce the incidence of SQLITE_BUSY errors (such as database being locked)
@@ -201,7 +264,7 @@ bool Seller::has_listed(unsigned int item_id) const {
 ////////////////////
 ////////////////////
 ////////////////////
-User * Seller::on_login(const std::string& username) { // assumes user data already exists in database
+User * neroshop::Seller::on_login(const std::string& username) { // assumes user data already exists in database
     // get user_data from db and set them
     DB db("neroshop.db");
     User * user = new Seller(username);
@@ -214,6 +277,8 @@ User * Seller::on_login(const std::string& username) { // assumes user data alre
     ///////////
     // load orders
     dynamic_cast<Seller *>(user)->load_orders();
+    // load customer_orders
+    static_cast<Seller *>(user)->load_customer_orders();
     // load wishlists
     // ...
     ///////////
@@ -221,7 +286,7 @@ User * Seller::on_login(const std::string& username) { // assumes user data alre
     return user;          
 }
 ////////////////////
-void Seller::on_order_received() {
+void neroshop::Seller::on_order_received() {
     if(wallet == nullptr) throw std::runtime_error("wallet has not been initialized");
     if(!wallet->get_monero_wallet()) throw std::runtime_error("monero_wallet_full is not opened");
     // if wallet is not properly synced with the daemon, you can only generate used addresses
@@ -231,7 +296,7 @@ void Seller::on_order_received() {
     for(int i = 0; i < 10; i++) wallet->address_new();
     // get a list of all unused subaddresses
     std::vector<std::string> unused_subaddresses = wallet->address_unused();
-    // now pick from a list of unused subaddresses (random)
+    // now pick from the list of unused subaddresses (random)
 	std::random_device rd; // Generating random numbers with C++11's random requires an engine and a distribution.
     std::mt19937 mt(rd()); // This is an engine based on the Mersenne Twister 19937 (64 bits):
     std::uniform_real_distribution<double> dist(0, unused_subaddresses.size() - 1);

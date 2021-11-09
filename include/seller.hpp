@@ -11,6 +11,7 @@
 #include "item.hpp"//#include "inventory.hpp" // item.hpp included here//#include "registry.hpp"//deprecated
 #include "converter.hpp"
 
+namespace neroshop {
 class Seller : public User { // sellers have unlimited access to the inventory
 public:
 	Seller();
@@ -19,7 +20,6 @@ public:
 	void list_item(unsigned int item_id, unsigned int stock_qty, double sales_price = 0.00, std::string currency = "usd");
 	void list_item(const Item& item, unsigned int stock_qty, double sales_price = 0.00, std::string currency = "usd", double discount = 0.00, unsigned int discounted_items = 0, std::string condition = "new"); // adds an item to the inventory
 	             // images, price, search_terms
-	void check_for_customer_orders();              
 	// setters	
 	void set_stock_quantity(const Item& item, unsigned int stock_qty);
 	void set_stock_quantity(unsigned int item_id, unsigned int stock_qty);
@@ -32,21 +32,25 @@ public:
 	unsigned int get_ratings_count() const;
 	unsigned int get_total_ratings() const;
 	unsigned int get_reputation() const; // represents a percentage (of good ratings)
-	// get_() const;
 	Wallet * get_wallet() const;
-	//neroshop::Inventory * get_inventory() const;
+    unsigned int get_customer_order(unsigned int index) const;
+    unsigned int get_customer_order_count() const;
+    std::vector<int> get_pending_customer_orders();
+    unsigned int get_sold_items_count() const;
 	// boolean
 	bool is_verified() const; // returns true if seller is verified brand owner
 	bool has_listed(unsigned int item_id) const; // returns true if this seller has listed an item
 	// callbacks
 	static User * on_login(const std::string& username);
 	void on_order_received();
+protected:
+    void load_customer_orders();	
 private:
-    Wallet * wallet;
-    //neroshop::Inventory * inventory; // seller will act as the inventory instead
 	std::string username;
+	Wallet * wallet;
+	std::vector<int> customer_order_list;
 };
-
+}
 #endif
 /*
 combining different promotions/coupons:
