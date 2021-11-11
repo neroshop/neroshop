@@ -55,8 +55,8 @@
 #include "menubar.hpp"
 #include "grid.hpp"
 // network.
-#include "server.hpp"
-#include "client.hpp"
+//#include "server.hpp"
+//#include "client.hpp"
 // utilities - the most essential part of the engine
 // entity and component
 #include "entity.hpp"

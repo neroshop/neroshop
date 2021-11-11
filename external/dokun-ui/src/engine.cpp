@@ -168,6 +168,7 @@ void Engine::on_close()
 }
 ////////////
 ////////////
+/*
 void pause_thread(int n) 
 {
   std::this_thread::sleep_for (std::chrono::seconds(n));
@@ -210,7 +211,7 @@ void server()
 	{
 		std::cout << server->read() << std::endl; 
 	}
-}
+}*/
 //////////// 
 ////////////
 int Engine::test(lua_State *L)

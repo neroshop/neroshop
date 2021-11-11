@@ -3,15 +3,17 @@
 - fix GUI focus thingy
 - figure out how to turn qrcode data into png and jpeg
 - host database on decentralized file hosting networking like sia, filecoin/ipfs, etc.
-- create a server daemon (neroshopd) that communicates with the main client app and does the heavy handling
-- put all classes under "neroshop" namespace
+- create a server daemon (neroshopd) that communicates with the main client app and does the heavy handling [x]
+- put all classes under "neroshop" namespace [x]
 - tor integration
+- change network type to mainnet
 
 [LOW PRIORITY]
 - create neroshop domain name (.org preffered)             []
 - create neroshop onion address                            []
 - neroshop matrix server                                   []
 - neroshop subreddit                                       [x]
+- neroshop github                                          [x]
 
 [HIRING]
 - hire graphics programmer to fix and optimize rendering code in "renderer.cpp"

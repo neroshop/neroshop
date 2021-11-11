@@ -350,26 +350,33 @@ set(dokun_ui_src ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/src/libdokun-ui.a
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include) # includes (.hpp)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/dependencies) # dependencies (dokun, etc.)
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/src) # sources (.cpp, .a)
-set(neroshop_src src/main.cpp src/wallet.cpp src/db.cpp src/validator.cpp src/icon.cpp src/converter.cpp src/qr.cpp src/user.cpp src/buyer.cpp src/seller.cpp src/item.cpp src/cart.cpp src/order.cpp src/message.cpp  )
+set(neroshop_src src/main.cpp src/wallet.cpp src/db.cpp src/validator.cpp src/icon.cpp src/converter.cpp src/qr.cpp src/user.cpp src/buyer.cpp src/seller.cpp src/item.cpp src/cart.cpp src/order.cpp src/message.cpp src/client.cpp )
 add_definitions(-DNEROSHOP_DEBUG) # for more detailed debugging, use -DNEROSHOP_DEBUG0
 add_executable(neroshop ${neroshop_src} ${monero_cpp_src} ${bcrypt_src} ${sqlite_src} ${qr_code_generator_src})
-#add_executable(neroshopd src/daemon.cpp) # server-daemon
 target_link_libraries(neroshop ${monero_src})
 target_link_libraries(neroshop ${dokun_ui_src})
+# daemon
+add_executable(daemon src/daemon.cpp src/server.cpp) # server-daemon
+target_link_libraries(daemon ${dokun_ui_src})
+set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -ldl") # fixes undefined reference to symbol 'dlsym@@GLIBC_2.2.5' error
 if(LINUX) 
     target_link_libraries(neroshop ${posix_src})
+    target_link_libraries(daemon ${posix_src})
     find_package(X11 REQUIRED)
     if(X11_FOUND)
 	    target_link_libraries(neroshop ${x11_src})
+	    target_link_libraries(daemon ${x11_src})
     endif()
 endif()
 find_package(OpenGL REQUIRED)
 if(OPENGL_FOUND)
 	target_link_libraries(neroshop ${opengl_src})
+	target_link_libraries(daemon ${opengl_src})
 endif()
 find_package(CURL) # works
 if(CURL_FOUND)
 	target_link_libraries(neroshop ${curl_src}) # sudo apt install libcurl-dev => then choose one of the options # found in: /usr/local/lib  and  /usr/lib/x86_64-linux-gnu
+    target_link_libraries(daemon ${curl_src})
 endif()
 # cmake -G"Unix Makefiles"
 # to set the current compiler manually, use the following commands:

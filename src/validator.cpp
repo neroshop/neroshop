@@ -4,7 +4,7 @@
 ////////////////////
 ////////////////////
 ////////////////////
-bool Validator::register_user(const std::string& username, const std::string& password, const std::string& confirm_pw, std::string opt_email) // user would have to confirm their pw twice to make sure they match :O - I totally forgot!
+bool neroshop::Validator::register_user(const std::string& username, const std::string& password, const std::string& confirm_pw, std::string opt_email) // user would have to confirm their pw twice to make sure they match :O - I totally forgot!
 {
     // username (will appear only in lower-case letters within the app)
     if(!validate_username(username)) {return false;}
@@ -29,12 +29,12 @@ bool Validator::register_user(const std::string& username, const std::string& pa
     save_user(username, pw_hash, email_hash);//{return;}
 #ifdef NEROSHOP_DEBUG
     NEROSHOP_TAG std::cout << get_date() << "\033[1;32;49m" << " account registered" << "\033[0m" << std::endl;
-    NEROSHOP_TAG std::cout << "\033[1;34;49m" << ((!username.empty()) ? std::string("Welcome to neroshop, " + username) : "Welcome to neroshop") << "\033[0m" << std::endl;
-#endif
+#endif    
+    neroshop::print((!username.empty()) ? std::string("Welcome to neroshop, " + username) : "Welcome to neroshop", 4);
     return true;
 } //ELI5: https://auth0.com/blog/adding-salt-to-hashing-a-better-way-to-store-passwords/  why bcrypt: https://security.stackexchange.com/questions/4781/do-any-security-experts-recommend-bcrypt-for-password-storage/6415#6415
 ////////////////////
-void Validator::save_user(const std::string& username, const char pw_hash[BCRYPT_HASHSIZE], std::string email_hash) 
+void neroshop::Validator::save_user(const std::string& username, const char pw_hash[BCRYPT_HASHSIZE], std::string email_hash) 
 {
     // sqlite - save a copy of user's account details locally (on user's device)
     DB db("neroshop.db");
@@ -62,7 +62,7 @@ void Validator::save_user(const std::string& username, const char pw_hash[BCRYPT
     db.close(); // don't forget to close the db after you're done :)
 }
 ////////////////////
-bool Validator::login(const std::string& username, const std::string& password)
+bool neroshop::Validator::login(const std::string& username, const std::string& password)
 {
 	// sqlite - figure out how to retrieve the user's name and pw_hash from the db
     DB db("neroshop.db");
@@ -79,12 +79,12 @@ bool Validator::login(const std::string& username, const std::string& password)
 	}
 #ifdef NEROSHOP_DEBUG
     NEROSHOP_TAG std::cout << get_date() << "\033[1;32;49m" << " successfully logged in" << "\033[0m" << std::endl;
-    NEROSHOP_TAG std::cout << "\033[1;34;49m" << ((!username.empty()) ? std::string("Welcome back, " + username) : "Welcome back") << "\033[0m" << std::endl;
 #endif
+    neroshop::print((!username.empty()) ? std::string("Welcome back, " + username) : "Welcome back", 4);
 	return true; // default value
 }
 ////////////////////
-bool Validator::login_with_email(const std::string& email, const std::string& password) { // works! but won't be used since most users won't opt-in to use an email
+bool neroshop::Validator::login_with_email(const std::string& email, const std::string& password) { // works! but won't be used since most users won't opt-in to use an email
     DB db("neroshop.db");
 	if(!db.table_exists("users")) {NEROSHOP_TAG std::cout << "\033[0;33;49m" << "This account is not registered" << "\033[0m" << std::endl; return false;}
 	// get email_hash (from email)
@@ -107,15 +107,15 @@ bool Validator::login_with_email(const std::string& email, const std::string& pa
 	}
 #ifdef NEROSHOP_DEBUG
     NEROSHOP_TAG std::cout << get_date() << "\033[1;32;49m" << " successfully logged in" << "\033[0m" << std::endl;
-    NEROSHOP_TAG std::cout << "\033[1;34;49m" << ((!username.empty()) ? std::string("Welcome back, " + username) : "Welcome back") << "\033[0m" << std::endl;
 #endif
+    neroshop::print((!username.empty()) ? std::string("Welcome back, " + username) : "Welcome back", 4);
 	return true; // default value
 }
 ////////////////////
-void Validator::change_pw(const std::string& old_pw, const std::string& new_pw/*, const std::string& confirm_new_pw*/) 
+void neroshop::Validator::change_pw(const std::string& old_pw, const std::string& new_pw/*, const std::string& confirm_new_pw*/) 
 {}
 ////////////////////
-std::string Validator::get_date(std::string format) // get current time and date
+std::string neroshop::Validator::get_date(std::string format) // get current time and date
 {
 	auto now = std::chrono::system_clock::now();
     auto in_time_t = std::chrono::system_clock::to_time_t(now);
@@ -124,7 +124,7 @@ std::string Validator::get_date(std::string format) // get current time and date
 	return ss.str();
 }
 ////////////////////
-bool Validator::validate_username(const std::string& username) 
+bool neroshop::Validator::validate_username(const std::string& username) 
 {
     // username (will appear only in lower-case letters within the app)
     // make sure username is at least 2 characters short (min_user_length=2)
@@ -196,7 +196,7 @@ bool Validator::validate_username(const std::string& username)
     return true; // default return value
 }
 ////////////////////
-bool Validator::validate_password(const std::string& password) 
+bool neroshop::Validator::validate_password(const std::string& password) 
 {
     //Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character:
     const std::regex pattern("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"); // source: https://stackoverflow.com/questions/19605150/regex-for-password-must-contain-at-least-eight-characters-at-least-one-number-a
@@ -224,20 +224,17 @@ bool Validator::validate_password(const std::string& password)
     return true; // default return value
 }
 ////////////////////
-bool Validator::validate_email(const std::string& email) { // not done
+bool neroshop::Validator::validate_email(const std::string& email) {
     // make sure email is a valid email
-    // must contain an "@" in between
-    // must end with a (.com, .org, etc.)
     const std::regex pattern("(\\w+)(\\.|_)?(\\w*)@(\\w+)(\\.(\\w+))+");
     if(!std::regex_match(email, pattern)) {
         neroshop::print("Email address is not valid", 1);
         return false;
     }
-    //neroshop::print("Email is valid", 3);
     return true;
 }
 ////////////////////
-bool Validator::validate_bcrypt_hash(const std::string& password, const std::string& hash)
+bool neroshop::Validator::validate_bcrypt_hash(const std::string& password, const std::string& hash)
 {   // verify password
     int result = bcrypt_checkpw(password.c_str(), hash.c_str());
 #ifdef NEROSHOP_DEBUG
@@ -246,7 +243,7 @@ bool Validator::validate_bcrypt_hash(const std::string& password, const std::str
     return (result == 0);
 }
 ////////////////////
-bool Validator::generate_bcrypt_salt(unsigned int workfactor, char salt[BCRYPT_HASHSIZE])
+bool neroshop::Validator::generate_bcrypt_salt(unsigned int workfactor, char salt[BCRYPT_HASHSIZE])
 {   // generate a salt (random)
     int result = bcrypt_gensalt(workfactor, salt); // workfactor must be between 4 and 31 - default is 12
 #ifdef NEROSHOP_DEBUG
@@ -256,7 +253,7 @@ bool Validator::generate_bcrypt_salt(unsigned int workfactor, char salt[BCRYPT_H
     return (result == 0);
 }
 ////////////////////
-bool Validator::generate_bcrypt_hash(const std::string& password, const char salt[BCRYPT_HASHSIZE], char hash[BCRYPT_HASHSIZE])
+bool neroshop::Validator::generate_bcrypt_hash(const std::string& password, const char salt[BCRYPT_HASHSIZE], char hash[BCRYPT_HASHSIZE])
 {   // generate hash (from password and salt combination)
     int result = bcrypt_hashpw(password.c_str(), salt, hash);
 #ifdef NEROSHOP_DEBUG
@@ -265,13 +262,13 @@ bool Validator::generate_bcrypt_hash(const std::string& password, const char sal
     return (result == 0);
 }
 ////////////////////
-bool Validator::validate_sha256_hash(const std::string& email, const std::string& hash) { // raw/unsalted hash
+bool neroshop::Validator::validate_sha256_hash(const std::string& email, const std::string& hash) { // raw/unsalted hash
     std::string temp_hash;
     generate_sha256_hash_evp(email, temp_hash);
     return (temp_hash == hash);
 }
 ////////////////////
-bool Validator::generate_sha256_hash_legacy(const std::string& email, std::string& hashed) {
+bool neroshop::Validator::generate_sha256_hash_legacy(const std::string& email, std::string& hashed) {
     // low-level interface (old)
     unsigned char hash[SHA256_DIGEST_LENGTH];
     SHA256_CTX sha256;
@@ -289,7 +286,7 @@ bool Validator::generate_sha256_hash_legacy(const std::string& email, std::strin
     return true;
 }
 ////////////////////
-bool Validator::generate_sha256_hash_evp(const std::string& email, std::string& hashed) {
+bool neroshop::Validator::generate_sha256_hash_evp(const std::string& email, std::string& hashed) {
     // EVP (recommended)
     bool success = false;
     EVP_MD_CTX* context = EVP_MD_CTX_new();

@@ -1,28 +1,28 @@
 #include "../include/item.hpp"
 
 ////////////////////
-Item::Item() : id(0)//, quantity(0), price(0.00), weight(1.0), size(std::make_tuple<double, double, double>(0.0, 0.0, 0.0)), discount(0.0), category("unspecified")/* or none */, condition("new") {}// name and desc and empty strings by default
+neroshop::Item::Item() : id(0)//, quantity(0), price(0.00), weight(1.0), size(std::make_tuple<double, double, double>(0.0, 0.0, 0.0)), discount(0.0), category("unspecified")/* or none */, condition("new") {}// name and desc and empty strings by default
 {}
 ////////////////////
-Item::Item(unsigned int id) {//: Item() { // for registered items that already have an id
+neroshop::Item::Item(unsigned int id) {//: Item() { // for registered items that already have an id
     set_id(id);
 }
 ////////////////////
-Item::Item(const std::string& name, const std::string& desc, double price, double weight, double length, double width, double height, const std::string& condition, const std::string& product_code) : Item() // quantity is set by cart
+neroshop::Item::Item(const std::string& name, const std::string& desc, double price, double weight, double length, double width, double height, const std::string& condition, const std::string& product_code) : Item() // quantity is set by cart
 {
     register_item(name, desc, price, weight, length, width, height, condition, product_code);
 }
 ////////////////////
-Item::Item(const std::string& name, const std::string& desc, double price, double weight, const std::tuple<double, double, double>& size, const std::string& condition, const std::string& product_code) : Item() // quantity is set by cart
+neroshop::Item::Item(const std::string& name, const std::string& desc, double price, double weight, const std::tuple<double, double, double>& size, const std::string& condition, const std::string& product_code) : Item() // quantity is set by cart
 {
     register_item(name, desc, price, weight, std::get<0>(size), std::get<1>(size), std::get<2>(size), condition, product_code);  
 }        
 ////////////////////
 ////////////////////
 ////////////////////
-Item::~Item() {}
+neroshop::Item::~Item() {}
 ////////////////////
-void Item::register_item(const std::string& name, const std::string& description, double price, double weight, double length, double width, double height, const std::string& condition, const std::string& product_code) {
+void neroshop::Item::register_item(const std::string& name, const std::string& description, double price, double weight, double length, double width, double height, const std::string& condition, const std::string& product_code) {
     DB db("neroshop.db");
     //db.execute("PRAGMA journal_mode = WAL;"); // this may reduce the incidence of SQLITE_BUSY errors (such as database being locked) // https://www.sqlite.org/pragma.html#pragma_journal_mode
     ///////////
@@ -59,7 +59,7 @@ void Item::register_item(const std::string& name, const std::string& description
     db.close();        
 }
 ////////////////////
-void Item::register_item(const Item& item) { 
+void neroshop::Item::register_item(const neroshop::Item& item) { 
     // if item is already registered, then exit function
     /*if(item.is_registered()) {std::cout << "\033[0;93m" << "Item " << item.name << " has already been registered" << "\033[0m" << std::endl;return;}
     DB db("neroshop.db");
@@ -68,7 +68,7 @@ void Item::register_item(const Item& item) {
     int reg_item = db.get_column_integer("item", "id", "product_code = " + DB::to_sql_string(item.product_code));
     if(reg_item != 0) {
         neroshop::print("Item with the same product code is registered", 1);
-        const_cast<Item&>(item).set_id(reg_item);
+        const_cast<neroshop::Item&>(item).set_id(reg_item);
         NEROSHOP_TAG std::cout << "item id set to: " << reg_item << std::endl;
         return; // exit function
     }*/
@@ -332,9 +332,9 @@ void Item::register_item(const Item& item) {
 	);
 	// save the item id
 	unsigned int item_id = db.get_column_integer("item ORDER BY id DESC LIMIT 1", "*");
-	const_cast<Item&>(item).set_id(item_id);
+	const_cast<neroshop::Item&>(item).set_id(item_id);
     ///////////
-    //const_cast<Item&>(item).show_info();
+    //const_cast<neroshop::Item&>(item).show_info();
     NEROSHOP_TAG std::cout << "\033[1;36m" << item.name << " (id: " << item.id << ") has been registered" << "\033[0m" << std::endl;
     ///////////
     db.close();*/
@@ -343,11 +343,11 @@ void Item::register_item(const Item& item) {
 ////////////////////
 ////////////////////
 ////////////////////
-void Item::set_id(unsigned int id) {
+void neroshop::Item::set_id(unsigned int id) {
     this->id = id;
 }
 ////////////////////
-void Item::set_quantity(unsigned int quantity) {
+void neroshop::Item::set_quantity(unsigned int quantity) {
     std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cart.db";
     DB db(cart_file);
     if(!db.table_exists("Cart")) {db.close(); return;}
@@ -355,7 +355,7 @@ void Item::set_quantity(unsigned int quantity) {
     db.close();
 }
 ////////////////////
-void Item::set_quantity(unsigned int item_id, unsigned int quantity) {
+void neroshop::Item::set_quantity(unsigned int item_id, unsigned int quantity) {
     std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cart.db";
     DB db(cart_file);
     if(!db.table_exists("Cart")) {db.close(); return;}
@@ -363,42 +363,42 @@ void Item::set_quantity(unsigned int item_id, unsigned int quantity) {
     db.close();
 }
 ////////////////////
-void Item::set_name(const std::string& name) {
+void neroshop::Item::set_name(const std::string& name) {
     DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return;}
     db.update("item", "name", DB::to_sql_string(name), "id = " + std::to_string(this->id));
     db.close();
 }
 ////////////////////
-void Item::set_name(unsigned int item_id, const std::string& name) {
+void neroshop::Item::set_name(unsigned int item_id, const std::string& name) {
     DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return;}
     db.update("item", "name", DB::to_sql_string(name), "id = " + std::to_string(item_id));
     db.close();
 }
 ////////////////////
-void Item::set_description(const std::string& description) {
+void neroshop::Item::set_description(const std::string& description) {
     DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return;}
     db.update("item", "description", DB::to_sql_string(description), "id = " + std::to_string(this->id));
     db.close();
 }
 ////////////////////
-void Item::set_description(unsigned int item_id, const std::string& description) {
+void neroshop::Item::set_description(unsigned int item_id, const std::string& description) {
     DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return;}
     db.update("item", "description", DB::to_sql_string(description), "id = " + std::to_string(item_id));
     db.close();
 }
 ////////////////////
-void Item::set_price(double price) {
+void neroshop::Item::set_price(double price) {
     DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return;}
     db.update("item", "price", std::to_string(price), "id = " + std::to_string(this->id));
     db.close();
 }
 ////////////////////
-void Item::set_price(unsigned int item_id, double price) {
+void neroshop::Item::set_price(unsigned int item_id, double price) {
     DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return;}
     db.update("item", "price", std::to_string(price), "id = " + std::to_string(item_id));
@@ -406,21 +406,21 @@ void Item::set_price(unsigned int item_id, double price) {
 }
 ////////////////////
 ////////////////////
-void Item::set_weight(double weight) {
+void neroshop::Item::set_weight(double weight) {
     DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return;}
     db.update("item", "weight", std::to_string(weight), "id = " + std::to_string(this->id));
     db.close();
 }
 ////////////////////
-void Item::set_weight(unsigned int item_id, double weight) {
+void neroshop::Item::set_weight(unsigned int item_id, double weight) {
     DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return;}
     db.update("item", "weight", std::to_string(weight), "id = " + std::to_string(item_id));
     db.close();
 }
 ////////////////////
-void Item::set_size(double l, double w, double h) {
+void neroshop::Item::set_size(double l, double w, double h) {
     DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return;}
     std::string size = std::to_string(l) + "x" + std::to_string(w) + "x" + std::to_string(h);
@@ -429,7 +429,7 @@ void Item::set_size(double l, double w, double h) {
     db.close();
 }
 ////////////////////
-void Item::set_size(unsigned int item_id, double l, double w, double h) {
+void neroshop::Item::set_size(unsigned int item_id, double l, double w, double h) {
     DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return;}
     std::string size = std::to_string(l) + "x" + std::to_string(w) + "x" + std::to_string(h);
@@ -439,7 +439,7 @@ void Item::set_size(unsigned int item_id, double l, double w, double h) {
 }
 ////////////////////
 ////////////////////
-void Item::set_size(const std::tuple<double, double, double>& size) {
+void neroshop::Item::set_size(const std::tuple<double, double, double>& size) {
     DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return;}
     std::string item_size = std::to_string(std::get<0>(size)) + "x" + std::to_string(std::get<1>(size)) + "x" + std::to_string(std::get<2>(size));
@@ -448,7 +448,7 @@ void Item::set_size(const std::tuple<double, double, double>& size) {
     db.close();
 }
 ////////////////////
-void Item::set_size(unsigned int item_id, const std::tuple<double, double, double>& size) {
+void neroshop::Item::set_size(unsigned int item_id, const std::tuple<double, double, double>& size) {
     DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return;}
     std::string item_size = std::to_string(std::get<0>(size)) + "x" + std::to_string(std::get<1>(size)) + "x" + std::to_string(std::get<2>(size));
@@ -457,21 +457,21 @@ void Item::set_size(unsigned int item_id, const std::tuple<double, double, doubl
     db.close();
 }
 ////////////////////
-void Item::set_discount(double discount) {
+void neroshop::Item::set_discount(double discount) {
     DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return;}
     db.update("item", "discount", std::to_string(discount), "id = " + std::to_string(this->id));
     db.close();
 }
 ////////////////////
-void Item::set_discount(unsigned int item_id, double discount) {
+void neroshop::Item::set_discount(unsigned int item_id, double discount) {
     DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return;}
     db.update("item", "discount", std::to_string(discount), "id = " + std::to_string(item_id));
     db.close();
 }
 ////////////////////
-void Item::set_discount_by_percentage(double percent) { // converts a percentage to a price then sets the price as the discount
+void neroshop::Item::set_discount_by_percentage(double percent) { // converts a percentage to a price then sets the price as the discount
     // convert discount (a percentage) into a decimal
     double num2dec = percent / 100; //std::cout << percent << "% is " << num2dec << std::endl;
     double original_price = get_price();
@@ -487,7 +487,7 @@ void Item::set_discount_by_percentage(double percent) { // converts a percentage
     db.close();    
 }
 ////////////////////
-void Item::set_discount_by_percentage(unsigned int item_id, double percent) {
+void neroshop::Item::set_discount_by_percentage(unsigned int item_id, double percent) {
     // convert discount (a percentage) into a decimal
     double num2dec = percent / 100; //std::cout << percent << "% is " << num2dec << std::endl;
     double original_price = get_price(item_id);
@@ -503,28 +503,28 @@ void Item::set_discount_by_percentage(unsigned int item_id, double percent) {
     db.close();
 }
 ////////////////////
-void Item::set_condition(const std::string& condition) {
+void neroshop::Item::set_condition(const std::string& condition) {
     DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return;}
     db.update("item", "condition", DB::to_sql_string(condition), "id = " + std::to_string(this->id));
     db.close();
 }
 ////////////////////
-void Item::set_condition(unsigned int item_id, const std::string& condition) {
+void neroshop::Item::set_condition(unsigned int item_id, const std::string& condition) {
     DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return;}
     db.update("item", "condition", DB::to_sql_string(condition), "id = " + std::to_string(item_id));
     db.close();
 }
 ////////////////////
-void Item::set_product_code(const std::string& product_code) {
+void neroshop::Item::set_product_code(const std::string& product_code) {
     DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return;}
     db.update("item", "product_code", DB::to_sql_string(product_code), "id = " + std::to_string(this->id));
     db.close();
 }
 ////////////////////
-void Item::set_product_code(unsigned int item_id, const std::string& product_code) {
+void neroshop::Item::set_product_code(unsigned int item_id, const std::string& product_code) {
     DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return;}
     db.update("item", "product_code", DB::to_sql_string(product_code), "id = " + std::to_string(item_id));
@@ -535,11 +535,11 @@ void Item::set_product_code(unsigned int item_id, const std::string& product_cod
 // getters
 ////////////////////
 ////////////////////
-unsigned int Item::get_id() const {
+unsigned int neroshop::Item::get_id() const {
     return id; // should be 0 by default for unregistered items
 }
 ////////////////////
-std::string Item::get_name() const {
+std::string neroshop::Item::get_name() const {
     DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return "";}
     std::string item_name = db.get_column_text("item", "name", "id = " + std::to_string(this->id));
@@ -547,7 +547,7 @@ std::string Item::get_name() const {
     return item_name;
 }
 ////////////////////
-std::string Item::get_name(unsigned int item_id) {
+std::string neroshop::Item::get_name(unsigned int item_id) {
     DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return "";}
     std::string item_name = db.get_column_text("item", "name", "id = " + std::to_string(item_id));
@@ -555,7 +555,7 @@ std::string Item::get_name(unsigned int item_id) {
     return item_name;
 }
 ////////////////////
-std::string Item::get_description() const {
+std::string neroshop::Item::get_description() const {
     DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return "";}
     std::string item_description = db.get_column_text("item", "description", "id = " + std::to_string(this->id));
@@ -563,7 +563,7 @@ std::string Item::get_description() const {
     return item_description;
 }
 ////////////////////
-std::string Item::get_description(unsigned int item_id) {
+std::string neroshop::Item::get_description(unsigned int item_id) {
     DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return "";}
     std::string item_description = db.get_column_text("item", "description", "id = " + std::to_string(item_id));
@@ -571,7 +571,7 @@ std::string Item::get_description(unsigned int item_id) {
     return item_description;
 }
 ////////////////////
-double Item::get_price() const {
+double neroshop::Item::get_price() const {
     DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return 0.0;}
     double item_price = db.get_column_real("item", "price", "id = " + std::to_string(this->id));
@@ -579,7 +579,7 @@ double Item::get_price() const {
     return item_price;
 }
 ////////////////////
-double Item::get_price(unsigned int item_id) { // original price (list price)
+double neroshop::Item::get_price(unsigned int item_id) { // original price (list price)
     DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return 0.0;}
     double item_price = db.get_column_real("item", "price", "id = " + std::to_string(item_id));
@@ -587,7 +587,7 @@ double Item::get_price(unsigned int item_id) { // original price (list price)
     return item_price;
 }
 ////////////////////
-unsigned int Item::get_quantity() const {
+unsigned int neroshop::Item::get_quantity() const {
     std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cart.db";
     DB db(cart_file);
     if(!db.table_exists("Cart")) {db.close(); return 0;}
@@ -596,7 +596,7 @@ unsigned int Item::get_quantity() const {
     return item_qty;
 }
 ////////////////////
-unsigned int Item::get_quantity(unsigned int item_id) {
+unsigned int neroshop::Item::get_quantity(unsigned int item_id) {
     std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cart.db";
     DB db(cart_file);
     if(!db.table_exists("Cart")) {db.close(); return 0;}
@@ -607,7 +607,7 @@ unsigned int Item::get_quantity(unsigned int item_id) {
 ////////////////////
 ////////////////////
 ////////////////////
-double Item::get_weight() const {
+double neroshop::Item::get_weight() const {
     DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return 0.0;}
     double item_weight = db.get_column_real("item", "weight", "id = " + std::to_string(this->id));
@@ -615,7 +615,7 @@ double Item::get_weight() const {
     return item_weight;
 }
 ////////////////////
-double Item::get_weight(unsigned int item_id) {
+double neroshop::Item::get_weight(unsigned int item_id) {
     DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return 0.0;}
     double item_weight = db.get_column_real("item", "weight", "id = " + std::to_string(item_id));
@@ -623,7 +623,7 @@ double Item::get_weight(unsigned int item_id) {
     return item_weight;
 }
 ////////////////////
-std::tuple<double, double, double> Item::get_size() const {
+std::tuple<double, double, double> neroshop::Item::get_size() const {
     DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return std::make_tuple(0, 0, 0);}
     std::vector<std::string> item_size = String::split(db.get_column_text("item", "size", "id = " + std::to_string(this->id)), "x");
@@ -631,7 +631,7 @@ std::tuple<double, double, double> Item::get_size() const {
     return std::make_tuple(std::stod(item_size[0]), std::stod(item_size[1]), std::stod(item_size[2]));
 }
 ////////////////////
-std::tuple<double, double, double> Item::get_size(unsigned int item_id) {
+std::tuple<double, double, double> neroshop::Item::get_size(unsigned int item_id) {
     DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return std::make_tuple(0, 0, 0);}
     std::vector<std::string> item_size = String::split(db.get_column_text("item", "size", "id = " + std::to_string(item_id)), "x");
@@ -639,15 +639,15 @@ std::tuple<double, double, double> Item::get_size(unsigned int item_id) {
     return std::make_tuple(std::stod(item_size[0]), std::stod(item_size[1]), std::stod(item_size[2]));
 }
 ////////////////////
-double Item::get_discount(unsigned int seller_id) const {
+double neroshop::Item::get_discount(unsigned int seller_id) const {
     return get_seller_discount(seller_id); // item discount is determined by seller
 }
 ////////////////////
-double Item::get_discount(unsigned int item_id, unsigned int seller_id) {
+double neroshop::Item::get_discount(unsigned int item_id, unsigned int seller_id) {
     return get_seller_discount(item_id, seller_id); // item discount is determined by seller
 }
 ////////////////////
-std::string Item::get_condition() const {
+std::string neroshop::Item::get_condition() const {
     DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return "";}
     std::string item_condition = db.get_column_text("item", "condition", "id = " + std::to_string(this->id));
@@ -655,7 +655,7 @@ std::string Item::get_condition() const {
     return item_condition;
 }
 ////////////////////
-std::string Item::get_condition(unsigned int item_id) {
+std::string neroshop::Item::get_condition(unsigned int item_id) {
     DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return "";}
     std::string item_condition = db.get_column_text("item", "condition", "id = " + std::to_string(item_id));
@@ -665,7 +665,7 @@ std::string Item::get_condition(unsigned int item_id) {
 ////////////////////
 //std::string get_subcategory() const {/*return subcategory;*/}
 ////////////////////
-std::string Item::get_product_code() const {
+std::string neroshop::Item::get_product_code() const {
     DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return "";}
     std::string item_product_code = db.get_column_text("item", "product_code", "id = " + std::to_string(this->id));
@@ -673,7 +673,7 @@ std::string Item::get_product_code() const {
     return item_product_code;
 }
 ////////////////////
-std::string Item::get_product_code(unsigned int item_id) {
+std::string neroshop::Item::get_product_code(unsigned int item_id) {
     DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return "";}
     std::string item_product_code = db.get_column_text("item", "product_code", "id = " + std::to_string(item_id));
@@ -687,7 +687,7 @@ std::string Item::get_product_code(unsigned int item_id) {
 // seller
 ////////////////////
 ////////////////////
-double Item::get_seller_price(unsigned int seller_id) const {
+double neroshop::Item::get_seller_price(unsigned int seller_id) const {
     DB db("neroshop.db");
     if(!db.table_exists("inventory")) {db.close(); return 0.00;} // make sure table exists first
     double seller_price = 0.00;
@@ -697,7 +697,7 @@ double Item::get_seller_price(unsigned int seller_id) const {
     return seller_price;
 }
 ////////////////////
-double Item::get_seller_price(unsigned int item_id, unsigned int seller_id) {// seller price (sales price)
+double neroshop::Item::get_seller_price(unsigned int item_id, unsigned int seller_id) {// seller price (sales price)
     DB db("neroshop.db");
     if(!db.table_exists("inventory")) {db.close(); return 0.00;} // make sure table exists first
     double seller_price = 0.00;
@@ -707,7 +707,7 @@ double Item::get_seller_price(unsigned int item_id, unsigned int seller_id) {// 
     return seller_price;
 }
 ////////////////////
-double Item::get_seller_discount(unsigned int seller_id) const {
+double neroshop::Item::get_seller_discount(unsigned int seller_id) const {
     DB db("neroshop.db");
     if(!db.table_exists("inventory")) {db.close(); return 0.00;} // make sure table exists first
     double seller_discount = 0.00;
@@ -717,7 +717,7 @@ double Item::get_seller_discount(unsigned int seller_id) const {
     return seller_discount;
 }
 ////////////////////
-double Item::get_seller_discount(unsigned int item_id, unsigned int seller_id) {
+double neroshop::Item::get_seller_discount(unsigned int item_id, unsigned int seller_id) {
     DB db("neroshop.db");
     if(!db.table_exists("inventory")) {db.close(); return 0.00;} // make sure table exists first
     double seller_discount = 0.00;
@@ -727,7 +727,7 @@ double Item::get_seller_discount(unsigned int item_id, unsigned int seller_id) {
     return seller_discount;
 }
 ////////////////////
-std::string Item::get_seller_condition(unsigned int seller_id) const {
+std::string neroshop::Item::get_seller_condition(unsigned int seller_id) const {
     DB db("neroshop.db");
     if(!db.table_exists("inventory")) {db.close(); return "";} // make sure table exists first
     std::string seller_condition = db.get_column_text("inventory", "seller_condition", "item_id = " + std::to_string(this->id) + " AND seller_id = " + std::to_string(seller_id));
@@ -735,7 +735,7 @@ std::string Item::get_seller_condition(unsigned int seller_id) const {
     return seller_condition;
 }
 ////////////////////
-std::string Item::get_seller_condition(unsigned int item_id, unsigned int seller_id) {
+std::string neroshop::Item::get_seller_condition(unsigned int item_id, unsigned int seller_id) {
     DB db("neroshop.db");
     if(!db.table_exists("inventory")) {db.close(); return "";} // make sure table exists first
     std::string seller_condition = db.get_column_text("inventory", "seller_condition", "item_id = " + std::to_string(item_id) + " AND seller_id = " + std::to_string(seller_id));
@@ -743,7 +743,7 @@ std::string Item::get_seller_condition(unsigned int item_id, unsigned int seller
     return seller_condition;
 }
 ////////////////////
-unsigned int Item::get_stock_quantity() const {
+unsigned int neroshop::Item::get_stock_quantity() const {
     DB db;if(!db.open("neroshop.db")) {std::cout << "Could not open sql database" << std::endl; return 0;}
     if(!db.table_exists("inventory")) {db.close(); return 0;} // make sure table exists first
     int stock_qty = db.get_column_integer("inventory", "stock_qty", "item_id=" + std::to_string(this->id)); // check stock_quantity
@@ -751,7 +751,7 @@ unsigned int Item::get_stock_quantity() const {
     return stock_qty;
 }
 //////////////////// 
-unsigned int Item::get_stock_quantity(unsigned int item_id) {
+unsigned int neroshop::Item::get_stock_quantity(unsigned int item_id) {
     DB db;if(!db.open("neroshop.db")) {std::cout << "Could not open sql database" << std::endl; return 0;}
     if(!db.table_exists("inventory")) {db.close(); return 0;} // make sure table exists first
     int stock_qty = db.get_column_integer("inventory", "stock_qty", "item_id=" + std::to_string(item_id)); // check stock_quantity
@@ -760,7 +760,7 @@ unsigned int Item::get_stock_quantity(unsigned int item_id) {
 }
 ////////////////////
 ////////////////////
-bool Item::is_registered() const {
+bool neroshop::Item::is_registered() const {
     DB db;if(!db.open("neroshop.db")) {std::cout << "Could not open sql database" << std::endl; return false;}
     if(!db.table_exists("item")) {db.close(); return false;} // make sure table exists first
     int id = db.get_column_integer("item", "id", "id=" + std::to_string(this->id));
@@ -768,7 +768,7 @@ bool Item::is_registered() const {
     return (id > 0);
 }
 ////////////////////
-bool Item::is_registered(unsigned int item_id) {
+bool neroshop::Item::is_registered(unsigned int item_id) {
     DB db;if(!db.open("neroshop.db")) {std::cout << "Could not open sql database" << std::endl; return false;}
     if(!db.table_exists("item")) {db.close(); return false;} // make sure table exists first
     int id = db.get_column_integer("item", "id", "id=" + std::to_string(item_id));
@@ -777,7 +777,7 @@ bool Item::is_registered(unsigned int item_id) {
 }
 ////////////////////
 ////////////////////
-bool Item::in_stock() const {
+bool neroshop::Item::in_stock() const {
     DB db;if(!db.open("neroshop.db")) {std::cout << "Could not open sql database" << std::endl; return false;}
     if(!db.table_exists("inventory")) {db.close(); return false;} // make sure table exists first
     int stock_qty = db.get_column_integer("inventory", "stock_qty", "item_id=" + std::to_string(this->id)); // check stock_quantity
@@ -786,7 +786,7 @@ bool Item::in_stock() const {
     return true;
 }
 ////////////////////
-bool Item::in_stock(unsigned int item_id) {
+bool neroshop::Item::in_stock(unsigned int item_id) {
     DB db;if(!db.open("neroshop.db")) {std::cout << "Could not open sql database" << std::endl; return false;}
     if(!db.table_exists("inventory")) {db.close(); return false;} // make sure table exists first
     int stock_qty = db.get_column_integer("inventory", "stock_qty", "item_id=" + std::to_string(item_id)); // check stock_quantity
@@ -796,7 +796,7 @@ bool Item::in_stock(unsigned int item_id) {
 }
 ////////////////////
 ////////////////////
-bool Item::in_cart(/*unsigned int cart_id*/) const {
+bool neroshop::Item::in_cart(/*unsigned int cart_id*/) const {
     std::string user = System::get_user();
     std::string cart_file = std::string("/home/" + user + "/.config/neroshop/") + "cart.db";
     DB db; if(!db.open(cart_file)) {std::cout << "Could not open sql database" << std::endl; return false;}
@@ -809,7 +809,7 @@ bool Item::in_cart(/*unsigned int cart_id*/) const {
     return false;
 }
 ////////////////////
-bool Item::in_cart(unsigned int item_id/*, unsigned int cart_id*/) {
+bool neroshop::Item::in_cart(unsigned int item_id/*, unsigned int cart_id*/) {
     std::string user = System::get_user();
     std::string cart_file = std::string("/home/" + user + "/.config/neroshop/") + "cart.db";
     DB db; if(!db.open(cart_file)) {std::cout << "Could not open sql database" << std::endl; return false;}
@@ -825,7 +825,7 @@ bool Item::in_cart(unsigned int item_id/*, unsigned int cart_id*/) {
 ////////////////////
 ////////////////////
 ////////////////////
-void Item::show_info() {
+void neroshop::Item::show_info() {
     std::cout << "Item name: " << get_name() << std::endl;
     std::cout << "id: " << get_id() << std::endl;
     std::cout << "desc: " << get_description() << std::endl;

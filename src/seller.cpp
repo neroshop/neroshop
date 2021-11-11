@@ -21,7 +21,7 @@ neroshop::Seller::~Seller() {
 void neroshop::Seller::list_item(unsigned int item_id, unsigned int stock_qty, double sales_price, std::string currency)
 {}
 ////////////////////
-void neroshop::Seller::list_item(const Item& item, unsigned int stock_qty, double sales_price, std::string currency, 
+void neroshop::Seller::list_item(const neroshop::Item& item, unsigned int stock_qty, double sales_price, std::string currency, 
     double discount, unsigned int discounted_items, std::string condition) { // ex. 5% off 10 balls
     // seller must be logged in
     if(!is_logged()) {neroshop::print("You must be logged in to list an item", 2); return;}
@@ -31,7 +31,7 @@ void neroshop::Seller::list_item(const Item& item, unsigned int stock_qty, doubl
     // but if the item is not registered then it cannot be listed
     if(!item.is_registered()) {NEROSHOP_TAG std::cout << "\033[0;91m" << "This item is not registered (invalid Item id)" << "\033[0m" << std::endl; return;}
     // make sure currency is supported
-    if(!Converter::is_supported_currency(currency)) {neroshop::print(currency + " is not a supported currency", 2); return;}
+    if(!neroshop::Converter::is_supported_currency(currency)) {neroshop::print(currency + " is not a supported currency", 2); return;}
     // store item in database
     DB db("neroshop.db");
 	//db.execute("PRAGMA journal_mode = WAL;"); // this may reduce the incidence of SQLITE_BUSY errors (such as database being locked) // https://www.sqlite.org/pragma.html#pragma_journal_mode
@@ -60,7 +60,7 @@ void neroshop::Seller::list_item(const Item& item, unsigned int stock_qty, doubl
 	// if there is a remainder then reduce the total discount
 	//if((stock_qty % discounted_items) == 1) total_discount = total_discount - discount;
 #ifdef NEROSHOP_DEBUG0
-	std::cout << "\033[1;37m" << "for every " << discounted_items << " " << item.get_name()/*" of an item"*/ << "s, you get " << Converter::get_currency_symbol(currency) << discount << " off (since you have x" << stock_qty << ", total discount is: " << Converter::get_currency_symbol(currency) << total_discount << ")\033[0m" << std::endl;
+	std::cout << "\033[1;37m" << "for every " << discounted_items << " " << item.get_name()/*" of an item"*/ << "s, you get " << neroshop::Converter::get_currency_symbol(currency) << discount << " off (since you have x" << stock_qty << ", total discount is: " << neroshop::Converter::get_currency_symbol(currency) << total_discount << ")\033[0m" << std::endl;
 #endif	
 	// insert item in inventory
 	db.insert("inventory", "item_id, seller_id, stock_qty, seller_price, currency, seller_discount, discount_qty, condition", 
@@ -125,7 +125,7 @@ void neroshop::Seller::set_stock_quantity(unsigned int item_id, unsigned int sto
 	db.close();
 }
 ////////////////////
-void neroshop::Seller::set_stock_quantity(const Item& item, unsigned int stock_qty) {
+void neroshop::Seller::set_stock_quantity(const neroshop::Item& item, unsigned int stock_qty) {
     // seller must be logged in
     if(!is_logged()) {NEROSHOP_TAG std::cout << "\033[0;91m" << "You must be logged in to list an item" << "\033[0m" << std::endl; return;}
     // a seller can create an item and then register it to the database
@@ -143,8 +143,8 @@ void neroshop::Seller::set_stock_quantity(const Item& item, unsigned int stock_q
 ////////////////////
 ////////////////////
 ////////////////////
-void neroshop::Seller::set_wallet(const Wallet& wallet) {
-    this->wallet = &const_cast<Wallet&>(wallet);// be sure to delete old wallet first (as seller cannot use two wallets at a time)
+void neroshop::Seller::set_wallet(const neroshop::Wallet& wallet) {
+    this->wallet = &const_cast<neroshop::Wallet&>(wallet);// be sure to delete old wallet first (as seller cannot use two wallets at a time)
 }
 ////////////////////
 ////////////////////
@@ -209,7 +209,7 @@ unsigned int neroshop::Seller::get_reputation() const {
 ////////////////////
 ////////////////////
 ////////////////////
-Wallet * neroshop::Seller::get_wallet() const {
+neroshop::Wallet * neroshop::Seller::get_wallet() const {
     return wallet;
 }
 ////////////////////
@@ -222,7 +222,7 @@ std::vector<int> neroshop::Seller::get_pending_customer_orders() {
          int pending_orders = db.get_column_integer("orders", "id", "id = " + std::to_string(customer_order_list[i]) + " AND status = " + DB::to_sql_string("Pending"));
          if(pending_orders != 0) {
              pending_order_list.push_back(customer_order_list[i]);
-             std::cout << "Pending orders: order#" << pending_orders << std::endl;
+             std::cout << "Pending orders #: " << pending_orders << std::endl;
          }  
     }
     ///////////
@@ -264,11 +264,11 @@ bool neroshop::Seller::has_listed(unsigned int item_id) const {
 ////////////////////
 ////////////////////
 ////////////////////
-User * neroshop::Seller::on_login(const std::string& username) { // assumes user data already exists in database
+neroshop::User * neroshop::Seller::on_login(const std::string& username) { // assumes user data already exists in database
     // get user_data from db and set them
     DB db("neroshop.db");
-    User * user = new Seller(username);
-    dynamic_cast<Seller *>(user)->set_logged(true); // protected, so can only be accessed by child class obj   // if validator::login(user, pw) returns true, then set User::logged to true    
+    neroshop::User * user = new Seller(username);
+    dynamic_cast<Seller *>(user)->set_logged(true); // protected, so can only be accessed by child class obj   // if validator::login(user, pw) returns true, then set neroshop::User::logged to true    
     dynamic_cast<Seller *>(user)->set_id(db.get_column_integer("users", "id", "name = " + DB::to_sql_string(username)));
     dynamic_cast<Seller *>(user)->set_role(user_role::seller);
 #ifdef NEROSHOP_DEBUG

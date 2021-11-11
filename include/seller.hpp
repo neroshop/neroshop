@@ -18,21 +18,21 @@ public:
 	Seller(const std::string& name);
 	~Seller();
 	void list_item(unsigned int item_id, unsigned int stock_qty, double sales_price = 0.00, std::string currency = "usd");
-	void list_item(const Item& item, unsigned int stock_qty, double sales_price = 0.00, std::string currency = "usd", double discount = 0.00, unsigned int discounted_items = 0, std::string condition = "new"); // adds an item to the inventory
+	void list_item(const neroshop::Item& item, unsigned int stock_qty, double sales_price = 0.00, std::string currency = "usd", double discount = 0.00, unsigned int discounted_items = 0, std::string condition = "new"); // adds an item to the inventory
 	             // images, price, search_terms
 	// setters	
-	void set_stock_quantity(const Item& item, unsigned int stock_qty);
+	void set_stock_quantity(const neroshop::Item& item, unsigned int stock_qty);
 	void set_stock_quantity(unsigned int item_id, unsigned int stock_qty);
 	// create promotions such as: percent_off, free_shipping, giveaway, buy_one_get_one_free, coupon codes(time_limit, expire_date) => https://tinuiti.com/blog/amazon/amazon-promotions-for-sellers/
 	// coupon_min_percent = 2%, coupon_max_percent = 90% (amazon is 5%-80%)
-	void set_wallet(const Wallet& wallet);// temporary - delete ASAP
+	void set_wallet(const neroshop::Wallet& wallet);// temporary - delete ASAP
 	// getters
 	unsigned int get_good_ratings() const;
 	unsigned int get_bad_ratings() const;
 	unsigned int get_ratings_count() const;
 	unsigned int get_total_ratings() const;
 	unsigned int get_reputation() const; // represents a percentage (of good ratings)
-	Wallet * get_wallet() const;
+	neroshop::Wallet * get_wallet() const;
     unsigned int get_customer_order(unsigned int index) const;
     unsigned int get_customer_order_count() const;
     std::vector<int> get_pending_customer_orders();
@@ -41,13 +41,13 @@ public:
 	bool is_verified() const; // returns true if seller is verified brand owner
 	bool has_listed(unsigned int item_id) const; // returns true if this seller has listed an item
 	// callbacks
-	static User * on_login(const std::string& username);
+	static neroshop::User * on_login(const std::string& username);
 	void on_order_received();
 protected:
     void load_customer_orders();	
 private:
 	std::string username;
-	Wallet * wallet;
+	neroshop::Wallet * wallet;
 	std::vector<int> customer_order_list;
 };
 }

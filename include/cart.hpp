@@ -11,24 +11,24 @@
 #include <sstream>   // std::stringstream
 #include <iomanip>   // std::put_time
 
-
+namespace neroshop {
 class Cart {
 public: // can be accessed by any class or function 
     Cart();
     ~Cart();
     // normal
     bool open() const;
-    void add(const Item& item, unsigned int quantity = 1); // quantity is 1 by default // Item * get_item(index);
+    void add(const neroshop::Item& item, unsigned int quantity = 1); // quantity is 1 by default // Item * get_item(index);
     //void add_new(unsigned int item_id, unsigned int quantity = 1);
-    void remove(const Item& item, unsigned int quantity = 1);
+    void remove(const neroshop::Item& item, unsigned int quantity = 1);
     void remove(unsigned int index, unsigned int quantity = 1);
     void empty(); // remove all items from cart
     void move_to_wishlist();
     void save_for_later();
-    void change_quantity(const Item& item, unsigned int quantity); // set_quantity is private so you can only change item quantity from this function
-    void shift_up(const Item& item);
-    void shift_down(const Item& item);
-	void swap_positions(const Item& item1, const Item& item2);
+    void change_quantity(const neroshop::Item& item, unsigned int quantity); // set_quantity is private so you can only change item quantity from this function
+    void shift_up(const neroshop::Item& item);
+    void shift_down(const neroshop::Item& item);
+	void swap_positions(const neroshop::Item& item1, const neroshop::Item& item2);
 	void checkout(); // user's cart contents impact inventory availability. Only after purchase will actual inventory decrease
 	static bool create_db();
 	// getters
@@ -42,27 +42,27 @@ public: // can be accessed by any class or function
 	double get_total_discount() const; // coupons can be applied while item is in cart
 	unsigned int get_items_count() const; // number of items in the cart based on quantity
 	unsigned int get_contents_count() const; // returns number of items in cart.contents
-	Item * get_item(unsigned int index) const; //unsigned int get_id() const;//static std::string get_file();
+	neroshop::Item * get_item(unsigned int index) const; //unsigned int get_id() const;//static std::string get_file();
 	// singleton
 	static Cart * get_singleton();
 	// boolean
 	bool is_empty() const;
     bool is_full() const; // cart is full (has reached max items)
-	bool in_cart(unsigned int item_id) const;//(const Item& item) const;
-	//bool validate_item(const Item& item) const;
+	bool in_cart(unsigned int item_id) const;//(const neroshop::Item& item) const;
+	//bool validate_item(const neroshop::Item& item) const;
 	// friends
 	friend class Buyer; // buyer can access cart's private members
 	friend class Order;
 private: // can be accessed by only this class (cannot even be inherited)
-    std::vector <Item *> contents;//protected: // cannot be accessed outside of class but by a derived class (subclass)
+    std::vector <neroshop::Item *> contents;//protected: // cannot be accessed outside of class but by a derived class (subclass)
     unsigned int max_items; // cart can only hold up to 10 items
     unsigned int max_quantity; // the max quantity each item can add up to is 100, so 10 items can have 10 quantity each, making the total number of items 100 //unsigned int id;
     static Cart * cart_obj; // singleton object
-    static void load(const Item& item, unsigned int quantity); // loads cart.db on app start
+    static void load(const neroshop::Item& item, unsigned int quantity); // loads cart.db on app start
     static void add_db(unsigned int item_id); // adds item to cart table for first time
     static void remove_db(unsigned int item_id); // removes item from cart table
 };
-
+}
 #endif
 
 /*

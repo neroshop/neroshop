@@ -23,6 +23,7 @@ extern "C" {      // run as c code
 #include <sqlite3.h>
 }
 
+namespace neroshop {
 class DB { // use sqlite browser for viewing SQLite DBs: https://sqlitebrowser.org/
 public:
     DB();
@@ -137,6 +138,7 @@ private:
 	static lua_State *lua_state;
 	static int callback(void *NotUsed, int argc, char **argv, char **azColName);
 };
+}
 // sqlite scalability/load: https://stackoverflow.com/questions/1546947/maximum-number-of-rows-in-a-sqlite-table
                             // https://stackoverflow.com/a/21396826 ***
                             // https://stackoverflow.com/a/11145704                                    

@@ -4,10 +4,11 @@
 #ifndef CATALOG_HPP_NEROSHOP // recommended to add unique identifier like _NEROSHOP to avoid naming collision with other libraries
 #define CATALOG_HPP_NEROSHOP
 
+namespace neroshop {
 class Catalog {//: public GUI {
 public:
 private:
 };
-
+}
 #endif
 // https://github.com/kyliau/ShoppingCart/blob/master/Catalog.cpp

@@ -8,14 +8,12 @@
 // nlohmann-json
 #include <nlohmann/json.hpp>
 #include <iostream>
-#include <chrono> // std::chrono
-#include <iomanip> // std::put_time
 #include "string.hpp" // dokun-ui
 
 //namespace neroshop {
 //enum class tracker {coinmarketcap, coincodex, coingecko};
 // https://www.coingecko.com/api/documentations/v3
-
+namespace neroshop {
 class Converter {
 public:
     // to other currencies//static double xmr_to_btc(double xmr);//static double xmr_to_usd(double xmr);
@@ -50,7 +48,7 @@ private:
     static std::size_t write_callback(char* in, std::size_t size, std::size_t num, std::string* out);
     static std::string json_string;//std::string url;
 };
-//}
+}
 #endif
 /*Usage:
 	std::cout << "1 USD = " << "\033[0;96m" << std::fixed << std::setprecision(12) << Converter::usd_to_xmr(1.00                  ) << "\033[0m" << " xmr" << std::endl;

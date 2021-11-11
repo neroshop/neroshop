@@ -32,6 +32,7 @@
 #include <utility> // std::pair
 #include <cmath>
 
+namespace neroshop {
 // this wallet class is only meant for creating and loading wallets, generating subaddresses, and listening to transactions. sending transactions? not so much - more focused on receiving
 class Wallet {
 public:
@@ -115,6 +116,7 @@ private:
     monero_network_type network_type; // default will be Mainnet when this app launches
     Process * process; // monerod process
 };
+}
 #endif // WALLET_HPP
 /*
 // both the seller and buyer should be able to see what address was assigned to what customer:

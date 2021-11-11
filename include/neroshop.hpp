@@ -27,5 +27,7 @@
 #include "cart.hpp"
 #include "order.hpp" //#include ".hpp"
 #include "message.hpp"
+//#include "server.hpp" // for daemon to use
+#include "client.hpp"
 
 #endif

@@ -1,8 +1,8 @@
 #include "../include/qr.hpp"
 
-QR::QR() {}
+neroshop::QR::QR() {}
 ////////////////////
-QR::QR(std::string filename, int image_size, int min_module_pixel_size, std::string text,
+neroshop::QR::QR(std::string filename, int image_size, int min_module_pixel_size, std::string text,
             bool overwrite, qrcodegen::QrCode::Ecc ecc) {
     this->filename = filename;
     this->size = image_size;
@@ -12,10 +12,10 @@ QR::QR(std::string filename, int image_size, int min_module_pixel_size, std::str
     this->ecc = ecc;
 }
 ////////////////////
-QR::~QR() {}
+neroshop::QR::~QR() {}
 ////////////////////    
 ////////////////////    
-bool QR::to_png() const {
+bool neroshop::QR::to_png() const {
     if(text.empty()) return false; // text is required
     std::ifstream file(filename.c_str());
     bool exists = file.good();
@@ -28,7 +28,7 @@ bool QR::to_png() const {
     return result;
 }
 ////////////////////
-bool QR::write_to_png(const qrcodegen::QrCode& qr_data) const {
+bool neroshop::QR::write_to_png(const qrcodegen::QrCode& qr_data) const {
     std::ofstream out(filename.c_str(), std::ios::binary);
     int pngWH = image_size_with_border(qr_data);
     //TinyPngOut pngout(pngWH, pngWH, out);
@@ -101,11 +101,11 @@ bool QR::write_to_png(const qrcodegen::QrCode& qr_data) const {
     return exists;
 }
 ////////////////////
-unsigned int QR::image_size(const qrcodegen::QrCode& qr_data) const {
+unsigned int neroshop::QR::image_size(const qrcodegen::QrCode& qr_data) const {
     return (size / qr_data.getSize()) * qr_data.getSize();
 }
 ////////////////////
-unsigned int QR::image_size_with_border(const qrcodegen::QrCode& qr_data) const {
+unsigned int neroshop::QR::image_size_with_border(const qrcodegen::QrCode& qr_data) const {
     return (size / (qr_data.getSize() + 2));
 }
 ////////////////////

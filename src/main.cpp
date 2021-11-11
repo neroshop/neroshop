@@ -72,6 +72,7 @@ namespace neroshop {
         // kill a monerod processes
         //while(Process::get_process_by_name("monerod") != -1) // kill all monerod processes
         //    kill(static_cast<pid_t>(Process::get_process_by_name("monerod")), SIGTERM); // kill daemon 
+        neroshop::print("neroshop closed");
     }
     ////////////////////
     static void close() {
@@ -86,6 +87,7 @@ int main() {
         std::cout << "\033[1;91m" << "neroshop: failed to start" << "\033[0m" << std::endl;
         exit(0);
     }
+    std::atexit(neroshop::close); // call neroshop::close when program is exited
     // /home/layter/.config/neroshop    <- where config files, cart files (temp) will be stored for guests (sellers' cart data will be stored in the db)
     ///////////////////////////////
     // SQLite3 datatypes: https://www.sqlite.org/datatype3.html
@@ -113,9 +115,9 @@ int main() {
     // register items: ball and ring
     // currency has to be stable so we will use usd or eur then it will be converted to xmr
     // we cannot set the price in xmr directly since its highly volatile and the price is always changing
-    Item ball("Ball", "A ball", 8.00, 0.5, std::make_tuple(1, 2, 3), "new", "000000000001");
-    Item ring("Ring", "A ring", 99.00, 0.2, std::make_tuple(3, 2, 1), "new","000000000002");
-    Item game("Game", "A nintendo game card", 60.00, 0.0, std::make_tuple(0, 0, 0), "new", "000000000003");//Item cake(7);
+    Item ball(1);//("Ball", "A ball", 8.00, 0.5, std::make_tuple(1, 2, 3), "new", "000000000001");
+    Item ring(2);//("Ring", "A ring", 99.00, 0.2, std::make_tuple(3, 2, 1), "new","000000000002");
+    Item game(3);//("Game", "A nintendo game card", 60.00, 0.0, std::make_tuple(0, 0, 0), "new", "000000000003");//Item cake(7);
     //seller->list_item(ball, 50, 8.50, "USD"); //adds item to inventory
     //////////////
     //cart->add(ball);
@@ -223,6 +225,7 @@ int main() {
     bool home_menu = false;
     bool synced = false;
     bool wallet_opened = false;
+    bool wallet_set = false;
     // init dokun
     //if(!Engine::open()) {std::cout << "dokun could not be initialized!"; exit(1);}
     // window
@@ -552,6 +555,19 @@ int main() {
     bool _activated = false;*/
     //----------------------------------  --------------------------------------	
     //--------------------------------- USER ----------------------------------------
+    //--------------------------------- CLIENT --------------------------------------
+    //std::system("./daemon </dev/null &>/dev/null &"); ::sleep(2);
+    Client * client = Client::get_main_client();
+	int client_port = 1234;//std::stoi(port)//8080
+	std::string client_ip = "0.0.0.0";//"localhost";//ip//0.0.0.0 means anyone can connect to your server
+	neroshop::print("connecting to " + ((client_ip == "localhost") ? "127.0.0.1" : client_ip) + ":" + std::to_string(client_port) + " ..");
+	if(!client->connect(client_port, client_ip)) {
+	    //exit(0);
+	} else std::cout << client->read() << std::endl; // read from server once
+	/////////////////////////////////////////////////////////////////////////////////
+	// start server
+	//Process * process = new Process("neroshop-d", " </dev/null &>/dev/null &");
+	/////////////////////////////////////////////////////////////////////////////////
     // ------------------------------------------------------------------------------
     ////////////////
     while (window.is_open()) { // main thread
@@ -564,27 +580,28 @@ int main() {
             window.clear(32, 32, 32);
             /////////////////////////
             if (submit_button -> is_pressed() && !Message::is_visible()) {
-                if (Validator::register_user(user_edit_r -> get_text(), pw_edit_r -> get_text(), pw_confirm_edit -> get_text(), opt_email_edit -> get_text())) {
+                if (Validator::register_user(user_edit_r->get_text(), pw_edit_r->get_text(), pw_confirm_edit->get_text(), opt_email_edit -> get_text())) {
                     // login user after a successful registration (create user)		
-                    std::string username = user_edit_r -> get_text();
+                    std::string username = user_edit_r-> get_text();
                     if (!user) user = Buyer::on_login(username); //(user_edit_r->get_text());
                     // clear text edits
-                    user_edit_r -> clear_all();
-                    pw_edit_r -> clear_all();
-                    pw_confirm_edit -> clear_all();
-                    opt_email_edit -> clear_all();
+                    user_edit_r->clear_all();
+                    pw_edit_r->clear_all();
+                    pw_confirm_edit->clear_all();
+                    opt_email_edit->clear_all();
                     // leave the register_menu
                     register_menu = false;
                     // go to the home_menu
                     home_menu = true;
                 }
             }
-            if (back_button -> is_pressed() && !Message::is_visible()) {
+            if (back_button->is_pressed() && !Message::is_visible()) {
+                if(client->is_connected()) client->write("back button pressed"); // temporary
                 // clear text edits
-                user_edit_r -> clear_all();
-                pw_edit_r -> clear_all();
-                pw_confirm_edit -> clear_all();
-                opt_email_edit -> clear_all();
+                user_edit_r->clear_all();
+                pw_edit_r->clear_all();
+                pw_confirm_edit->clear_all();
+                opt_email_edit->clear_all();
                 // leave the register_menu
                 register_menu = false;
                 // return to the login_menu
@@ -645,15 +662,16 @@ int main() {
                     }
                     if (role_id == 1) user = Buyer::on_login(user_edit -> get_text());
                     if (role_id == 2) user = Seller::on_login(user_edit -> get_text());
-                    // only sellers can register for an account (edit: buyers can register for an account too)
-                    // make an order
-                    //cart->add(ball, 2);
-                    //cart->add(ring, 2);
-                    //cart->add(game, 1);
-                    //user->create_order(shipping_addr/*, "layter@protonmail.com"*/);
+                    // broadcast messages to server
+                    if(client->is_connected()) client->write(user->get_name() + " has logged in "); // temporary
+                    // set wallet and check for pending orders
                     if(user->is_seller()) {
-                        // set the wallet if it is opened
-                        if(wallet_opened) static_cast<Seller *>(user)->set_wallet(*wallet);
+                        // set the wallet if it is opened, but it is not yet set
+                        if(wallet_opened && !wallet_set) {
+                            static_cast<Seller *>(user)->set_wallet(*wallet);
+                            wallet_set = true;
+                            neroshop::print("wallet set to seller (id: " + std::to_string(user->get_id()) + ")", 3);
+                        }
                         // check for any incoming orders (pending)
                         std::vector<int> pending_orders = static_cast<Seller *>(user)->get_pending_customer_orders();
                         if(pending_orders.size() > 0) {
@@ -662,6 +680,11 @@ int main() {
                             }
                         }
                     }
+                    // make an order
+                    //cart->add(ball, 2);
+                    //cart->add(ring, 2);
+                    //cart->add(game, 1);
+                    //user->create_order(shipping_addr/*, "layter@protonmail.com"*/);                    
                     // set the wallet
                     //if(user && wallet_opened) static_cast <Seller *>(user)->set_wallet(*wallet);
                     //std::cout << "is_user_logged_in: " << user->is_logged() << std::endl;

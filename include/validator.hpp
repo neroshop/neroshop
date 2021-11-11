@@ -20,6 +20,7 @@ extern "C" {
 #include <openssl/sha.h> // for hashing email (sha256) // -lssl -lcrypto
 #include <openssl/evp.h> // recommeded for sha256, sha512, etc. // https://stackoverflow.com/questions/2262386/generate-sha256-with-openssl-and-c#comment67577990_10632725
 
+namespace neroshop {
 class Validator {
 public:
     static bool register_user(const std::string& username, const std::string& password, const std::string& confirm_pw, std::string opt_email = "");
@@ -41,6 +42,7 @@ public:
 private:
     //static Data * db;
 };
+}
 #endif
 /*
 usernames:

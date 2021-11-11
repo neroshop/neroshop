@@ -7737,33 +7737,6 @@ src/button.cpp.s:
 	$(MAKE) -f CMakeFiles/libdokun-ui.dir/build.make CMakeFiles/libdokun-ui.dir/src/button.cpp.s
 .PHONY : src/button.cpp.s
 
-src/client.o: src/client.cpp.o
-
-.PHONY : src/client.o
-
-# target to build an object file
-src/client.cpp.o:
-	$(MAKE) -f CMakeFiles/libdokun-ui.dir/build.make CMakeFiles/libdokun-ui.dir/src/client.cpp.o
-.PHONY : src/client.cpp.o
-
-src/client.i: src/client.cpp.i
-
-.PHONY : src/client.i
-
-# target to preprocess a source file
-src/client.cpp.i:
-	$(MAKE) -f CMakeFiles/libdokun-ui.dir/build.make CMakeFiles/libdokun-ui.dir/src/client.cpp.i
-.PHONY : src/client.cpp.i
-
-src/client.s: src/client.cpp.s
-
-.PHONY : src/client.s
-
-# target to generate assembly for a file
-src/client.cpp.s:
-	$(MAKE) -f CMakeFiles/libdokun-ui.dir/build.make CMakeFiles/libdokun-ui.dir/src/client.cpp.s
-.PHONY : src/client.cpp.s
-
 src/combo.o: src/combo.cpp.o
 
 .PHONY : src/combo.o
@@ -8384,33 +8357,6 @@ src/scrollbar.s: src/scrollbar.cpp.s
 src/scrollbar.cpp.s:
 	$(MAKE) -f CMakeFiles/libdokun-ui.dir/build.make CMakeFiles/libdokun-ui.dir/src/scrollbar.cpp.s
 .PHONY : src/scrollbar.cpp.s
-
-src/server.o: src/server.cpp.o
-
-.PHONY : src/server.o
-
-# target to build an object file
-src/server.cpp.o:
-	$(MAKE) -f CMakeFiles/libdokun-ui.dir/build.make CMakeFiles/libdokun-ui.dir/src/server.cpp.o
-.PHONY : src/server.cpp.o
-
-src/server.i: src/server.cpp.i
-
-.PHONY : src/server.i
-
-# target to preprocess a source file
-src/server.cpp.i:
-	$(MAKE) -f CMakeFiles/libdokun-ui.dir/build.make CMakeFiles/libdokun-ui.dir/src/server.cpp.i
-.PHONY : src/server.cpp.i
-
-src/server.s: src/server.cpp.s
-
-.PHONY : src/server.s
-
-# target to generate assembly for a file
-src/server.cpp.s:
-	$(MAKE) -f CMakeFiles/libdokun-ui.dir/build.make CMakeFiles/libdokun-ui.dir/src/server.cpp.s
-.PHONY : src/server.cpp.s
 
 src/shader.o: src/shader.cpp.o
 
@@ -9510,9 +9456,6 @@ help:
 	@echo "... src/button.o"
 	@echo "... src/button.i"
 	@echo "... src/button.s"
-	@echo "... src/client.o"
-	@echo "... src/client.i"
-	@echo "... src/client.s"
 	@echo "... src/combo.o"
 	@echo "... src/combo.i"
 	@echo "... src/combo.s"
@@ -9582,9 +9525,6 @@ help:
 	@echo "... src/scrollbar.o"
 	@echo "... src/scrollbar.i"
 	@echo "... src/scrollbar.s"
-	@echo "... src/server.o"
-	@echo "... src/server.i"
-	@echo "... src/server.s"
 	@echo "... src/shader.o"
 	@echo "... src/shader.i"
 	@echo "... src/shader.s"

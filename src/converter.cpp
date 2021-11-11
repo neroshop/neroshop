@@ -4,11 +4,11 @@
 ////////////////////
 ////////////////////
 ////////////////////
-std::string Converter::json_string ("");
+std::string neroshop::Converter::json_string ("");
 ////////////////////
 ////////////////////
-double Converter::from_xmr(double amount, const std::string& currency_code) {
-    if(!is_supported_currency(currency_code)) {std::cout << "(Converter::from_xmr): This currency is not supported: " << currency_code << std::endl; return 0.00;};
+double neroshop::Converter::from_xmr(double amount, const std::string& currency_code) {
+    if(!is_supported_currency(currency_code)) {std::cout << "(neroshop::Converter::from_xmr): This currency is not supported: " << currency_code << std::endl; return 0.00;};
     std::string currency = String::lower(currency_code);
     if(!request("https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=" + currency)) {
         std::cout << "Request failed" << std::endl;
@@ -23,7 +23,7 @@ double Converter::from_xmr(double amount, const std::string& currency_code) {
 ////////////////////
 ////////////////////
 ////////////////////
-double Converter::to_xmr(double amount, const std::string& currency_code) 
+double neroshop::Converter::to_xmr(double amount, const std::string& currency_code) 
 {  
     if(String::lower(currency_code) == "btc") {return btc_to_xmr(amount);}
     if(String::lower(currency_code) == "eth") {return eth_to_xmr(amount);}
@@ -40,12 +40,12 @@ double Converter::to_xmr(double amount, const std::string& currency_code)
     if(String::lower(currency_code) == "nzd") {return nzd_to_xmr(amount);}
     if(String::lower(currency_code) == "mxn") {return mxn_to_xmr(amount);}
     //if(String::lower(currency_code) == "") {return _to_xmr(amount);}
-    std::cout << "(Converter::to_xmr): This currency is not supported: " << currency_code << std::endl;
+    std::cout << "(neroshop::Converter::to_xmr): This currency is not supported: " << currency_code << std::endl;
     return 0.0;
 }
 ////////////////////
 ////////////////////
-double Converter::btc_to_xmr(double btc) {
+double neroshop::Converter::btc_to_xmr(double btc) {
     double xmr_amount = 0.0;
     // get json from url
     request("https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=btc");//("https://coincodex.com/api/coincodex/get_coin/xmr");
@@ -67,7 +67,7 @@ double Converter::btc_to_xmr(double btc) {
 ////////////////////
 // coincodex: price_high_24_usd, last_price_usd, price_btc
 ////////////////////
-double Converter::eth_to_xmr(double eth) {
+double neroshop::Converter::eth_to_xmr(double eth) {
     double xmr_amount = 0.0;
     // get json from url
     request("https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=eth");//("https://coincodex.com/api/coincodex/get_coin/xmr");
@@ -87,7 +87,7 @@ double Converter::eth_to_xmr(double eth) {
     return xmr_amount;
 }
 ////////////////////
-double Converter::dai_to_xmr(double dai) {
+double neroshop::Converter::dai_to_xmr(double dai) {
     double xmr_amount = 0.0;
     // first, convert dai to usd
     request("https://api.coingecko.com/api/v3/simple/price?ids=dai&vs_currencies=usd");
@@ -106,7 +106,7 @@ double Converter::dai_to_xmr(double dai) {
     return xmr_amount;
 }
 ////////////////////
-double Converter::usd_to_xmr(double usd) {
+double neroshop::Converter::usd_to_xmr(double usd) {
     double xmr_amount = 0.0;
     // get json from url
     request("https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=usd");//("https://coincodex.com/api/coincodex/get_coin/xmr");
@@ -126,7 +126,7 @@ double Converter::usd_to_xmr(double usd) {
     return xmr_amount;
 }
 ////////////////////
-double Converter::eur_to_xmr(double eur) {
+double neroshop::Converter::eur_to_xmr(double eur) {
     double xmr_amount = 0.0;
     // get json from url
     request("https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=eur");//("https://coincodex.com/api/coincodex/get_coin/xmr");
@@ -146,7 +146,7 @@ double Converter::eur_to_xmr(double eur) {
     return xmr_amount;
 }
 ////////////////////
-double Converter::jpy_to_xmr(double jpy) {
+double neroshop::Converter::jpy_to_xmr(double jpy) {
     double xmr_amount = 0.0;
     // get json from url
     request("https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=jpy");
@@ -166,7 +166,7 @@ double Converter::jpy_to_xmr(double jpy) {
     return xmr_amount;
 }
 ////////////////////
-double Converter::gbp_to_xmr(double gbp) {
+double neroshop::Converter::gbp_to_xmr(double gbp) {
     double xmr_amount = 0.0;
     // get json from url
     request("https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=gbp");
@@ -186,7 +186,7 @@ double Converter::gbp_to_xmr(double gbp) {
     return xmr_amount;
 }
 ////////////////////
-double Converter::cad_to_xmr(double cad) {
+double neroshop::Converter::cad_to_xmr(double cad) {
     double xmr_amount = 0.0;
     // get json from url
     request("https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=cad");
@@ -206,7 +206,7 @@ double Converter::cad_to_xmr(double cad) {
     return xmr_amount;
 }
 ////////////////////
-double Converter::chf_to_xmr(double chf) {
+double neroshop::Converter::chf_to_xmr(double chf) {
     double xmr_amount = 0.0;
     // get json from url
     request("https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=chf");
@@ -226,7 +226,7 @@ double Converter::chf_to_xmr(double chf) {
     return xmr_amount;
 }
 ////////////////////
-double Converter::aud_to_xmr(double aud) {
+double neroshop::Converter::aud_to_xmr(double aud) {
     double xmr_amount = 0.0;
     // get json from url
     request("https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=aud");
@@ -246,7 +246,7 @@ double Converter::aud_to_xmr(double aud) {
     return xmr_amount;
 }
 ////////////////////
-double Converter::cny_to_xmr(double cny) {
+double neroshop::Converter::cny_to_xmr(double cny) {
     double xmr_amount = 0.0;
     // get json from url
     request("https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=cny");
@@ -266,7 +266,7 @@ double Converter::cny_to_xmr(double cny) {
     return xmr_amount;
 }
 ////////////////////
-double Converter::sek_to_xmr(double sek) {
+double neroshop::Converter::sek_to_xmr(double sek) {
     double xmr_amount = 0.0;
     request("https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=sek");
 #ifdef NEROSHOP_DEBUG0
@@ -281,7 +281,7 @@ double Converter::sek_to_xmr(double sek) {
     return xmr_amount;
 }
 ////////////////////
-double Converter::nzd_to_xmr(double nzd) {
+double neroshop::Converter::nzd_to_xmr(double nzd) {
     double xmr_amount = 0.0;
     request("https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=nzd");
 #ifdef NEROSHOP_DEBUG0
@@ -296,7 +296,7 @@ double Converter::nzd_to_xmr(double nzd) {
     return xmr_amount;
 }
 ////////////////////
-double Converter::mxn_to_xmr(double mxn)
+double neroshop::Converter::mxn_to_xmr(double mxn)
 {
     double xmr_amount = 0.0;
     request("https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=mxn");
@@ -314,12 +314,12 @@ double Converter::mxn_to_xmr(double mxn)
 ////////////////////
 ////////////////////
 ////////////////////
-double Converter::to_kg(double amount, const std::string& unit_name) const {
+double neroshop::Converter::to_kg(double amount, const std::string& unit_name) const {
     if(String::lower(unit_name) == "lb" || String::lower(unit_name) == "lbs" || String::lower(unit_name) == "pound") {return lb_to_kg(amount);}
     return 0.0;
 }
 ////////////////////
-double Converter::lb_to_kg(double lb) {
+double neroshop::Converter::lb_to_kg(double lb) {
     double lb2kg = 0.45359237; // 1 lb = 0.45359237 kg
     return lb * lb2kg;
 }
@@ -327,7 +327,7 @@ double Converter::lb_to_kg(double lb) {
 ////////////////////
 ////////////////////
 ////////////////////
-std::string Converter::get_currency_symbol(const std::string& currency_code) {
+std::string neroshop::Converter::get_currency_symbol(const std::string& currency_code) {
     if(String::lower(currency_code) == "usd") return "$";// or US$
     if(String::lower(currency_code) == "eur") return "€";
     if(String::lower(currency_code) == "jpy") return "¥";
@@ -346,7 +346,7 @@ std::string Converter::get_currency_symbol(const std::string& currency_code) {
 ////////////////////
 ////////////////////
 ////////////////////
-bool Converter::is_supported_currency(const std::string& currency_code) {
+bool neroshop::Converter::is_supported_currency(const std::string& currency_code) {
     if(String::lower(currency_code) == "usd") return true;
     if(String::lower(currency_code) == "eur") return true;
     if(String::lower(currency_code) == "jpy") return true;
@@ -364,7 +364,7 @@ bool Converter::is_supported_currency(const std::string& currency_code) {
 ////////////////////
 ////////////////////
 ////////////////////
-bool Converter::request(const std::string& url)
+bool neroshop::Converter::request(const std::string& url)
 {
     // parse raw json str
     //std::string buffer;
@@ -376,8 +376,8 @@ bool Converter::request(const std::string& url)
         //curl_easy_setopt(curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4); // opt - Don't bother trying IPv6, which would increase DNS resolution time.
         //curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10); // opt - don't wait forever, time out after 10 secs
         //curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L); // opt follow https redirects if necessary
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, Converter::write_callback);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &Converter::json_string);//&buffer);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, neroshop::Converter::write_callback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &neroshop::Converter::json_string);//&buffer);
         res = curl_easy_perform(curl);
         //curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code); // opt
         if(res != CURLE_OK) {
@@ -391,13 +391,13 @@ bool Converter::request(const std::string& url)
     return true;
 }
 ////////////////////
-std::string Converter::get_json() // const; // returns whole json as a string
+std::string neroshop::Converter::get_json() // const; // returns whole json as a string
 {
     return json_string;
 }
 ////////////////////
 ////////////////////
-std::size_t Converter::write_callback(char* in, std::size_t size, std::size_t num, std::string* out)
+std::size_t neroshop::Converter::write_callback(char* in, std::size_t size, std::size_t num, std::string* out)
 {
     const std::size_t total_bytes = size * num;
     if(total_bytes) {

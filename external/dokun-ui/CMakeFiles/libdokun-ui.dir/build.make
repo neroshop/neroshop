@@ -343,35 +343,9 @@ CMakeFiles/libdokun-ui.dir/src/tab.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/libdokun-ui.dir/src/tab.cpp.s"
 	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/src/tab.cpp -o CMakeFiles/libdokun-ui.dir/src/tab.cpp.s
 
-CMakeFiles/libdokun-ui.dir/src/server.cpp.o: CMakeFiles/libdokun-ui.dir/flags.make
-CMakeFiles/libdokun-ui.dir/src/server.cpp.o: src/server.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building CXX object CMakeFiles/libdokun-ui.dir/src/server.cpp.o"
-	/usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/libdokun-ui.dir/src/server.cpp.o -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/src/server.cpp
-
-CMakeFiles/libdokun-ui.dir/src/server.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/libdokun-ui.dir/src/server.cpp.i"
-	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/src/server.cpp > CMakeFiles/libdokun-ui.dir/src/server.cpp.i
-
-CMakeFiles/libdokun-ui.dir/src/server.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/libdokun-ui.dir/src/server.cpp.s"
-	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/src/server.cpp -o CMakeFiles/libdokun-ui.dir/src/server.cpp.s
-
-CMakeFiles/libdokun-ui.dir/src/client.cpp.o: CMakeFiles/libdokun-ui.dir/flags.make
-CMakeFiles/libdokun-ui.dir/src/client.cpp.o: src/client.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building CXX object CMakeFiles/libdokun-ui.dir/src/client.cpp.o"
-	/usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/libdokun-ui.dir/src/client.cpp.o -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/src/client.cpp
-
-CMakeFiles/libdokun-ui.dir/src/client.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/libdokun-ui.dir/src/client.cpp.i"
-	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/src/client.cpp > CMakeFiles/libdokun-ui.dir/src/client.cpp.i
-
-CMakeFiles/libdokun-ui.dir/src/client.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/libdokun-ui.dir/src/client.cpp.s"
-	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/src/client.cpp -o CMakeFiles/libdokun-ui.dir/src/client.cpp.s
-
 CMakeFiles/libdokun-ui.dir/src/entity.cpp.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/src/entity.cpp.o: src/entity.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Building CXX object CMakeFiles/libdokun-ui.dir/src/entity.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building CXX object CMakeFiles/libdokun-ui.dir/src/entity.cpp.o"
 	/usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/libdokun-ui.dir/src/entity.cpp.o -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/src/entity.cpp
 
 CMakeFiles/libdokun-ui.dir/src/entity.cpp.i: cmake_force
@@ -384,7 +358,7 @@ CMakeFiles/libdokun-ui.dir/src/entity.cpp.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/src/component.cpp.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/src/component.cpp.o: src/component.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_26) "Building CXX object CMakeFiles/libdokun-ui.dir/src/component.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building CXX object CMakeFiles/libdokun-ui.dir/src/component.cpp.o"
 	/usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/libdokun-ui.dir/src/component.cpp.o -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/src/component.cpp
 
 CMakeFiles/libdokun-ui.dir/src/component.cpp.i: cmake_force
@@ -397,7 +371,7 @@ CMakeFiles/libdokun-ui.dir/src/component.cpp.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/src/timer.cpp.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/src/timer.cpp.o: src/timer.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_27) "Building CXX object CMakeFiles/libdokun-ui.dir/src/timer.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Building CXX object CMakeFiles/libdokun-ui.dir/src/timer.cpp.o"
 	/usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/libdokun-ui.dir/src/timer.cpp.o -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/src/timer.cpp
 
 CMakeFiles/libdokun-ui.dir/src/timer.cpp.i: cmake_force
@@ -410,7 +384,7 @@ CMakeFiles/libdokun-ui.dir/src/timer.cpp.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/src/shader.cpp.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/src/shader.cpp.o: src/shader.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_28) "Building CXX object CMakeFiles/libdokun-ui.dir/src/shader.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_26) "Building CXX object CMakeFiles/libdokun-ui.dir/src/shader.cpp.o"
 	/usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/libdokun-ui.dir/src/shader.cpp.o -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/src/shader.cpp
 
 CMakeFiles/libdokun-ui.dir/src/shader.cpp.i: cmake_force
@@ -423,7 +397,7 @@ CMakeFiles/libdokun-ui.dir/src/shader.cpp.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/src/factory.cpp.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/src/factory.cpp.o: src/factory.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_29) "Building CXX object CMakeFiles/libdokun-ui.dir/src/factory.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_27) "Building CXX object CMakeFiles/libdokun-ui.dir/src/factory.cpp.o"
 	/usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/libdokun-ui.dir/src/factory.cpp.o -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/src/factory.cpp
 
 CMakeFiles/libdokun-ui.dir/src/factory.cpp.i: cmake_force
@@ -436,7 +410,7 @@ CMakeFiles/libdokun-ui.dir/src/factory.cpp.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/src/script.cpp.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/src/script.cpp.o: src/script.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_30) "Building CXX object CMakeFiles/libdokun-ui.dir/src/script.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_28) "Building CXX object CMakeFiles/libdokun-ui.dir/src/script.cpp.o"
 	/usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/libdokun-ui.dir/src/script.cpp.o -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/src/script.cpp
 
 CMakeFiles/libdokun-ui.dir/src/script.cpp.i: cmake_force
@@ -449,7 +423,7 @@ CMakeFiles/libdokun-ui.dir/src/script.cpp.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/src/console.cpp.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/src/console.cpp.o: src/console.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_31) "Building CXX object CMakeFiles/libdokun-ui.dir/src/console.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_29) "Building CXX object CMakeFiles/libdokun-ui.dir/src/console.cpp.o"
 	/usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/libdokun-ui.dir/src/console.cpp.o -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/src/console.cpp
 
 CMakeFiles/libdokun-ui.dir/src/console.cpp.i: cmake_force
@@ -462,7 +436,7 @@ CMakeFiles/libdokun-ui.dir/src/console.cpp.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/src/plugin.cpp.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/src/plugin.cpp.o: src/plugin.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_32) "Building CXX object CMakeFiles/libdokun-ui.dir/src/plugin.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_30) "Building CXX object CMakeFiles/libdokun-ui.dir/src/plugin.cpp.o"
 	/usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/libdokun-ui.dir/src/plugin.cpp.o -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/src/plugin.cpp
 
 CMakeFiles/libdokun-ui.dir/src/plugin.cpp.i: cmake_force
@@ -475,7 +449,7 @@ CMakeFiles/libdokun-ui.dir/src/plugin.cpp.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/src/file.cpp.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/src/file.cpp.o: src/file.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_33) "Building CXX object CMakeFiles/libdokun-ui.dir/src/file.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_31) "Building CXX object CMakeFiles/libdokun-ui.dir/src/file.cpp.o"
 	/usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/libdokun-ui.dir/src/file.cpp.o -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/src/file.cpp
 
 CMakeFiles/libdokun-ui.dir/src/file.cpp.i: cmake_force
@@ -488,7 +462,7 @@ CMakeFiles/libdokun-ui.dir/src/file.cpp.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/src/renderer.cpp.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/src/renderer.cpp.o: src/renderer.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_34) "Building CXX object CMakeFiles/libdokun-ui.dir/src/renderer.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_32) "Building CXX object CMakeFiles/libdokun-ui.dir/src/renderer.cpp.o"
 	/usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/libdokun-ui.dir/src/renderer.cpp.o -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/src/renderer.cpp
 
 CMakeFiles/libdokun-ui.dir/src/renderer.cpp.i: cmake_force
@@ -501,7 +475,7 @@ CMakeFiles/libdokun-ui.dir/src/renderer.cpp.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/src/process.cpp.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/src/process.cpp.o: src/process.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_35) "Building CXX object CMakeFiles/libdokun-ui.dir/src/process.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_33) "Building CXX object CMakeFiles/libdokun-ui.dir/src/process.cpp.o"
 	/usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/libdokun-ui.dir/src/process.cpp.o -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/src/process.cpp
 
 CMakeFiles/libdokun-ui.dir/src/process.cpp.i: cmake_force
@@ -514,7 +488,7 @@ CMakeFiles/libdokun-ui.dir/src/process.cpp.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/src/browser.cpp.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/src/browser.cpp.o: src/browser.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_36) "Building CXX object CMakeFiles/libdokun-ui.dir/src/browser.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_34) "Building CXX object CMakeFiles/libdokun-ui.dir/src/browser.cpp.o"
 	/usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/libdokun-ui.dir/src/browser.cpp.o -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/src/browser.cpp
 
 CMakeFiles/libdokun-ui.dir/src/browser.cpp.i: cmake_force
@@ -527,7 +501,7 @@ CMakeFiles/libdokun-ui.dir/src/browser.cpp.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/src/logger.cpp.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/src/logger.cpp.o: src/logger.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_37) "Building CXX object CMakeFiles/libdokun-ui.dir/src/logger.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_35) "Building CXX object CMakeFiles/libdokun-ui.dir/src/logger.cpp.o"
 	/usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/libdokun-ui.dir/src/logger.cpp.o -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/src/logger.cpp
 
 CMakeFiles/libdokun-ui.dir/src/logger.cpp.i: cmake_force
@@ -540,7 +514,7 @@ CMakeFiles/libdokun-ui.dir/src/logger.cpp.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lua.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lua.c.o: external/lua/lua-5.4.1/src/lua.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_38) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lua.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_36) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lua.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lua.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/lua/lua-5.4.1/src/lua.c
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lua.c.i: cmake_force
@@ -553,7 +527,7 @@ CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lua.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/luac.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/luac.c.o: external/lua/lua-5.4.1/src/luac.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_39) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/luac.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_37) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/luac.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/luac.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/lua/lua-5.4.1/src/luac.c
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/luac.c.i: cmake_force
@@ -566,7 +540,7 @@ CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/luac.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lapi.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lapi.c.o: external/lua/lua-5.4.1/src/lapi.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_40) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lapi.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_38) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lapi.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lapi.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/lua/lua-5.4.1/src/lapi.c
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lapi.c.i: cmake_force
@@ -579,7 +553,7 @@ CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lapi.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lcode.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lcode.c.o: external/lua/lua-5.4.1/src/lcode.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_41) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lcode.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_39) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lcode.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lcode.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/lua/lua-5.4.1/src/lcode.c
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lcode.c.i: cmake_force
@@ -592,7 +566,7 @@ CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lcode.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lctype.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lctype.c.o: external/lua/lua-5.4.1/src/lctype.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_42) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lctype.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_40) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lctype.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lctype.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/lua/lua-5.4.1/src/lctype.c
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lctype.c.i: cmake_force
@@ -605,7 +579,7 @@ CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lctype.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ldebug.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ldebug.c.o: external/lua/lua-5.4.1/src/ldebug.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_43) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ldebug.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_41) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ldebug.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ldebug.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/lua/lua-5.4.1/src/ldebug.c
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ldebug.c.i: cmake_force
@@ -618,7 +592,7 @@ CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ldebug.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ldo.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ldo.c.o: external/lua/lua-5.4.1/src/ldo.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_44) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ldo.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_42) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ldo.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ldo.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/lua/lua-5.4.1/src/ldo.c
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ldo.c.i: cmake_force
@@ -631,7 +605,7 @@ CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ldo.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ldump.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ldump.c.o: external/lua/lua-5.4.1/src/ldump.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_45) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ldump.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_43) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ldump.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ldump.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/lua/lua-5.4.1/src/ldump.c
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ldump.c.i: cmake_force
@@ -644,7 +618,7 @@ CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ldump.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lfunc.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lfunc.c.o: external/lua/lua-5.4.1/src/lfunc.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_46) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lfunc.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_44) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lfunc.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lfunc.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/lua/lua-5.4.1/src/lfunc.c
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lfunc.c.i: cmake_force
@@ -657,7 +631,7 @@ CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lfunc.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lgc.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lgc.c.o: external/lua/lua-5.4.1/src/lgc.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_47) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lgc.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_45) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lgc.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lgc.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/lua/lua-5.4.1/src/lgc.c
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lgc.c.i: cmake_force
@@ -670,7 +644,7 @@ CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lgc.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/llex.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/llex.c.o: external/lua/lua-5.4.1/src/llex.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_48) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/llex.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_46) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/llex.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/llex.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/lua/lua-5.4.1/src/llex.c
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/llex.c.i: cmake_force
@@ -683,7 +657,7 @@ CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/llex.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lmem.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lmem.c.o: external/lua/lua-5.4.1/src/lmem.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_49) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lmem.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_47) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lmem.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lmem.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/lua/lua-5.4.1/src/lmem.c
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lmem.c.i: cmake_force
@@ -696,7 +670,7 @@ CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lmem.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lobject.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lobject.c.o: external/lua/lua-5.4.1/src/lobject.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_50) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lobject.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_48) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lobject.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lobject.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/lua/lua-5.4.1/src/lobject.c
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lobject.c.i: cmake_force
@@ -709,7 +683,7 @@ CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lobject.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lopcodes.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lopcodes.c.o: external/lua/lua-5.4.1/src/lopcodes.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_51) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lopcodes.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_49) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lopcodes.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lopcodes.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/lua/lua-5.4.1/src/lopcodes.c
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lopcodes.c.i: cmake_force
@@ -722,7 +696,7 @@ CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lopcodes.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lparser.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lparser.c.o: external/lua/lua-5.4.1/src/lparser.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_52) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lparser.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_50) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lparser.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lparser.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/lua/lua-5.4.1/src/lparser.c
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lparser.c.i: cmake_force
@@ -735,7 +709,7 @@ CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lparser.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lstate.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lstate.c.o: external/lua/lua-5.4.1/src/lstate.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_53) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lstate.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_51) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lstate.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lstate.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/lua/lua-5.4.1/src/lstate.c
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lstate.c.i: cmake_force
@@ -748,7 +722,7 @@ CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lstate.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lstring.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lstring.c.o: external/lua/lua-5.4.1/src/lstring.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_54) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lstring.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_52) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lstring.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lstring.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/lua/lua-5.4.1/src/lstring.c
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lstring.c.i: cmake_force
@@ -761,7 +735,7 @@ CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lstring.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ltable.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ltable.c.o: external/lua/lua-5.4.1/src/ltable.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_55) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ltable.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_53) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ltable.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ltable.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/lua/lua-5.4.1/src/ltable.c
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ltable.c.i: cmake_force
@@ -774,7 +748,7 @@ CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ltable.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ltm.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ltm.c.o: external/lua/lua-5.4.1/src/ltm.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_56) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ltm.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_54) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ltm.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ltm.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/lua/lua-5.4.1/src/ltm.c
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ltm.c.i: cmake_force
@@ -787,7 +761,7 @@ CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ltm.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lundump.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lundump.c.o: external/lua/lua-5.4.1/src/lundump.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_57) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lundump.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_55) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lundump.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lundump.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/lua/lua-5.4.1/src/lundump.c
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lundump.c.i: cmake_force
@@ -800,7 +774,7 @@ CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lundump.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lvm.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lvm.c.o: external/lua/lua-5.4.1/src/lvm.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_58) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lvm.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_56) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lvm.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lvm.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/lua/lua-5.4.1/src/lvm.c
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lvm.c.i: cmake_force
@@ -813,7 +787,7 @@ CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lvm.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lzio.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lzio.c.o: external/lua/lua-5.4.1/src/lzio.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_59) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lzio.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_57) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lzio.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lzio.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/lua/lua-5.4.1/src/lzio.c
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lzio.c.i: cmake_force
@@ -826,7 +800,7 @@ CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lzio.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lauxlib.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lauxlib.c.o: external/lua/lua-5.4.1/src/lauxlib.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_60) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lauxlib.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_58) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lauxlib.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lauxlib.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/lua/lua-5.4.1/src/lauxlib.c
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lauxlib.c.i: cmake_force
@@ -839,7 +813,7 @@ CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lauxlib.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lbaselib.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lbaselib.c.o: external/lua/lua-5.4.1/src/lbaselib.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_61) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lbaselib.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_59) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lbaselib.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lbaselib.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/lua/lua-5.4.1/src/lbaselib.c
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lbaselib.c.i: cmake_force
@@ -852,7 +826,7 @@ CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lbaselib.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lcorolib.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lcorolib.c.o: external/lua/lua-5.4.1/src/lcorolib.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_62) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lcorolib.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_60) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lcorolib.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lcorolib.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/lua/lua-5.4.1/src/lcorolib.c
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lcorolib.c.i: cmake_force
@@ -865,7 +839,7 @@ CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lcorolib.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ldblib.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ldblib.c.o: external/lua/lua-5.4.1/src/ldblib.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_63) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ldblib.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_61) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ldblib.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ldblib.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/lua/lua-5.4.1/src/ldblib.c
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ldblib.c.i: cmake_force
@@ -878,7 +852,7 @@ CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ldblib.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/liolib.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/liolib.c.o: external/lua/lua-5.4.1/src/liolib.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_64) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/liolib.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_62) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/liolib.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/liolib.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/lua/lua-5.4.1/src/liolib.c
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/liolib.c.i: cmake_force
@@ -891,7 +865,7 @@ CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/liolib.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lmathlib.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lmathlib.c.o: external/lua/lua-5.4.1/src/lmathlib.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_65) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lmathlib.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_63) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lmathlib.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lmathlib.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/lua/lua-5.4.1/src/lmathlib.c
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lmathlib.c.i: cmake_force
@@ -904,7 +878,7 @@ CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lmathlib.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/loadlib.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/loadlib.c.o: external/lua/lua-5.4.1/src/loadlib.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_66) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/loadlib.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_64) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/loadlib.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/loadlib.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/lua/lua-5.4.1/src/loadlib.c
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/loadlib.c.i: cmake_force
@@ -917,7 +891,7 @@ CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/loadlib.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/loslib.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/loslib.c.o: external/lua/lua-5.4.1/src/loslib.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_67) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/loslib.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_65) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/loslib.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/loslib.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/lua/lua-5.4.1/src/loslib.c
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/loslib.c.i: cmake_force
@@ -930,7 +904,7 @@ CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/loslib.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lstrlib.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lstrlib.c.o: external/lua/lua-5.4.1/src/lstrlib.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_68) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lstrlib.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_66) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lstrlib.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lstrlib.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/lua/lua-5.4.1/src/lstrlib.c
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lstrlib.c.i: cmake_force
@@ -943,7 +917,7 @@ CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lstrlib.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ltablib.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ltablib.c.o: external/lua/lua-5.4.1/src/ltablib.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_69) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ltablib.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_67) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ltablib.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ltablib.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/lua/lua-5.4.1/src/ltablib.c
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ltablib.c.i: cmake_force
@@ -956,7 +930,7 @@ CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/ltablib.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lutf8lib.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lutf8lib.c.o: external/lua/lua-5.4.1/src/lutf8lib.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_70) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lutf8lib.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_68) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lutf8lib.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lutf8lib.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/lua/lua-5.4.1/src/lutf8lib.c
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lutf8lib.c.i: cmake_force
@@ -969,7 +943,7 @@ CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/lutf8lib.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/linit.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/linit.c.o: external/lua/lua-5.4.1/src/linit.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_71) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/linit.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_69) "Building C object CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/linit.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/linit.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/lua/lua-5.4.1/src/linit.c
 
 CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/linit.c.i: cmake_force
@@ -982,7 +956,7 @@ CMakeFiles/libdokun-ui.dir/external/lua/lua-5.4.1/src/linit.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/png/png.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/png/png.c.o: external/png/png.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_72) "Building C object CMakeFiles/libdokun-ui.dir/external/png/png.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_70) "Building C object CMakeFiles/libdokun-ui.dir/external/png/png.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/png/png.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/png/png.c
 
 CMakeFiles/libdokun-ui.dir/external/png/png.c.i: cmake_force
@@ -995,7 +969,7 @@ CMakeFiles/libdokun-ui.dir/external/png/png.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/png/pngerror.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/png/pngerror.c.o: external/png/pngerror.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_73) "Building C object CMakeFiles/libdokun-ui.dir/external/png/pngerror.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_71) "Building C object CMakeFiles/libdokun-ui.dir/external/png/pngerror.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/png/pngerror.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/png/pngerror.c
 
 CMakeFiles/libdokun-ui.dir/external/png/pngerror.c.i: cmake_force
@@ -1008,7 +982,7 @@ CMakeFiles/libdokun-ui.dir/external/png/pngerror.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/png/pngget.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/png/pngget.c.o: external/png/pngget.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_74) "Building C object CMakeFiles/libdokun-ui.dir/external/png/pngget.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_72) "Building C object CMakeFiles/libdokun-ui.dir/external/png/pngget.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/png/pngget.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/png/pngget.c
 
 CMakeFiles/libdokun-ui.dir/external/png/pngget.c.i: cmake_force
@@ -1021,7 +995,7 @@ CMakeFiles/libdokun-ui.dir/external/png/pngget.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/png/pngmem.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/png/pngmem.c.o: external/png/pngmem.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_75) "Building C object CMakeFiles/libdokun-ui.dir/external/png/pngmem.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_73) "Building C object CMakeFiles/libdokun-ui.dir/external/png/pngmem.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/png/pngmem.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/png/pngmem.c
 
 CMakeFiles/libdokun-ui.dir/external/png/pngmem.c.i: cmake_force
@@ -1034,7 +1008,7 @@ CMakeFiles/libdokun-ui.dir/external/png/pngmem.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/png/pngpread.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/png/pngpread.c.o: external/png/pngpread.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_76) "Building C object CMakeFiles/libdokun-ui.dir/external/png/pngpread.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_74) "Building C object CMakeFiles/libdokun-ui.dir/external/png/pngpread.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/png/pngpread.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/png/pngpread.c
 
 CMakeFiles/libdokun-ui.dir/external/png/pngpread.c.i: cmake_force
@@ -1047,7 +1021,7 @@ CMakeFiles/libdokun-ui.dir/external/png/pngpread.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/png/pngread.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/png/pngread.c.o: external/png/pngread.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_77) "Building C object CMakeFiles/libdokun-ui.dir/external/png/pngread.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_75) "Building C object CMakeFiles/libdokun-ui.dir/external/png/pngread.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/png/pngread.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/png/pngread.c
 
 CMakeFiles/libdokun-ui.dir/external/png/pngread.c.i: cmake_force
@@ -1060,7 +1034,7 @@ CMakeFiles/libdokun-ui.dir/external/png/pngread.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/png/pngrio.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/png/pngrio.c.o: external/png/pngrio.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_78) "Building C object CMakeFiles/libdokun-ui.dir/external/png/pngrio.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_76) "Building C object CMakeFiles/libdokun-ui.dir/external/png/pngrio.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/png/pngrio.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/png/pngrio.c
 
 CMakeFiles/libdokun-ui.dir/external/png/pngrio.c.i: cmake_force
@@ -1073,7 +1047,7 @@ CMakeFiles/libdokun-ui.dir/external/png/pngrio.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/png/pngrtran.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/png/pngrtran.c.o: external/png/pngrtran.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_79) "Building C object CMakeFiles/libdokun-ui.dir/external/png/pngrtran.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_77) "Building C object CMakeFiles/libdokun-ui.dir/external/png/pngrtran.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/png/pngrtran.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/png/pngrtran.c
 
 CMakeFiles/libdokun-ui.dir/external/png/pngrtran.c.i: cmake_force
@@ -1086,7 +1060,7 @@ CMakeFiles/libdokun-ui.dir/external/png/pngrtran.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/png/pngrutil.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/png/pngrutil.c.o: external/png/pngrutil.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_80) "Building C object CMakeFiles/libdokun-ui.dir/external/png/pngrutil.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_78) "Building C object CMakeFiles/libdokun-ui.dir/external/png/pngrutil.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/png/pngrutil.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/png/pngrutil.c
 
 CMakeFiles/libdokun-ui.dir/external/png/pngrutil.c.i: cmake_force
@@ -1099,7 +1073,7 @@ CMakeFiles/libdokun-ui.dir/external/png/pngrutil.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/png/pngset.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/png/pngset.c.o: external/png/pngset.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_81) "Building C object CMakeFiles/libdokun-ui.dir/external/png/pngset.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_79) "Building C object CMakeFiles/libdokun-ui.dir/external/png/pngset.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/png/pngset.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/png/pngset.c
 
 CMakeFiles/libdokun-ui.dir/external/png/pngset.c.i: cmake_force
@@ -1112,7 +1086,7 @@ CMakeFiles/libdokun-ui.dir/external/png/pngset.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/png/pngtrans.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/png/pngtrans.c.o: external/png/pngtrans.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_82) "Building C object CMakeFiles/libdokun-ui.dir/external/png/pngtrans.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_80) "Building C object CMakeFiles/libdokun-ui.dir/external/png/pngtrans.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/png/pngtrans.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/png/pngtrans.c
 
 CMakeFiles/libdokun-ui.dir/external/png/pngtrans.c.i: cmake_force
@@ -1125,7 +1099,7 @@ CMakeFiles/libdokun-ui.dir/external/png/pngtrans.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/png/pngwio.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/png/pngwio.c.o: external/png/pngwio.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_83) "Building C object CMakeFiles/libdokun-ui.dir/external/png/pngwio.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_81) "Building C object CMakeFiles/libdokun-ui.dir/external/png/pngwio.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/png/pngwio.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/png/pngwio.c
 
 CMakeFiles/libdokun-ui.dir/external/png/pngwio.c.i: cmake_force
@@ -1138,7 +1112,7 @@ CMakeFiles/libdokun-ui.dir/external/png/pngwio.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/png/pngwrite.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/png/pngwrite.c.o: external/png/pngwrite.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_84) "Building C object CMakeFiles/libdokun-ui.dir/external/png/pngwrite.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_82) "Building C object CMakeFiles/libdokun-ui.dir/external/png/pngwrite.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/png/pngwrite.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/png/pngwrite.c
 
 CMakeFiles/libdokun-ui.dir/external/png/pngwrite.c.i: cmake_force
@@ -1151,7 +1125,7 @@ CMakeFiles/libdokun-ui.dir/external/png/pngwrite.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/png/pngwtran.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/png/pngwtran.c.o: external/png/pngwtran.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_85) "Building C object CMakeFiles/libdokun-ui.dir/external/png/pngwtran.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_83) "Building C object CMakeFiles/libdokun-ui.dir/external/png/pngwtran.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/png/pngwtran.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/png/pngwtran.c
 
 CMakeFiles/libdokun-ui.dir/external/png/pngwtran.c.i: cmake_force
@@ -1164,7 +1138,7 @@ CMakeFiles/libdokun-ui.dir/external/png/pngwtran.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/png/pngwutil.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/png/pngwutil.c.o: external/png/pngwutil.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_86) "Building C object CMakeFiles/libdokun-ui.dir/external/png/pngwutil.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_84) "Building C object CMakeFiles/libdokun-ui.dir/external/png/pngwutil.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/png/pngwutil.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/png/pngwutil.c
 
 CMakeFiles/libdokun-ui.dir/external/png/pngwutil.c.i: cmake_force
@@ -1177,7 +1151,7 @@ CMakeFiles/libdokun-ui.dir/external/png/pngwutil.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/gif/lib/dgif_lib.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/gif/lib/dgif_lib.c.o: external/gif/lib/dgif_lib.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_87) "Building C object CMakeFiles/libdokun-ui.dir/external/gif/lib/dgif_lib.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_85) "Building C object CMakeFiles/libdokun-ui.dir/external/gif/lib/dgif_lib.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/gif/lib/dgif_lib.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/gif/lib/dgif_lib.c
 
 CMakeFiles/libdokun-ui.dir/external/gif/lib/dgif_lib.c.i: cmake_force
@@ -1190,7 +1164,7 @@ CMakeFiles/libdokun-ui.dir/external/gif/lib/dgif_lib.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/gif/lib/egif_lib.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/gif/lib/egif_lib.c.o: external/gif/lib/egif_lib.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_88) "Building C object CMakeFiles/libdokun-ui.dir/external/gif/lib/egif_lib.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_86) "Building C object CMakeFiles/libdokun-ui.dir/external/gif/lib/egif_lib.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/gif/lib/egif_lib.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/gif/lib/egif_lib.c
 
 CMakeFiles/libdokun-ui.dir/external/gif/lib/egif_lib.c.i: cmake_force
@@ -1203,7 +1177,7 @@ CMakeFiles/libdokun-ui.dir/external/gif/lib/egif_lib.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/gif/lib/gif_err.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/gif/lib/gif_err.c.o: external/gif/lib/gif_err.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_89) "Building C object CMakeFiles/libdokun-ui.dir/external/gif/lib/gif_err.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_87) "Building C object CMakeFiles/libdokun-ui.dir/external/gif/lib/gif_err.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/gif/lib/gif_err.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/gif/lib/gif_err.c
 
 CMakeFiles/libdokun-ui.dir/external/gif/lib/gif_err.c.i: cmake_force
@@ -1216,7 +1190,7 @@ CMakeFiles/libdokun-ui.dir/external/gif/lib/gif_err.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/gif/lib/gif_font.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/gif/lib/gif_font.c.o: external/gif/lib/gif_font.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_90) "Building C object CMakeFiles/libdokun-ui.dir/external/gif/lib/gif_font.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_88) "Building C object CMakeFiles/libdokun-ui.dir/external/gif/lib/gif_font.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/gif/lib/gif_font.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/gif/lib/gif_font.c
 
 CMakeFiles/libdokun-ui.dir/external/gif/lib/gif_font.c.i: cmake_force
@@ -1229,7 +1203,7 @@ CMakeFiles/libdokun-ui.dir/external/gif/lib/gif_font.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/gif/lib/gif_hash.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/gif/lib/gif_hash.c.o: external/gif/lib/gif_hash.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_91) "Building C object CMakeFiles/libdokun-ui.dir/external/gif/lib/gif_hash.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_89) "Building C object CMakeFiles/libdokun-ui.dir/external/gif/lib/gif_hash.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/gif/lib/gif_hash.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/gif/lib/gif_hash.c
 
 CMakeFiles/libdokun-ui.dir/external/gif/lib/gif_hash.c.i: cmake_force
@@ -1242,7 +1216,7 @@ CMakeFiles/libdokun-ui.dir/external/gif/lib/gif_hash.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/gif/lib/gifalloc.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/gif/lib/gifalloc.c.o: external/gif/lib/gifalloc.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_92) "Building C object CMakeFiles/libdokun-ui.dir/external/gif/lib/gifalloc.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_90) "Building C object CMakeFiles/libdokun-ui.dir/external/gif/lib/gifalloc.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/gif/lib/gifalloc.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/gif/lib/gifalloc.c
 
 CMakeFiles/libdokun-ui.dir/external/gif/lib/gifalloc.c.i: cmake_force
@@ -1255,7 +1229,7 @@ CMakeFiles/libdokun-ui.dir/external/gif/lib/gifalloc.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/gif/lib/openbsd-reallocarray.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/gif/lib/openbsd-reallocarray.c.o: external/gif/lib/openbsd-reallocarray.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_93) "Building C object CMakeFiles/libdokun-ui.dir/external/gif/lib/openbsd-reallocarray.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_91) "Building C object CMakeFiles/libdokun-ui.dir/external/gif/lib/openbsd-reallocarray.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/gif/lib/openbsd-reallocarray.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/gif/lib/openbsd-reallocarray.c
 
 CMakeFiles/libdokun-ui.dir/external/gif/lib/openbsd-reallocarray.c.i: cmake_force
@@ -1268,7 +1242,7 @@ CMakeFiles/libdokun-ui.dir/external/gif/lib/openbsd-reallocarray.c.s: cmake_forc
 
 CMakeFiles/libdokun-ui.dir/external/gif/lib/quantize.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/gif/lib/quantize.c.o: external/gif/lib/quantize.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_94) "Building C object CMakeFiles/libdokun-ui.dir/external/gif/lib/quantize.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_92) "Building C object CMakeFiles/libdokun-ui.dir/external/gif/lib/quantize.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/gif/lib/quantize.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/gif/lib/quantize.c
 
 CMakeFiles/libdokun-ui.dir/external/gif/lib/quantize.c.i: cmake_force
@@ -1281,7 +1255,7 @@ CMakeFiles/libdokun-ui.dir/external/gif/lib/quantize.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jaricom.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jaricom.c.o: external/jpeg/jaricom.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_95) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jaricom.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_93) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jaricom.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jaricom.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jaricom.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jaricom.c.i: cmake_force
@@ -1294,7 +1268,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jaricom.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcapimin.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcapimin.c.o: external/jpeg/jcapimin.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_96) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jcapimin.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_94) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jcapimin.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jcapimin.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jcapimin.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcapimin.c.i: cmake_force
@@ -1307,7 +1281,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jcapimin.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcapistd.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcapistd.c.o: external/jpeg/jcapistd.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_97) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jcapistd.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_95) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jcapistd.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jcapistd.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jcapistd.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcapistd.c.i: cmake_force
@@ -1320,7 +1294,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jcapistd.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcarith.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcarith.c.o: external/jpeg/jcarith.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_98) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jcarith.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_96) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jcarith.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jcarith.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jcarith.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcarith.c.i: cmake_force
@@ -1333,7 +1307,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jcarith.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jccoefct.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jccoefct.c.o: external/jpeg/jccoefct.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_99) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jccoefct.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_97) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jccoefct.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jccoefct.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jccoefct.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jccoefct.c.i: cmake_force
@@ -1346,7 +1320,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jccoefct.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jccolor.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jccolor.c.o: external/jpeg/jccolor.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_100) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jccolor.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_98) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jccolor.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jccolor.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jccolor.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jccolor.c.i: cmake_force
@@ -1359,7 +1333,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jccolor.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcdctmgr.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcdctmgr.c.o: external/jpeg/jcdctmgr.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_101) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jcdctmgr.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_99) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jcdctmgr.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jcdctmgr.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jcdctmgr.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcdctmgr.c.i: cmake_force
@@ -1372,7 +1346,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jcdctmgr.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jchuff.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jchuff.c.o: external/jpeg/jchuff.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_102) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jchuff.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_100) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jchuff.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jchuff.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jchuff.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jchuff.c.i: cmake_force
@@ -1385,7 +1359,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jchuff.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcinit.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcinit.c.o: external/jpeg/jcinit.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_103) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jcinit.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_101) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jcinit.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jcinit.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jcinit.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcinit.c.i: cmake_force
@@ -1398,7 +1372,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jcinit.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcmainct.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcmainct.c.o: external/jpeg/jcmainct.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_104) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jcmainct.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_102) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jcmainct.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jcmainct.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jcmainct.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcmainct.c.i: cmake_force
@@ -1411,7 +1385,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jcmainct.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcmarker.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcmarker.c.o: external/jpeg/jcmarker.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_105) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jcmarker.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_103) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jcmarker.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jcmarker.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jcmarker.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcmarker.c.i: cmake_force
@@ -1424,7 +1398,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jcmarker.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcmaster.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcmaster.c.o: external/jpeg/jcmaster.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_106) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jcmaster.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_104) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jcmaster.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jcmaster.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jcmaster.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcmaster.c.i: cmake_force
@@ -1437,7 +1411,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jcmaster.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcomapi.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcomapi.c.o: external/jpeg/jcomapi.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_107) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jcomapi.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_105) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jcomapi.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jcomapi.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jcomapi.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcomapi.c.i: cmake_force
@@ -1450,7 +1424,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jcomapi.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcparam.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcparam.c.o: external/jpeg/jcparam.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_108) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jcparam.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_106) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jcparam.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jcparam.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jcparam.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcparam.c.i: cmake_force
@@ -1463,7 +1437,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jcparam.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcprepct.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcprepct.c.o: external/jpeg/jcprepct.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_109) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jcprepct.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_107) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jcprepct.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jcprepct.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jcprepct.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcprepct.c.i: cmake_force
@@ -1476,7 +1450,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jcprepct.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcsample.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcsample.c.o: external/jpeg/jcsample.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_110) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jcsample.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_108) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jcsample.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jcsample.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jcsample.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jcsample.c.i: cmake_force
@@ -1489,7 +1463,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jcsample.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jctrans.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jctrans.c.o: external/jpeg/jctrans.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_111) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jctrans.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_109) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jctrans.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jctrans.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jctrans.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jctrans.c.i: cmake_force
@@ -1502,7 +1476,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jctrans.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdapimin.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdapimin.c.o: external/jpeg/jdapimin.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_112) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jdapimin.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_110) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jdapimin.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jdapimin.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jdapimin.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdapimin.c.i: cmake_force
@@ -1515,7 +1489,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jdapimin.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdapistd.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdapistd.c.o: external/jpeg/jdapistd.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_113) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jdapistd.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_111) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jdapistd.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jdapistd.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jdapistd.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdapistd.c.i: cmake_force
@@ -1528,7 +1502,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jdapistd.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdarith.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdarith.c.o: external/jpeg/jdarith.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_114) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jdarith.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_112) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jdarith.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jdarith.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jdarith.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdarith.c.i: cmake_force
@@ -1541,7 +1515,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jdarith.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdatadst.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdatadst.c.o: external/jpeg/jdatadst.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_115) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jdatadst.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_113) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jdatadst.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jdatadst.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jdatadst.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdatadst.c.i: cmake_force
@@ -1554,7 +1528,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jdatadst.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdatasrc.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdatasrc.c.o: external/jpeg/jdatasrc.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_116) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jdatasrc.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_114) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jdatasrc.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jdatasrc.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jdatasrc.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdatasrc.c.i: cmake_force
@@ -1567,7 +1541,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jdatasrc.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdcoefct.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdcoefct.c.o: external/jpeg/jdcoefct.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_117) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jdcoefct.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_115) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jdcoefct.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jdcoefct.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jdcoefct.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdcoefct.c.i: cmake_force
@@ -1580,7 +1554,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jdcoefct.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdcolor.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdcolor.c.o: external/jpeg/jdcolor.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_118) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jdcolor.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_116) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jdcolor.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jdcolor.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jdcolor.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdcolor.c.i: cmake_force
@@ -1593,7 +1567,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jdcolor.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jddctmgr.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jddctmgr.c.o: external/jpeg/jddctmgr.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_119) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jddctmgr.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_117) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jddctmgr.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jddctmgr.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jddctmgr.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jddctmgr.c.i: cmake_force
@@ -1606,7 +1580,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jddctmgr.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdhuff.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdhuff.c.o: external/jpeg/jdhuff.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_120) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jdhuff.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_118) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jdhuff.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jdhuff.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jdhuff.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdhuff.c.i: cmake_force
@@ -1619,7 +1593,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jdhuff.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdinput.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdinput.c.o: external/jpeg/jdinput.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_121) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jdinput.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_119) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jdinput.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jdinput.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jdinput.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdinput.c.i: cmake_force
@@ -1632,7 +1606,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jdinput.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdmainct.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdmainct.c.o: external/jpeg/jdmainct.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_122) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jdmainct.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_120) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jdmainct.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jdmainct.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jdmainct.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdmainct.c.i: cmake_force
@@ -1645,7 +1619,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jdmainct.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdmarker.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdmarker.c.o: external/jpeg/jdmarker.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_123) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jdmarker.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_121) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jdmarker.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jdmarker.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jdmarker.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdmarker.c.i: cmake_force
@@ -1658,7 +1632,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jdmarker.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdmaster.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdmaster.c.o: external/jpeg/jdmaster.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_124) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jdmaster.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_122) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jdmaster.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jdmaster.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jdmaster.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdmaster.c.i: cmake_force
@@ -1671,7 +1645,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jdmaster.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdmerge.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdmerge.c.o: external/jpeg/jdmerge.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_125) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jdmerge.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_123) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jdmerge.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jdmerge.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jdmerge.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdmerge.c.i: cmake_force
@@ -1684,7 +1658,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jdmerge.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdpostct.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdpostct.c.o: external/jpeg/jdpostct.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_126) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jdpostct.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_124) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jdpostct.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jdpostct.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jdpostct.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdpostct.c.i: cmake_force
@@ -1697,7 +1671,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jdpostct.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdsample.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdsample.c.o: external/jpeg/jdsample.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_127) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jdsample.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_125) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jdsample.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jdsample.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jdsample.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdsample.c.i: cmake_force
@@ -1710,7 +1684,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jdsample.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdtrans.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdtrans.c.o: external/jpeg/jdtrans.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_128) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jdtrans.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_126) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jdtrans.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jdtrans.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jdtrans.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jdtrans.c.i: cmake_force
@@ -1723,7 +1697,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jdtrans.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jerror.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jerror.c.o: external/jpeg/jerror.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_129) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jerror.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_127) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jerror.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jerror.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jerror.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jerror.c.i: cmake_force
@@ -1736,7 +1710,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jerror.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jfdctflt.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jfdctflt.c.o: external/jpeg/jfdctflt.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_130) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jfdctflt.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_128) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jfdctflt.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jfdctflt.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jfdctflt.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jfdctflt.c.i: cmake_force
@@ -1749,7 +1723,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jfdctflt.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jfdctfst.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jfdctfst.c.o: external/jpeg/jfdctfst.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_131) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jfdctfst.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_129) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jfdctfst.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jfdctfst.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jfdctfst.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jfdctfst.c.i: cmake_force
@@ -1762,7 +1736,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jfdctfst.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jfdctint.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jfdctint.c.o: external/jpeg/jfdctint.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_132) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jfdctint.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_130) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jfdctint.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jfdctint.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jfdctint.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jfdctint.c.i: cmake_force
@@ -1775,7 +1749,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jfdctint.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jidctflt.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jidctflt.c.o: external/jpeg/jidctflt.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_133) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jidctflt.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_131) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jidctflt.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jidctflt.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jidctflt.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jidctflt.c.i: cmake_force
@@ -1788,7 +1762,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jidctflt.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jidctfst.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jidctfst.c.o: external/jpeg/jidctfst.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_134) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jidctfst.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_132) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jidctfst.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jidctfst.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jidctfst.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jidctfst.c.i: cmake_force
@@ -1801,7 +1775,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jidctfst.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jidctint.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jidctint.c.o: external/jpeg/jidctint.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_135) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jidctint.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_133) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jidctint.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jidctint.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jidctint.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jidctint.c.i: cmake_force
@@ -1814,7 +1788,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jidctint.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jquant1.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jquant1.c.o: external/jpeg/jquant1.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_136) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jquant1.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_134) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jquant1.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jquant1.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jquant1.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jquant1.c.i: cmake_force
@@ -1827,7 +1801,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jquant1.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jquant2.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jquant2.c.o: external/jpeg/jquant2.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_137) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jquant2.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_135) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jquant2.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jquant2.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jquant2.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jquant2.c.i: cmake_force
@@ -1840,7 +1814,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jquant2.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jutils.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jutils.c.o: external/jpeg/jutils.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_138) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jutils.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_136) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jutils.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jutils.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jutils.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jutils.c.i: cmake_force
@@ -1853,7 +1827,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jutils.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jmemmgr.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jmemmgr.c.o: external/jpeg/jmemmgr.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_139) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jmemmgr.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_137) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jmemmgr.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jmemmgr.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jmemmgr.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jmemmgr.c.i: cmake_force
@@ -1866,7 +1840,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jmemmgr.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jmemansi.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/jpeg/jmemansi.c.o: external/jpeg/jmemansi.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_140) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jmemansi.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_138) "Building C object CMakeFiles/libdokun-ui.dir/external/jpeg/jmemansi.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/jpeg/jmemansi.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/jpeg/jmemansi.c
 
 CMakeFiles/libdokun-ui.dir/external/jpeg/jmemansi.c.i: cmake_force
@@ -1879,7 +1853,7 @@ CMakeFiles/libdokun-ui.dir/external/jpeg/jmemansi.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_aux.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_aux.c.o: external/tiff/libtiff/tif_aux.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_141) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_aux.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_139) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_aux.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_aux.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_aux.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_aux.c.i: cmake_force
@@ -1892,7 +1866,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_aux.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_close.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_close.c.o: external/tiff/libtiff/tif_close.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_142) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_close.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_140) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_close.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_close.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_close.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_close.c.i: cmake_force
@@ -1905,7 +1879,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_close.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_codec.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_codec.c.o: external/tiff/libtiff/tif_codec.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_143) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_codec.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_141) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_codec.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_codec.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_codec.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_codec.c.i: cmake_force
@@ -1918,7 +1892,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_codec.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_color.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_color.c.o: external/tiff/libtiff/tif_color.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_144) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_color.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_142) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_color.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_color.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_color.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_color.c.i: cmake_force
@@ -1931,7 +1905,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_color.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_compress.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_compress.c.o: external/tiff/libtiff/tif_compress.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_145) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_compress.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_143) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_compress.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_compress.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_compress.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_compress.c.i: cmake_force
@@ -1944,7 +1918,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_compress.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dir.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dir.c.o: external/tiff/libtiff/tif_dir.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_146) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dir.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_144) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dir.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dir.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_dir.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dir.c.i: cmake_force
@@ -1957,7 +1931,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dir.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dirinfo.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dirinfo.c.o: external/tiff/libtiff/tif_dirinfo.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_147) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dirinfo.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_145) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dirinfo.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dirinfo.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_dirinfo.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dirinfo.c.i: cmake_force
@@ -1970,7 +1944,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dirinfo.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dirread.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dirread.c.o: external/tiff/libtiff/tif_dirread.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_148) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dirread.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_146) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dirread.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dirread.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_dirread.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dirread.c.i: cmake_force
@@ -1983,7 +1957,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dirread.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dirwrite.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dirwrite.c.o: external/tiff/libtiff/tif_dirwrite.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_149) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dirwrite.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_147) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dirwrite.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dirwrite.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_dirwrite.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dirwrite.c.i: cmake_force
@@ -1996,7 +1970,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dirwrite.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dumpmode.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dumpmode.c.o: external/tiff/libtiff/tif_dumpmode.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_150) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dumpmode.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_148) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dumpmode.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dumpmode.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_dumpmode.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dumpmode.c.i: cmake_force
@@ -2009,7 +1983,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_dumpmode.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_error.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_error.c.o: external/tiff/libtiff/tif_error.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_151) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_error.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_149) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_error.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_error.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_error.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_error.c.i: cmake_force
@@ -2022,7 +1996,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_error.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_extension.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_extension.c.o: external/tiff/libtiff/tif_extension.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_152) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_extension.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_150) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_extension.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_extension.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_extension.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_extension.c.i: cmake_force
@@ -2035,7 +2009,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_extension.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_fax3.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_fax3.c.o: external/tiff/libtiff/tif_fax3.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_153) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_fax3.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_151) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_fax3.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_fax3.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_fax3.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_fax3.c.i: cmake_force
@@ -2048,7 +2022,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_fax3.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_fax3sm.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_fax3sm.c.o: external/tiff/libtiff/tif_fax3sm.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_154) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_fax3sm.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_152) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_fax3sm.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_fax3sm.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_fax3sm.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_fax3sm.c.i: cmake_force
@@ -2061,7 +2035,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_fax3sm.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_flush.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_flush.c.o: external/tiff/libtiff/tif_flush.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_155) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_flush.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_153) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_flush.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_flush.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_flush.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_flush.c.i: cmake_force
@@ -2074,7 +2048,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_flush.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_getimage.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_getimage.c.o: external/tiff/libtiff/tif_getimage.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_156) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_getimage.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_154) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_getimage.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_getimage.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_getimage.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_getimage.c.i: cmake_force
@@ -2087,7 +2061,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_getimage.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_jbig.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_jbig.c.o: external/tiff/libtiff/tif_jbig.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_157) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_jbig.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_155) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_jbig.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_jbig.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_jbig.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_jbig.c.i: cmake_force
@@ -2100,7 +2074,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_jbig.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_jpeg_12.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_jpeg_12.c.o: external/tiff/libtiff/tif_jpeg_12.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_158) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_jpeg_12.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_156) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_jpeg_12.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_jpeg_12.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_jpeg_12.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_jpeg_12.c.i: cmake_force
@@ -2113,7 +2087,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_jpeg_12.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_jpeg.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_jpeg.c.o: external/tiff/libtiff/tif_jpeg.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_159) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_jpeg.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_157) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_jpeg.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_jpeg.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_jpeg.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_jpeg.c.i: cmake_force
@@ -2126,7 +2100,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_jpeg.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_luv.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_luv.c.o: external/tiff/libtiff/tif_luv.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_160) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_luv.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_158) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_luv.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_luv.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_luv.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_luv.c.i: cmake_force
@@ -2139,7 +2113,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_luv.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_lzma.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_lzma.c.o: external/tiff/libtiff/tif_lzma.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_161) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_lzma.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_159) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_lzma.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_lzma.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_lzma.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_lzma.c.i: cmake_force
@@ -2152,7 +2126,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_lzma.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_lzw.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_lzw.c.o: external/tiff/libtiff/tif_lzw.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_162) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_lzw.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_160) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_lzw.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_lzw.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_lzw.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_lzw.c.i: cmake_force
@@ -2165,7 +2139,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_lzw.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_next.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_next.c.o: external/tiff/libtiff/tif_next.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_163) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_next.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_161) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_next.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_next.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_next.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_next.c.i: cmake_force
@@ -2178,7 +2152,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_next.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_ojpeg.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_ojpeg.c.o: external/tiff/libtiff/tif_ojpeg.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_164) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_ojpeg.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_162) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_ojpeg.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_ojpeg.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_ojpeg.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_ojpeg.c.i: cmake_force
@@ -2191,7 +2165,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_ojpeg.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_open.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_open.c.o: external/tiff/libtiff/tif_open.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_165) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_open.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_163) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_open.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_open.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_open.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_open.c.i: cmake_force
@@ -2204,7 +2178,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_open.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_packbits.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_packbits.c.o: external/tiff/libtiff/tif_packbits.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_166) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_packbits.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_164) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_packbits.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_packbits.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_packbits.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_packbits.c.i: cmake_force
@@ -2217,7 +2191,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_packbits.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_pixarlog.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_pixarlog.c.o: external/tiff/libtiff/tif_pixarlog.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_167) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_pixarlog.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_165) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_pixarlog.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_pixarlog.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_pixarlog.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_pixarlog.c.i: cmake_force
@@ -2230,7 +2204,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_pixarlog.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_predict.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_predict.c.o: external/tiff/libtiff/tif_predict.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_168) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_predict.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_166) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_predict.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_predict.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_predict.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_predict.c.i: cmake_force
@@ -2243,7 +2217,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_predict.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_print.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_print.c.o: external/tiff/libtiff/tif_print.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_169) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_print.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_167) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_print.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_print.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_print.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_print.c.i: cmake_force
@@ -2256,7 +2230,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_print.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_read.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_read.c.o: external/tiff/libtiff/tif_read.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_170) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_read.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_168) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_read.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_read.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_read.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_read.c.i: cmake_force
@@ -2269,7 +2243,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_read.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_stream.cxx.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_stream.cxx.o: external/tiff/libtiff/tif_stream.cxx
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_171) "Building CXX object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_stream.cxx.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_169) "Building CXX object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_stream.cxx.o"
 	/usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_stream.cxx.o -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_stream.cxx
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_stream.cxx.i: cmake_force
@@ -2282,7 +2256,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_stream.cxx.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_strip.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_strip.c.o: external/tiff/libtiff/tif_strip.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_172) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_strip.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_170) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_strip.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_strip.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_strip.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_strip.c.i: cmake_force
@@ -2295,7 +2269,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_strip.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_swab.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_swab.c.o: external/tiff/libtiff/tif_swab.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_173) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_swab.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_171) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_swab.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_swab.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_swab.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_swab.c.i: cmake_force
@@ -2308,7 +2282,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_swab.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_thunder.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_thunder.c.o: external/tiff/libtiff/tif_thunder.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_174) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_thunder.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_172) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_thunder.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_thunder.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_thunder.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_thunder.c.i: cmake_force
@@ -2321,7 +2295,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_thunder.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_tile.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_tile.c.o: external/tiff/libtiff/tif_tile.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_175) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_tile.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_173) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_tile.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_tile.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_tile.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_tile.c.i: cmake_force
@@ -2334,7 +2308,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_tile.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_version.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_version.c.o: external/tiff/libtiff/tif_version.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_176) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_version.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_174) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_version.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_version.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_version.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_version.c.i: cmake_force
@@ -2347,7 +2321,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_version.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_warning.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_warning.c.o: external/tiff/libtiff/tif_warning.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_177) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_warning.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_175) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_warning.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_warning.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_warning.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_warning.c.i: cmake_force
@@ -2360,7 +2334,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_warning.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_write.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_write.c.o: external/tiff/libtiff/tif_write.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_178) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_write.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_176) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_write.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_write.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_write.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_write.c.i: cmake_force
@@ -2373,7 +2347,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_write.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_zip.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_zip.c.o: external/tiff/libtiff/tif_zip.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_179) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_zip.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_177) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_zip.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_zip.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_zip.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_zip.c.i: cmake_force
@@ -2386,7 +2360,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_zip.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_unix.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_unix.c.o: external/tiff/libtiff/tif_unix.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_180) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_unix.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_178) "Building C object CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_unix.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_unix.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/tiff/libtiff/tif_unix.c
 
 CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_unix.c.i: cmake_force
@@ -2399,7 +2373,7 @@ CMakeFiles/libdokun-ui.dir/external/tiff/libtiff/tif_unix.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/ogg/src/bitwise.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/ogg/src/bitwise.c.o: external/ogg/src/bitwise.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_181) "Building C object CMakeFiles/libdokun-ui.dir/external/ogg/src/bitwise.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_179) "Building C object CMakeFiles/libdokun-ui.dir/external/ogg/src/bitwise.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/ogg/src/bitwise.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/ogg/src/bitwise.c
 
 CMakeFiles/libdokun-ui.dir/external/ogg/src/bitwise.c.i: cmake_force
@@ -2412,7 +2386,7 @@ CMakeFiles/libdokun-ui.dir/external/ogg/src/bitwise.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/ogg/src/framing.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/ogg/src/framing.c.o: external/ogg/src/framing.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_182) "Building C object CMakeFiles/libdokun-ui.dir/external/ogg/src/framing.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_180) "Building C object CMakeFiles/libdokun-ui.dir/external/ogg/src/framing.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/ogg/src/framing.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/ogg/src/framing.c
 
 CMakeFiles/libdokun-ui.dir/external/ogg/src/framing.c.i: cmake_force
@@ -2425,7 +2399,7 @@ CMakeFiles/libdokun-ui.dir/external/ogg/src/framing.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/analysis.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/analysis.c.o: external/vorbis/lib/analysis.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_183) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/analysis.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_181) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/analysis.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/vorbis/lib/analysis.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/vorbis/lib/analysis.c
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/analysis.c.i: cmake_force
@@ -2438,7 +2412,7 @@ CMakeFiles/libdokun-ui.dir/external/vorbis/lib/analysis.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/bitrate.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/bitrate.c.o: external/vorbis/lib/bitrate.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_184) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/bitrate.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_182) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/bitrate.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/vorbis/lib/bitrate.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/vorbis/lib/bitrate.c
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/bitrate.c.i: cmake_force
@@ -2451,7 +2425,7 @@ CMakeFiles/libdokun-ui.dir/external/vorbis/lib/bitrate.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/block.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/block.c.o: external/vorbis/lib/block.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_185) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/block.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_183) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/block.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/vorbis/lib/block.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/vorbis/lib/block.c
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/block.c.i: cmake_force
@@ -2464,7 +2438,7 @@ CMakeFiles/libdokun-ui.dir/external/vorbis/lib/block.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/codebook.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/codebook.c.o: external/vorbis/lib/codebook.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_186) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/codebook.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_184) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/codebook.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/vorbis/lib/codebook.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/vorbis/lib/codebook.c
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/codebook.c.i: cmake_force
@@ -2477,7 +2451,7 @@ CMakeFiles/libdokun-ui.dir/external/vorbis/lib/codebook.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/envelope.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/envelope.c.o: external/vorbis/lib/envelope.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_187) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/envelope.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_185) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/envelope.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/vorbis/lib/envelope.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/vorbis/lib/envelope.c
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/envelope.c.i: cmake_force
@@ -2490,7 +2464,7 @@ CMakeFiles/libdokun-ui.dir/external/vorbis/lib/envelope.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/floor0.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/floor0.c.o: external/vorbis/lib/floor0.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_188) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/floor0.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_186) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/floor0.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/vorbis/lib/floor0.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/vorbis/lib/floor0.c
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/floor0.c.i: cmake_force
@@ -2503,7 +2477,7 @@ CMakeFiles/libdokun-ui.dir/external/vorbis/lib/floor0.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/floor1.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/floor1.c.o: external/vorbis/lib/floor1.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_189) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/floor1.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_187) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/floor1.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/vorbis/lib/floor1.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/vorbis/lib/floor1.c
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/floor1.c.i: cmake_force
@@ -2516,7 +2490,7 @@ CMakeFiles/libdokun-ui.dir/external/vorbis/lib/floor1.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/info.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/info.c.o: external/vorbis/lib/info.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_190) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/info.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_188) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/info.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/vorbis/lib/info.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/vorbis/lib/info.c
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/info.c.i: cmake_force
@@ -2529,7 +2503,7 @@ CMakeFiles/libdokun-ui.dir/external/vorbis/lib/info.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/lookup.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/lookup.c.o: external/vorbis/lib/lookup.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_191) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/lookup.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_189) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/lookup.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/vorbis/lib/lookup.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/vorbis/lib/lookup.c
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/lookup.c.i: cmake_force
@@ -2542,7 +2516,7 @@ CMakeFiles/libdokun-ui.dir/external/vorbis/lib/lookup.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/lpc.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/lpc.c.o: external/vorbis/lib/lpc.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_192) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/lpc.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_190) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/lpc.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/vorbis/lib/lpc.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/vorbis/lib/lpc.c
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/lpc.c.i: cmake_force
@@ -2555,7 +2529,7 @@ CMakeFiles/libdokun-ui.dir/external/vorbis/lib/lpc.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/lsp.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/lsp.c.o: external/vorbis/lib/lsp.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_193) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/lsp.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_191) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/lsp.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/vorbis/lib/lsp.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/vorbis/lib/lsp.c
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/lsp.c.i: cmake_force
@@ -2568,7 +2542,7 @@ CMakeFiles/libdokun-ui.dir/external/vorbis/lib/lsp.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/mapping0.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/mapping0.c.o: external/vorbis/lib/mapping0.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_194) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/mapping0.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_192) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/mapping0.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/vorbis/lib/mapping0.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/vorbis/lib/mapping0.c
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/mapping0.c.i: cmake_force
@@ -2581,7 +2555,7 @@ CMakeFiles/libdokun-ui.dir/external/vorbis/lib/mapping0.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/mdct.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/mdct.c.o: external/vorbis/lib/mdct.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_195) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/mdct.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_193) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/mdct.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/vorbis/lib/mdct.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/vorbis/lib/mdct.c
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/mdct.c.i: cmake_force
@@ -2594,7 +2568,7 @@ CMakeFiles/libdokun-ui.dir/external/vorbis/lib/mdct.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/psy.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/psy.c.o: external/vorbis/lib/psy.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_196) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/psy.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_194) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/psy.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/vorbis/lib/psy.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/vorbis/lib/psy.c
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/psy.c.i: cmake_force
@@ -2607,7 +2581,7 @@ CMakeFiles/libdokun-ui.dir/external/vorbis/lib/psy.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/registry.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/registry.c.o: external/vorbis/lib/registry.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_197) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/registry.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_195) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/registry.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/vorbis/lib/registry.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/vorbis/lib/registry.c
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/registry.c.i: cmake_force
@@ -2620,7 +2594,7 @@ CMakeFiles/libdokun-ui.dir/external/vorbis/lib/registry.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/res0.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/res0.c.o: external/vorbis/lib/res0.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_198) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/res0.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_196) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/res0.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/vorbis/lib/res0.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/vorbis/lib/res0.c
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/res0.c.i: cmake_force
@@ -2633,7 +2607,7 @@ CMakeFiles/libdokun-ui.dir/external/vorbis/lib/res0.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/sharedbook.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/sharedbook.c.o: external/vorbis/lib/sharedbook.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_199) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/sharedbook.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_197) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/sharedbook.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/vorbis/lib/sharedbook.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/vorbis/lib/sharedbook.c
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/sharedbook.c.i: cmake_force
@@ -2646,7 +2620,7 @@ CMakeFiles/libdokun-ui.dir/external/vorbis/lib/sharedbook.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/smallft.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/smallft.c.o: external/vorbis/lib/smallft.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_200) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/smallft.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_198) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/smallft.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/vorbis/lib/smallft.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/vorbis/lib/smallft.c
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/smallft.c.i: cmake_force
@@ -2659,7 +2633,7 @@ CMakeFiles/libdokun-ui.dir/external/vorbis/lib/smallft.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/synthesis.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/synthesis.c.o: external/vorbis/lib/synthesis.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_201) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/synthesis.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_199) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/synthesis.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/vorbis/lib/synthesis.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/vorbis/lib/synthesis.c
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/synthesis.c.i: cmake_force
@@ -2672,7 +2646,7 @@ CMakeFiles/libdokun-ui.dir/external/vorbis/lib/synthesis.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/vorbisenc.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/vorbisenc.c.o: external/vorbis/lib/vorbisenc.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_202) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/vorbisenc.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_200) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/vorbisenc.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/vorbis/lib/vorbisenc.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/vorbis/lib/vorbisenc.c
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/vorbisenc.c.i: cmake_force
@@ -2685,7 +2659,7 @@ CMakeFiles/libdokun-ui.dir/external/vorbis/lib/vorbisenc.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/vorbisfile.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/vorbisfile.c.o: external/vorbis/lib/vorbisfile.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_203) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/vorbisfile.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_201) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/vorbisfile.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/vorbis/lib/vorbisfile.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/vorbis/lib/vorbisfile.c
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/vorbisfile.c.i: cmake_force
@@ -2698,7 +2672,7 @@ CMakeFiles/libdokun-ui.dir/external/vorbis/lib/vorbisfile.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/window.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/window.c.o: external/vorbis/lib/window.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_204) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/window.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_202) "Building C object CMakeFiles/libdokun-ui.dir/external/vorbis/lib/window.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/vorbis/lib/window.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/vorbis/lib/window.c
 
 CMakeFiles/libdokun-ui.dir/external/vorbis/lib/window.c.i: cmake_force
@@ -2711,7 +2685,7 @@ CMakeFiles/libdokun-ui.dir/external/vorbis/lib/window.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/cpu.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/cpu.c.o: external/flac/src/libFLAC/cpu.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_205) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/cpu.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_203) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/cpu.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/cpu.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/flac/src/libFLAC/cpu.c
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/cpu.c.i: cmake_force
@@ -2724,7 +2698,7 @@ CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/cpu.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/crc.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/crc.c.o: external/flac/src/libFLAC/crc.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_206) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/crc.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_204) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/crc.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/crc.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/flac/src/libFLAC/crc.c
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/crc.c.i: cmake_force
@@ -2737,7 +2711,7 @@ CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/crc.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc.c.o: external/flac/src/libFLAC/lpc.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_207) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_205) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/flac/src/libFLAC/lpc.c
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc.c.i: cmake_force
@@ -2750,7 +2724,7 @@ CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/md5.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/md5.c.o: external/flac/src/libFLAC/md5.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_208) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/md5.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_206) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/md5.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/md5.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/flac/src/libFLAC/md5.c
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/md5.c.i: cmake_force
@@ -2763,7 +2737,7 @@ CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/md5.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/fixed.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/fixed.c.o: external/flac/src/libFLAC/fixed.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_209) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/fixed.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_207) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/fixed.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/fixed.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/flac/src/libFLAC/fixed.c
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/fixed.c.i: cmake_force
@@ -2776,7 +2750,7 @@ CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/fixed.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/float.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/float.c.o: external/flac/src/libFLAC/float.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_210) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/float.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_208) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/float.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/float.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/flac/src/libFLAC/float.c
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/float.c.i: cmake_force
@@ -2789,7 +2763,7 @@ CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/float.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/format.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/format.c.o: external/flac/src/libFLAC/format.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_211) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/format.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_209) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/format.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/format.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/flac/src/libFLAC/format.c
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/format.c.i: cmake_force
@@ -2802,7 +2776,7 @@ CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/format.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/memory.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/memory.c.o: external/flac/src/libFLAC/memory.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_212) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/memory.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_210) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/memory.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/memory.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/flac/src/libFLAC/memory.c
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/memory.c.i: cmake_force
@@ -2815,7 +2789,7 @@ CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/memory.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/window.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/window.c.o: external/flac/src/libFLAC/window.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_213) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/window.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_211) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/window.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/window.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/flac/src/libFLAC/window.c
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/window.c.i: cmake_force
@@ -2828,7 +2802,7 @@ CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/window.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/bitmath.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/bitmath.c.o: external/flac/src/libFLAC/bitmath.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_214) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/bitmath.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_212) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/bitmath.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/bitmath.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/flac/src/libFLAC/bitmath.c
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/bitmath.c.i: cmake_force
@@ -2841,7 +2815,7 @@ CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/bitmath.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/bitreader.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/bitreader.c.o: external/flac/src/libFLAC/bitreader.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_215) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/bitreader.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_213) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/bitreader.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/bitreader.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/flac/src/libFLAC/bitreader.c
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/bitreader.c.i: cmake_force
@@ -2854,7 +2828,7 @@ CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/bitreader.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/bitwriter.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/bitwriter.c.o: external/flac/src/libFLAC/bitwriter.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_216) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/bitwriter.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_214) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/bitwriter.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/bitwriter.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/flac/src/libFLAC/bitwriter.c
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/bitwriter.c.i: cmake_force
@@ -2867,7 +2841,7 @@ CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/bitwriter.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/ogg_helper.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/ogg_helper.c.o: external/flac/src/libFLAC/ogg_helper.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_217) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/ogg_helper.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_215) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/ogg_helper.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/ogg_helper.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/flac/src/libFLAC/ogg_helper.c
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/ogg_helper.c.i: cmake_force
@@ -2880,7 +2854,7 @@ CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/ogg_helper.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/ogg_mapping.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/ogg_mapping.c.o: external/flac/src/libFLAC/ogg_mapping.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_218) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/ogg_mapping.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_216) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/ogg_mapping.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/ogg_mapping.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/flac/src/libFLAC/ogg_mapping.c
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/ogg_mapping.c.i: cmake_force
@@ -2893,7 +2867,7 @@ CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/ogg_mapping.c.s: cmake_forc
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc_intrin_sse.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc_intrin_sse.c.o: external/flac/src/libFLAC/lpc_intrin_sse.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_219) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc_intrin_sse.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_217) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc_intrin_sse.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc_intrin_sse.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/flac/src/libFLAC/lpc_intrin_sse.c
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc_intrin_sse.c.i: cmake_force
@@ -2906,7 +2880,7 @@ CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc_intrin_sse.c.s: cmake_f
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_decoder.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_decoder.c.o: external/flac/src/libFLAC/stream_decoder.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_220) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_decoder.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_218) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_decoder.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_decoder.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/flac/src/libFLAC/stream_decoder.c
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_decoder.c.i: cmake_force
@@ -2919,7 +2893,7 @@ CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_decoder.c.s: cmake_f
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder.c.o: external/flac/src/libFLAC/stream_encoder.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_221) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_219) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/flac/src/libFLAC/stream_encoder.c
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder.c.i: cmake_force
@@ -2932,7 +2906,7 @@ CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder.c.s: cmake_f
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc_intrin_avx2.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc_intrin_avx2.c.o: external/flac/src/libFLAC/lpc_intrin_avx2.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_222) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc_intrin_avx2.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_220) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc_intrin_avx2.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc_intrin_avx2.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/flac/src/libFLAC/lpc_intrin_avx2.c
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc_intrin_avx2.c.i: cmake_force
@@ -2945,7 +2919,7 @@ CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc_intrin_avx2.c.s: cmake_
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc_intrin_sse2.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc_intrin_sse2.c.o: external/flac/src/libFLAC/lpc_intrin_sse2.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_223) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc_intrin_sse2.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_221) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc_intrin_sse2.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc_intrin_sse2.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/flac/src/libFLAC/lpc_intrin_sse2.c
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc_intrin_sse2.c.i: cmake_force
@@ -2958,7 +2932,7 @@ CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc_intrin_sse2.c.s: cmake_
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/metadata_object.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/metadata_object.c.o: external/flac/src/libFLAC/metadata_object.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_224) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/metadata_object.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_222) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/metadata_object.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/metadata_object.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/flac/src/libFLAC/metadata_object.c
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/metadata_object.c.i: cmake_force
@@ -2971,7 +2945,7 @@ CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/metadata_object.c.s: cmake_
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc_intrin_sse41.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc_intrin_sse41.c.o: external/flac/src/libFLAC/lpc_intrin_sse41.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_225) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc_intrin_sse41.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_223) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc_intrin_sse41.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc_intrin_sse41.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/flac/src/libFLAC/lpc_intrin_sse41.c
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc_intrin_sse41.c.i: cmake_force
@@ -2984,7 +2958,7 @@ CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/lpc_intrin_sse41.c.s: cmake
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/fixed_intrin_sse2.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/fixed_intrin_sse2.c.o: external/flac/src/libFLAC/fixed_intrin_sse2.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_226) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/fixed_intrin_sse2.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_224) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/fixed_intrin_sse2.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/fixed_intrin_sse2.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/flac/src/libFLAC/fixed_intrin_sse2.c
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/fixed_intrin_sse2.c.i: cmake_force
@@ -2997,7 +2971,7 @@ CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/fixed_intrin_sse2.c.s: cmak
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/fixed_intrin_ssse3.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/fixed_intrin_ssse3.c.o: external/flac/src/libFLAC/fixed_intrin_ssse3.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_227) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/fixed_intrin_ssse3.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_225) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/fixed_intrin_ssse3.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/fixed_intrin_ssse3.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/flac/src/libFLAC/fixed_intrin_ssse3.c
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/fixed_intrin_ssse3.c.i: cmake_force
@@ -3010,7 +2984,7 @@ CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/fixed_intrin_ssse3.c.s: cma
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/metadata_iterators.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/metadata_iterators.c.o: external/flac/src/libFLAC/metadata_iterators.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_228) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/metadata_iterators.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_226) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/metadata_iterators.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/metadata_iterators.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/flac/src/libFLAC/metadata_iterators.c
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/metadata_iterators.c.i: cmake_force
@@ -3023,7 +2997,7 @@ CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/metadata_iterators.c.s: cma
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/ogg_decoder_aspect.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/ogg_decoder_aspect.c.o: external/flac/src/libFLAC/ogg_decoder_aspect.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_229) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/ogg_decoder_aspect.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_227) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/ogg_decoder_aspect.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/ogg_decoder_aspect.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/flac/src/libFLAC/ogg_decoder_aspect.c
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/ogg_decoder_aspect.c.i: cmake_force
@@ -3036,7 +3010,7 @@ CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/ogg_decoder_aspect.c.s: cma
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/ogg_encoder_aspect.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/ogg_encoder_aspect.c.o: external/flac/src/libFLAC/ogg_encoder_aspect.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_230) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/ogg_encoder_aspect.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_228) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/ogg_encoder_aspect.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/ogg_encoder_aspect.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/flac/src/libFLAC/ogg_encoder_aspect.c
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/ogg_encoder_aspect.c.i: cmake_force
@@ -3049,7 +3023,7 @@ CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/ogg_encoder_aspect.c.s: cma
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder_framing.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder_framing.c.o: external/flac/src/libFLAC/stream_encoder_framing.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_231) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder_framing.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_229) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder_framing.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder_framing.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/flac/src/libFLAC/stream_encoder_framing.c
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder_framing.c.i: cmake_force
@@ -3062,7 +3036,7 @@ CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder_framing.c.s:
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder_intrin_avx2.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder_intrin_avx2.c.o: external/flac/src/libFLAC/stream_encoder_intrin_avx2.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_232) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder_intrin_avx2.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_230) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder_intrin_avx2.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder_intrin_avx2.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/flac/src/libFLAC/stream_encoder_intrin_avx2.c
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder_intrin_avx2.c.i: cmake_force
@@ -3075,7 +3049,7 @@ CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder_intrin_avx2.
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder_intrin_sse2.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder_intrin_sse2.c.o: external/flac/src/libFLAC/stream_encoder_intrin_sse2.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_233) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder_intrin_sse2.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_231) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder_intrin_sse2.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder_intrin_sse2.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/flac/src/libFLAC/stream_encoder_intrin_sse2.c
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder_intrin_sse2.c.i: cmake_force
@@ -3088,7 +3062,7 @@ CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder_intrin_sse2.
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder_intrin_ssse3.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder_intrin_ssse3.c.o: external/flac/src/libFLAC/stream_encoder_intrin_ssse3.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_234) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder_intrin_ssse3.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_232) "Building C object CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder_intrin_ssse3.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder_intrin_ssse3.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/flac/src/libFLAC/stream_encoder_intrin_ssse3.c
 
 CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder_intrin_ssse3.c.i: cmake_force
@@ -3101,7 +3075,7 @@ CMakeFiles/libdokun-ui.dir/external/flac/src/libFLAC/stream_encoder_intrin_ssse3
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/analyze.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/theora/lib/analyze.c.o: external/theora/lib/analyze.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_235) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/analyze.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_233) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/analyze.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/theora/lib/analyze.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/theora/lib/analyze.c
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/analyze.c.i: cmake_force
@@ -3114,7 +3088,7 @@ CMakeFiles/libdokun-ui.dir/external/theora/lib/analyze.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/apiwrapper.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/theora/lib/apiwrapper.c.o: external/theora/lib/apiwrapper.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_236) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/apiwrapper.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_234) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/apiwrapper.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/theora/lib/apiwrapper.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/theora/lib/apiwrapper.c
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/apiwrapper.c.i: cmake_force
@@ -3127,7 +3101,7 @@ CMakeFiles/libdokun-ui.dir/external/theora/lib/apiwrapper.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/bitpack.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/theora/lib/bitpack.c.o: external/theora/lib/bitpack.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_237) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/bitpack.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_235) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/bitpack.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/theora/lib/bitpack.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/theora/lib/bitpack.c
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/bitpack.c.i: cmake_force
@@ -3140,7 +3114,7 @@ CMakeFiles/libdokun-ui.dir/external/theora/lib/bitpack.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/cpu.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/theora/lib/cpu.c.o: external/theora/lib/cpu.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_238) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/cpu.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_236) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/cpu.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/theora/lib/cpu.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/theora/lib/cpu.c
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/cpu.c.i: cmake_force
@@ -3153,7 +3127,7 @@ CMakeFiles/libdokun-ui.dir/external/theora/lib/cpu.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/decapiwrapper.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/theora/lib/decapiwrapper.c.o: external/theora/lib/decapiwrapper.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_239) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/decapiwrapper.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_237) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/decapiwrapper.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/theora/lib/decapiwrapper.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/theora/lib/decapiwrapper.c
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/decapiwrapper.c.i: cmake_force
@@ -3166,7 +3140,7 @@ CMakeFiles/libdokun-ui.dir/external/theora/lib/decapiwrapper.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/decinfo.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/theora/lib/decinfo.c.o: external/theora/lib/decinfo.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_240) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/decinfo.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_238) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/decinfo.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/theora/lib/decinfo.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/theora/lib/decinfo.c
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/decinfo.c.i: cmake_force
@@ -3179,7 +3153,7 @@ CMakeFiles/libdokun-ui.dir/external/theora/lib/decinfo.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/decode.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/theora/lib/decode.c.o: external/theora/lib/decode.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_241) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/decode.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_239) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/decode.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/theora/lib/decode.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/theora/lib/decode.c
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/decode.c.i: cmake_force
@@ -3192,7 +3166,7 @@ CMakeFiles/libdokun-ui.dir/external/theora/lib/decode.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/dequant.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/theora/lib/dequant.c.o: external/theora/lib/dequant.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_242) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/dequant.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_240) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/dequant.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/theora/lib/dequant.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/theora/lib/dequant.c
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/dequant.c.i: cmake_force
@@ -3205,7 +3179,7 @@ CMakeFiles/libdokun-ui.dir/external/theora/lib/dequant.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/encapiwrapper.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/theora/lib/encapiwrapper.c.o: external/theora/lib/encapiwrapper.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_243) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/encapiwrapper.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_241) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/encapiwrapper.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/theora/lib/encapiwrapper.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/theora/lib/encapiwrapper.c
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/encapiwrapper.c.i: cmake_force
@@ -3218,7 +3192,7 @@ CMakeFiles/libdokun-ui.dir/external/theora/lib/encapiwrapper.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/encfrag.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/theora/lib/encfrag.c.o: external/theora/lib/encfrag.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_244) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/encfrag.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_242) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/encfrag.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/theora/lib/encfrag.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/theora/lib/encfrag.c
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/encfrag.c.i: cmake_force
@@ -3231,7 +3205,7 @@ CMakeFiles/libdokun-ui.dir/external/theora/lib/encfrag.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/encinfo.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/theora/lib/encinfo.c.o: external/theora/lib/encinfo.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_245) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/encinfo.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_243) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/encinfo.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/theora/lib/encinfo.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/theora/lib/encinfo.c
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/encinfo.c.i: cmake_force
@@ -3244,7 +3218,7 @@ CMakeFiles/libdokun-ui.dir/external/theora/lib/encinfo.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/encode.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/theora/lib/encode.c.o: external/theora/lib/encode.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_246) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/encode.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_244) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/encode.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/theora/lib/encode.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/theora/lib/encode.c
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/encode.c.i: cmake_force
@@ -3257,7 +3231,7 @@ CMakeFiles/libdokun-ui.dir/external/theora/lib/encode.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/enquant.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/theora/lib/enquant.c.o: external/theora/lib/enquant.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_247) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/enquant.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_245) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/enquant.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/theora/lib/enquant.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/theora/lib/enquant.c
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/enquant.c.i: cmake_force
@@ -3270,7 +3244,7 @@ CMakeFiles/libdokun-ui.dir/external/theora/lib/enquant.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/fdct.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/theora/lib/fdct.c.o: external/theora/lib/fdct.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_248) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/fdct.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_246) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/fdct.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/theora/lib/fdct.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/theora/lib/fdct.c
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/fdct.c.i: cmake_force
@@ -3283,7 +3257,7 @@ CMakeFiles/libdokun-ui.dir/external/theora/lib/fdct.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/fragment.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/theora/lib/fragment.c.o: external/theora/lib/fragment.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_249) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/fragment.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_247) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/fragment.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/theora/lib/fragment.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/theora/lib/fragment.c
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/fragment.c.i: cmake_force
@@ -3296,7 +3270,7 @@ CMakeFiles/libdokun-ui.dir/external/theora/lib/fragment.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/huffdec.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/theora/lib/huffdec.c.o: external/theora/lib/huffdec.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_250) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/huffdec.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_248) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/huffdec.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/theora/lib/huffdec.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/theora/lib/huffdec.c
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/huffdec.c.i: cmake_force
@@ -3309,7 +3283,7 @@ CMakeFiles/libdokun-ui.dir/external/theora/lib/huffdec.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/huffenc.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/theora/lib/huffenc.c.o: external/theora/lib/huffenc.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_251) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/huffenc.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_249) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/huffenc.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/theora/lib/huffenc.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/theora/lib/huffenc.c
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/huffenc.c.i: cmake_force
@@ -3322,7 +3296,7 @@ CMakeFiles/libdokun-ui.dir/external/theora/lib/huffenc.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/idct.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/theora/lib/idct.c.o: external/theora/lib/idct.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_252) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/idct.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_250) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/idct.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/theora/lib/idct.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/theora/lib/idct.c
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/idct.c.i: cmake_force
@@ -3335,7 +3309,7 @@ CMakeFiles/libdokun-ui.dir/external/theora/lib/idct.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/info.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/theora/lib/info.c.o: external/theora/lib/info.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_253) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/info.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_251) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/info.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/theora/lib/info.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/theora/lib/info.c
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/info.c.i: cmake_force
@@ -3348,7 +3322,7 @@ CMakeFiles/libdokun-ui.dir/external/theora/lib/info.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/internal.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/theora/lib/internal.c.o: external/theora/lib/internal.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_254) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/internal.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_252) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/internal.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/theora/lib/internal.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/theora/lib/internal.c
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/internal.c.i: cmake_force
@@ -3361,7 +3335,7 @@ CMakeFiles/libdokun-ui.dir/external/theora/lib/internal.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/mathops.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/theora/lib/mathops.c.o: external/theora/lib/mathops.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_255) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/mathops.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_253) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/mathops.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/theora/lib/mathops.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/theora/lib/mathops.c
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/mathops.c.i: cmake_force
@@ -3374,7 +3348,7 @@ CMakeFiles/libdokun-ui.dir/external/theora/lib/mathops.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/mcenc.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/theora/lib/mcenc.c.o: external/theora/lib/mcenc.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_256) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/mcenc.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_254) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/mcenc.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/theora/lib/mcenc.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/theora/lib/mcenc.c
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/mcenc.c.i: cmake_force
@@ -3387,7 +3361,7 @@ CMakeFiles/libdokun-ui.dir/external/theora/lib/mcenc.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/quant.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/theora/lib/quant.c.o: external/theora/lib/quant.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_257) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/quant.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_255) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/quant.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/theora/lib/quant.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/theora/lib/quant.c
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/quant.c.i: cmake_force
@@ -3400,7 +3374,7 @@ CMakeFiles/libdokun-ui.dir/external/theora/lib/quant.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/rate.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/theora/lib/rate.c.o: external/theora/lib/rate.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_258) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/rate.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_256) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/rate.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/theora/lib/rate.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/theora/lib/rate.c
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/rate.c.i: cmake_force
@@ -3413,7 +3387,7 @@ CMakeFiles/libdokun-ui.dir/external/theora/lib/rate.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/state.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/theora/lib/state.c.o: external/theora/lib/state.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_259) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/state.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_257) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/state.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/theora/lib/state.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/theora/lib/state.c
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/state.c.i: cmake_force
@@ -3426,7 +3400,7 @@ CMakeFiles/libdokun-ui.dir/external/theora/lib/state.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/tokenize.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/theora/lib/tokenize.c.o: external/theora/lib/tokenize.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_260) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/tokenize.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_258) "Building C object CMakeFiles/libdokun-ui.dir/external/theora/lib/tokenize.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/theora/lib/tokenize.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/theora/lib/tokenize.c
 
 CMakeFiles/libdokun-ui.dir/external/theora/lib/tokenize.c.i: cmake_force
@@ -3439,7 +3413,7 @@ CMakeFiles/libdokun-ui.dir/external/theora/lib/tokenize.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/autofit/autofit.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/autofit/autofit.c.o: external/freetype/src/autofit/autofit.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_261) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/autofit/autofit.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_259) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/autofit/autofit.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/autofit/autofit.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/autofit/autofit.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/autofit/autofit.c.i: cmake_force
@@ -3452,7 +3426,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/autofit/autofit.c.s: cmake_forc
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftbase.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftbase.c.o: external/freetype/src/base/ftbase.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_262) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftbase.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_260) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftbase.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftbase.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftbase.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftbase.c.i: cmake_force
@@ -3465,7 +3439,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftbase.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftbbox.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftbbox.c.o: external/freetype/src/base/ftbbox.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_263) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftbbox.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_261) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftbbox.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftbbox.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftbbox.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftbbox.c.i: cmake_force
@@ -3478,7 +3452,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftbbox.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftbdf.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftbdf.c.o: external/freetype/src/base/ftbdf.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_264) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftbdf.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_262) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftbdf.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftbdf.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftbdf.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftbdf.c.i: cmake_force
@@ -3491,7 +3465,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftbdf.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftbitmap.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftbitmap.c.o: external/freetype/src/base/ftbitmap.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_265) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftbitmap.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_263) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftbitmap.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftbitmap.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftbitmap.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftbitmap.c.i: cmake_force
@@ -3504,7 +3478,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftbitmap.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftcid.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftcid.c.o: external/freetype/src/base/ftcid.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_266) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftcid.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_264) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftcid.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftcid.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftcid.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftcid.c.i: cmake_force
@@ -3517,7 +3491,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftcid.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftfstype.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftfstype.c.o: external/freetype/src/base/ftfstype.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_267) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftfstype.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_265) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftfstype.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftfstype.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftfstype.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftfstype.c.i: cmake_force
@@ -3530,7 +3504,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftfstype.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftgasp.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftgasp.c.o: external/freetype/src/base/ftgasp.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_268) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftgasp.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_266) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftgasp.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftgasp.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftgasp.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftgasp.c.i: cmake_force
@@ -3543,7 +3517,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftgasp.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftglyph.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftglyph.c.o: external/freetype/src/base/ftglyph.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_269) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftglyph.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_267) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftglyph.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftglyph.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftglyph.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftglyph.c.i: cmake_force
@@ -3556,7 +3530,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftglyph.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftgxval.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftgxval.c.o: external/freetype/src/base/ftgxval.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_270) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftgxval.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_268) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftgxval.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftgxval.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftgxval.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftgxval.c.i: cmake_force
@@ -3569,7 +3543,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftgxval.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftinit.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftinit.c.o: external/freetype/src/base/ftinit.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_271) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftinit.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_269) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftinit.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftinit.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftinit.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftinit.c.i: cmake_force
@@ -3582,7 +3556,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftinit.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftmm.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftmm.c.o: external/freetype/src/base/ftmm.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_272) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftmm.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_270) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftmm.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftmm.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftmm.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftmm.c.i: cmake_force
@@ -3595,7 +3569,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftmm.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftotval.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftotval.c.o: external/freetype/src/base/ftotval.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_273) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftotval.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_271) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftotval.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftotval.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftotval.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftotval.c.i: cmake_force
@@ -3608,7 +3582,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftotval.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftpatent.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftpatent.c.o: external/freetype/src/base/ftpatent.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_274) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftpatent.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_272) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftpatent.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftpatent.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftpatent.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftpatent.c.i: cmake_force
@@ -3621,7 +3595,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftpatent.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftpfr.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftpfr.c.o: external/freetype/src/base/ftpfr.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_275) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftpfr.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_273) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftpfr.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftpfr.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftpfr.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftpfr.c.i: cmake_force
@@ -3634,7 +3608,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftpfr.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftstroke.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftstroke.c.o: external/freetype/src/base/ftstroke.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_276) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftstroke.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_274) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftstroke.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftstroke.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftstroke.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftstroke.c.i: cmake_force
@@ -3647,7 +3621,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftstroke.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftsynth.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftsynth.c.o: external/freetype/src/base/ftsynth.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_277) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftsynth.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_275) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftsynth.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftsynth.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftsynth.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftsynth.c.i: cmake_force
@@ -3660,7 +3634,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftsynth.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftsystem.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftsystem.c.o: external/freetype/src/base/ftsystem.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_278) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftsystem.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_276) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftsystem.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftsystem.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftsystem.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftsystem.c.i: cmake_force
@@ -3673,7 +3647,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftsystem.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/fttype1.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/fttype1.c.o: external/freetype/src/base/fttype1.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_279) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/fttype1.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_277) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/fttype1.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/base/fttype1.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/fttype1.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/fttype1.c.i: cmake_force
@@ -3686,7 +3660,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/base/fttype1.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftwinfnt.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftwinfnt.c.o: external/freetype/src/base/ftwinfnt.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_280) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftwinfnt.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_278) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftwinfnt.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftwinfnt.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftwinfnt.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftwinfnt.c.i: cmake_force
@@ -3699,7 +3673,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftwinfnt.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/bdf/bdf.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/bdf/bdf.c.o: external/freetype/src/bdf/bdf.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_281) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/bdf/bdf.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_279) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/bdf/bdf.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/bdf/bdf.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/bdf/bdf.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/bdf/bdf.c.i: cmake_force
@@ -3712,7 +3686,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/bdf/bdf.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/bzip2/ftbzip2.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/bzip2/ftbzip2.c.o: external/freetype/src/bzip2/ftbzip2.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_282) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/bzip2/ftbzip2.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_280) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/bzip2/ftbzip2.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/bzip2/ftbzip2.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/bzip2/ftbzip2.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/bzip2/ftbzip2.c.i: cmake_force
@@ -3725,7 +3699,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/bzip2/ftbzip2.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/cache/ftcache.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/cache/ftcache.c.o: external/freetype/src/cache/ftcache.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_283) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/cache/ftcache.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_281) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/cache/ftcache.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/cache/ftcache.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/cache/ftcache.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/cache/ftcache.c.i: cmake_force
@@ -3738,7 +3712,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/cache/ftcache.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/cff/cff.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/cff/cff.c.o: external/freetype/src/cff/cff.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_284) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/cff/cff.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_282) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/cff/cff.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/cff/cff.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/cff/cff.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/cff/cff.c.i: cmake_force
@@ -3751,7 +3725,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/cff/cff.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/cid/type1cid.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/cid/type1cid.c.o: external/freetype/src/cid/type1cid.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_285) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/cid/type1cid.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_283) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/cid/type1cid.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/cid/type1cid.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/cid/type1cid.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/cid/type1cid.c.i: cmake_force
@@ -3764,7 +3738,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/cid/type1cid.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/gzip/ftgzip.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/gzip/ftgzip.c.o: external/freetype/src/gzip/ftgzip.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_286) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/gzip/ftgzip.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_284) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/gzip/ftgzip.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/gzip/ftgzip.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/gzip/ftgzip.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/gzip/ftgzip.c.i: cmake_force
@@ -3777,7 +3751,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/gzip/ftgzip.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/lzw/ftlzw.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/lzw/ftlzw.c.o: external/freetype/src/lzw/ftlzw.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_287) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/lzw/ftlzw.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_285) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/lzw/ftlzw.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/lzw/ftlzw.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/lzw/ftlzw.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/lzw/ftlzw.c.i: cmake_force
@@ -3790,7 +3764,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/lzw/ftlzw.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/pcf/pcf.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/pcf/pcf.c.o: external/freetype/src/pcf/pcf.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_288) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/pcf/pcf.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_286) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/pcf/pcf.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/pcf/pcf.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/pcf/pcf.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/pcf/pcf.c.i: cmake_force
@@ -3803,7 +3777,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/pcf/pcf.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/pfr/pfr.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/pfr/pfr.c.o: external/freetype/src/pfr/pfr.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_289) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/pfr/pfr.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_287) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/pfr/pfr.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/pfr/pfr.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/pfr/pfr.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/pfr/pfr.c.i: cmake_force
@@ -3816,7 +3790,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/pfr/pfr.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/psaux/psaux.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/psaux/psaux.c.o: external/freetype/src/psaux/psaux.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_290) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/psaux/psaux.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_288) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/psaux/psaux.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/psaux/psaux.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/psaux/psaux.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/psaux/psaux.c.i: cmake_force
@@ -3829,7 +3803,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/psaux/psaux.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/pshinter/pshinter.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/pshinter/pshinter.c.o: external/freetype/src/pshinter/pshinter.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_291) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/pshinter/pshinter.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_289) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/pshinter/pshinter.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/pshinter/pshinter.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/pshinter/pshinter.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/pshinter/pshinter.c.i: cmake_force
@@ -3842,7 +3816,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/pshinter/pshinter.c.s: cmake_fo
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/psnames/psnames.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/psnames/psnames.c.o: external/freetype/src/psnames/psnames.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_292) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/psnames/psnames.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_290) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/psnames/psnames.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/psnames/psnames.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/psnames/psnames.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/psnames/psnames.c.i: cmake_force
@@ -3855,7 +3829,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/psnames/psnames.c.s: cmake_forc
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/raster/raster.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/raster/raster.c.o: external/freetype/src/raster/raster.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_293) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/raster/raster.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_291) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/raster/raster.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/raster/raster.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/raster/raster.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/raster/raster.c.i: cmake_force
@@ -3868,7 +3842,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/raster/raster.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/sfnt/sfnt.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/sfnt/sfnt.c.o: external/freetype/src/sfnt/sfnt.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_294) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/sfnt/sfnt.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_292) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/sfnt/sfnt.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/sfnt/sfnt.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/sfnt/sfnt.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/sfnt/sfnt.c.i: cmake_force
@@ -3881,7 +3855,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/sfnt/sfnt.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/smooth/smooth.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/smooth/smooth.c.o: external/freetype/src/smooth/smooth.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_295) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/smooth/smooth.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_293) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/smooth/smooth.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/smooth/smooth.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/smooth/smooth.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/smooth/smooth.c.i: cmake_force
@@ -3894,7 +3868,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/smooth/smooth.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/truetype/truetype.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/truetype/truetype.c.o: external/freetype/src/truetype/truetype.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_296) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/truetype/truetype.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_294) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/truetype/truetype.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/truetype/truetype.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/truetype/truetype.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/truetype/truetype.c.i: cmake_force
@@ -3907,7 +3881,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/truetype/truetype.c.s: cmake_fo
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/type1/type1.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/type1/type1.c.o: external/freetype/src/type1/type1.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_297) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/type1/type1.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_295) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/type1/type1.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/type1/type1.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/type1/type1.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/type1/type1.c.i: cmake_force
@@ -3920,7 +3894,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/type1/type1.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/type42/type42.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/type42/type42.c.o: external/freetype/src/type42/type42.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_298) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/type42/type42.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_296) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/type42/type42.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/type42/type42.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/type42/type42.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/type42/type42.c.i: cmake_force
@@ -3933,7 +3907,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/type42/type42.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/winfonts/winfnt.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/winfonts/winfnt.c.o: external/freetype/src/winfonts/winfnt.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_299) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/winfonts/winfnt.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_297) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/winfonts/winfnt.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/winfonts/winfnt.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/winfonts/winfnt.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/winfonts/winfnt.c.i: cmake_force
@@ -3946,7 +3920,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/winfonts/winfnt.c.s: cmake_forc
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftdebug.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftdebug.c.o: external/freetype/src/base/ftdebug.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_300) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftdebug.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_298) "Building C object CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftdebug.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftdebug.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftdebug.c
 
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftdebug.c.i: cmake_force
@@ -3959,7 +3933,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftdebug.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/zlib/adler32.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/zlib/adler32.c.o: external/zlib/adler32.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_301) "Building C object CMakeFiles/libdokun-ui.dir/external/zlib/adler32.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_299) "Building C object CMakeFiles/libdokun-ui.dir/external/zlib/adler32.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/zlib/adler32.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/zlib/adler32.c
 
 CMakeFiles/libdokun-ui.dir/external/zlib/adler32.c.i: cmake_force
@@ -3972,7 +3946,7 @@ CMakeFiles/libdokun-ui.dir/external/zlib/adler32.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/zlib/crc32.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/zlib/crc32.c.o: external/zlib/crc32.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_302) "Building C object CMakeFiles/libdokun-ui.dir/external/zlib/crc32.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_300) "Building C object CMakeFiles/libdokun-ui.dir/external/zlib/crc32.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/zlib/crc32.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/zlib/crc32.c
 
 CMakeFiles/libdokun-ui.dir/external/zlib/crc32.c.i: cmake_force
@@ -3985,7 +3959,7 @@ CMakeFiles/libdokun-ui.dir/external/zlib/crc32.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/zlib/deflate.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/zlib/deflate.c.o: external/zlib/deflate.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_303) "Building C object CMakeFiles/libdokun-ui.dir/external/zlib/deflate.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_301) "Building C object CMakeFiles/libdokun-ui.dir/external/zlib/deflate.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/zlib/deflate.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/zlib/deflate.c
 
 CMakeFiles/libdokun-ui.dir/external/zlib/deflate.c.i: cmake_force
@@ -3998,7 +3972,7 @@ CMakeFiles/libdokun-ui.dir/external/zlib/deflate.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/zlib/inflate.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/zlib/inflate.c.o: external/zlib/inflate.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_304) "Building C object CMakeFiles/libdokun-ui.dir/external/zlib/inflate.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_302) "Building C object CMakeFiles/libdokun-ui.dir/external/zlib/inflate.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/zlib/inflate.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/zlib/inflate.c
 
 CMakeFiles/libdokun-ui.dir/external/zlib/inflate.c.i: cmake_force
@@ -4011,7 +3985,7 @@ CMakeFiles/libdokun-ui.dir/external/zlib/inflate.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/zlib/compress.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/zlib/compress.c.o: external/zlib/compress.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_305) "Building C object CMakeFiles/libdokun-ui.dir/external/zlib/compress.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_303) "Building C object CMakeFiles/libdokun-ui.dir/external/zlib/compress.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/zlib/compress.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/zlib/compress.c
 
 CMakeFiles/libdokun-ui.dir/external/zlib/compress.c.i: cmake_force
@@ -4024,7 +3998,7 @@ CMakeFiles/libdokun-ui.dir/external/zlib/compress.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/zlib/gzclose.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/zlib/gzclose.c.o: external/zlib/gzclose.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_306) "Building C object CMakeFiles/libdokun-ui.dir/external/zlib/gzclose.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_304) "Building C object CMakeFiles/libdokun-ui.dir/external/zlib/gzclose.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/zlib/gzclose.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/zlib/gzclose.c
 
 CMakeFiles/libdokun-ui.dir/external/zlib/gzclose.c.i: cmake_force
@@ -4037,7 +4011,7 @@ CMakeFiles/libdokun-ui.dir/external/zlib/gzclose.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/zlib/gzlib.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/zlib/gzlib.c.o: external/zlib/gzlib.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_307) "Building C object CMakeFiles/libdokun-ui.dir/external/zlib/gzlib.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_305) "Building C object CMakeFiles/libdokun-ui.dir/external/zlib/gzlib.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/zlib/gzlib.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/zlib/gzlib.c
 
 CMakeFiles/libdokun-ui.dir/external/zlib/gzlib.c.i: cmake_force
@@ -4050,7 +4024,7 @@ CMakeFiles/libdokun-ui.dir/external/zlib/gzlib.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/zlib/gzread.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/zlib/gzread.c.o: external/zlib/gzread.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_308) "Building C object CMakeFiles/libdokun-ui.dir/external/zlib/gzread.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_306) "Building C object CMakeFiles/libdokun-ui.dir/external/zlib/gzread.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/zlib/gzread.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/zlib/gzread.c
 
 CMakeFiles/libdokun-ui.dir/external/zlib/gzread.c.i: cmake_force
@@ -4063,7 +4037,7 @@ CMakeFiles/libdokun-ui.dir/external/zlib/gzread.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/zlib/gzwrite.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/zlib/gzwrite.c.o: external/zlib/gzwrite.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_309) "Building C object CMakeFiles/libdokun-ui.dir/external/zlib/gzwrite.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_307) "Building C object CMakeFiles/libdokun-ui.dir/external/zlib/gzwrite.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/zlib/gzwrite.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/zlib/gzwrite.c
 
 CMakeFiles/libdokun-ui.dir/external/zlib/gzwrite.c.i: cmake_force
@@ -4076,7 +4050,7 @@ CMakeFiles/libdokun-ui.dir/external/zlib/gzwrite.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/zlib/infback.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/zlib/infback.c.o: external/zlib/infback.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_310) "Building C object CMakeFiles/libdokun-ui.dir/external/zlib/infback.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_308) "Building C object CMakeFiles/libdokun-ui.dir/external/zlib/infback.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/zlib/infback.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/zlib/infback.c
 
 CMakeFiles/libdokun-ui.dir/external/zlib/infback.c.i: cmake_force
@@ -4089,7 +4063,7 @@ CMakeFiles/libdokun-ui.dir/external/zlib/infback.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/zlib/inffast.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/zlib/inffast.c.o: external/zlib/inffast.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_311) "Building C object CMakeFiles/libdokun-ui.dir/external/zlib/inffast.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_309) "Building C object CMakeFiles/libdokun-ui.dir/external/zlib/inffast.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/zlib/inffast.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/zlib/inffast.c
 
 CMakeFiles/libdokun-ui.dir/external/zlib/inffast.c.i: cmake_force
@@ -4102,7 +4076,7 @@ CMakeFiles/libdokun-ui.dir/external/zlib/inffast.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/zlib/inftrees.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/zlib/inftrees.c.o: external/zlib/inftrees.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_312) "Building C object CMakeFiles/libdokun-ui.dir/external/zlib/inftrees.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_310) "Building C object CMakeFiles/libdokun-ui.dir/external/zlib/inftrees.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/zlib/inftrees.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/zlib/inftrees.c
 
 CMakeFiles/libdokun-ui.dir/external/zlib/inftrees.c.i: cmake_force
@@ -4115,7 +4089,7 @@ CMakeFiles/libdokun-ui.dir/external/zlib/inftrees.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/zlib/trees.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/zlib/trees.c.o: external/zlib/trees.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_313) "Building C object CMakeFiles/libdokun-ui.dir/external/zlib/trees.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_311) "Building C object CMakeFiles/libdokun-ui.dir/external/zlib/trees.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/zlib/trees.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/zlib/trees.c
 
 CMakeFiles/libdokun-ui.dir/external/zlib/trees.c.i: cmake_force
@@ -4128,7 +4102,7 @@ CMakeFiles/libdokun-ui.dir/external/zlib/trees.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/zlib/uncompr.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/zlib/uncompr.c.o: external/zlib/uncompr.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_314) "Building C object CMakeFiles/libdokun-ui.dir/external/zlib/uncompr.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_312) "Building C object CMakeFiles/libdokun-ui.dir/external/zlib/uncompr.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/zlib/uncompr.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/zlib/uncompr.c
 
 CMakeFiles/libdokun-ui.dir/external/zlib/uncompr.c.i: cmake_force
@@ -4141,7 +4115,7 @@ CMakeFiles/libdokun-ui.dir/external/zlib/uncompr.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/zlib/zutil.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/zlib/zutil.c.o: external/zlib/zutil.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_315) "Building C object CMakeFiles/libdokun-ui.dir/external/zlib/zutil.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_313) "Building C object CMakeFiles/libdokun-ui.dir/external/zlib/zutil.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/zlib/zutil.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/zlib/zutil.c
 
 CMakeFiles/libdokun-ui.dir/external/zlib/zutil.c.i: cmake_force
@@ -4154,7 +4128,7 @@ CMakeFiles/libdokun-ui.dir/external/zlib/zutil.c.s: cmake_force
 
 CMakeFiles/libdokun-ui.dir/external/glew/src/glew.c.o: CMakeFiles/libdokun-ui.dir/flags.make
 CMakeFiles/libdokun-ui.dir/external/glew/src/glew.c.o: external/glew/src/glew.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_316) "Building C object CMakeFiles/libdokun-ui.dir/external/glew/src/glew.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_314) "Building C object CMakeFiles/libdokun-ui.dir/external/glew/src/glew.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libdokun-ui.dir/external/glew/src/glew.c.o   -c /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/glew/src/glew.c
 
 CMakeFiles/libdokun-ui.dir/external/glew/src/glew.c.i: cmake_force
@@ -4189,8 +4163,6 @@ libdokun__ui_OBJECTS = \
 "CMakeFiles/libdokun-ui.dir/src/grid.cpp.o" \
 "CMakeFiles/libdokun-ui.dir/src/combo.cpp.o" \
 "CMakeFiles/libdokun-ui.dir/src/tab.cpp.o" \
-"CMakeFiles/libdokun-ui.dir/src/server.cpp.o" \
-"CMakeFiles/libdokun-ui.dir/src/client.cpp.o" \
 "CMakeFiles/libdokun-ui.dir/src/entity.cpp.o" \
 "CMakeFiles/libdokun-ui.dir/src/component.cpp.o" \
 "CMakeFiles/libdokun-ui.dir/src/timer.cpp.o" \
@@ -4509,8 +4481,6 @@ src/libdokun-ui.a: CMakeFiles/libdokun-ui.dir/src/menubar.cpp.o
 src/libdokun-ui.a: CMakeFiles/libdokun-ui.dir/src/grid.cpp.o
 src/libdokun-ui.a: CMakeFiles/libdokun-ui.dir/src/combo.cpp.o
 src/libdokun-ui.a: CMakeFiles/libdokun-ui.dir/src/tab.cpp.o
-src/libdokun-ui.a: CMakeFiles/libdokun-ui.dir/src/server.cpp.o
-src/libdokun-ui.a: CMakeFiles/libdokun-ui.dir/src/client.cpp.o
 src/libdokun-ui.a: CMakeFiles/libdokun-ui.dir/src/entity.cpp.o
 src/libdokun-ui.a: CMakeFiles/libdokun-ui.dir/src/component.cpp.o
 src/libdokun-ui.a: CMakeFiles/libdokun-ui.dir/src/timer.cpp.o
@@ -4805,7 +4775,7 @@ src/libdokun-ui.a: CMakeFiles/libdokun-ui.dir/external/zlib/zutil.c.o
 src/libdokun-ui.a: CMakeFiles/libdokun-ui.dir/external/glew/src/glew.c.o
 src/libdokun-ui.a: CMakeFiles/libdokun-ui.dir/build.make
 src/libdokun-ui.a: CMakeFiles/libdokun-ui.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_317) "Linking CXX static library src/libdokun-ui.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/CMakeFiles --progress-num=$(CMAKE_PROGRESS_315) "Linking CXX static library src/libdokun-ui.a"
 	$(CMAKE_COMMAND) -P CMakeFiles/libdokun-ui.dir/cmake_clean_target.cmake
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/libdokun-ui.dir/link.txt --verbose=$(VERBOSE)
 

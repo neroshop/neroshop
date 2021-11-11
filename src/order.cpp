@@ -1,22 +1,22 @@
 #include "../include/order.hpp"
 
 ////////////////////
-Order::Order() : id(0)
+neroshop::Order::Order() : id(0)
 {}
 ////////////////////
-Order::Order(unsigned int id) {
+neroshop::Order::Order(unsigned int id) {
     set_id(id); // once an order has a valid id, then it means it is already in the database
 }
 ////////////////////
-Order::~Order() 
+neroshop::Order::~Order() 
 {}
 ////////////////////
 ////////////////////
-void Order::create_order(unsigned int user_id, const std::string& shipping_address, std::string contact_info) // order: order_id, [order_date], product, SKU, quantity, price (subtotal), discount (optional), shipping_cost/estimated_delivery, payment method:monero[xmr], total
+void neroshop::Order::create_order(unsigned int user_id, const std::string& shipping_address, std::string contact_info) // order: order_id, [order_date], product, SKU, quantity, price (subtotal), discount (optional), shipping_cost/estimated_delivery, payment method:monero[xmr], total
 {
     // check if order is not already in the database
     if(this->id > 0) { neroshop::print("This order (id: " + std::to_string(this->id) + ") already exists"); return; }
-    Cart cart = *Cart::get_singleton();
+    neroshop::Cart cart = *neroshop::Cart::get_singleton();
     if(cart.is_empty()) {neroshop::print("You cannot place an order: (Cart is empty)", 1);return;}// if cart is empty, exit function
     // seller_id cannot buy from him or her self
     // if(user_id == seller_id) { neroshop::print("You cannot buy from yourself") return; }
@@ -27,7 +27,7 @@ void Order::create_order(unsigned int user_id, const std::string& shipping_addre
 	std::stringstream ss;
 	ss << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d %H:%M:%S"); // l% = 12h (01-12), %H = 24h (00-23), %p = AM or PM, %F = %Y-%m-%d (YYYY-MM-DD)
 	std::string date = ss.str(); // order_date
-    DB db("neroshop.db");
+    neroshop::DB db("neroshop.db");
     //db.execute("PRAGMA journal_mode = WAL;"); // this may reduce the incidence of SQLITE_BUSY errors (such as database being locked) // https://www.sqlite.org/pragma.html#pragma_journal_mode
     if(!db.table_exists("orders")) { // ORDER is a keyword in sqlite :O
         db.table("orders"); // a unique id will automatically be made for each order, so long as the same db is being used
@@ -76,9 +76,9 @@ void Order::create_order(unsigned int user_id, const std::string& shipping_addre
     set_id(order_id); // save the order_id
     double subtotal = 0.00, discount = 0.00, shipping_cost = 0.00;
     std::string seller_currency;
-    //if(!Converter::is_supported_currency(currency)) currency = "usd"; // default
+    //if(!neroshop::Converter::is_supported_currency(currency)) currency = "usd"; // default
     for(int i = 0; i < cart.get_contents_count(); i++) {
-        Item * item = cart.get_item(i);
+        neroshop::Item * item = cart.get_item(i);
         std::string item_name = cart.get_item(i)->get_name();
         unsigned int item_id  = cart.get_item(i)->get_id();
         unsigned int item_qty = cart.get_item(i)->get_quantity();
@@ -101,7 +101,7 @@ void Order::create_order(unsigned int user_id, const std::string& shipping_addre
         unsigned int discounted_items = db.get_column_integer("inventory", "discount_qty", "item_id = " + std::to_string(item_id) + " AND seller_id = " + std::to_string(seller_id));
         if(seller_discount > 0.00) {
             discount += (item_qty / discounted_items) * seller_discount;
-            NEROSHOP_TAG std::cout << "\033[1;37m" << "for every " << discounted_items << " " << item_name << "s, you get " << Converter::get_currency_symbol(seller_currency) << std::fixed << std::setprecision(2) << seller_discount << " off (since you have x" << item_qty << ", total discount is: " << Converter::get_currency_symbol(seller_currency) << ((item_qty / discounted_items) * seller_discount) << ")\033[0m" << std::endl;
+            NEROSHOP_TAG std::cout << "\033[1;37m" << "for every " << discounted_items << " " << item_name << "s, you get " << neroshop::Converter::get_currency_symbol(seller_currency) << std::fixed << std::setprecision(2) << seller_discount << " off (since you have x" << item_qty << ", total discount is: " << neroshop::Converter::get_currency_symbol(seller_currency) << ((item_qty / discounted_items) * seller_discount) << ")\033[0m" << std::endl;
         }
         // get condition of item based on seller
         std::string item_condition = db.get_column_text("inventory", "condition", "item_id = " + std::to_string(item_id) + " AND seller_id = " + std::to_string(seller_id));
@@ -126,7 +126,7 @@ void Order::create_order(unsigned int user_id, const std::string& shipping_addre
     neroshop::print("Thank you for using neroshop.");
     neroshop::io_write("You have ordered: ");
     for(int i = 0; i < cart.get_contents_count(); i++) {
-        Item * item = cart.get_item(i);
+        neroshop::Item * item = cart.get_item(i);
         std::cout << "\033[0;94m" + item->get_name() << " (x" << item->get_quantity() << ")\033[0m" << std::endl;
         item->set_quantity(0); // reset all item quantity to 0 (now that order has been completed)
     }
@@ -137,19 +137,19 @@ void Order::create_order(unsigned int user_id, const std::string& shipping_addre
     set_status(order_status::failed); // set order status to failed by default
     db.update("orders", "status", DB::to_sql_string(get_status_string()), "id = " + std::to_string(order_id));
     // update order details - converts seller's currency of choice to xmr, the moment you create an order
-    db.update("orders", "subtotal", std::to_string(Converter::to_xmr(subtotal, seller_currency)), "id = " + std::to_string(order_id));
-    db.update("orders", "discount", std::to_string(Converter::to_xmr(discount, seller_currency)), "id = " + std::to_string(order_id));
-    db.update("orders", "shipping_cost", std::to_string(Converter::to_xmr(shipping_cost, seller_currency)), "id = " + std::to_string(order_id));
+    db.update("orders", "subtotal", std::to_string(neroshop::Converter::to_xmr(subtotal, seller_currency)), "id = " + std::to_string(order_id));
+    db.update("orders", "discount", std::to_string(neroshop::Converter::to_xmr(discount, seller_currency)), "id = " + std::to_string(order_id));
+    db.update("orders", "shipping_cost", std::to_string(neroshop::Converter::to_xmr(shipping_cost, seller_currency)), "id = " + std::to_string(order_id));
     double total = (subtotal - discount) + shipping_cost;
-    db.update("orders", "total", std::to_string(Converter::to_xmr(total, seller_currency)), "id = " + std::to_string(order_id));
+    db.update("orders", "total", std::to_string(neroshop::Converter::to_xmr(total, seller_currency)), "id = " + std::to_string(order_id));
     // display order details
     std::string currency = Script::get_string(DB::get_lua_state(), "neroshop.currency");
-    if(currency.empty() || !Converter::is_supported_currency(currency)) currency = "usd"; // default //Converter::from_xmr(Converter::to_xmr(, seller_currency), currency);
+    if(currency.empty() || !neroshop::Converter::is_supported_currency(currency)) currency = "usd"; // default //neroshop::Converter::from_xmr(neroshop::Converter::to_xmr(, seller_currency), currency);
     neroshop::print("Sit tight as we notify the seller(s) about your order.");
-    std::cout << "Subtotal: " << std::fixed << std::setprecision(12) << Converter::to_xmr(subtotal, seller_currency) << " xmr" << std::fixed << std::setprecision(2) << " (" << Converter::get_currency_symbol(currency) << Converter::from_xmr(Converter::to_xmr(subtotal, seller_currency), currency) << " " << String::upper(currency) << ")" <<  std::endl; // (() ? : "")
-    if(discount > 0) std::cout << "Discount: -" << std::fixed << std::setprecision(12) << Converter::to_xmr(discount, seller_currency) << " xmr" << std::fixed << std::setprecision(2) << " (" << Converter::get_currency_symbol(currency) << Converter::from_xmr(Converter::to_xmr(discount, seller_currency), currency) << " " << String::upper(currency) << ")" <<  std::endl;
-    std::cout << "Shipping: " << std::fixed << std::setprecision(12) << Converter::to_xmr(shipping_cost, seller_currency) << " xmr" << std::fixed << std::setprecision(2) << " (" << Converter::get_currency_symbol(currency) << Converter::from_xmr(Converter::to_xmr(shipping_cost, seller_currency), currency) << " " << String::upper(currency) << ")" <<  std::endl;
-    std::cout << "Order total: " << std::fixed << std::setprecision(12) << Converter::to_xmr(total, seller_currency) << " xmr" << std::fixed << std::setprecision(2) << " (" << Converter::get_currency_symbol(currency) << Converter::from_xmr(Converter::to_xmr(total, seller_currency), currency) << " " << String::upper(currency) << ")" <<  std::endl;
+    std::cout << "Subtotal: " << std::fixed << std::setprecision(12) << neroshop::Converter::to_xmr(subtotal, seller_currency) << " xmr" << std::fixed << std::setprecision(2) << " (" << neroshop::Converter::get_currency_symbol(currency) << neroshop::Converter::from_xmr(neroshop::Converter::to_xmr(subtotal, seller_currency), currency) << " " << String::upper(currency) << ")" <<  std::endl; // (() ? : "")
+    if(discount > 0) std::cout << "Discount: -" << std::fixed << std::setprecision(12) << neroshop::Converter::to_xmr(discount, seller_currency) << " xmr" << std::fixed << std::setprecision(2) << " (" << neroshop::Converter::get_currency_symbol(currency) << neroshop::Converter::from_xmr(neroshop::Converter::to_xmr(discount, seller_currency), currency) << " " << String::upper(currency) << ")" <<  std::endl;
+    std::cout << "Shipping: " << std::fixed << std::setprecision(12) << neroshop::Converter::to_xmr(shipping_cost, seller_currency) << " xmr" << std::fixed << std::setprecision(2) << " (" << neroshop::Converter::get_currency_symbol(currency) << neroshop::Converter::from_xmr(neroshop::Converter::to_xmr(shipping_cost, seller_currency), currency) << " " << String::upper(currency) << ")" <<  std::endl;
+    std::cout << "Order total: " << std::fixed << std::setprecision(12) << neroshop::Converter::to_xmr(total, seller_currency) << " xmr" << std::fixed << std::setprecision(2) << " (" << neroshop::Converter::get_currency_symbol(currency) << neroshop::Converter::from_xmr(neroshop::Converter::to_xmr(total, seller_currency), currency) << " " << String::upper(currency) << ")" <<  std::endl;
     //std::cout << "Estimated delivery date: " << delivery_date_est << std::endl;
     set_status(order_status::pending); // if everything went well then order will be set to pending
     db.update("orders", "status", DB::to_sql_string(get_status_string()), "id = " + std::to_string(order_id));
@@ -160,7 +160,7 @@ void Order::create_order(unsigned int user_id, const std::string& shipping_addre
     // seller generates a unique subaddress when they accept the order, the stock_qty of item_id in table Inventory (seller can choose to either accept or deny the order, but they must give a reason for denying an order)
 }
 ////////////////////
-void Order::cancel_order()
+void neroshop::Order::cancel_order()
 {
     // cannot cancel order if it has been at least 12 hours or more
     // sellers can request that a buyer cancels an order
@@ -168,32 +168,32 @@ void Order::cancel_order()
     set_status( order_status::cancelled );
 }
 ////////////////////
-void Order::change_order()
+void neroshop::Order::change_order()
 {}
 ////////////////////
 ////////////////////
 ////////////////////
 ////////////////////
 ////////////////////
-void Order::set_id(unsigned int id) {
+void neroshop::Order::set_id(unsigned int id) {
     this->id = id;
 }
 ////////////////////
-void Order::set_status(order_status status) { this->status = status;}
+void neroshop::Order::set_status(order_status status) { this->status = status;}
 ////////////////////
 ////////////////////
 ////////////////////
 ////////////////////
 ////////////////////
-unsigned int Order::get_id() const {
+unsigned int neroshop::Order::get_id() const {
     return id;
 }
 ////////////////////
-order_status Order::get_status() const {return status;}
+order_status neroshop::Order::get_status() const {return status;}
 ////////////////////
-std::string Order::get_status_string() const {
+std::string neroshop::Order::get_status_string() const {
     switch(status) {
-        case order_status::incomplete: return "Incomplete";break; // order was interrupted while using was in the process of creating an order
+        case order_status::incomplete: return "Incomplete";break; // order was interrupted while user was in the process of creating an order
         case order_status::pending   : return "Pending"  ; break;
         case order_status::preparing : return "Preparing"; break;
         case order_status::shipped   : return "Shipped"  ; break;
@@ -214,16 +214,12 @@ std::string Order::get_status_string() const {
 ////////////////////
 ////////////////////
 ////////////////////
-bool Order::is_cancelled() const {return (status == order_status::cancelled);}
+bool neroshop::Order::is_cancelled() const {return (status == order_status::cancelled);}
 ////////////////////
 ////////////////////
-bool Order::in_db(unsigned int order_number) // static - can be called without an obj
+bool neroshop::Order::in_db(unsigned int order_number) // static - can be called without an obj
 {
-    DB db;
-    if(!db.open("neroshop.db")) {
-		std::cout << Logger("Could not open sql database", 0) << std::endl;
-        return false; // exit function
-    }
+    neroshop::DB db("neroshop.db");
     int order_id = db.get_column_integer("orders", "id", "id=" + std::to_string(order_number));
     if(order_id <= 0) {std::cout << "Order not found" << std::endl;return false;}
     if(order_id == order_number) {

@@ -1,10 +1,10 @@
 #include "../include/user.hpp"
 
 ////////////////////
-User::User() : logged(false), id(0), role(user_role::guest) // name is an empty string by default
+neroshop::User::User() : logged(false), id(0), role(user_role::guest) // name is an empty string by default
 {}
 ////////////////////
-User::~User()
+neroshop::User::~User()
 {
     for(int i = 0; i < order_list.size(); i++) {
         if(order_list[i]) 
@@ -15,7 +15,7 @@ User::~User()
 ////////////////////
 ////////////////////
 // buyers can only rate seller they have purchased from!!
-void User::rate_seller(unsigned int seller_id, unsigned int score, std::string comments) { // perfected 99.9%!!
+void neroshop::User::rate_seller(unsigned int seller_id, unsigned int score, std::string comments) { // perfected 99.9%!!
     // seller_id cannot be 0 (0 = invalid id)
     if(seller_id <= 0) return;
     // score must be between 0 and 1
@@ -80,7 +80,7 @@ void User::rate_seller(unsigned int seller_id, unsigned int score, std::string c
 // user->rate_seller(seller_id, 0, "This seller sucks!");
 ////////////////////
 ////////////////////
-void User::rate_item(unsigned int item_id, unsigned int stars, std::string comments) { // perfected 99%!!!
+void neroshop::User::rate_item(unsigned int item_id, unsigned int stars, std::string comments) { // perfected 99%!!!
     // user_id (maybe allow unregistered users to review/rate items)
     // if user is a guest, generate an id for it? basically, a guest is a session
     // if item is not registered
@@ -167,7 +167,7 @@ void User::rate_item(unsigned int item_id, unsigned int stars, std::string comme
 // user->rate_item(ball.get_id(), 5, "Very bouncy. I love it!");
 ////////////////////
 ////////////////////
-void User::convert() {
+void neroshop::User::convert() {
     if(is_guest()) return;
     if(is_seller()) { neroshop::print("You are already a seller", 2); return; }
     DB db("neroshop.db");
@@ -177,7 +177,7 @@ void User::convert() {
 }
 // if(user->is_buyer()) user->convert(); // convert buyer to seller
 ////////////////////
-void User::delete_account() {
+void neroshop::User::delete_account() {
     if(!is_logged()) {neroshop::print("You are not logged in", 2);return;} // must be logged in to delete your account
     DB db("neroshop.db");
     db.drop("users", "id = " + std::to_string(get_id()) + " AND name = " + DB::to_sql_string(get_name()));
@@ -200,21 +200,21 @@ void User::delete_account() {
 ////////////////////
 ////////////////////
 ////////////////////
-void User::add_to_cart(const Item& item, unsigned int quantity) {
-    Cart::get_singleton()->add(item, quantity);
+void neroshop::User::add_to_cart(const neroshop::Item& item, unsigned int quantity) {
+    neroshop::Cart::get_singleton()->add(item, quantity);
 }
 ////////////////////
-void User::remove_from_cart(const Item& item, unsigned int quantity) {
-    Cart::get_singleton()->remove(item, quantity);
+void neroshop::User::remove_from_cart(const neroshop::Item& item, unsigned int quantity) {
+    neroshop::Cart::get_singleton()->remove(item, quantity);
 }
 ////////////////////
 ////////////////////
 ////////////////////
 ////////////////////
 ////////////////////
-Order * User::create_order(const std::string& shipping_address) {//const {
+neroshop::Order * neroshop::User::create_order(const std::string& shipping_address) {//const {
     // name[first and last], address1(street, p.o box, company name, etc.), address2(apt number, suite, unit, building, floor, etc.) city, zip/postal_code, state/province/region country, opt:[phone, email]
-    Order * order = new Order();
+    neroshop::Order * order = new neroshop::Order();
     order->create_order(get_id(), shipping_address); // we are using crypto, not debit/credit cards, so no billing address is needed
     order_list.push_back(order); // whether an order fails or succeeds, store it regardless
     return order;
@@ -227,7 +227,7 @@ Order * User::create_order(const std::string& shipping_address) {//const {
 // put this in Buyer::on_login and Seller::on_login
 // Guests orders are not saved to the main database
 // orders are never deleted, their statuses just change: rejected, failure, delivered, etc.
-void User::load_orders() {
+void neroshop::User::load_orders() {
     DB db("neroshop.db");
     if(!db.table_exists("orders")) return; // user probably has no order history
     // create orders based on user order_ids stored in orders
@@ -240,7 +240,7 @@ void User::load_orders() {
         for(unsigned int i = 1; i <= last_order; i++) { // i is wrong because ids can start from 24, but i starts from 1
             unsigned int order_id = db.get_column_integer("orders", "id", "id = " + std::to_string(i) + " AND user_id = " + std::to_string(get_id()));
             if(order_id == 0) continue; // skip 0's
-            Order * order = new Order(order_id);
+            neroshop::Order * order = new neroshop::Order(order_id);
             order_list.push_back(order); // store orders for later use
             neroshop::print("Order (id: " + std::to_string(order->get_id()) + ") has been loaded");
         }
@@ -257,38 +257,38 @@ void User::load_orders() {
 ////////////////////
 ////////////////////
 ////////////////////
-void User::set_id(unsigned int id) {
+void neroshop::User::set_id(unsigned int id) {
     this->id = id;
 }
 ////////////////////
-void User::set_name(const std::string& name) {
+void neroshop::User::set_name(const std::string& name) {
     this->name = name;
 }
 ////////////////////
-void User::set_role(user_role role) {
+void neroshop::User::set_role(user_role role) {
     this->role = role;
 }
 ////////////////////
-void User::set_logged(bool logged) { // protected function, so only derived classes can use this
+void neroshop::User::set_logged(bool logged) { // protected function, so only derived classes can use this
     this->logged = logged;
     if(!logged) on_logout(); // call on_logout() (callback)
 }
 ////////////////////
 ////////////////////
 ////////////////////
-unsigned int User::get_id() const {
+unsigned int neroshop::User::get_id() const {
     return id;
 }
 ////////////////////
-std::string User::get_name() const {
+std::string neroshop::User::get_name() const {
     return name;
 }
 ////////////////////
-user_role User::get_role() const {
+user_role neroshop::User::get_role() const {
     return role;
 }
 ////////////////////
-std::string User::get_role_string() const {
+std::string neroshop::User::get_role_string() const {
     switch(this->role) {
         case user_role::guest: return "Guest"; break;
         case user_role::buyer: return "Buyer"; break;
@@ -299,28 +299,28 @@ std::string User::get_role_string() const {
 ////////////////////
 ////////////////////
 ////////////////////
-Cart * User::get_cart() const {
-    return Cart::get_singleton();
+neroshop::Cart * neroshop::User::get_cart() const {
+    return neroshop::Cart::get_singleton();
 }
 ////////////////////
-Order * User::get_order(unsigned int index) const {
-    if(index > (order_list.size()-1)) throw std::runtime_error("(User::get_order): attempt to access invalid index");
+neroshop::Order * neroshop::User::get_order(unsigned int index) const {
+    if(index > (order_list.size()-1)) throw std::runtime_error("(neroshop::User::get_order): attempt to access invalid index");
     return order_list[index];
 }
 ////////////////////
-unsigned int User::get_order_count() const {
+unsigned int neroshop::User::get_order_count() const {
     return order_list.size();
 }
 ////////////////////
 ////////////////////
 ////////////////////
 ////////////////////
-bool User::is_guest() const {
+bool neroshop::User::is_guest() const {
     if(is_logged()) return false;
     return true; // guests (buyers) are not required to register // guests are buyers by default, except their data is not stored
 }
 ////////////////////
-bool User::is_buyer() const// buyer and guests are not required to register, only sellers
+bool neroshop::User::is_buyer() const// buyer and guests are not required to register, only sellers
 {
     if(id <= 0) return false;
     DB db("neroshop.db");
@@ -331,7 +331,7 @@ bool User::is_buyer() const// buyer and guests are not required to register, onl
     return true;
 }
 ////////////////////
-bool User::is_seller() const
+bool neroshop::User::is_seller() const
 {
     if(id <= 0) return false;//if(String::lower(this->name) == "guest") return false; // reserved name "Guest" for guests only
     DB db("neroshop.db");
@@ -342,12 +342,12 @@ bool User::is_seller() const
     return true;
 }
 ////////////////////
-bool User::is_online() const
+bool neroshop::User::is_online() const // a user is not created until they are logged so this function can only be called when a user is logged // guests can also use this function so its a bad idea to check if user is logged
 {
-    return false;
+    return Client::get_main_client()->is_connected();// && is_logged()); // user must be both connected to the network and logged in
 }
 ////////////////////
-bool User::is_registered() const {
+bool neroshop::User::is_registered() const {
     DB db("neroshop.db");
 	// if table Users does not exist, that means no accounts are registered
 	if(!db.table_exists("users")) return false; // if table Users does not exist, no accounts are registered
@@ -358,7 +358,7 @@ bool User::is_registered() const {
     return true;
 }
 ////////////////////
-bool User::is_registered(const std::string& name) { // no need to login to prove user is registered, just need to check the db
+bool neroshop::User::is_registered(const std::string& name) { // no need to login to prove user is registered, just need to check the db
     // an empty username is ALWAYS invalid
     if(name.empty()) return false;
     DB db("neroshop.db");
@@ -372,12 +372,12 @@ bool User::is_registered(const std::string& name) { // no need to login to prove
     return true;
 }
 ////////////////////
-bool User::is_logged() const
+bool neroshop::User::is_logged() const
 {
     return logged;
 }
 ////////////////////
-bool User::has_email() const {
+bool neroshop::User::has_email() const {
     if(is_guest()) return false;
     DB db("neroshop.db");
     std::string email_hash = db.get_column_text("users", "email_hash", "id = " + std::to_string(get_id()));
@@ -390,14 +390,15 @@ bool User::has_email() const {
 ////////////////////
 // callbacks
 ////////////////////
-//User * User::on_login(const std::string& username) {return nullptr;} // this function does nothing
+//User * neroshop::User::on_login(const std::string& username) {return nullptr;} // this function does nothing
 ////////////////////
-void User::on_order_received() {} // for sellers to implement // this function does nothing
+void neroshop::User::on_order_received() {} // for sellers to implement // this function does nothing
 ////////////////////
-void User::on_logout() {
+void neroshop::User::on_logout() {
     if(is_guest()) return; // guests don't have an account so therefore they cannot logout
     // do something when logged is set to false ...
     neroshop::print("You have logged out");
+    //disconnect from server
 }
 ////////////////////
 ////////////////////

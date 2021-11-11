@@ -9,6 +9,7 @@
 #include <tuple>        // std::tuple, std::get, std::tie, std::ignore
 #include "db.hpp"
 
+namespace neroshop {
 class Item { // or Product or whatever you want to call it
 public:
     Item();
@@ -130,7 +131,7 @@ private:
     //static void set_images(unsigned int item_id, std::vector<char *>& images);       
     //static void set_(unsigned int item_id, );
 };
-
+}
 #endif
 /*
 If you are selling, for example, yoga pants in different sizes and colors, this is how you might want to manage the SKUs for them:

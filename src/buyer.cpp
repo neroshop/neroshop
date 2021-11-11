@@ -1,9 +1,9 @@
 #include "../include/buyer.hpp"
 
 ////////////////////
-Buyer::Buyer() {} // not used
+neroshop::Buyer::Buyer() {} // not used
 ////////////////////
-Buyer::Buyer(const std::string& name) : Buyer() {
+neroshop::Buyer::Buyer(const std::string& name) : Buyer() {
     set_name(name);
     //std::cout << "buyer created\n";
 }
@@ -28,10 +28,10 @@ Buyer::Buyer(const std::string& name) : Buyer() {
 ////////////////////
 ////////////////////
 ////////////////////
-User * Buyer::on_login(const std::string& username) { // if validator::login(user, pw) returns true, then set User::logged to true
+neroshop::User * neroshop::Buyer::on_login(const std::string& username) { // if validator::login(user, pw) returns true, then set User::logged to true
     // retrieve user data from database
     DB db("neroshop.db");
-    User * user = new Buyer(username); // create seller obj
+    neroshop::User * user = new Buyer(username); // create seller obj
     dynamic_cast<Buyer *>(user)->set_logged(true); // protected, so only instance of derived class can call this function
     dynamic_cast<Buyer *>(user)->set_id(db.get_column_integer("users", "id", "name = " + DB::to_sql_string(username)));
     dynamic_cast<Buyer *>(user)->set_role(user_role::buyer); // set the role

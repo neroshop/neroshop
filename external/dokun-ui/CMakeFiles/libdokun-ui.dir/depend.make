@@ -3912,23 +3912,6 @@ CMakeFiles/libdokun-ui.dir/src/button.cpp.o: external/tiff/libtiff/tiffconf.h
 CMakeFiles/libdokun-ui.dir/src/button.cpp.o: external/tiff/libtiff/tiffio.h
 CMakeFiles/libdokun-ui.dir/src/button.cpp.o: external/tiff/libtiff/tiffvers.h
 
-CMakeFiles/libdokun-ui.dir/src/client.cpp.o: include/android_header.hpp
-CMakeFiles/libdokun-ui.dir/src/client.cpp.o: include/client.hpp
-CMakeFiles/libdokun-ui.dir/src/client.cpp.o: include/linux_header.hpp
-CMakeFiles/libdokun-ui.dir/src/client.cpp.o: include/platform.hpp
-CMakeFiles/libdokun-ui.dir/src/client.cpp.o: include/win32_header.hpp
-CMakeFiles/libdokun-ui.dir/src/client.cpp.o: src/client.cpp
-CMakeFiles/libdokun-ui.dir/src/client.cpp.o: external/glew/include/GL/eglew.h
-CMakeFiles/libdokun-ui.dir/src/client.cpp.o: external/glew/include/GL/glew.h
-CMakeFiles/libdokun-ui.dir/src/client.cpp.o: external/glew/include/GL/glxew.h
-CMakeFiles/libdokun-ui.dir/src/client.cpp.o: external/glew/include/GL/wglew.h
-CMakeFiles/libdokun-ui.dir/src/client.cpp.o: external/glfw/include/GLFW/glfw3.h
-CMakeFiles/libdokun-ui.dir/src/client.cpp.o: external/lua/lua-5.4.1/src/lauxlib.h
-CMakeFiles/libdokun-ui.dir/src/client.cpp.o: external/lua/lua-5.4.1/src/lua.h
-CMakeFiles/libdokun-ui.dir/src/client.cpp.o: external/lua/lua-5.4.1/src/lua.hpp
-CMakeFiles/libdokun-ui.dir/src/client.cpp.o: external/lua/lua-5.4.1/src/luaconf.h
-CMakeFiles/libdokun-ui.dir/src/client.cpp.o: external/lua/lua-5.4.1/src/lualib.h
-
 CMakeFiles/libdokun-ui.dir/src/combo.cpp.o: include/android_header.hpp
 CMakeFiles/libdokun-ui.dir/src/combo.cpp.o: include/box.hpp
 CMakeFiles/libdokun-ui.dir/src/combo.cpp.o: include/combo.hpp
@@ -5113,7 +5096,6 @@ CMakeFiles/libdokun-ui.dir/src/engine.cpp.o: include/box.hpp
 CMakeFiles/libdokun-ui.dir/src/engine.cpp.o: include/browser.hpp
 CMakeFiles/libdokun-ui.dir/src/engine.cpp.o: include/build.hpp
 CMakeFiles/libdokun-ui.dir/src/engine.cpp.o: include/button.hpp
-CMakeFiles/libdokun-ui.dir/src/engine.cpp.o: include/client.hpp
 CMakeFiles/libdokun-ui.dir/src/engine.cpp.o: include/combo.hpp
 CMakeFiles/libdokun-ui.dir/src/engine.cpp.o: include/component.hpp
 CMakeFiles/libdokun-ui.dir/src/engine.cpp.o: include/console.hpp
@@ -5140,7 +5122,6 @@ CMakeFiles/libdokun-ui.dir/src/engine.cpp.o: include/progressbar.hpp
 CMakeFiles/libdokun-ui.dir/src/engine.cpp.o: include/renderer.hpp
 CMakeFiles/libdokun-ui.dir/src/engine.cpp.o: include/script.hpp
 CMakeFiles/libdokun-ui.dir/src/engine.cpp.o: include/scrollbar.hpp
-CMakeFiles/libdokun-ui.dir/src/engine.cpp.o: include/server.hpp
 CMakeFiles/libdokun-ui.dir/src/engine.cpp.o: include/shader.hpp
 CMakeFiles/libdokun-ui.dir/src/engine.cpp.o: include/slider.hpp
 CMakeFiles/libdokun-ui.dir/src/engine.cpp.o: include/spinner.hpp
@@ -9505,23 +9486,6 @@ CMakeFiles/libdokun-ui.dir/src/scrollbar.cpp.o: external/tiff/libtiff/tiff.h
 CMakeFiles/libdokun-ui.dir/src/scrollbar.cpp.o: external/tiff/libtiff/tiffconf.h
 CMakeFiles/libdokun-ui.dir/src/scrollbar.cpp.o: external/tiff/libtiff/tiffio.h
 CMakeFiles/libdokun-ui.dir/src/scrollbar.cpp.o: external/tiff/libtiff/tiffvers.h
-
-CMakeFiles/libdokun-ui.dir/src/server.cpp.o: include/android_header.hpp
-CMakeFiles/libdokun-ui.dir/src/server.cpp.o: include/linux_header.hpp
-CMakeFiles/libdokun-ui.dir/src/server.cpp.o: include/platform.hpp
-CMakeFiles/libdokun-ui.dir/src/server.cpp.o: include/server.hpp
-CMakeFiles/libdokun-ui.dir/src/server.cpp.o: include/win32_header.hpp
-CMakeFiles/libdokun-ui.dir/src/server.cpp.o: src/server.cpp
-CMakeFiles/libdokun-ui.dir/src/server.cpp.o: external/glew/include/GL/eglew.h
-CMakeFiles/libdokun-ui.dir/src/server.cpp.o: external/glew/include/GL/glew.h
-CMakeFiles/libdokun-ui.dir/src/server.cpp.o: external/glew/include/GL/glxew.h
-CMakeFiles/libdokun-ui.dir/src/server.cpp.o: external/glew/include/GL/wglew.h
-CMakeFiles/libdokun-ui.dir/src/server.cpp.o: external/glfw/include/GLFW/glfw3.h
-CMakeFiles/libdokun-ui.dir/src/server.cpp.o: external/lua/lua-5.4.1/src/lauxlib.h
-CMakeFiles/libdokun-ui.dir/src/server.cpp.o: external/lua/lua-5.4.1/src/lua.h
-CMakeFiles/libdokun-ui.dir/src/server.cpp.o: external/lua/lua-5.4.1/src/lua.hpp
-CMakeFiles/libdokun-ui.dir/src/server.cpp.o: external/lua/lua-5.4.1/src/luaconf.h
-CMakeFiles/libdokun-ui.dir/src/server.cpp.o: external/lua/lua-5.4.1/src/lualib.h
 
 CMakeFiles/libdokun-ui.dir/src/shader.cpp.o: include/android_header.hpp
 CMakeFiles/libdokun-ui.dir/src/shader.cpp.o: include/factory.hpp

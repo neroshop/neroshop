@@ -18,6 +18,7 @@ using qrcodegen::QrSegment;
 // dokun-ui
 //#include <texture.hpp>
 
+namespace neroshop {
 class QR {
 public:
     QR();
@@ -36,4 +37,5 @@ private:
     bool overwrite_existing_file;
     qrcodegen::QrCode::Ecc ecc;
 };
+}
 #endif

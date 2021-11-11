@@ -56,8 +56,8 @@
 #include "tab.hpp"
 //#include "chat.hpp"//#include "player.hpp" // temp
 // network.
-#include "server.hpp"
-#include "client.hpp"
+//#include "server.hpp"
+//#include "client.hpp"
 // utilities - the most essential part of the engine
 #include "entity.hpp"
 #include "component.hpp"

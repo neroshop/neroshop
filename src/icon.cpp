@@ -1,15 +1,15 @@
 #include "../include/icon.hpp"
 
-Icon::Icon() {}
+neroshop::Icon::Icon() {}
 ////////////////////
-Icon::~Icon() {}
+neroshop::Icon::~Icon() {}
 ////////////////////
-//Icon * Icon::icon_ptr (new Icon());
+//Icon * neroshop::Icon::icon_ptr (new Icon());
 ////////////////////
-std::map<std::string, Image *> Icon::get({});
+std::map<std::string, Image *> neroshop::Icon::get({});
 ////////////////////
 ////////////////////
-bool Icon::load_all() { // loads all images
+bool neroshop::Icon::load_all() { // loads all images
     if(!load_monero()) return false;
     if(!load_settings()) return false;
     if(!load_cart()) return false;
@@ -38,7 +38,7 @@ bool Icon::load_all() { // loads all images
 ////////////////////
 ////////////////////
 ////////////////////
-bool Icon::load_monero()
+bool neroshop::Icon::load_monero()
 {
  const char * monero_symbol_white = {
   //64, 64, 4,
@@ -1090,11 +1090,11 @@ const char * monero_symbol = {
     ////////////
     // monero-white
     Image * image_monero_symbol_white = new Image(const_cast<char *>(monero_symbol_white), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("monero_symbol_white", image_monero_symbol_white));
+    neroshop::Icon::get.insert(std::make_pair("monero_symbol_white", image_monero_symbol_white));
     // monero-transparent
     Image * image_monero_symbol = new Image(const_cast<char *>(monero_symbol), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("monero_symbol", image_monero_symbol));
-    //std::cout << "icon_count: " << Icon::get.size() << std::endl;
+    neroshop::Icon::get.insert(std::make_pair("monero_symbol", image_monero_symbol));
+    //std::cout << "icon_count: " << neroshop::Icon::get.size() << std::endl;
     return true;
 }
 ////////////////////
@@ -1106,7 +1106,7 @@ const char * monero_symbol = {
 ////////////////////
 ////////////////////
 ////////////////////
-bool Icon::load_settings() // cog
+bool neroshop::Icon::load_settings() // cog
 {
  const char * settings = {
   //64, 64, 4,
@@ -1798,7 +1798,7 @@ bool Icon::load_settings() // cog
   "\000\000\000\000\000\000",
 };
     Image * image_settings = new Image(const_cast<char *>(settings), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("settings", image_settings));
+    neroshop::Icon::get.insert(std::make_pair("settings", image_settings));
     return true;
 }
 ////////////////////
@@ -1810,7 +1810,7 @@ bool Icon::load_settings() // cog
 ////////////////////
 ////////////////////
 ////////////////////
-bool Icon::load_cart() 
+bool neroshop::Icon::load_cart() 
 {
 const char * cart = {
   //64, 64, 4,
@@ -2434,7 +2434,7 @@ const char * cart = {
   "\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000",
 };
     Image * image_cart = new Image(const_cast<char *>(cart), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("cart", image_cart));
+    neroshop::Icon::get.insert(std::make_pair("cart", image_cart));
     return true;
 }
 ////////////////////
@@ -2446,7 +2446,7 @@ const char * cart = {
 ////////////////////
 ////////////////////
 ////////////////////
-bool Icon::load_search() {
+bool neroshop::Icon::load_search() {
  const char * search = { // the bigger the size, the better the quality
   //64, 64, 4,
   "\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000"
@@ -3086,7 +3086,7 @@ bool Icon::load_search() {
 };
 
     Image * image_search = new Image(const_cast<char *>(search), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("search", image_search));
+    neroshop::Icon::get.insert(std::make_pair("search", image_search));
     return true;
 }
 ////////////////////
@@ -3098,7 +3098,7 @@ bool Icon::load_search() {
 ////////////////////
 ////////////////////
 ////////////////////
-bool Icon::load_user()
+bool neroshop::Icon::load_user()
 {
 const char * user = {
   //64, 64, 4,
@@ -3760,7 +3760,7 @@ const char * user = {
   "\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000",
 };
     Image * image_user = new Image(const_cast<char *>(user), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("user", image_user));
+    neroshop::Icon::get.insert(std::make_pair("user", image_user));
     return true;
 }
 ////////////////////
@@ -3772,13 +3772,13 @@ const char * user = {
 ////////////////////
 ////////////////////
 ////////////////////
-bool Icon::load_heart()
+bool neroshop::Icon::load_heart()
 {
 //    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-//    Icon::get.insert(std::make_pair("", image_));
+//    neroshop::Icon::get.insert(std::make_pair("", image_));
       ////////////
 //    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-//    Icon::get.insert(std::make_pair("", image_));
+//    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }
 ////////////////////
@@ -3790,7 +3790,7 @@ bool Icon::load_heart()
 ////////////////////
 ////////////////////
 ////////////////////
-bool Icon::load_star() // star, star_outline
+bool neroshop::Icon::load_star() // star, star_outline
 {
 const char * star = {
   //64, 64, 4,
@@ -4478,7 +4478,7 @@ const char * star = {
   "\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000",
 };
     Image * image_star = new Image(const_cast<char *>(star), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("star", image_star));
+    neroshop::Icon::get.insert(std::make_pair("star", image_star));
       ////////////
 const char * star_outline = {
   //64, 64, 4,
@@ -5069,7 +5069,7 @@ const char * star_outline = {
   "\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000",
 };      
     Image * image_star_outline = new Image(const_cast<char *>(star_outline), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("star_outline", image_star_outline));
+    neroshop::Icon::get.insert(std::make_pair("star_outline", image_star_outline));
     return true;
 }
 ////////////////////
@@ -5081,7 +5081,7 @@ const char * star_outline = {
 ////////////////////
 ////////////////////
 ////////////////////
-bool Icon::load_circle() // circle, circle_outline
+bool neroshop::Icon::load_circle() // circle, circle_outline
 {
 const char * circle_outline = {
   //64, 64, 4,
@@ -5709,7 +5709,7 @@ const char * circle_outline = {
 };
 
     Image * image_circle_outline = new Image(const_cast<char *>(circle_outline), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("circle_outline", image_circle_outline));
+    neroshop::Icon::get.insert(std::make_pair("circle_outline", image_circle_outline));
 
     const char * circle = {
   //64, 64, 4,
@@ -6534,7 +6534,7 @@ const char * circle_outline = {
 
     ////////////
     Image * image_circle = new Image(const_cast<char *>(circle), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("circle", image_circle));
+    neroshop::Icon::get.insert(std::make_pair("circle", image_circle));
     return true;
 }
 ////////////////////
@@ -6546,7 +6546,7 @@ const char * circle_outline = {
 ////////////////////
 ////////////////////
 ////////////////////
-bool Icon::load_speaker() // volume_up, volume_down
+bool neroshop::Icon::load_speaker() // volume_up, volume_down
 {
     return true;
 }
@@ -6559,7 +6559,7 @@ bool Icon::load_speaker() // volume_up, volume_down
 ////////////////////
 ////////////////////
 ////////////////////
-bool Icon::load_bookmark()
+bool neroshop::Icon::load_bookmark()
 {
  const char * bookmark = {
   //64, 64, 4,
@@ -7221,7 +7221,7 @@ bool Icon::load_bookmark()
   "\000\000",
 };
     Image * image_bookmark = new Image(const_cast<char *>(bookmark), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("bookmark", image_bookmark)); // pixels are messed up
+    neroshop::Icon::get.insert(std::make_pair("bookmark", image_bookmark)); // pixels are messed up
     ///////////
 const char * bookmark_book = {
   //64, 64, 4,
@@ -7977,7 +7977,7 @@ const char * bookmark_book = {
   "\000\000\000\000\000\000\000\000",
 };
     Image * image_bookmark_book = new Image(const_cast<char *>(bookmark_book), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("bookmark_book", image_bookmark_book)); // pixels are messed up
+    neroshop::Icon::get.insert(std::make_pair("bookmark_book", image_bookmark_book)); // pixels are messed up
     return true;
 }
 ////////////////////
@@ -7989,7 +7989,7 @@ const char * bookmark_book = {
 ////////////////////
 ////////////////////
 ////////////////////
-bool Icon::load_trash()
+bool neroshop::Icon::load_trash()
 {
  const char * trash = {
   //64, 64, 4,
@@ -8658,7 +8658,7 @@ bool Icon::load_trash()
   "\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000",
 };
     Image * image_trash = new Image(const_cast<char *>(trash), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("trash", image_trash));
+    neroshop::Icon::get.insert(std::make_pair("trash", image_trash));
     return true;
 }
 ////////////////////
@@ -8670,7 +8670,7 @@ bool Icon::load_trash()
 ////////////////////
 ////////////////////
 ////////////////////
-bool Icon::load_order()
+bool neroshop::Icon::load_order()
 {
 const char * purchase_order = {
   //64, 64, 4,
@@ -9304,7 +9304,7 @@ const char * purchase_order = {
 };
 
     Image * image_order = new Image(const_cast<char *>(purchase_order), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("order", image_order));
+    neroshop::Icon::get.insert(std::make_pair("order", image_order));
     return true;
 }
 ////////////////////
@@ -9316,14 +9316,14 @@ const char * purchase_order = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_flag()
+/*bool neroshop::Icon::load_flag()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     ////////////
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -9335,11 +9335,11 @@ const char * purchase_order = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -9351,7 +9351,7 @@ const char * purchase_order = {
 ////////////////////
 ////////////////////
 ////////////////////
-bool Icon::load_upload()
+bool neroshop::Icon::load_upload()
 {
 const char * upload = {
   //64, 64, 4,
@@ -9983,7 +9983,7 @@ const char * upload = {
   "\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000",
 };
     Image * image_upload = new Image(const_cast<char *>(upload), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("upload", image_upload));
+    neroshop::Icon::get.insert(std::make_pair("upload", image_upload));
     return true;
 }
 ////////////////////
@@ -9995,7 +9995,7 @@ const char * upload = {
 ////////////////////
 ////////////////////
 ////////////////////
-bool Icon::load_login()
+bool neroshop::Icon::load_login()
 {
 const char * user_login = {
   //64, 64, 4,
@@ -10685,7 +10685,7 @@ const char * user_login = {
   "\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000",
 };
     Image * image_user_login = new Image(const_cast<char *>(user_login), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("user_login", image_user_login));
+    neroshop::Icon::get.insert(std::make_pair("user_login", image_user_login));
     ///////////////
 const char * padlock = {
   //64, 64, 4,
@@ -11364,7 +11364,7 @@ const char * padlock = {
   "\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000",
 };    
     Image * image_padlock = new Image(const_cast<char *>(padlock), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("padlock", image_padlock));
+    neroshop::Icon::get.insert(std::make_pair("padlock", image_padlock));
     return true;
 }
 ////////////////////
@@ -11376,7 +11376,7 @@ const char * padlock = {
 ////////////////////
 ////////////////////
 ////////////////////
-bool Icon::load_console()
+bool neroshop::Icon::load_console()
 {
 const char * console = {
   //64, 64, 4,
@@ -12024,7 +12024,7 @@ const char * console = {
   "\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000",
 };
     Image * image_console = new Image(const_cast<char *>(console), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("console", image_console));
+    neroshop::Icon::get.insert(std::make_pair("console", image_console));
     return true;
 }
 ////////////////////
@@ -12036,7 +12036,7 @@ const char * console = {
 ////////////////////
 ////////////////////
 ////////////////////
-bool Icon::load_wallet()
+bool neroshop::Icon::load_wallet()
 {
 const char * wallet = {
   //64, 64, 4,
@@ -12892,7 +12892,7 @@ const char * wallet = {
   "\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000",
 };
     Image * image_wallet = new Image(const_cast<char *>(wallet), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("wallet", image_wallet));
+    neroshop::Icon::get.insert(std::make_pair("wallet", image_wallet));
     return true;
 }
 ////////////////////
@@ -12904,11 +12904,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -12920,11 +12920,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -12936,11 +12936,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -12952,11 +12952,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -12968,11 +12968,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -12984,11 +12984,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13000,11 +13000,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13016,11 +13016,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13032,11 +13032,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13048,11 +13048,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13064,11 +13064,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13080,11 +13080,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13096,11 +13096,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13112,7 +13112,7 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
     return true;
 }*/
@@ -13125,7 +13125,7 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
     return true;
 }*/
@@ -13137,7 +13137,7 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
     return true;
 }*/
@@ -13150,7 +13150,7 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
     return true;
 }*/
@@ -13163,11 +13163,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13179,11 +13179,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13195,11 +13195,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13211,11 +13211,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13227,11 +13227,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13243,11 +13243,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13259,11 +13259,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13275,11 +13275,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13291,11 +13291,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13307,11 +13307,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13323,11 +13323,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13339,11 +13339,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13355,11 +13355,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13371,11 +13371,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13387,11 +13387,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13403,11 +13403,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13419,11 +13419,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13435,11 +13435,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13451,11 +13451,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13467,11 +13467,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13483,11 +13483,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13499,11 +13499,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13515,11 +13515,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13531,11 +13531,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13547,11 +13547,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13563,11 +13563,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13579,11 +13579,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13595,11 +13595,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13611,11 +13611,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13627,11 +13627,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13643,11 +13643,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13659,11 +13659,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13675,11 +13675,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13691,11 +13691,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13707,11 +13707,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13723,11 +13723,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13739,11 +13739,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13755,11 +13755,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13771,11 +13771,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13787,11 +13787,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13803,11 +13803,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13819,11 +13819,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13835,11 +13835,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13851,11 +13851,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13867,11 +13867,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13883,11 +13883,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13899,11 +13899,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13915,11 +13915,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13931,11 +13931,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13947,11 +13947,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13963,11 +13963,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13979,11 +13979,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -13995,11 +13995,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14011,11 +14011,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14027,11 +14027,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14043,11 +14043,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14059,11 +14059,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14075,11 +14075,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14091,11 +14091,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14107,11 +14107,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14123,11 +14123,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14139,11 +14139,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14155,11 +14155,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14171,11 +14171,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14187,11 +14187,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14203,11 +14203,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14219,11 +14219,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14235,11 +14235,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14251,11 +14251,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14267,11 +14267,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14283,11 +14283,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14299,11 +14299,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/////////////////////
 ////////////////////
@@ -14314,11 +14314,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14330,11 +14330,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14346,11 +14346,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14362,11 +14362,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14378,11 +14378,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14394,138 +14394,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/////////////////////
 ////////////////////
@@ -14536,11 +14409,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14552,11 +14425,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14568,11 +14441,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14584,11 +14457,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14600,11 +14473,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14616,11 +14489,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14632,11 +14505,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14648,43 +14521,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/////////////////////
 ////////////////////
@@ -14695,11 +14536,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14711,11 +14552,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14727,11 +14568,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14743,11 +14584,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14759,11 +14600,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14775,11 +14616,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14791,11 +14632,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14807,11 +14648,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14823,11 +14664,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -14839,491 +14680,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
-    return true;
-}*/
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-////////////////////
-/*bool Icon::load_()
-{
-
-    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/////////////////////
 ////////////////////
@@ -15334,11 +14695,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15350,11 +14711,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15366,11 +14727,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15382,11 +14743,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15398,11 +14759,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15414,11 +14775,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15430,11 +14791,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15446,11 +14807,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15462,11 +14823,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15478,11 +14839,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15494,11 +14855,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15510,11 +14871,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15526,11 +14887,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15542,11 +14903,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15558,11 +14919,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15574,11 +14935,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15590,11 +14951,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15606,11 +14967,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15622,11 +14983,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15638,11 +14999,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15654,11 +15015,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15670,11 +15031,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15686,11 +15047,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15702,11 +15063,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15718,11 +15079,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15734,11 +15095,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15750,11 +15111,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15766,11 +15127,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15782,11 +15143,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15798,11 +15159,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15814,11 +15175,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15830,11 +15191,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15846,11 +15207,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15862,11 +15223,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15878,11 +15239,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15894,11 +15255,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15910,11 +15271,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15926,11 +15287,11 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/
 ////////////////////
@@ -15942,10 +15303,649 @@ const char * wallet = {
 ////////////////////
 ////////////////////
 ////////////////////
-/*bool Icon::load_()
+/*bool neroshop::Icon::load_()
 {
 
     Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
-    Icon::get.insert(std::make_pair("", image_));
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
+    return true;
+}*/
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+/*bool neroshop::Icon::load_()
+{
+
+    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);
+    neroshop::Icon::get.insert(std::make_pair("", image_));
     return true;
 }*/

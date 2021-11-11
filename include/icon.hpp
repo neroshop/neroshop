@@ -4,7 +4,7 @@
 #include "image.hpp"
 
 //typedef std::tuple<unsigned int, unsigned int, unsigned int> dimensions; // width height channel
-
+namespace neroshop {
 class Icon {
 public:
     Icon();
@@ -34,6 +34,7 @@ public:
     static std::map<std::string, Image *> get; // a map is basically a std::vector of std::pairs
     //static std::vector< std::pair<std::string, Image *> > get; //Icon * icon_ptr; // singleton obj
 }; 
+}
 #endif
 // name, data, width, height, channel, depth
 //    Image * image_ = new Image(const_cast<char *>(), 64, 64, 1, 4);

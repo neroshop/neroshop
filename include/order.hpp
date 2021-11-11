@@ -18,6 +18,7 @@ enum class order_status : unsigned int {incomplete, created, pending = created, 
 enum class payment_method{/*cash, card,*/ crypto,};
 enum class currency{xmr,};
 
+namespace neroshop {
 class Order { // create a db for orders that stores order numbers and details and retrieve order
 public:
 	Order();
@@ -49,7 +50,7 @@ private:
 	void set_status(order_status status);
 	void set_id(unsigned int id);
 };
-
+}
 #endif
 // https://support.bigcommerce.com/s/article/Orders?language=en_US
 // https://docs.woocommerce.com/document/managing-orders/

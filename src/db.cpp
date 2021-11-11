@@ -1,9 +1,9 @@
 #include "../include/db.hpp"
 
-DB::DB()
+neroshop::DB::DB()
 {}
 ////////////////////
-DB::DB(const std::string& file_name) : DB() // delegating constructor
+neroshop::DB::DB(const std::string& file_name) : DB() // delegating constructor
 {
 	if(!open(file_name)) {
 		NEROSHOP_TAG std::cout << SQLITE3_TAG_ERR << "Could not open db - " + String::to_string(sqlite3_errmsg(db)) + " (" + file_name + ")" << std::endl;
@@ -11,12 +11,12 @@ DB::DB(const std::string& file_name) : DB() // delegating constructor
     }
 }
 ////////////////////
-DB::~DB()
+neroshop::DB::~DB()
 {}
 ////////////////////
-lua_State * DB::lua_state (luaL_newstate()); // static lua_state
+lua_State * neroshop::DB::lua_state (luaL_newstate()); // static lua_state
 ////////////////////
-bool DB::open(const std::string& file_name) // create a data base; works!
+bool neroshop::DB::open(const std::string& file_name) // create a data base; works!
 {
 	if(sqlite3_open(file_name.c_str(), &db)) {
 		close();
@@ -25,15 +25,15 @@ bool DB::open(const std::string& file_name) // create a data base; works!
 	return true;
 }
 ////////////////////
-void DB::close() {
+void neroshop::DB::close() {
 	sqlite3_close(db);
 }
 ////////////////////
 ////////////////////
-void DB::execute(const std::string& sql) // execute an sql statement; works !
+void neroshop::DB::execute(const std::string& sql) // execute an sql statement; works !
 {
 	char * errmsg = 0;
-	int error = sqlite3_exec(db, sql.c_str(), DB::callback, 0, &errmsg);
+	int error = sqlite3_exec(db, sql.c_str(), neroshop::DB::callback, 0, &errmsg);
 	if (error != SQLITE_OK)
 	{
 		NEROSHOP_TAG std::cout << SQLITE3_TAG_ERR + String::to_string(errmsg) << "\033[0m" << std::endl;
@@ -42,7 +42,7 @@ void DB::execute(const std::string& sql) // execute an sql statement; works !
 	if(error == SQLITE_LOCKED) {NEROSHOP_TAG std::cout << "dammit, this database is locked wtf!!!" << std::endl;} // remove this LOL
 }
 ////////////////////
-void DB::table(const std::string& table, bool auto_inc) // creates a new table; works !
+void neroshop::DB::table(const std::string& table, bool auto_inc) // creates a new table; works !
 {
 	std::string sql = "CREATE TABLE IF NOT EXISTS table_name(id  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT);";
 	// set table name
@@ -56,7 +56,7 @@ void DB::table(const std::string& table, bool auto_inc) // creates a new table; 
 	execute(sql.c_str());
 }
 ////////////////////
-void DB::column(const std::string& table, const std::string& method, const std::string& column_name, std::string column_type) // creates, deletes, or modifies a column; works!
+void neroshop::DB::column(const std::string& table, const std::string& method, const std::string& column_name, std::string column_type) // creates, deletes, or modifies a column; works!
 {
 	std::string sql = "ALTER TABLE table_name method column_name column_type;";
 	// add a column to table 
@@ -80,7 +80,7 @@ void DB::column(const std::string& table, const std::string& method, const std::
 // db->column("Users", "DROP", "pw_hash"); // no column datatype required for DROP
 // use UPDATE to update columns! INSERT only adds a new row and id!!
 ////////////////////
-void DB::insert(const std::string& table, const std::string& variable, const std::string& value) // sets the value of a column (column must exist first); works!
+void neroshop::DB::insert(const std::string& table, const std::string& variable, const std::string& value) // sets the value of a column (column must exist first); works!
 {  
     std::string sql = "INSERT INTO table_name (variable)" 
 	" VALUES (value);";
@@ -95,7 +95,7 @@ void DB::insert(const std::string& table, const std::string& variable, const std
 	execute(sql.c_str());
 } // db->insert("Player", "name, level", "'Jack', 1"); -> sets the column 'name' to 'Jack'
 ////////////////////
-void DB::select(const std::string& table, std::string variable, std::string condition) // selects variable from a table // works!
+void neroshop::DB::select(const std::string& table, std::string variable, std::string condition) // selects variable from a table // works!
 {
 	std::string sql = "SELECT * " // "SELECT * "
 	"FROM table_name "
@@ -115,7 +115,7 @@ void DB::select(const std::string& table, std::string variable, std::string cond
 	execute(sql.c_str());
 } // db->select("Users", "name", "id=2"); // shows user's name where the id=2
 ////////////////////
-void DB::update(const std::string& table, const std::string& variable, const std::string& value, std::string condition) // updates a variable; works!
+void neroshop::DB::update(const std::string& table, const std::string& variable, const std::string& value, std::string condition) // updates a variable; works!
 {
 	std::string sql = "UPDATE table_name "
 	"SET variable = value " 
@@ -135,7 +135,7 @@ void DB::update(const std::string& table, const std::string& variable, const std
 	execute( sql.c_str() );
 } // db->update("Users", "name", "'jack'", "id = 1"); // UPDATE Users SET name='jack' WHERE id=1
 ////////////////////
-void DB::drop(const std::string& table, std::string condition) // works!
+void neroshop::DB::drop(const std::string& table, std::string condition) // works!
 {
 	std::string sql;
 	if(condition.empty())
@@ -162,7 +162,7 @@ void DB::drop(const std::string& table, std::string condition) // works!
 // db->drop("Users", "id=2"); // deletes column where id=2 
 ////////////////////
 ////////////////////
-void DB::index(const std::string& index_name, const std::string& table_name, const std::string& column_list) // ensures that columns will not be duplicated // works!
+void neroshop::DB::index(const std::string& index_name, const std::string& table_name, const std::string& column_list) // ensures that columns will not be duplicated // works!
 {
     std::string sql = "CREATE UNIQUE INDEX index_name ON table_name (column_list);";
     sql = String::swap_first_of(sql, "index_name", index_name  );
@@ -177,7 +177,7 @@ void DB::index(const std::string& index_name, const std::string& table_name, con
 // db->index("idx_users_hash", "Users", "pw_hash"); // like an index of a book // SQLite will issue an error message indicating that the unique index has been violated if a row is not unique when inserting new data to the table
 // db->index("idx_users_name", "Users", "first_name, last_name"); // multiple unique columns
 ////////////////////
-void DB::drop_index(const std::string& index_name) // works!
+void neroshop::DB::drop_index(const std::string& index_name) // works!
 {
     std::string sql = "DROP INDEX IF EXISTS index_name;"; // drops an index if it exists
     sql = String::swap_first_of(sql, "index_name", index_name  );
@@ -189,7 +189,7 @@ void DB::drop_index(const std::string& index_name) // works!
 } // db->drop_index("idx_users_hash");
 ////////////////////
 ////////////////////
-void DB::rename_table(const std::string& table, const std::string& new_name) // works!
+void neroshop::DB::rename_table(const std::string& table, const std::string& new_name) // works!
 {
 	std::string sql = "ALTER TABLE table_name " 
 	"RENAME TO new_name;";
@@ -204,7 +204,7 @@ void DB::rename_table(const std::string& table, const std::string& new_name) // 
 } // db->rename_table("Users", "Sellers");
 ////////////////////
 ////////////////////
-void DB::delete_from(const std::string& table, std::string condition) { // not tested yet
+void neroshop::DB::delete_from(const std::string& table, std::string condition) { // not tested yet
     std::string sql = "DELETE FROM table_name"
     "WHERE condition;";
     sql = String::swap_first_of(sql, "table_name", table   );
@@ -219,7 +219,7 @@ void DB::delete_from(const std::string& table, std::string condition) { // not t
 	execute(sql.c_str());    
 }
 ////////////////////
-void DB::truncate(const std::string& table_name) { // primary_key id will stay unique so if you make a table with 9 rows then truncate it, when you insert into the table again, the id will start from 10 // https://www.tutorialspoint.com/sqlite/sqlite_truncate_table.htm
+void neroshop::DB::truncate(const std::string& table_name) { // primary_key id will stay unique so if you make a table with 9 rows then truncate it, when you insert into the table again, the id will start from 10 // https://www.tutorialspoint.com/sqlite/sqlite_truncate_table.htm
     std::string sql = "DELETE FROM table_name;";
     sql = String::swap_first_of(sql, "table_name", table_name   );
     //sql.append(" VACUUM;");// to clear unused space
@@ -229,7 +229,7 @@ void DB::truncate(const std::string& table_name) { // primary_key id will stay u
     execute(sql.c_str());
 }
 ////////////////////
-void DB::vacuum() { // reduces db size by clearing empty spaces
+void neroshop::DB::vacuum() { // reduces db size by clearing empty spaces
     std::string sql = "VACUUM;";
 #ifdef NEROSHOP_DEBUG0
     neroshop::print(SQLITE3_TAG + sql);
@@ -238,28 +238,28 @@ void DB::vacuum() { // reduces db size by clearing empty spaces
 }
 ////////////////////
 ////////////////////
-std::string DB::to_sql_string(const std::string& value) {
+std::string neroshop::DB::to_sql_string(const std::string& value) {
     return "\"" + value + "\"";
 }
 ////////////////////
 ////////////////////
 ////////////////////
 ////////////////////
-sqlite3 * DB::get_handle() const {
+sqlite3 * neroshop::DB::get_handle() const {
     return db;
 }
 ////////////////////
-//sqlite3_stmt * DB::get_stmt() const {
+//sqlite3_stmt * neroshop::DB::get_stmt() const {
 //    return nullptr;//stmt;
 //}
 ////////////////////
 ////////////////////
-std::string DB::get_sqlite_version() {
+std::string neroshop::DB::get_sqlite_version() {
     return sqlite3_libversion();
-} // NEROSHOP_TAG std::cout << SQLITE3_TAG << "sqlite3 v" << DB::get_sqlite_version() << std::endl;
+} // NEROSHOP_TAG std::cout << SQLITE3_TAG << "sqlite3 v" << neroshop::DB::get_sqlite_version() << std::endl;
 ////////////////////
 ////////////////////
-std::string DB::get_select(const std::string& table, std::string variable, std::string condition) const 
+std::string neroshop::DB::get_select(const std::string& table, std::string variable, std::string condition) const 
 {
 	std::string sql = "SELECT * FROM table_name WHERE condition;";
 	// select from table
@@ -281,7 +281,7 @@ std::string DB::get_select(const std::string& table, std::string variable, std::
 }
 ////////////////////
 ////////////////////
-std::string DB::get_column_name(const std::string& table) const 
+std::string neroshop::DB::get_column_name(const std::string& table) const 
 {
     sqlite3_stmt * stmt;
     std::string sql = get_select(table);
@@ -300,11 +300,11 @@ std::string DB::get_column_name(const std::string& table) const
     return "";
 }
 ////////////////////
-void * DB::get_column_null(const std::string& table, std::string variable, std::string condition) const {
+void * neroshop::DB::get_column_null(const std::string& table, std::string variable, std::string condition) const {
     return nullptr;
 }
 ////////////////////
-int DB::get_column_integer(const std::string& table, std::string variable, std::string condition) const {
+int neroshop::DB::get_column_integer(const std::string& table, std::string variable, std::string condition) const {
     sqlite3_stmt * stmt;
     std::string sql = get_select(table, variable, condition);
     //NEROSHOP_TAG std::cout << sql << std::endl; // debug
@@ -325,7 +325,7 @@ int DB::get_column_integer(const std::string& table, std::string variable, std::
     return 0;
 }
 ////////////////////
-double DB::get_column_real(const std::string& table, std::string variable, std::string condition) const {
+double neroshop::DB::get_column_real(const std::string& table, std::string variable, std::string condition) const {
     sqlite3_stmt * stmt;
     std::string sql = get_select(table, variable, condition);
     //NEROSHOP_TAG std::cout << sql << std::endl; // debug
@@ -348,7 +348,7 @@ double DB::get_column_real(const std::string& table, std::string variable, std::
 ////////////////////
 // https://zetcode.com/db/sqlitec/
 //////////////////// //int sqlite3_column_type(stmt, 0); // returns a SQLite datatype: SQLITE_INTEGER, SQLITE_FLOAT, SQLITE_TEXT, SQLITE_BLOB, or SQLITE_NULL
-std::string DB::get_column_text(const std::string& table, std::string variable, std::string condition) const // works!
+std::string neroshop::DB::get_column_text(const std::string& table, std::string variable, std::string condition) const // works!
 {
     sqlite3_stmt * stmt;
     std::string sql = get_select(table, variable, condition);
@@ -370,7 +370,7 @@ std::string DB::get_column_text(const std::string& table, std::string variable, 
     return "";
 }
 ////////////////////
-void * DB::get_column_blob(const std::string& table, std::string variable, std::string condition) const 
+void * neroshop::DB::get_column_blob(const std::string& table, std::string variable, std::string condition) const 
 {
     sqlite3_stmt * stmt;
     std::string sql = get_select(table, variable, condition);
@@ -392,14 +392,14 @@ void * DB::get_column_blob(const std::string& table, std::string variable, std::
     return nullptr;
 }
 ////////////////////
-unsigned int DB::row_count(const std::string& table_name) const {
+unsigned int neroshop::DB::row_count(const std::string& table_name) const {
     return get_column_integer(table_name, "COUNT(*)");
 }
 ////////////////////
 ////////////////////
 ////////////////////
 ////////////////////
-bool DB::table_exists(const std::string& table_name) const {
+bool neroshop::DB::table_exists(const std::string& table_name) const {
     std::string sql_cond = "type='table' AND name='table_name';";//SELECT count(*) FROM sqlite_master WHERE type='table' AND name='table_name';
     sql_cond = String::swap_first_of(sql_cond, "table_name", table_name);
     bool exists = get_column_integer("sqlite_master", "count(*)", sql_cond);
@@ -408,7 +408,7 @@ bool DB::table_exists(const std::string& table_name) const {
 ////////////////////
 // will print [sqlite3]: no such column: role_id" if column does not exist
 // find a proper way to check if column exists
-bool DB::column_exists(const std::string& table_name, const std::string& column_name) const {
+bool neroshop::DB::column_exists(const std::string& table_name, const std::string& column_name) const {
     bool exists = get_column_integer(table_name, "count(" + column_name + ")");
     return exists;
 }
@@ -419,7 +419,7 @@ bool DB::column_exists(const std::string& table_name, const std::string& column_
 ////////////////////
 ////////////////////
 ////////////////////
-int DB::callback(void *not_used, int argc, char **argv, char **azcolname)
+int neroshop::DB::callback(void *not_used, int argc, char **argv, char **azcolname)
 {
     int i;
     for(i = 0; i < argc; i++) {
@@ -434,7 +434,7 @@ int DB::callback(void *not_used, int argc, char **argv, char **azcolname)
 ////////////////////
 // Lua
 ////////////////////
-bool DB::create_config() { // good!
+bool neroshop::DB::create_config() { // good!
     std::string user = System::get_user();
     std::string text = "-- config.lua\n"
     "localhost = \"127.0.0.1\"\n"
@@ -500,7 +500,7 @@ bool DB::create_config() { // good!
     return true;
 }
 ////////////////////
-bool DB::load_config(lua_State *L)
+bool neroshop::DB::load_config(lua_State *L)
 {
     std::string user = System::get_user();
     // "/home/<user>/.config/neroshop"
@@ -513,12 +513,12 @@ bool DB::load_config(lua_State *L)
     return true; // default return-value
 }
 ////////////////////
-//void DB::edit_config() {}
+//void neroshop::DB::edit_config() {}
 // 1. dump file contents into string
 // 2. use String to add or remove specific contents
 // 3. re-write config
 ////////////////////
-lua_State * DB::get_lua_state()// const 
+lua_State * neroshop::DB::get_lua_state()// const 
 {
     return lua_state;
 }
@@ -530,7 +530,7 @@ lua_State * DB::get_lua_state()// const
 ////////////////////
 ////////////////////
 ////////////////////
-bool DB::text_to_binary(const std::string& input, const std::string& output) // (input)file_to_convert_to_binary, (output)binary_file
+bool neroshop::DB::text_to_binary(const std::string& input, const std::string& output) // (input)file_to_convert_to_binary, (output)binary_file
 {
 	std::ifstream rfile(input.c_str());
 	if(!rfile.is_open())
@@ -556,7 +556,7 @@ bool DB::text_to_binary(const std::string& input, const std::string& output) // 
 	return true;
 }
 ////////////////////
-bool DB::binary_to_text(const std::string& input, const std::string& output)
+bool neroshop::DB::binary_to_text(const std::string& input, const std::string& output)
 {
 	std::ifstream rfile(input.c_str());
 	if(!rfile.is_open())

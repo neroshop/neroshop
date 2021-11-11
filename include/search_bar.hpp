@@ -5,10 +5,10 @@
 #define SEARCH_BAR_HPP_NEROSHOP
 
 //#include "edit.h"
-
+namespace neroshop {
 class SearchBar {
 public:
 private:
 }; // make a search_engine.hpp ??
-
+}
 #endif

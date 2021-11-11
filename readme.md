@@ -22,7 +22,7 @@ The name neroshop comes from "nero", meaning black combined with the word "shop"
 ### features:
 * no registration required (for buyers)
 * no KYC or AML
-* buy and sell products with monero (and other "private by default" crypto)
+* buy and sell products with monero (and possibly other private by default crypto in the near future)
 * automatic subaddress generator (a unique monero address is generated from seller's account each time a buyer orders an item)
 * address watcher that tracks incoming txs and notifies both the user and seller
 ("awaiting payment ..."[red], "payment incoming"[yellow], "payment received!"[green])

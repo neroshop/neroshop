@@ -7,9 +7,11 @@
 #include <iostream>
 #include "validator.hpp" // also includes db.hpp
 #include "order.hpp"
+#include "client.hpp"
 //namespace neroshop { // https://stackoverflow.com/questions/623903/defining-a-class-within-a-namespace
 enum class user_role : unsigned int {guest, buyer, seller}; // enum classes help avoid polluting the scope (either global or namespace) //https://stackoverflow.com/a/32953854 // https://stackoverflow.com/questions/9630744/should-you-declare-enums-inside-or-outside-a-class // user_role ut = user_role::buyer;
 
+namespace neroshop {
 class User { // base class of seller and buyer
 public: // bool is_buyer, bool is_seller, bool is_registered, bool is_logged_in, etc.
     User();
@@ -19,9 +21,9 @@ public: // bool is_buyer, bool is_seller, bool is_registered, bool is_logged_in,
     void rate_seller(unsigned int seller_id, unsigned int score, std::string comments = ""); // seller score (0-1)
     void rate_item(unsigned int item_id, unsigned int stars, std::string comments = ""); // star ratings (1-5)    
     void convert(); // converts buyer to seller //revert();
-    void add_to_cart(const Item& item, unsigned int quantity = 1);
-    void remove_from_cart(const Item& item, unsigned int quantity = 1);
-    Order * create_order(/*unsigned int seller_id, */const std::string& shipping_address);// const;//void create_order();
+    void add_to_cart(const neroshop::Item& item, unsigned int quantity = 1);
+    void remove_from_cart(const neroshop::Item& item, unsigned int quantity = 1);
+    neroshop::Order * create_order(/*unsigned int seller_id, */const std::string& shipping_address);// const;//void create_order();
     //void report_user(const User& user, const std::string& reason); // report a user
     void delete_account();
     // setters
@@ -31,8 +33,8 @@ public: // bool is_buyer, bool is_seller, bool is_registered, bool is_logged_in,
     user_role get_role() const;
     std::string get_role_string() const;
     // buyer functions (getters)
-    Cart * get_cart() const; // uses default cart (singleton)
-    Order * get_order(unsigned int index) const;
+    neroshop::Cart * get_cart() const; // uses default cart (singleton)
+    neroshop::Order * get_order(unsigned int index) const;
     unsigned int get_order_count() const;
     // boolean
     bool is_guest() const; // return (user_role == "guest") // 
@@ -50,7 +52,7 @@ public: // bool is_buyer, bool is_seller, bool is_registered, bool is_logged_in,
     // callbacks
     void on_registration(const std::string& name); // on registering an account
     //virtual User * on_login(const std::string& username);// = 0; // load all data: orders, reputation/ratings, settings // for all users
-    void on_checkout();//(const Order& order); // for all users
+    void on_checkout();//(const neroshop::Order& order); // for all users
     virtual void on_order_received(); // for sellers only
     void on_logout();
     // friends
@@ -59,14 +61,16 @@ protected: // can only be accessed by classes that inherit from class User (even
     void set_name(const std::string& name); // the same for every derived class 
     void set_role(user_role role); // either buyer or seller // the same for every derived class 
     void set_logged(bool logged); // the same for every derived class
+    void set_online(bool online);
     void load_orders(); // on login, load all orders this user has made so far
 private:
     unsigned int id;
     std::string name;
     user_role role; // seller, buyer (guest)
-    bool logged; // determines whether user is logged in or not
-    std::vector<Order *> order_list;
-};//}
+    bool logged; // determines whether user is logged in or not//bool online;
+    std::vector<neroshop::Order *> order_list;
+};
+}
 #endif // check if user has internet, and user is logged_in
 /*
 // converting a user to a seller
