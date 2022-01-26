@@ -1,34 +1,34 @@
 #include "../include/engine.hpp"
 ////////////
-Engine::Engine(void) 
+dokun::Engine::Engine(void) 
 {}
 ////////////
-Engine::~Engine(void)
+dokun::Engine::~Engine(void)
 {
 	close();
 }
 ////////////
-Engine * Engine::engine_ptr (new Engine());
+dokun::Engine * dokun::Engine::engine_ptr (new dokun::Engine());
 ////////////
-bool Engine::status (false);
+bool dokun::Engine::status (false);
 ////////////
-bool Engine::open()
+bool dokun::Engine::open()
 {
 	return on_open();
 }
 ////////////
-int Engine::open(lua_State *L)
+int dokun::Engine::open(lua_State *L)
 {
     lua_pushboolean(L, open());
 	return 1;
 }
 ////////////
-void Engine::close()
+void dokun::Engine::close()
 {
 	on_close();
 }
 ////////////
-int Engine::close (lua_State *L) 
+int dokun::Engine::close (lua_State *L) 
 {
 	on_close();
 	lua_close(L);
@@ -38,30 +38,59 @@ int Engine::close (lua_State *L)
 ////////////
 ////////////
 ////////////
-Engine * Engine::get_engine()
+dokun::Engine * dokun::Engine::get_engine()
 {
 	return engine_ptr;
 }
 //////////// 
-bool Engine::get_status()
+bool dokun::Engine::get_status()
 {
 	return status;
 }
 //////////// 
-bool Engine::on_open()
+bool dokun::Engine::on_open()
 {
     if(status == 1) return true; // engine is on (already) - ensures that the engine is not initialized more than once
 #ifdef __gnu_linux__ // engine should be closed manually
-    std::atexit(Engine::close);
-    std::at_quick_exit(Engine::close);
+    std::atexit(dokun::Engine::close);
+    std::at_quick_exit(dokun::Engine::close);
 #endif 
     // set "user-defined" global locale (utf-8, etc.) - std::setlocale(LC_ALL, ""); // for C and C++ where synced with stdio // (#include <clocale>) //std::locale::global(std::locale("")); // for C++ (#include <locale>)  // wstring + wcout works, string + cout does not  (use L"str")//std::wcout << "User-preferred locale setting is " << std::locale("").name().c_str() << '\n';
     //std::locale::global(std::locale(""));
     // start session
     Logger::open();
 	/////////////////////////////////////////
+#ifdef DOKUN_GLFW	   
+    // Setup glfw (initialize glfw)
+    glfwSetErrorCallback(dokun::Window::glfw_error_callback);
+    if (!glfwInit())
+        return false;
+    // Decide GL+GLSL versions
+#if defined(DOKUN_OPENGL_ES2)
+    // GL ES 2.0 + GLSL 100
+    const char* glsl_version = "#version 100";
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
+#elif defined(__APPLE__)
+    // GL 3.2 + GLSL 150
+    const char* glsl_version = "#version 150";
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // Required on Mac
+#else
+    // dokun uses GL 3.3 + GLSL 330 // GL 3.0 + GLSL 130
+    const char* glsl_version = "#version 330";//"#version 130";
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);//0);
+    //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
+    //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
+#endif
+#endif 
+	/////////////////////////////////////////
 #ifdef DOKUN_VULKAN
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 	HMODULE vulkan = LoadLibrary("vulkan-1.dll");
 #endif
 #ifdef __gnu_linux__
@@ -73,7 +102,7 @@ bool Engine::on_open()
 		status = 0;
 		return false;
 	}
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 	const char * vulkan_ext[] = { "VK_KHR_surface", "VK_KHR_win32_surface" }; // enable extensions
 #endif
 #ifdef __gnu_linux__
@@ -107,7 +136,7 @@ bool Engine::on_open()
 		return false;
 	}
 #endif // end of ifdef DOKUN_VULKAN
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 	if (WSAStartup(MAKEWORD(2, 2), & get_engine()->wsa_data) != 0)
     {
 		Logger("Could not start Winsocket : " + std::to_string(WSAGetLastError()));
@@ -115,7 +144,7 @@ bool Engine::on_open()
 		return false;
     }
 #endif
-    if(!FONT::open())
+    if(!dokun::Font::open())
 	{
 		Logger("Could not start FreeType");
 		status = 0;
@@ -130,20 +159,20 @@ bool Engine::on_open()
     /////////////////////////////////////////
     //Renderer::start(); // initializes Renderer by setting default values
     // load the default font (ONLY once so that you do not have to load it a hundred times)
-    if(!FONT::system_font->load(DEFAULT_FONT_PATH)) Logger("Could not load default font from " + String(DEFAULT_FONT_PATH).str());
+    if(!dokun::Font::system_font->load(DEFAULT_FONT_PATH)) Logger("Could not load default font from " + String(DEFAULT_FONT_PATH).str());
 	// set status to 1 (proof that engine has been initialized)
 	status = 1;
     //Logger("engine initialized.");
 	return true;
 }
 ////////////
-void Engine::on_close()
+void dokun::Engine::on_close()
 {
     if(status == 0) return; // engine is off (already)
 #ifdef DOKUN_VULKAN
     if(Renderer::get_instance() != VK_NULL_HANDLE ) { vkDestroyInstance (Renderer::get_instance(), nullptr);}
 #endif
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 #ifdef DOKUN_VULKAN
     //FreeLibrary(vulkan);
 #endif
@@ -154,9 +183,13 @@ void Engine::on_close()
     //dlclose(vulkan);
 #endif        
 #endif
-	FONT::close (); // close freetype
+	dokun::Font::close (); // close freetype
     //Audio::close(); // close openal
 	/////////////////////////////////////////
+#ifdef DOKUN_GLFW
+    Logger("GLFW terminated");
+    glfwTerminate();
+#endif	
     /////////////////////////////////////////
     // save cache (scripts)
     //Script::save_cache();
@@ -214,7 +247,7 @@ void server()
 }*/
 //////////// 
 ////////////
-int Engine::test(lua_State *L)
+int dokun::Engine::test(lua_State *L)
 {
 	return 0;
 } // ./dokun -e"dokun:test()"
@@ -222,13 +255,13 @@ int Engine::test(lua_State *L)
 #ifdef __cplusplus // if c++
 extern "C" {
 #endif	
-int Engine::reg(lua_State *L)
+int dokun::Engine::reg(lua_State *L)
 {	
     static const luaL_Reg module[] = 
     {
-		{"start" , Engine::open  },
-	    {"close" , Engine::close },
-		{"test"  , Engine::test  },
+		{"start" , dokun::Engine::open  },
+	    {"close" , dokun::Engine::close },
+		{"test"  , dokun::Engine::test  },
         {nullptr , nullptr       },
     };	
 	
@@ -238,7 +271,7 @@ int Engine::reg(lua_State *L)
 	Script::global(L, "DOKUN_VERSION_MAJOR", std::string(ENGINE_VERSION_MAJOR));
 	Script::global(L, "DOKUN_VERSION_MINOR", std::string(ENGINE_VERSION_MINOR));
 	Script::global(L, "DOKUN_VERSION_PATCH", std::string(ENGINE_VERSION_PATCH));
-	Script::global(L, "DOKUN_STATUS", (Engine::get_status() != 0));
+	Script::global(L, "DOKUN_STATUS", (dokun::Engine::get_status() != 0));
 	Script::global(L, "DOKUN_PLATFORM",         dokun::platform());
 	// window -----------------------------------------------------------
 	Script::table   (L, "Window");
@@ -251,7 +284,8 @@ int Engine::reg(lua_State *L)
 	Script::function(L, "Window", "iconify", dokun::Window::iconify);		
 	Script::function(L, "Window", "maximize", dokun::Window::maximize);		
 	Script::function(L, "Window", "restore", dokun::Window::restore);				
-	Script::function(L, "Window", "loop", dokun::Window::loop); 
+	//Script::function(L, "Window", "poll_events", dokun::Window::poll_events); 
+	//Script::function(L, "Window", "wait_events", dokun::Window::wait_events); 
 	Script::function(L, "Window", "set_title", dokun::Window::set_title);
 	Script::function(L, "Window", "set_width", dokun::Window::set_width);
 	Script::function(L, "Window", "set_height", dokun::Window::set_height);
@@ -700,18 +734,18 @@ int Engine::reg(lua_State *L)
 	//Script::function(L, "Grid", ""        , Grid::);
 	// font -----------------------------------------------------------
 	Script::table   (L, "Font"                          );
-	Script::function(L, "Font", "new"     , FONT::font_new);
-	Script::function(L, "Font", "load"    , FONT::load   );
-    Script::function(L, "Font", "generate", FONT::generate);
-	Script::function(L, "Font", "destroy" , FONT::destroy);
-    Script::function(L, "Font", "set_width", FONT::set_width);
-    Script::function(L, "Font", "set_height", FONT::set_height);
-    Script::function(L, "Font", "set_size", FONT::set_size);
-	Script::function(L, "Font", "get_size", FONT::get_size);
-	Script::function(L, "Font", "get_rect", FONT::get_rect);
-	Script::function(L, "Font", "get_data", FONT::get_data);
-    Script::function(L, "Font", "is_generated", FONT::is_generated);
-	//Script::function(L, "Font", ""        , FONT::);
+	Script::function(L, "Font", "new"     , dokun::Font::font_new);
+	Script::function(L, "Font", "load"    , dokun::Font::load   );
+    Script::function(L, "Font", "generate", dokun::Font::generate);
+	Script::function(L, "Font", "destroy" , dokun::Font::destroy);
+    Script::function(L, "Font", "set_width", dokun::Font::set_width);
+    Script::function(L, "Font", "set_height", dokun::Font::set_height);
+    Script::function(L, "Font", "set_size", dokun::Font::set_size);
+	Script::function(L, "Font", "get_size", dokun::Font::get_size);
+	Script::function(L, "Font", "get_rect", dokun::Font::get_rect);
+	Script::function(L, "Font", "get_data", dokun::Font::get_data);
+    Script::function(L, "Font", "is_generated", dokun::Font::is_generated);
+	//Script::function(L, "Font", ""        , dokun::Font::);
 	// network -----------------------------------------------------------
 	//Script::global (L, "socket", Socket::new_); // returns a socket
 	//Script::table (L, "Network"); // Network_mt
@@ -1040,22 +1074,22 @@ int Engine::reg(lua_State *L)
 #ifdef DOKUN_BUILD_LIBRARY
     LUA_API int luaopen_dokun (lua_State *L)
     {
-		return Engine::reg(L);
+		return dokun::Engine::reg(L);
     }
 #endif
 /////////////////////////////
 #ifdef DOKUN_BUILD_MODULE
     DOKUN_MODULE int luaopen_dokun (lua_State *L)
     {
-        return Engine::reg(L);
+        return dokun::Engine::reg(L);
     }
 #endif
 /////////////////////////////
 #ifdef DOKUN_BUILD_CONSOLE
     LUA_API int luaopen_dokun (lua_State *L)
     {
-	    Engine::open      (L); // initialize engine by default in lua
-		return Engine::reg(L);
+	    dokun::Engine::open      (L); // initialize engine by default in lua
+		return dokun::Engine::reg(L);
     }
 #endif
 #ifdef __cplusplus // if c++

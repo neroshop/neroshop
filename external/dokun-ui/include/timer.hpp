@@ -1,5 +1,5 @@
-#ifndef _TIMER
-#define _TIMER
+#ifndef TIMER_HPP_DOKUN
+#define TIMER_HPP_DOKUN
 
 #include "platform.hpp"
 #include "logger.hpp"
@@ -70,7 +70,7 @@ class Timer
 		static double get_tick_count           (void);	
 		// boolean
 	private:
-	#ifdef __windows__
+	#ifdef DOKUN_WIN32
     double PCFreq = 0.0;
     __int64 CounterStart = 0;
 	#endif

@@ -9,7 +9,7 @@ Browser::~Browser()
 ////////////
 void Browser::open(const std::string& url) // Browser::open("https://stackoverflow.com");
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 	ShellExecute(NULL, "open", url.c_str(), NULL, NULL, SW_SHOWNORMAL);
 #endif
 #ifdef __gnu_linux__

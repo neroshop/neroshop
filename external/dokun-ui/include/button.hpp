@@ -1,5 +1,5 @@
-#ifndef _BUTTON
-#define _BUTTON
+#ifndef BUTTON_HPP_DOKUN
+#define BUTTON_HPP_DOKUN
 
 #include "ui.hpp"
 #include "label.hpp"
@@ -29,19 +29,20 @@ public:
 	// Setters.
 	void set_text(const std::string& text); static int set_text(lua_State *L);// generates a label for button
     void set_image(const Image& image); static int set_image(lua_State *L); // GUI::add()
-	void set_label(const Label& label); static int set_label(lua_State *L); // Label::set_text
-	void set_color(double red, double green, double blue, double alpha = 255, bool original = false); static int set_color(lua_State *L);
-	void set_color(const Vector3& color, bool original = false);
-	void set_color(const Vector4& color, bool original = false);
+	void set_label(const dokun::Label& label); static int set_label(lua_State *L); // dokun::Label::set_text
+	void set_color(unsigned int red, unsigned int green, unsigned int blue);
+	void set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha); static int set_color(lua_State *L);
+	void set_color(const Vector3& color);
+	void set_color(const Vector4& color);
 	void set_alpha(double alpha);   static int set_alpha(lua_State *L);
 	void set_outline(bool outline);
-	void set_outline_color(double red, double green, double blue, double alpha = 1.0);
+	void set_outline_color(unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0);
 	void set_outline_color(const Vector3& color);
 	void set_outline_color(const Vector4& color);	
 	void set_fill(bool fill); static int set_fill(lua_State *L);
 	void set_shadow(bool shadow); static int set_shadow(lua_State *L);
 	void set_gradient(bool gradient); static int set_gradient(lua_State *L);                             //  static int set_(lua_State *L);
-	void set_gradient_color(double red, double green, double blue, double alpha = 255); static int set_gradient_color(lua_State *L);
+	void set_gradient_color(unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0); static int set_gradient_color(lua_State *L);
 	void set_gradient_color(const Vector3& color);
 	void set_gradient_color(const Vector4& color);
     // border functions
@@ -52,7 +53,7 @@ public:
 	void set_border_style(int style, int side = 0);
 	void set_border_radius(int radius, int side = 0); // roundness
     // Getters
-	Label * get_label()const; static int get_label(lua_State *L); // accessing label functions = (e.g. get_label()->get_string())
+	dokun::Label * get_label()const; static int get_label(lua_State *L); // accessing label functions = (e.g. get_label()->get_string())
 	Image * get_image()const; static int get_image(lua_State *L); // accessing image functions = (e.g. get_image()->get_width() )
 	std::string get_text()const; static int get_text(lua_State *L);
 	Vector4 get_color()const; static int get_color(lua_State *L);
@@ -79,9 +80,8 @@ private:
     Vector4 hover_color;
 	Vector4 press_color;
 	Vector4 old_color; // might not need
-	bool color_saved;
 	// content
-	Label * label;
+	dokun::Label * label;
 	Image * image;
 	//////////////
 	double tint_factor; // 0.25, 0.5, 0.75, 1.0 (100% tint = white)

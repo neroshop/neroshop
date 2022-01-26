@@ -1,6 +1,6 @@
 #include "../include/menubar.hpp"
 
-Menubar::Menubar() : color(64, 64, 64, 255), submenu_color(color),
+Menubar::Menubar() : color(64, 64, 64, 1.0), submenu_color(color),
 // fill
 fill(true), // true by default // fills up any extra space within the menubar
 // spacing
@@ -8,17 +8,17 @@ spacing(0),//(0),
 // outline
 outline(false),
 outline_width(1.0),
-outline_color(255, 255, 255, 255),
+outline_color(255, 255, 255, 1.0),
 outline_antialiased(false),
 // highlight
 highlight(true),
-highlight_color(0, 51, 102, 255),
+highlight_color(0, 51, 102, 1.0),
 // gradient
 gradient(false),
 gradient_color(color)
 {
 	set_position(0, 0);
-	set_size(Renderer::window_width, 20); //Logger("Menubar width is " + String::to_string(get_width()) + " on creation");// menubar_width / menu_width = how_many_menu_can_fit  
+	set_size(Renderer::window_width, 20); //dokun::Logger("Menubar width is " + String::to_string(get_width()) + " on creation");// menubar_width / menu_width = how_many_menu_can_fit  
 	set_orientation(0);	                  // If you want a vertical menubar then just use a combo_box
 	
 	bar = new Box();
@@ -30,7 +30,7 @@ gradient_color(color)
 	// outline
 	bar->set_outline(true);
 	bar->set_outline_width(1.0);
-    bar->set_outline_color(0, 0, 0, 255);
+    bar->set_outline_color(0, 0, 0, 1.0);
     bar->set_outline_antialiased(false);
     // gradient
     bar->set_gradient(this->gradient);
@@ -80,7 +80,7 @@ void Menubar::draw() // because Menubar is parent to all the menus, its menu chi
 		    bar->set_color(this->color); //
 	        bar->set_outline(true);
 	        bar->set_outline_width(1.0);
-            bar->set_outline_color(0, 0, 0, 255);
+            bar->set_outline_color(0, 0, 0, 1.0);
             bar->set_outline_antialiased(false);
 		    // Draw bar
 		    bar->draw();
@@ -203,10 +203,10 @@ void Menubar::add(const std::string& menu_name)
 	// create a new label for menu (in case it does not have one and so it does not crash when trying to access its label)
 	if(!menu->get_label()) 
 	{ 
-	    Logger("Menu: " + menu_name + " does not have a label so I will create one for it.");
-	    Label * menu_label = new Label(); 
+	    dokun::Logger("Menu: " + menu_name + " does not have a label so I will create one for it.");
+	    dokun::Label * menu_label = new dokun::Label(); 
 	    menu->set_label(*menu_label); // also sets label parent to sub
-	    Logger("Label has been created for Menu: " + menu_name, "info");
+	    dokun::Logger("dokun::Label has been created for Menu: " + menu_name, "info");
 	}	
 	// menu_label -  make sure parent is set (which it should be) so label can be drawn
 	menu->get_label()->set_string   (menu_name); // set menu's label string
@@ -221,7 +221,7 @@ int Menubar::add(lua_State * L)
 void Menubar::sub(const Box& submenu, int index)
 {
     if(menu_list.size() < index + 1) // if menu at index does not exist
-		Logger("Attempt to access invalid location in sub() | menubar.cpp (180)");
+		dokun::Logger("Attempt to access invalid location in sub() | menubar.cpp (180)");
 	if(fill ) const_cast<Box&>(submenu).set_size(menu_list[index]->get_width(), menu_list[index]->get_height());
 	if(!fill) const_cast<Box&>(submenu).set_height(menu_list[index]->get_height()); // only change the height, leave the width alone (if not filling entire bar)
 	const_cast<Box&>(submenu).set_position(menu_list[index]->get_position().x, menu_list[index]->get_position().y + menu_list[index]->get_height());
@@ -236,7 +236,7 @@ void Menubar::sub(const Box& submenu, int index)
         sub_list.push_back(std::vector<Box *>()); // create empty row
 	}
     if(menu_list.size() < index + 1) // if menu at index does not exist
-		Logger("Attempt to access invalid location in sub() | menubar.cpp (180)");	
+		dokun::Logger("Attempt to access invalid location in sub() | menubar.cpp (180)");	
 	sub_list[index].push_back(&const_cast<Box&>(submenu));
 	const_cast<Box&>(submenu).set_size(50, get_height());
 	const_cast<Box&>(submenu).set_position(menu_list[index]->get_position().x, menu_list[index]->get_position().y + menu_list[index]->get_height());
@@ -254,10 +254,10 @@ void Menubar::sub(const std::string& menu_name, const std::string& sub_name) // 
 	// create a new label for sub (in case it does not have one)
 	if(!submenu->get_label()) 
 	{ 
-	    Logger("Submenu: " + sub_name + " does not have a label so I will create one for it.");
-	    Label * sub_label = new Label();
+	    dokun::Logger("Submenu: " + sub_name + " does not have a label so I will create one for it.");
+	    dokun::Label * sub_label = new dokun::Label();
 	    submenu->set_label(*sub_label); // also sets label parent to sub
-	    Logger("Label has been created for Submenu: " + sub_name, "info");
+	    dokun::Logger("dokun::Label has been created for Submenu: " + sub_name, "info");
 	}
 	// set existing sub->label's properties (some Boxes are created with a pre-installed label)
 	// be sure label_parent is set to submenu
@@ -277,7 +277,7 @@ void Menubar::sub(const std::string& menu_name, const std::string& sub_name) // 
 }
 ////////////
 ////////////
-void Menubar::set_color(int red, int green, int blue, int alpha)
+void Menubar::set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {
     color = Vector4(red, green, blue, alpha);
 }
@@ -292,7 +292,7 @@ void Menubar::set_color(const Vector4& color)
     set_color(color.x, color.y, color.z, color.w);
 }
 ////////////
-void Menubar::set_submenu_color(int red, int green, int blue, int alpha)
+void Menubar::set_submenu_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {
     submenu_color = Vector4(red, green, blue, alpha);
 }
@@ -320,7 +320,7 @@ int Menubar::set_outline_width(lua_State *L)
 {
     return 0;
 }
-void Menubar::set_outline_color(int red, int green, int blue, int alpha)
+void Menubar::set_outline_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {} 
 int Menubar::set_outline_color(lua_State *L)
 {
@@ -350,7 +350,7 @@ int Menubar::set_fill(lua_State * L)
 Box * Menubar::get_menu(int index)
 {
 #ifdef DOKUN_DEBUG	
-	if(menu_list.size() < index + 1) Logger("Attempt to access invalid location | menubar.cpp (234)", "error");
+	if(menu_list.size() < index + 1) dokun::Logger("Attempt to access invalid location | menubar.cpp (234)", "error");
 #endif	
 	return menu_list[index];
 }
@@ -377,8 +377,8 @@ int Menubar::get_menu(lua_State * L)
 Box * Menubar::get_submenu(int menu_index, int sub_index)
 {
 #ifdef DOKUN_DEBUG	
-	if(menu_list.size() < menu_index + 1) Logger("Attempt to access invalid location | menubar.cpp (243)", "error");
-	if(sub_list.size() < sub_index + 1) Logger("Attempt to access invalid location | menubar.cpp (244)", "error");
+	if(menu_list.size() < menu_index + 1) dokun::Logger("Attempt to access invalid location | menubar.cpp (243)", "error");
+	if(sub_list.size() < sub_index + 1) dokun::Logger("Attempt to access invalid location | menubar.cpp (244)", "error");
 #endif	
 	return sub_list[menu_index][sub_index];
 }
@@ -397,7 +397,7 @@ int Menubar::get_menu_count(lua_State * L)
 int Menubar::get_submenu_count(int index) // returns number of submenus at index
 {
 #ifdef DOKUN_DEBUG		
-	if(sub_list.size() < index + 1) Logger("Attempt to access invalid location | menubar.cpp (229)");
+	if(sub_list.size() < index + 1) dokun::Logger("Attempt to access invalid location | menubar.cpp (229)");
 #endif	
 	return sub_list[index].size();
 }

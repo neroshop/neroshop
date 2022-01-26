@@ -1,5 +1,5 @@
-#ifndef _SCRIPT
-#define _SCRIPT
+#ifndef SCRIPT_HPP_DOKUN
+#define SCRIPT_HPP_DOKUN
 
 #include "string.hpp"
 #include "file.hpp"

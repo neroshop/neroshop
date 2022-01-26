@@ -1,5 +1,5 @@
-#ifndef _VECTOR 
-#define _VECTOR
+#ifndef VECTOR_HPP_DOKUN
+#define VECTOR_HPP_DOKUN
 
 #ifdef __cplusplus // if c++
 #include <iostream>

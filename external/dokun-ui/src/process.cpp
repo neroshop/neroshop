@@ -9,7 +9,7 @@ Process::Process(const std::string& program, const std::string& arg) : Process()
 {
     if(!create(program, arg))
 	{
-		Logger("Process creation failed");
+		dokun::Logger("Process creation failed");
 	}
 }
 ////////////////////
@@ -20,7 +20,7 @@ Process::~Process()
 ////////////////////	
 void * Process::open()
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 	this->handle = static_cast<void *>(OpenProcess(PROCESS_ALL_ACCESS, FALSE, GetCurrentProcessId()));
 	return this->handle;
 #endif	
@@ -31,7 +31,7 @@ void * Process::open()
 ////////////////////
 bool Process::create(const std::string& program, const std::string& argument)
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
     STARTUPINFO si;
     PROCESS_INFORMATION pi;
 
@@ -89,7 +89,7 @@ bool Process::create(const std::string& program, const std::string& argument)
 ////////////////////
 bool Process::terminate()
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 	return (TerminateProcess(static_cast<HANDLE>(this->handle), 0) != 0);
 #endif	
 #ifdef __gnu_linux__
@@ -100,7 +100,7 @@ bool Process::terminate()
 ////////////////////
 bool Process::terminate(Process * process)
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 	return (TerminateProcess(static_cast<HANDLE>(process->get_handle()), 0) != 0);
 #endif
 #ifdef __gnu_linux__
@@ -111,14 +111,14 @@ bool Process::terminate(Process * process)
 ////////////////////
 void Process::exit(int code)
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 	ExitProcess(code);
 #endif	
 #ifdef __gnu_linux__
 #endif	
 }
 ////////////////////
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 void * Process::get_handle() const
 {
 	return this->handle;
@@ -174,7 +174,7 @@ int Process::get_process_by_name(const std::string& process_name) {
 ////////////////////
 void * Process::get_active()
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 	return static_cast<void *>(GetCurrentProcess());
 #endif
 #ifdef __gnu_linux__

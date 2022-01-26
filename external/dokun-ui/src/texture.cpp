@@ -18,8 +18,8 @@ Texture::Texture() : width(32), height(32), depth(1), data (nullptr),
 #endif
     Factory::get_texture_factory()->store(this);
 #ifdef DOKUN_DEBUG 	
-	Logger::push("dokun: " + String(this).str() + " has been allocated with Texture::new ()");
-	Logger::push("       (index=" + std::to_string(Factory::get_texture_factory()->get_location(this)) + ", total_texture_count=" + std::to_string(Factory::get_texture_factory()->get_size()) + ")");
+	dokun::Logger::push("dokun: " + String(this).str() + " has been allocated with Texture::new ()");
+	dokun::Logger::push("       (index=" + std::to_string(Factory::get_texture_factory()->get_location(this)) + ", total_texture_count=" + std::to_string(Factory::get_texture_factory()->get_size()) + ")");
 #endif    
 }
 /////////////
@@ -28,8 +28,8 @@ Texture::Texture(const Texture& texture)
     copy(texture);
 	Factory::get_texture_factory()->store(this);
 #ifdef DOKUN_DEBUG 	
-	Logger::push("dokun: " + String(this).str() + " has been allocated with Texture::new ()");
-	Logger::push("       (index=" + std::to_string(Factory::get_texture_factory()->get_location(this)) + ", total_texture_count=" + std::to_string(Factory::get_texture_factory()->get_size()) + ")");
+	dokun::Logger::push("dokun: " + String(this).str() + " has been allocated with Texture::new ()");
+	dokun::Logger::push("       (index=" + std::to_string(Factory::get_texture_factory()->get_location(this)) + ", total_texture_count=" + std::to_string(Factory::get_texture_factory()->get_size()) + ")");
 #endif  	
 }
 /////////////
@@ -37,7 +37,7 @@ Texture::Texture(const std::string& file_name) : rect(0, 0, 0, 0), type("diffuse
 {
     if(!load(file_name)) 
 	{
-		Logger("Could not open texture from file " + file_name, DOKUN_FILE, DOKUN_LINE);
+		dokun::Logger("Could not open texture from file " + file_name, DOKUN_FILE, DOKUN_LINE);
 		return;
 	}
 #ifdef DOKUN_OPENGL	
@@ -54,8 +54,8 @@ Texture::Texture(const std::string& file_name) : rect(0, 0, 0, 0), type("diffuse
 #endif		
     Factory::get_texture_factory()->store(this);
 #ifdef DOKUN_DEBUG 	
-	Logger::push("dokun: " + String(this).str() + " has been allocated with Texture::new ()");
-	Logger::push("       (index=" + std::to_string(Factory::get_texture_factory()->get_location(this)) + ", total_texture_count=" + std::to_string(Factory::get_texture_factory()->get_size()) + ")");
+	dokun::Logger::push("dokun: " + String(this).str() + " has been allocated with Texture::new ()");
+	dokun::Logger::push("       (index=" + std::to_string(Factory::get_texture_factory()->get_location(this)) + ", total_texture_count=" + std::to_string(Factory::get_texture_factory()->get_size()) + ")");
 #endif       
 }
 /////////////
@@ -63,7 +63,7 @@ Texture::Texture(const std::string& file_name, const std::string& type) : rect(0
 {
     if(!load(file_name)) 
 	{
-		Logger("Could not open texture from file " + file_name, DOKUN_FILE, DOKUN_LINE);
+		dokun::Logger("Could not open texture from file " + file_name, DOKUN_FILE, DOKUN_LINE);
 		return;
 	}
 #ifdef DOKUN_OPENGL	
@@ -81,8 +81,8 @@ Texture::Texture(const std::string& file_name, const std::string& type) : rect(0
 	set_type(type);
 	Factory::get_texture_factory()->store(this);
 #ifdef DOKUN_DEBUG 	
-	Logger::push("dokun: " + String(this).str() + " has been allocated with Texture::new ()");
-	Logger::push("       (index=" + std::to_string(Factory::get_texture_factory()->get_location(this)) + ", total_texture_count=" + std::to_string(Factory::get_texture_factory()->get_size()) + ")");
+	dokun::Logger::push("dokun: " + String(this).str() + " has been allocated with Texture::new ()");
+	dokun::Logger::push("       (index=" + std::to_string(Factory::get_texture_factory()->get_location(this)) + ", total_texture_count=" + std::to_string(Factory::get_texture_factory()->get_size()) + ")");
 #endif  	
 }
 /////////////
@@ -90,7 +90,7 @@ Texture::Texture(const std::string& file_name, int x, int y, int width, int heig
 {
 	if(!load(file_name)) 
 	{
-        Logger("Could not open texture from file " + file_name, DOKUN_FILE, DOKUN_LINE);
+        dokun::Logger("Could not open texture from file " + file_name, DOKUN_FILE, DOKUN_LINE);
         return;
     }
 #ifdef DOKUN_OPENGL	
@@ -108,8 +108,8 @@ Texture::Texture(const std::string& file_name, int x, int y, int width, int heig
     set_rect(x, y, width, height);
 	Factory::get_texture_factory()->store(this);
 #ifdef DOKUN_DEBUG 	
-	Logger::push("dokun: " + String(this).str() + " has been allocated with Texture::new     ()");
-	Logger::push("       (index=" + std::to_string(Factory::get_texture_factory()->get_location(this)) + ", total_texture_count=" + std::to_string(Factory::get_texture_factory()->get_size()) + ")");
+	dokun::Logger::push("dokun: " + String(this).str() + " has been allocated with Texture::new     ()");
+	dokun::Logger::push("       (index=" + std::to_string(Factory::get_texture_factory()->get_location(this)) + ", total_texture_count=" + std::to_string(Factory::get_texture_factory()->get_size()) + ")");
 #endif 	
 }
 /////////////
@@ -117,7 +117,7 @@ Texture::Texture(const void * data, int width, int height, int depth, int channe
 {
     if(!load(data, width, height, depth, channel)) 
 	{
-		Logger("Could not open texture from data", DOKUN_FILE, DOKUN_LINE);
+		dokun::Logger("Could not open texture from data", DOKUN_FILE, DOKUN_LINE);
 		return;
 	}
 #ifdef DOKUN_OPENGL	
@@ -134,8 +134,8 @@ Texture::Texture(const void * data, int width, int height, int depth, int channe
 #endif
     Factory::get_texture_factory()->store(this);
 #ifdef DOKUN_DEBUG 	
-	Logger::push("dokun: " + String(this).str() + " has been allocated with Texture::new ()");
-	Logger::push("       (index=" + std::to_string(Factory::get_texture_factory()->get_location(this)) + ", total_texture_count=" + std::to_string(Factory::get_texture_factory()->get_size()) + ")");
+	dokun::Logger::push("dokun: " + String(this).str() + " has been allocated with Texture::new ()");
+	dokun::Logger::push("       (index=" + std::to_string(Factory::get_texture_factory()->get_location(this)) + ", total_texture_count=" + std::to_string(Factory::get_texture_factory()->get_size()) + ")");
 #endif     		
 }
 /////////////
@@ -145,8 +145,8 @@ Texture::~Texture(void)
     destroy(); // destroy texture buffer obj and texture pixel data
 	Factory::get_texture_factory()->release(this);
 #ifdef DOKUN_DEBUG 	
-	Logger::push("dokun: " + String(this).str() + " has been deallocated with Texture::~Texture ()");
-	Logger::push("       (index=" + std::to_string(Factory::get_texture_factory()->get_location(this)) + ", total_texture_count=" + std::to_string(Factory::get_texture_factory()->get_size()) + ")");
+	dokun::Logger::push("dokun: " + String(this).str() + " has been deallocated with Texture::~Texture ()");
+	dokun::Logger::push("       (index=" + std::to_string(Factory::get_texture_factory()->get_location(this)) + ", total_texture_count=" + std::to_string(Factory::get_texture_factory()->get_size()) + ")");
 #endif	
 }
 /////////////
@@ -233,7 +233,7 @@ void Texture::copy(const Texture& texture)
 	set_type(texture.get_type());
 	// check for opengl context
 #ifdef DOKUN_OPENGL
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 	if(!wglGetCurrentContext()) // no context (to make function more safer to use and to prevent crash)
 		return;
 #endif		
@@ -282,7 +282,7 @@ int Texture::copy(lua_State *L)
 void Texture::generate()
 {
 #ifdef DOKUN_OPENGL
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 	if(!wglGetCurrentContext()) // no context (to make function more safer to use and to prevent crash)
 		return;
 #endif		
@@ -304,7 +304,7 @@ void Texture::generate()
         glGenerateMipmap(target); // generate mipmaps              glGenerateTextureMipmap(static_cast<GLuint>(buffer)); // <- this is only in OpenGL 4.5
 		glBindTexture(target, 0); // unbind buffer
 	#ifdef DOKUN_DEBUG
-	    Logger::push("dokun: Texture_" + std::to_string(Factory::get_texture_factory()->get_location(this)) + " generated (value=" + String((int)buffer).str() + ")");
+	    dokun::Logger::push("dokun: Texture_" + std::to_string(Factory::get_texture_factory()->get_location(this)) + " generated (value=" + String((int)buffer).str() + ")");
     #endif	
 	}
 #endif	
@@ -325,7 +325,7 @@ int Texture::generate(lua_State *L)
 void Texture::generate_array(int layer_count)
 {
 #ifdef DOKUN_OPENGL
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 	if(!wglGetCurrentContext()) // no context (to make function more safer to use and to prevent crash)
 		return;
 #endif		
@@ -355,7 +355,7 @@ void Texture::generate_array(int layer_count)
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, wrap_t);  		
 		//glBindTexture(GL_TEXTURE_2D_ARRAY, 0); // unbind buffer    
 	#ifdef DOKUN_DEBUG
-	    Logger::push(DOKUN_LOGTAG + "Texture array generated");
+	    dokun::Logger::push(DOKUN_LOGTAG + "Texture array generated");
     #endif		
 	}
 #endif	
@@ -364,7 +364,7 @@ void Texture::generate_array(int layer_count)
 void Texture::bind()
 {
 #ifdef DOKUN_OPENGL	
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 	if(!wglGetCurrentContext()) // no context (to make function more safer to use and to prevent crash)
 		return;
 #endif		
@@ -395,7 +395,7 @@ int Texture::bind(lua_State * L)
 void Texture::unbind()
 {
 #ifdef DOKUN_OPENGL	
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 	if(!wglGetCurrentContext()) // no context (to make function more safer to use and to prevent crash)
 		return;
 #endif		
@@ -423,7 +423,7 @@ int Texture::unbind(lua_State * L)
 void Texture::destroy()
 {
 #ifdef DOKUN_OPENGL	
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 	if(!wglGetCurrentContext()) // no context (to make function more safer to use and to prevent crash)
 		return;
 #endif		
@@ -468,7 +468,7 @@ int Texture::destroy(lua_State *L)
 void Texture::clear()
 {
 #ifdef DOKUN_OPENGL	
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 	if(!wglGetCurrentContext()) // no context (to make function more safer to use and to prevent crash)
         return;
 #endif		
@@ -539,7 +539,7 @@ void Texture::set_buffer(unsigned int buffer)
 #ifdef DOKUN_OPENGL
     this->buffer = buffer;
 #ifdef DOKUN_DEBUG // if buffer (GL_texture) does not exist then send warning
-#ifdef __windows__
+#ifdef DOKUN_WIN32
     if(!wglGetCurrentContext())
         return;
 #endif
@@ -549,7 +549,7 @@ void Texture::set_buffer(unsigned int buffer)
 		return;
 #endif
 #endif
-    if(!glIsTexture(buffer)) Logger(String("warning! Buffer \"" + std::to_string(buffer) + "\" has not been generated."));// if the buffer is not a valid GL_texture
+    if(!glIsTexture(buffer)) dokun::Logger(String("warning! Buffer \"" + std::to_string(buffer) + "\" has not been generated."));// if the buffer is not a valid GL_texture
 #endif    
 #endif
 }
@@ -1142,7 +1142,7 @@ int Texture::is_inverted(lua_State *L)
 bool Texture::is_generated()const // returns true if texture buffer is generated
 {
 #ifdef DOKUN_OPENGL
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 	if(!wglGetCurrentContext()) // no context (to make function more safer to use and to prevent crash)
 		return false;
 #endif		
@@ -1174,7 +1174,7 @@ int Texture::is_generated(lua_State*L)
 bool Texture::is_png()
 {
 	if(get_file().empty()) {
-		Logger("Unable to get image format unless it has been loaded from a file");
+		dokun::Logger("Unable to get image format unless it has been loaded from a file");
 		return false;
 	}
     png_byte header[8];
@@ -1574,7 +1574,7 @@ bool Texture::load_gif(const std::string& file_name) // void Texture::load_gif(c
 		return false;
 	}
 	if(gif->ImageCount <= 0)     {
-		Logger("Gif does not contain any image.");
+		dokun::Logger("Gif does not contain any image.");
 		return false;
 	}
     //-------------------
@@ -1644,13 +1644,13 @@ bool Texture::load_tiff(const std::string& file_name) // void Texture::load_tiff
 	npixels = width * height;
     raster=(uint32 *) _TIFFmalloc(npixels *sizeof(uint32));
 	if(raster == nullptr){
-		Logger("Could not allocate memory");
+		dokun::Logger("Could not allocate memory");
 		return false;
 	}
 
     if(TIFFReadRGBAImage(tiff, width, height, raster, 0) == 0)
 	{
-	    Logger("Could not read image");
+	    dokun::Logger("Could not read image");
 		_TIFFfree(raster);
 		return false;
 	}
@@ -1701,7 +1701,7 @@ void Texture::export_png() // hmm.. gif
 	    nullptr, nullptr); // write_struct
     if (!png_ptr)
 	{
-		Logger("Out of memory");
+		dokun::Logger("Out of memory");
 		//return false; // out of memory
 	}
     png_infop info_ptr = png_create_info_struct(png_ptr); // info_struct

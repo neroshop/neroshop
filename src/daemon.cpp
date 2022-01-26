@@ -113,7 +113,7 @@ int main(void)
     {
         // Execute daemon heartbeat, where your recurring activity occurs
         do_heartbeat();
-        // Sleep for a period of time// sleep for a while in case a new client connects
+        // Sleep for a period of time (in seconds)// sleep for a while in case a new client connects
         sleep(SLEEP_INTERVAL);
     }
     // Close system logs for the child process

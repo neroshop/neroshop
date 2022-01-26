@@ -1,24 +1,24 @@
 #include "../include/font.hpp"
 
-FONT::FONT() : width(0), height(16), face(nullptr), data(nullptr)
+dokun::Font::Font() : width(0), height(16), face(nullptr), data(nullptr)
 {
 	Factory::get_font_factory()->store(this);
 }
 /////////////
-FONT::FONT(const FONT& font) : width(0), height(16) // copies data from another font
+dokun::Font::Font(const dokun::Font& font) : width(0), height(16) // copies data from another font
 {
     copy(font);
 	Factory::get_font_factory()->store(this);
 }
 /////////////
-FONT::FONT(const std::string& file_name) : width(0), height(16)
+dokun::Font::Font(const std::string& file_name) : width(0), height(16)
 {
     if(!load(file_name)) {
-	    std::cerr << Logger("Could not open font from " + file_name);}
+	    std::cerr << dokun::Logger("Could not open font from " + file_name);}
 	Factory::get_font_factory()->store(this);
 }
 /////////////
-int FONT::font_new(lua_State *L)
+int dokun::Font::font_new(lua_State *L)
 {
 	std::string file_name;
 	if(lua_type(L, -1) == LUA_TSTRING) file_name = lua_tostring(L, -1);
@@ -29,9 +29,9 @@ int FONT::font_new(lua_State *L)
 	lua_getglobal(L, "Font");
 	lua_setmetatable(L, 1);
 	// set userdata
-	FONT **font = static_cast<FONT**>(lua_newuserdata(L, sizeof(FONT*)));
-	if(!file_name.empty()) *font = new FONT(file_name);
-	else *font = new FONT();
+	dokun::Font **font = static_cast<dokun::Font **>(lua_newuserdata(L, sizeof(dokun::Font *)));
+	if(!file_name.empty()) *font = new dokun::Font(file_name);
+	else *font = new dokun::Font();
 	lua_setfield(L, 1, "udata");
 	if(lua_istable(L, -1)) // return font, if table
 	    return 1; 
@@ -39,66 +39,66 @@ int FONT::font_new(lua_State *L)
 	return 1;
 }
 /////////////
-FONT::~FONT(void)
+dokun::Font::~Font(void)
 {
 	destroy(); // destroy texture_buffer
 	Factory::get_font_factory()->release(this);
 }
 /////////////
-FT_Library FONT::library (nullptr);
+FT_Library dokun::Font::library (nullptr);
 /////////////
-FONT * FONT::system_font (new FONT());
+dokun::Font * dokun::Font::system_font (new dokun::Font());
 /////////////
-bool FONT::open()
+bool dokun::Font::open()
 {
 	if(library != nullptr) return true; // if freetype2 was previously initialized, return true
 
     FT_Error error = FT_Init_FreeType( &library );
-    if ( error ) { Logger("FT_Init_FreeType failed."); return false; }
+    if ( error ) { dokun::Logger("FT_Init_FreeType failed."); return false; }
 #ifdef DOKUN_DEBUG0
-    Logger("freetype initialized.");
+    dokun::Logger("freetype initialized.");
 #endif
 	return true;
 }
 /////////////
-void FONT::close()
+void dokun::Font::close()
 {
     if(library == nullptr) return; // if freetype2 is already closed, then return
     delete system_font;            // destroy default font (works by clicking the window's close button "X"). The default font is created and owned by dokun so it should be automatically deleted by the engine
     system_font = nullptr;         // set default font to nullptr
 
 	FT_Error error = FT_Done_FreeType( library );
-	if ( error ) { Logger("FT_Done_FreeType failed."); return; }
+	if ( error ) { dokun::Logger("FT_Done_FreeType failed."); return; }
 	library = nullptr; // set library to nullptr once FT_Done_FreeType succeeds.
 #ifdef DOKUN_DEBUG
-        Logger("freetype closed.");
+        dokun::Logger("freetype closed.");
 #endif
 }
 /////////////
-bool FONT::load(const std::string& file_name) // load a font as a whole
+bool dokun::Font::load(const std::string& file_name) // load a font as a whole
 {
     FT_Error error = FT_New_Face( library, file_name.c_str(), 0, &face );
-	if(error) { Logger("Could not load font from " + file_name); return false; }
+	if(error) { dokun::Logger("Could not load font from " + file_name); return false; }
 	this->file = file_name; // save filename once FT_New_Face is succeeds.
 	error = FT_Set_Pixel_Sizes(face, width, height); // ppem (pixel per em)  // at 8, "Sid" would be 13 x 5 | at 16, "Sid" would be 24 x 11 |at 32, "Sid" would be 47 x 22  | at 48, "Sid" would be 74 x 32 //FT_Error error = FT_Set_Char_Size( face, height * 64, 0, 72, 0 );   // DPI: 72 or 96 
     return true;
 }
 /////////////
-bool FONT::load(const void * buffer, long size)
+bool dokun::Font::load(const void * buffer, long size)
 {
     FT_Error error = FT_New_Memory_Face( library, static_cast<FT_Byte *>(const_cast<void *>(buffer)), static_cast<FT_Long>(size), 0, &face );
-    if(error) { Logger("Could not load font from memory"); return false; }
+    if(error) { dokun::Logger("Could not load font from memory"); return false; }
 	return true;
 }
 /////////////
-int FONT::load(lua_State *L)
+int dokun::Font::load(lua_State *L)
 {
     luaL_checktype(L, 1, LUA_TTABLE);
 	luaL_checktype(L, 2, LUA_TSTRING);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-	    FONT * font = *static_cast<FONT **>(lua_touserdata(L, -1));
+	    dokun::Font * font = *static_cast<dokun::Font **>(lua_touserdata(L, -1));
 		lua_pushboolean(L, font->load(lua_tostring(L, 2)));
 		return 1;
 	}
@@ -106,19 +106,19 @@ int FONT::load(lua_State *L)
 	return 1;
 }
 /////////////
-void FONT::generate() // load each character and store it in array for later use
+void dokun::Font::generate() // load each character and store it in array for later use
 {
 	if(is_generated()) return; // return if previously generated
 	for (unsigned char c = 0; c < face->num_glyphs/*128*/; c++) {
         if (FT_Load_Char(static_cast<FT_Face>(face), c, FT_LOAD_RENDER)) //Load and render glyph
 	    {
-	        Logger("Could not load glyph from font");
+	        dokun::Logger("Could not load glyph from font");
 			continue;
 	    }
 		// generate texture for each glyph (character)
         unsigned int texture_id = 0;		
     #ifdef DOKUN_OPENGL
-    #ifdef __windows__
+    #ifdef DOKUN_WIN32
 	    if(!wglGetCurrentContext())
 		    return;
     #endif
@@ -181,7 +181,7 @@ void FONT::generate() // load each character and store it in array for later use
             //line_height = static_cast((face->size->metrics.ascender - face->size->metrics.descender) >> 6);
 		};
 	#ifdef DOKUN_DEBUG0 // show all glyphs and their sizes
-	    if(glIsTexture(texture_id)) std::cout << "GL_texture: " << texture_id << " generated for glyph: " << c << std::endl;//std::cout << String::to_string(c) << " "<< character.width << ", " << character.height << " (buffer: " << String::to_string(texture_id) << ")" << std::endl;//Logger(String::to_string(c) +" "+ std::to_string(character.width) +", "+ std::to_string(character.height) + "\n");
+	    if(glIsTexture(texture_id)) std::cout << "GL_texture: " << texture_id << " generated for glyph: " << c << std::endl;//std::cout << String::to_string(c) << " "<< character.width << ", " << character.height << " (buffer: " << String::to_string(texture_id) << ")" << std::endl;//dokun::Logger(String::to_string(c) +" "+ std::to_string(character.width) +", "+ std::to_string(character.height) + "\n");
 	#endif
         // save bitmaps to Texture -------------------------------
         Texture * texture = new Texture(face->glyph->bitmap.buffer, face->glyph->bitmap.width, 
@@ -200,26 +200,26 @@ void FONT::generate() // load each character and store it in array for later use
 		// you can store and replace texture_id like this: character_array['a'].id = 10; // WORKS!!  //character_array.find('a')->second.id = 10;
 	}
 	#ifdef DOKUN_DEBUG0
-	    //Logger("Font_" + String::to_string((int)Factory::get_font_factory()->get_location(this)) + " generated with " + String::to_string((int)character_array.size()) + " characters.");
+	    //dokun::Logger("Font_" + String::to_string((int)Factory::get_font_factory()->get_location(this)) + " generated with " + String::to_string((int)character_array.size()) + " characters.");
 	#endif
 }
 /////////////
-int FONT::generate(lua_State *L)
+int dokun::Font::generate(lua_State *L)
 {
     luaL_checktype(L, 1, LUA_TTABLE);
     lua_getfield(L, 1, "udata");
     if(lua_isuserdata(L, -1))
     {
-        FONT * font = *static_cast<FONT **>(lua_touserdata(L, -1));
+        dokun::Font * font = *static_cast<dokun::Font **>(lua_touserdata(L, -1));
         font->generate();
     }
     return 0;
 }
 /////////////
-void FONT::destroy()
+void dokun::Font::destroy()
 {
 #ifdef DOKUN_OPENGL
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 	if(!wglGetCurrentContext())
 		return;
 #endif
@@ -254,20 +254,20 @@ void FONT::destroy()
 #endif	
 }
 /////////////
-int FONT::destroy(lua_State *L)
+int dokun::Font::destroy(lua_State *L)
 {
     luaL_checktype(L, 1, LUA_TTABLE);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-	    FONT * font = *static_cast<FONT **>(lua_touserdata(L, -1));
+	    dokun::Font * font = *static_cast<dokun::Font **>(lua_touserdata(L, -1));
         font->destroy();		
 	}
 	return 0;
 }
 /////////////
 /////////////
-void FONT::copy(const FONT& font)
+void dokun::Font::copy(const dokun::Font& font)
 {
     // destroy old texture so you can generate a new one
     if(is_generated()) destroy();
@@ -278,18 +278,18 @@ void FONT::copy(const FONT& font)
 	file   = font.get_file  ();
 }
 /////////////
-int FONT::copy(lua_State *L)
+int dokun::Font::copy(lua_State *L)
 {
     luaL_checktype(L, 1, LUA_TTABLE);
     luaL_checktype(L, 2, LUA_TTABLE);
 	lua_getfield(L, 2, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-	    FONT * font2 = *static_cast<FONT **>(lua_touserdata(L, -1));
+	    dokun::Font * font2 = *static_cast<dokun::Font **>(lua_touserdata(L, -1));
 	    lua_getfield(L, 1, "udata");
 	    if(lua_isuserdata(L, -1))
  	    {
-	        FONT * font = *static_cast<FONT **>(lua_touserdata(L, -1));
+	        dokun::Font * font = *static_cast<dokun::Font **>(lua_touserdata(L, -1));
             font->copy(*font2);		
 	    }
     }
@@ -301,49 +301,49 @@ int FONT::copy(lua_State *L)
 /////////////
 /////////////
 //setters
-void FONT::set_width(unsigned int width) // ONLY works if set before loading font
+void dokun::Font::set_width(unsigned int width) // ONLY works if set before loading font
 {
     this->width = width;
 }
 /////////////
-int FONT::set_width(lua_State *L) // ONLY works if set before loading font
+int dokun::Font::set_width(lua_State *L) // ONLY works if set before loading font
 {
     luaL_checktype(L, 1, LUA_TTABLE);
     luaL_checktype(L, 2, LUA_TNUMBER);
     lua_getfield(L, 1, "udata");
     if(lua_isuserdata(L, -1))
     {
-        FONT * font = *static_cast<FONT **>(lua_touserdata(L, -1));
+        dokun::Font * font = *static_cast<dokun::Font **>(lua_touserdata(L, -1));
         font->set_width(lua_tonumber(L, 2));
     }
     return 0;
 }
 /////////////
-void FONT::set_height(unsigned int height) // ONLY works if set before loading font
+void dokun::Font::set_height(unsigned int height) // ONLY works if set before loading font
 {
     this->height = height;
 }
 /////////////
-int FONT::set_height(lua_State *L) // ONLY works if set before loading font
+int dokun::Font::set_height(lua_State *L) // ONLY works if set before loading font
 {
     luaL_checktype(L, 1, LUA_TTABLE);
     luaL_checktype(L, 2, LUA_TNUMBER);
     lua_getfield(L, 1, "udata");
     if(lua_isuserdata(L, -1))
     {
-        FONT * font = *static_cast<FONT **>(lua_touserdata(L, -1));
+        dokun::Font * font = *static_cast<dokun::Font **>(lua_touserdata(L, -1));
         font->set_height(lua_tonumber(L, 2));
     }
     return 0;
 }
 /////////////
-void FONT::set_size(unsigned int width, unsigned int height) // ONLY works if set before loading font
+void dokun::Font::set_size(unsigned int width, unsigned int height) // ONLY works if set before loading font
 {
     set_width(width);
     set_height(height);
 }
 /////////////
-int FONT::set_size(lua_State *L) // ONLY works if set before loading font
+int dokun::Font::set_size(lua_State *L) // ONLY works if set before loading font
 {
     luaL_checktype(L, 1, LUA_TTABLE);
     luaL_checktype(L, 2, LUA_TNUMBER);
@@ -351,33 +351,33 @@ int FONT::set_size(lua_State *L) // ONLY works if set before loading font
     lua_getfield(L, 1, "udata");
     if(lua_isuserdata(L, -1))
     {
-        FONT * font = *static_cast<FONT **>(lua_touserdata(L, -1));
+        dokun::Font * font = *static_cast<dokun::Font **>(lua_touserdata(L, -1));
         font->set_size(lua_tonumber(L, 2), lua_tonumber(L, 3));
     }
     return 0;
 }
 /////////////
-void FONT::set_pixel_size(unsigned int width, unsigned int height) {   
+void dokun::Font::set_pixel_size(unsigned int width, unsigned int height) {   
     FT_Set_Pixel_Sizes(face, width, height);
 }    
 /////////////
 /////////////
 /////////////
 /////////////
-int FONT::get_width() const  // returns FT_PIXEL_SIZES width
+int dokun::Font::get_width() const  // returns FT_PIXEL_SIZES width
 {
     return width;
 }
 /////////////
-int FONT::get_width(char glyph) const // returns width of single character (glyph)
+int dokun::Font::get_width(char glyph) const // returns width of single character (glyph)
 {
-    const_cast<FONT*>(this)->generate(); // generate font texture to get the glyph size// NOTE: IT is impossible to get the size of a character unless character_array has already been generated beforehand
+    const_cast<dokun::Font *>(this)->generate(); // generate font texture to get the glyph size// NOTE: IT is impossible to get the size of a character unless character_array has already been generated beforehand
     if(!is_generated()) return 0;
     if(glyph == ' ') return face->glyph->advance.x >> 6; // white space " " width comes up as 0, need to fix that, set to 10 for now // the advance is for spacing between characters in a string of text
     return character_array.find(glyph)->second.width;//face->glyph->bitmap.width;//character_array['A'].width;
 }
 /////////////
-int FONT::get_width(const std::string& text) const // returns biggest font_width (actual font_width in pixels) multiplied by the number_of_characters in arg "text"
+int dokun::Font::get_width(const std::string& text) const // returns biggest font_width (actual font_width in pixels) multiplied by the number_of_characters in arg "text"
 {
     double font_size = get_height(); 
     Vector2 resolution = Vector2(72, 72);//Resolution means DPI here (dots per inch)    //Standard values are 72 or 96 dpi for display devices like the screen. The resolution is used to compute the character pixel size from the character point size.
@@ -409,13 +409,13 @@ int FONT::get_width(const std::string& text) const // returns biggest font_width
     return font_width * text.size(); // if text has no newline, return the font_size multiplied by the text's normal length
 }
 /////////////
-int FONT::get_width(lua_State *L)
+int dokun::Font::get_width(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
     lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		FONT * font = *static_cast<FONT **>(lua_touserdata(L, -1));
+		dokun::Font * font = *static_cast<dokun::Font **>(lua_touserdata(L, -1));
 		lua_pushnumber(L, font->get_width());
 		return 1;		
 	}
@@ -423,19 +423,19 @@ int FONT::get_width(lua_State *L)
 	return 1;		
 }
 /////////////
-int FONT::get_height() const // returns FT_PIXEL_SIZES height
+int dokun::Font::get_height() const // returns FT_PIXEL_SIZES height
 {
     return height;
 }
 /////////////
-int FONT::get_height(char glyph) const // returns height of single character (glyph)
+int dokun::Font::get_height(char glyph) const // returns height of single character (glyph)
 {
-    const_cast<FONT*>(this)->generate();
+    const_cast<dokun::Font *>(this)->generate();
     if(!is_generated()) return 0;
     return character_array.find(glyph)->second.height;//return face->glyph->bitmap.rows;	 // NOTE: IT is impossible to get the size of a character unless character_array has already been generated beforehand
 }
 /////////////
-int FONT::get_height(const std::string& text) const // returns the largest height of a single character (glyph) found in the text // This also returns the same "height" (returns biggest (actual font_height in pixels)  height found in a glyph in the font)
+int dokun::Font::get_height(const std::string& text) const // returns the largest height of a single character (glyph) found in the text // This also returns the same "height" (returns biggest (actual font_height in pixels)  height found in a glyph in the font)
 {
     // But what if the text contains a newline? Then the height would have to change!
     int font_size = get_height(); // 16
@@ -457,13 +457,13 @@ int FONT::get_height(const std::string& text) const // returns the largest heigh
     return font_height;
 }
 /////////////
-int FONT::get_height(lua_State *L)
+int dokun::Font::get_height(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
     lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		FONT * font = *static_cast<FONT **>(lua_touserdata(L, -1));
+		dokun::Font * font = *static_cast<dokun::Font **>(lua_touserdata(L, -1));
 		lua_pushnumber(L, font->get_height());
 		return 1;		
 	}
@@ -471,23 +471,23 @@ int FONT::get_height(lua_State *L)
 	return 1;	
 }
 /////////////
-Vector2 FONT::get_size() const
+Vector2 dokun::Font::get_size() const
 {
 	return Vector2(get_width(), get_height());
 }
 /////////////
-Vector2 FONT::get_size(char glyph) const
+Vector2 dokun::Font::get_size(char glyph) const
 {
 	return Vector2(get_width(glyph), get_height(glyph));
 }
 /////////////
-int FONT::get_size(lua_State *L)
+int dokun::Font::get_size(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
     lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		FONT * font = *static_cast<FONT **>(lua_touserdata(L, -1));
+		dokun::Font * font = *static_cast<dokun::Font **>(lua_touserdata(L, -1));
 		lua_pushnumber(L, font->get_size().x);
 		lua_pushnumber(L, font->get_size().y);
 		return 2;		
@@ -497,7 +497,7 @@ int FONT::get_size(lua_State *L)
 	return 2;	
 }
 /////////////
-Vector4 FONT::get_rect()const
+Vector4 dokun::Font::get_rect()const
 {
 	int x = face->bbox.xMax;      // right 
 	int y = face->bbox.yMin;      // bottom
@@ -508,13 +508,13 @@ Vector4 FONT::get_rect()const
 #endif
 }
 /////////////
-int FONT::get_rect(lua_State *L)
+int dokun::Font::get_rect(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
     lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		FONT * font = *static_cast<FONT **>(lua_touserdata(L, -1));
+		dokun::Font * font = *static_cast<dokun::Font **>(lua_touserdata(L, -1));
 		lua_pushnumber(L, font->get_rect().x);
 		lua_pushnumber(L, font->get_rect().y);
 		lua_pushnumber(L, font->get_rect().z);
@@ -528,18 +528,18 @@ int FONT::get_rect(lua_State *L)
 	return 4;		
 }
 /////////////
-FT_Byte * FONT::get_data() const
+FT_Byte * dokun::Font::get_data() const
 {
 	return data;
 }
 /////////////
-int FONT::get_data(lua_State *L)
+int dokun::Font::get_data(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
     lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		FONT * font = *static_cast<FONT **>(lua_touserdata(L, -1));
+		dokun::Font * font = *static_cast<dokun::Font **>(lua_touserdata(L, -1));
 		lua_pushlightuserdata(L, font->get_data());
 		return 1;
 	}
@@ -547,18 +547,18 @@ int FONT::get_data(lua_State *L)
 	return 1;
 }
 /////////////
-FT_Face FONT::get_face() const
+FT_Face dokun::Font::get_face() const
 {
 	return face;
 }
 /////////////
-int FONT::get_face(lua_State *L)
+int dokun::Font::get_face(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
     lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		FONT * font = *static_cast<FONT **>(lua_touserdata(L, -1));
+		dokun::Font * font = *static_cast<dokun::Font **>(lua_touserdata(L, -1));
 		lua_pushlightuserdata(L, font->get_face());
 		return 1;
 	}
@@ -567,18 +567,18 @@ int FONT::get_face(lua_State *L)
 }
 /////////////
 /////////////
-std::string FONT::get_file()const
+std::string dokun::Font::get_file()const
 {
 	return file;
 }
 /////////////
-int FONT::get_file(lua_State *L)
+int dokun::Font::get_file(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
     lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		FONT * font = *static_cast<FONT **>(lua_touserdata(L, -1));
+		dokun::Font * font = *static_cast<dokun::Font **>(lua_touserdata(L, -1));
 		lua_pushstring(L, font->get_file().c_str());
 		return 1;
 	}
@@ -586,26 +586,26 @@ int FONT::get_file(lua_State *L)
     return 1;
 }
 /////////////
-unsigned int FONT::get_buffer(char glyph) const
+unsigned int dokun::Font::get_buffer(char glyph) const
 {
-    if(!is_generated()) { Logger("Font::get_buffer: Cannot get buffer without a context."); return 0; }
+    if(!is_generated()) { dokun::Logger("Font::get_buffer: Cannot get buffer without a context."); return 0; }
     return character_array.find(glyph)->second.id;
 }
 /////////////
-unsigned int FONT::get_buffer(const std::string& glyph) const
+unsigned int dokun::Font::get_buffer(const std::string& glyph) const
 {
-    if(!is_generated()) { Logger("Font::get_buffer: Cannot get buffer without a context."); return 0; }
+    if(!is_generated()) { dokun::Logger("Font::get_buffer: Cannot get buffer without a context."); return 0; }
     return character_array.find(glyph[0])->second.id;
 }
 /////////////
-int FONT::get_buffer(lua_State *L)
+int dokun::Font::get_buffer(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	luaL_checktype(L, 2, LUA_TSTRING);
     lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		FONT * font = *static_cast<FONT **>(lua_touserdata(L, -1));
+		dokun::Font * font = *static_cast<dokun::Font **>(lua_touserdata(L, -1));
         lua_pushinteger(L, font->get_buffer(lua_tostring(L, 2)));
 		return 1;
 	}
@@ -613,12 +613,12 @@ int FONT::get_buffer(lua_State *L)
     return 1;
 }
 /////////////
-Texture * FONT::get_bitmap(int index) const // returns bitmap by index
+Texture * dokun::Font::get_bitmap(int index) const // returns bitmap by index
 {
     return bitmaps[index];
 }
 /////////////
-Texture * FONT::get_bitmap(const std::string& name) const // returns bitmap by name
+Texture * dokun::Font::get_bitmap(const std::string& name) const // returns bitmap by name
 {
     for(int b = 0; b < bitmaps.size(); b++)
     {
@@ -627,14 +627,14 @@ Texture * FONT::get_bitmap(const std::string& name) const // returns bitmap by n
     }
     return nullptr;
 }
-int FONT::get_bitmap(lua_State *L)
+int dokun::Font::get_bitmap(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	luaL_checktype(L, 2, LUA_TNUMBER);
     lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		FONT * font = *static_cast<FONT **>(lua_touserdata(L, -1));
+		dokun::Font * font = *static_cast<dokun::Font **>(lua_touserdata(L, -1));
 		lua_pushlightuserdata(L, font->get_bitmap(lua_tonumber(L, 2)));
 		return 1;
 	}
@@ -642,17 +642,17 @@ int FONT::get_bitmap(lua_State *L)
 	return 1;
 }
 /////////////
-unsigned int FONT::get_character_count() const
+unsigned int dokun::Font::get_character_count() const
 {
     return face->num_glyphs;
 }
-int FONT::get_character_count(lua_State *L)
+int dokun::Font::get_character_count(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
     lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		FONT * font = *static_cast<FONT **>(lua_touserdata(L, -1));
+		dokun::Font * font = *static_cast<dokun::Font **>(lua_touserdata(L, -1));
         lua_pushnumber(L, font->get_character_count());
         return 1;
     }
@@ -660,17 +660,17 @@ int FONT::get_character_count(lua_State *L)
     return 1;
 }
 /////////////
-std::string FONT::get_family_name()const
+std::string dokun::Font::get_family_name()const
 {
     return face->family_name;
 }
-int FONT::get_family_name(lua_State *L)
+int dokun::Font::get_family_name(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
     lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		FONT * font = *static_cast<FONT **>(lua_touserdata(L, -1));
+		dokun::Font * font = *static_cast<dokun::Font **>(lua_touserdata(L, -1));
 		lua_pushstring(L, font->get_family_name().c_str());
 		return 1;
 	}
@@ -678,17 +678,17 @@ int FONT::get_family_name(lua_State *L)
 	return 1;
 }
 /////////////
-std::string FONT::get_style_name ()const
+std::string dokun::Font::get_style_name ()const
 {
     return face->style_name;
 }
-int FONT::get_style_name (lua_State *L)
+int dokun::Font::get_style_name (lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
     lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		FONT * font = *static_cast<FONT **>(lua_touserdata(L, -1));
+		dokun::Font * font = *static_cast<dokun::Font **>(lua_touserdata(L, -1));
 		lua_pushstring(L, font->get_style_name().c_str());
 		return 1;
 	}
@@ -698,9 +698,9 @@ int FONT::get_style_name (lua_State *L)
 /////////////
 /////////////
 /////////////
-Vector2 FONT::get_bearing(char glyph)const // char holds only -128 to 127. unsigned char holds 0 to 255
+Vector2 dokun::Font::get_bearing(char glyph)const // char holds only -128 to 127. unsigned char holds 0 to 255
 {
-    const_cast<FONT*>(this)->generate();
+    const_cast<dokun::Font *>(this)->generate();
     if(!is_generated()) return 0;
     return Vector2(character_array.find(glyph)->second.bearing_x, character_array.find(glyph)->second.bearing_y);
 }
@@ -711,7 +711,7 @@ int get_bearing(lua_State *L)
     lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		FONT * font = *static_cast<FONT **>(lua_touserdata(L, -1));
+		dokun::Font * font = *static_cast<dokun::Font **>(lua_touserdata(L, -1));
 		lua_pushnumber(L, font->get_bearing(lua_tonumber(L, 2)).x);
 		lua_pushnumber(L, font->get_bearing(lua_tonumber(L, 2)).y);
 		return 2;
@@ -721,9 +721,9 @@ int get_bearing(lua_State *L)
 	return 2;
 }
 /////////////
-Vector2 FONT::get_advance(char glyph)const
+Vector2 dokun::Font::get_advance(char glyph)const
 {
-    const_cast<FONT*>(this)->generate();
+    const_cast<dokun::Font *>(this)->generate();
     if(!is_generated()) return 0;
     return Vector2(character_array.find(glyph)->second.advance_x, character_array.find(glyph)->second.advance_y);    
 }
@@ -734,7 +734,7 @@ int get_advance(lua_State *L)
     lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		FONT * font = *static_cast<FONT **>(lua_touserdata(L, -1));
+		dokun::Font * font = *static_cast<dokun::Font **>(lua_touserdata(L, -1));
 		lua_pushnumber(L, font->get_advance(lua_tonumber(L, 2)).x);
 		lua_pushnumber(L, font->get_advance(lua_tonumber(L, 2)).y);
 		return 2;
@@ -752,7 +752,7 @@ int get_advance(lua_State *L)
     lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		FONT * font = *static_cast<FONT **>(lua_touserdata(L, -1));
+		dokun::Font * font = *static_cast<dokun::Font **>(lua_touserdata(L, -1));
 		lua_push(L, font->get_());
 		return 1;
 	}
@@ -761,23 +761,23 @@ int get_advance(lua_State *L)
 */
 /////////////
 /////////////
-FONT * FONT::get_system_font()
+dokun::Font * dokun::Font::get_system_font()
 {
 	return system_font;
 }
 /////////////
 /////////////
-bool FONT::is_generated() const // checks if a texture has been generated for each glyph
+bool dokun::Font::is_generated() const // checks if a texture has been generated for each glyph
 {
 	return !character_array.empty();
 }
-int FONT::is_generated(lua_State * L)
+int dokun::Font::is_generated(lua_State * L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
     lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		FONT * font = *static_cast<FONT **>(lua_touserdata(L, -1));
+		dokun::Font * font = *static_cast<dokun::Font **>(lua_touserdata(L, -1));
         lua_pushboolean(L, font->is_generated());
         return 1;
     }

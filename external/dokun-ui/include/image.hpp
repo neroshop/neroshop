@@ -1,5 +1,5 @@
-#ifndef _IMAGE
-#define _IMAGE
+#ifndef IMAGE_HPP_DOKUN
+#define IMAGE_HPP_DOKUN
 
 #include "platform.hpp"
 #include "vector.hpp"
@@ -64,7 +64,7 @@ public:
 	void set_angle(double angle);                    static int set_angle(lua_State *L);
 	void set_scale(double x, double y);             static int set_scale(lua_State *L);
 	void set_scale(const Vector2& scale);
-	void set_color(int red, int green, int blue, int alpha = 255);           static int set_color(lua_State *L);
+	void set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0);           static int set_color(lua_State *L);
 	void set_color(const Vector3& color);
 	void set_color(const Vector4& color);
 	void set_alignment(const std::string& alignment);           static int set_alignment(lua_State *L);

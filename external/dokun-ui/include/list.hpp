@@ -1,5 +1,5 @@
-#ifndef _LIST
-#define _LIST
+#ifndef LIST_HPP_DOKUN
+#define LIST_HPP_DOKUN
 
 #include "ui.hpp"
 #include "box.hpp"
@@ -18,15 +18,15 @@ public:
 	void draw(const Vector2& position);	
 	void add(const Box& item);       static int add(lua_State *L);// adds a new list obj
 	// setters (applies to all list items)
-	void set_color(int red, int green, int blue, int alpha=255);
+	void set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0);
 	void set_color(const Vector3& color);
 	void set_color(const Vector4& color);
 	void set_text(const std::string& text);
-	void set_label(const Label& label);
+	void set_label(const dokun::Label& label);
 	void set_image(const Image& image);
 	
 	std::string get_text() const;
-	Label * get_label() const;
+	dokun::Label * get_label() const;
 	Image * get_image() const;
 	Vector4 get_color() const;
 	Box * get_item(int index) const;
@@ -35,7 +35,7 @@ public:
 	// outline
 	void set_outline(bool outline);                                                static int set_outline(lua_State * L);
 	void set_outline_width(double width);                                                      static int set_outline_width(lua_State * L);
-	void set_outline_color(int red, int green, int blue, int alpha = 255);         static int set_outline_color(lua_State * L);
+	void set_outline_color(unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0);         static int set_outline_color(lua_State * L);
 	void set_outline_color(const Vector3& color);
 	void set_outline_color(const Vector4& color);
 	void set_outline_antialiased(bool antialiased);		
@@ -48,7 +48,7 @@ private:
     friend class Combobox;
     std::vector<Box *> item_list; // function add() this->next = list; list.set_position(this->get_x(), this->y + this->get_height())
 	Image * image;
-	Label * label;
+	dokun::Label * label;
 	Vector4 color;
 	Box * selection;
 	// outline
@@ -82,11 +82,11 @@ Usage:
 	list->get_item(3)->set_color(110, 123, 139);
 	list->get_item(4)->set_color(0,	139, 69);
 	// and text
-	list->get_item(0)->set_label(*new Label("A"));
-	list->get_item(1)->set_label(*new Label("B"));
-	list->get_item(2)->set_label(*new Label("C"));
-	list->get_item(3)->set_label(*new Label("D"));
-	list->get_item(4)->set_label(*new Label("E"));
+	list->get_item(0)->set_label(*new dokun::Label("A"));
+	list->get_item(1)->set_label(*new dokun::Label("B"));
+	list->get_item(2)->set_label(*new dokun::Label("C"));
+	list->get_item(3)->set_label(*new dokun::Label("D"));
+	list->get_item(4)->set_label(*new dokun::Label("E"));
 	list->get_item(0)->get_label()->set_alignment("center");
 	list->get_item(1)->get_label()->set_alignment("center");
 	list->get_item(2)->get_label()->set_alignment("center");

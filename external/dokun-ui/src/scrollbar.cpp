@@ -3,19 +3,19 @@
 Scrollbar::Scrollbar() : value(0), range(0, 5), color(64, 64, 64, 225), 
 // handle
 handle_offset(0), // y_position
-handle_color(0, 51, 102, 255)/*(32, 32, 32, 225)*/,
+handle_color(0, 51, 102, 1.0)/*(32, 32, 32, 1.0)*/,
 handle_size(40),  // height
 handle_radius(50),
 // button
 button(false),
-button_color (96, 96, 96, 225),
+button_color (96, 96, 96, 1.0),
 button_height(20),
 // arrow
 arrow(false),
-arrow_color(32, 32, 32, 225),
+arrow_color(32, 32, 32, 1.0),
 // outline (or border)
 outline (true),
-outline_color(0, 0, 0, 255),
+outline_color(0, 0, 0, 1.0),
 outline_width(1.0),
 outline_antialiased(false),
 // gradient
@@ -104,7 +104,7 @@ int Scrollbar::draw(lua_State *L)
 }
 //////////////
 //////////////
-void Scrollbar::set_color(int red, int green, int blue, int alpha)
+void Scrollbar::set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {
 	color = Vector4(red, green, blue, alpha);
 }
@@ -125,9 +125,9 @@ int Scrollbar::set_color(lua_State *L)
 	luaL_checktype(L, 2, LUA_TNUMBER);
 	luaL_checktype(L, 3, LUA_TNUMBER);
 	luaL_checktype(L, 4, LUA_TNUMBER);
-	luaL_optnumber(L, 5, 255);
+	luaL_optnumber(L, 5, 1.0);
 	int d = lua_tonumber(L, 5);
-	if(d == 0) {Logger("color.w is 0 ?? | progressbar.cpp (143)\n");d=255;};
+	if(d == 0) {dokun::Logger("color.w is 0 ?? | progressbar.cpp (143)\n");d=255;};
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
@@ -155,7 +155,7 @@ void Scrollbar::set_step(double step)
 } // number of items to scroll
 //////////////
 // handle properties
-void Scrollbar::set_handle_color(int layer, int red, int green, int blue)
+void Scrollbar::set_handle_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {}
 //////////////
 int Scrollbar::set_handle_color(lua_State *L)
@@ -163,8 +163,8 @@ int Scrollbar::set_handle_color(lua_State *L)
     return 0;
 }
 //////////////
-//void set_handle_inner_color(int red, int green, int blue, int alpha); static int set_handle_inner_color(lua_State *L);// handle and beam parts of slider
-//void set_handle_outer_color(int red, int green, int blue, int alpha); static int set_handle_outer_color(lua_State *L);// handle and beam parts of slider
+//void set_handle_inner_color(unsigned int red, unsigned int green, unsigned int blue, double alpha); static int set_handle_inner_color(lua_State *L);// handle and beam parts of slider
+//void set_handle_outer_color(unsigned int red, unsigned int green, unsigned int blue, double alpha); static int set_handle_outer_color(lua_State *L);// handle and beam parts of slider
 void Scrollbar::set_handle_size(int handle_size)
 {
     this->handle_size = handle_size; // height
@@ -186,7 +186,7 @@ void Scrollbar::set_button(bool button)
 void Scrollbar::set_button_height(int height)
 {}
 //////////////
-void Scrollbar::set_button_color(int red, int green, int blue, int alpha)
+void Scrollbar::set_button_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {}
 //////////////
 void Scrollbar::set_button_color(const Vector3& color)
@@ -199,7 +199,7 @@ void Scrollbar::set_button_color(const Vector4& color)
 void Scrollbar::set_arrow(bool arrow)
 {}
 //////////////
-void Scrollbar::set_arrow_color(int red, int green, int blue, int alpha)
+void Scrollbar::set_arrow_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {}
 //////////////
 void Scrollbar::set_arrow_color(const Vector3& color)
@@ -229,7 +229,7 @@ int Scrollbar::set_outline_width(lua_State *L)
     return 0;
 }
 //////////////
-void Scrollbar::set_outline_color(int red, int green, int blue, int alpha)
+void Scrollbar::set_outline_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {
 	outline_color = Vector4(red, green, blue, alpha);
 }

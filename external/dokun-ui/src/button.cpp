@@ -1,11 +1,11 @@
 #include "../include/button.hpp"
 
-Button::Button() : color(0, 51, 102, 255), tint_factor(0.05), shade_factor(0.25), depth(1), label(nullptr), image(nullptr), fill(true), shadow(false), border(false), type("polygon"),
-    old_color(0, 51, 102, 255), color_saved(false),
+Button::Button() : color(0, 51, 102, 1.0), tint_factor(0.05), shade_factor(0.25), depth(1), label(nullptr), image(nullptr), fill(true), shadow(false), border(false), type("polygon"),
+    old_color(color),//(0, 51, 102, 1.0), 
 	// outline (is the same as a border)
-    outline(true),//(false),
+    outline(false),
 	outline_width(2.0),
-	outline_color(255, 255, 255, 255),
+	outline_color(255, 255, 255, 1.0),
 	outline_antialiased(false),
 // border properties - remove this asap
     border_color(255, 255, 255),
@@ -22,52 +22,52 @@ Button::Button() : color(0, 51, 102, 255), tint_factor(0.05), shade_factor(0.25)
 	set_width(100);
 	set_height(50);	
 	set_orientation(0);
-    label = new Label();
+    label = new dokun::Label();
 }
 /////////////
-Button::Button(const std::string& text) : color(0, 51, 102, 255), tint_factor(0.05), shade_factor(0.25), depth(1), label(nullptr), image(nullptr), fill(true), shadow(false), border(false), type("polygon")
+Button::Button(const std::string& text) : color(0, 51, 102, 1.0), tint_factor(0.05), shade_factor(0.25), depth(1), label(nullptr), image(nullptr), fill(true), shadow(false), border(false), type("polygon")
 {
 	set_position(0, 0);
 	set_width(100);
 	set_height(50);	
 	set_orientation(0);
-	label = new Label();
+	label = new dokun::Label();
 }
 /////////////
-Button::Button(int x, int y) : color(0, 51, 102, 255), tint_factor(0.05), shade_factor(0.25), depth(1), label(nullptr), image(nullptr), fill(true), shadow(false), border(false), type("polygon")
+Button::Button(int x, int y) : color(0, 51, 102, 1.0), tint_factor(0.05), shade_factor(0.25), depth(1), label(nullptr), image(nullptr), fill(true), shadow(false), border(false), type("polygon")
 {
     set_position(x, y);
 	set_width(100);
 	set_height(50);
 	set_orientation(0);
-	label = new Label();
+	label = new dokun::Label();
 }
 /////////////
-Button::Button(int x, int y, int width, int height) : color(0, 51, 102, 255), tint_factor(0.05), shade_factor(0.25), depth(1), label(nullptr), image(nullptr), fill(true), shadow(false), border(false), type("polygon")
+Button::Button(int x, int y, int width, int height) : color(0, 51, 102, 1.0), tint_factor(0.05), shade_factor(0.25), depth(1), label(nullptr), image(nullptr), fill(true), shadow(false), border(false), type("polygon")
 {
 	set_position(x, y);
 	set_width(width);
 	set_height(height);
 	set_orientation(0);
-	label = new Label();
+	label = new dokun::Label();
 }  
 /////////////
-Button::Button(const std::string& text, int x, int y) : color(0, 51, 102, 255), tint_factor(0.05), shade_factor(0.25), depth(1), label(nullptr), image(nullptr), fill(true), shadow(false), border(false), type("polygon")
+Button::Button(const std::string& text, int x, int y) : color(0, 51, 102, 1.0), tint_factor(0.05), shade_factor(0.25), depth(1), label(nullptr), image(nullptr), fill(true), shadow(false), border(false), type("polygon")
 {
 	set_position(x, y);
 	set_width(100);
 	set_height(50);
 	set_orientation(0);
-	label = new Label();
+	label = new dokun::Label();
 }
 /////////////
-Button::Button(const std::string& text, int x, int y, int width, int height) : color(0, 51, 102, 255), tint_factor(0.05), shade_factor(0.25), depth(1), label(nullptr), image(nullptr), fill(true), shadow(false), border(false), type("polygon")
+Button::Button(const std::string& text, int x, int y, int width, int height) : color(0, 51, 102, 1.0), tint_factor(0.05), shade_factor(0.25), depth(1), label(nullptr), image(nullptr), fill(true), shadow(false), border(false), type("polygon")
 {
 	set_position(x, y);
 	set_width(width);
 	set_height(height);	
 	set_orientation(0);
-	label = new Label();
+	label = new dokun::Label();
 }
 /////////////
 Button::~Button(void)
@@ -218,9 +218,9 @@ int Button::set_image(lua_State *L)
 	return 0;
 }
 /////////////
-void Button::set_label(const Label& label)
+void Button::set_label(const dokun::Label& label)
 {
-	this->label = &const_cast<Label&>(label);
+	this->label = &const_cast<dokun::Label&>(label);
 	this->label->set_parent(* this);
 }
 /////////////
@@ -233,7 +233,7 @@ int Button::set_label(lua_State *L)
 	    lua_getfield(L, 2, "udata");
 	    if(lua_isuserdata(L, -1))
 	    {
-		    Label * label = *static_cast<Label **>(lua_touserdata(L, -1));
+		    dokun::Label * label = *static_cast<dokun::Label **>(lua_touserdata(L, -1));
 		    lua_getfield(L, 1, "udata");
 		    if(lua_isuserdata(L, -1))
 		    {
@@ -259,21 +259,24 @@ int Button::set_label(lua_State *L)
 	return 0;
 }
 /////////////
-void Button::set_color(double red, double green, double blue, double alpha, bool original)
-{    // old_color = color; // save old color before changing the color
+void Button::set_color(unsigned int red, unsigned int green, unsigned int blue) 
+{
+    color = Vector4(red, green, blue, color.w);
+    old_color = color; // save user-defined color before changing the color    
+}
+/////////////
+void Button::set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
+{
 	color = Vector4(red, green, blue, alpha);
-	if(!original) return; // not original color, exit function
-	old_color = color;
+    old_color = color; // save user-defined color before changing the color	
 }
 /////////////
-void Button::set_color(const Vector3& color, bool original)
-{
-	set_color(color.x, color.y, color.z, 255, original);
+void Button::set_color(const Vector3& color) {
+	set_color(color.x, color.y, color.z);
 }
 /////////////
-void Button::set_color(const Vector4& color, bool original)
-{
-	set_color(color.x, color.y, color.z, color.w, original);
+void Button::set_color(const Vector4& color) {
+	set_color(color.x, color.y, color.z, color.w);
 }
 /////////////
 int Button::set_color(lua_State *L)
@@ -294,9 +297,9 @@ int Button::set_color(lua_State *L)
 /////////////
 void Button::set_alpha(double alpha)
 {
+    old_color.w = color.w; // save old alpha before setting new one
 	color.w = alpha;
-	old_color.w = color.w;
-}  
+}
 /////////////
 int Button::set_alpha(lua_State *L)
 {
@@ -316,13 +319,13 @@ void Button::set_outline(bool outline)
 {
     this->outline = outline;
 }
-void Button::set_outline_color(double red, double green, double blue, double alpha)
+void Button::set_outline_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {
-    outline_color = Vector4(red, green, blue, 255/*alpha*/);
+    outline_color = Vector4(red, green, blue, 1.0/*alpha*/);
 }
 void Button::set_outline_color(const Vector3& color)
 {
-    set_outline_color(color.x, color.y, color.z, 255);
+    set_outline_color(color.x, color.y, color.z, outline_color.w);
 }
 void Button::set_outline_color(const Vector4& color)
 {
@@ -383,14 +386,14 @@ int Button::set_gradient(lua_State *L)
     return 0;
 }
 /////////////
-void Button::set_gradient_color(double red, double green, double blue, double alpha)
+void Button::set_gradient_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {
     gradient_color = Vector4(red, green, blue, alpha);
 }
 /////////////
 void Button::set_gradient_color(const Vector3& gradient_color)
 {
-    set_gradient_color(gradient_color.x, gradient_color.y, gradient_color.z);
+    set_gradient_color(gradient_color.x, gradient_color.y, gradient_color.z, this->gradient_color.w);
 }
 /////////////
 void Button::set_gradient_color(const Vector4& gradient_color)
@@ -418,7 +421,7 @@ int Button::set_gradient_color(lua_State *L)
 /////////////
 //  GETTERS
 /////////////
-Label * Button::get_label()const
+dokun::Label * Button::get_label()const
 {
 	return label;
 }
@@ -531,26 +534,18 @@ void Button::on_press()
 /////////////
 void Button::on_mouse_interact()
 {
-	// save original color
-	if(!color_saved) 
-	{
-	    old_color = get_color();
-	    color_saved = true;
-	}
 	if(Mouse::is_over(get_position(), get_size()))
 	{
-	    //std::cout << "old_color (saved): " << old_color << std::endl;
-		if(Mouse::is_pressed(1))
-	    {
+		if(Mouse::is_pressed(1)) {
 			// add a shade to color (on press)
 		    press_color.x = color.x * (1 - shade_factor); // 1 = black
 		    press_color.y = color.y * (1 - shade_factor);
 		    press_color.z = color.z * (1 - shade_factor);	
 		    press_color.w = color.w;
             //std::cout << "press_color: " << press_color << std::endl;
-		    set_color(press_color);
+		    color = press_color;
 		}
-		else set_color(old_color); // set to hover_color
+		else color = old_color;//set_color(old_color); // set to hover_color
 		
 		// add a tint to color (on hover)
 		hover_color.x = color.x + (255 - color.x) * tint_factor; //  255 = white
@@ -558,9 +553,8 @@ void Button::on_mouse_interact()
 		hover_color.z = color.z + (255 - color.z) * tint_factor;
         hover_color.w = color.w;
         //std::cout << "hover_color: " << hover_color << std::endl;
-		set_color(hover_color);
-		
-	} else set_color(old_color); // revert back to original color
+		color = hover_color;
+	} else color = old_color; // revert back to original color
 }
 /////////////
 /////////////

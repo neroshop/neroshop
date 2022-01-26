@@ -1,5 +1,5 @@
-#ifndef _BROWSER
-#define _BROWSER
+#ifndef BROWSER_HPP_DOKUN
+#define BROWSER_HPP_DOKUN
 #include "platform.hpp"
 
 #ifdef __cplusplus

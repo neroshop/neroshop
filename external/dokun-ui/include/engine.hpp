@@ -1,5 +1,5 @@
-#ifndef _ENGINE
-#define _ENGINE
+#ifndef ENGINE_HPP_DOKUN
+#define ENGINE_HPP_DOKUN
 
 /*  Dokun Engine 1.0.0            Copyright (C) 2015-2021 sidpoison (no company or website)
    
@@ -88,6 +88,7 @@
 #define ENGINE_VERSION ENGINE_VERSION_MAJOR "." ENGINE_VERSION_MINOR "." ENGINE_VERSION_PATCH
 
 #ifdef __cplusplus
+namespace dokun {
 class Engine { // The engine initializes the libraries it requires and registers c functions to lua
 public:
     Engine(); 
@@ -106,16 +107,17 @@ private:
 	static void on_close(); // do stuff before closing engine
 	// registry (registers functions)
 	// singleton
-	static Engine * engine_ptr;
+	static dokun::Engine * engine_ptr;
 	// status
 	static bool status;
 	// third_party
 	#ifdef DOKUN_VULKAN
 	    VkApplicationInfo app_info;
 	#endif
-	#ifdef __windows__
+	#ifdef DOKUN_WIN32
 	    WSADATA wsa_data;
 	#endif
 };
+}
 #endif
 #endif // rewriting lua : lualib.h (declare engine), linit.c (register engine), engine.cpp(define engine)

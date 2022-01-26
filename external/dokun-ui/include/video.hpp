@@ -1,5 +1,5 @@
-#ifndef _VIDEO
-#define _VIDEO // new!
+#ifndef VIDEO_HPP_DOKUN
+#define VIDEO_HPP_DOKUN // new!
 
 #include "logger.hpp"
 #include "utility.hpp"

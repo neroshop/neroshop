@@ -1,7 +1,7 @@
 //#include "platform.hpp"
 
-#ifndef _BUILD
-#define _BUILD
+#ifndef BUILD_HPP_DOKUN
+#define BUILD_HPP_DOKUN
 /////////////
 // Default - build default
 #ifndef DOKUN_BUILD_EXECUTABLE  // no executable

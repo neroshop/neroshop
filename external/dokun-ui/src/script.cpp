@@ -8,7 +8,7 @@ Script::Script(void)
 Script::Script(lua_State *L, const std::string& file_name) : Script() // Factory::get_script_factory()->store(this);
 {
 	if(load(L, file_name) == 0) {
-		Logger("Could not load from file: " + file_name);
+		dokun::Logger("Could not load from file: " + file_name);
 	}
 }
 //////////
@@ -27,7 +27,7 @@ bool Script::load(lua_State * L, const std::string& file_name)
 	}
 	if(is_script(file_name)) // checks if script object is already attached to a file (one file per script_ptr)
 	{
-	    //Logger(file_name + " has already been loaded");
+	    //dokun::Logger(file_name + " has already been loaded");
 		return true;
 	}
     if(luaL_dofile(L, file_name.c_str()) != 0)
@@ -199,13 +199,13 @@ void Script::write(std::string code)
 {
 	if(!is_script()) // not loaded?
 	{
-		Logger("Could not write to script");
+		dokun::Logger("Could not write to script");
 		return;
 	}
 	std::ofstream file(get_file(), std::ios::app);
 	if(!file.is_open())
 	{
-		Logger("Could not write to " + get_file());
+		dokun::Logger("Could not write to " + get_file());
 		return;
 	}
 	file << " " << code << std::endl;
@@ -395,7 +395,7 @@ void Script::save_cache()
     // open file for writing
     std::ofstream cfile;
     cfile.open ("script_cache.txt", std::ios::out | std::ios::app); // std::ios::out is default mode for ofstream (writing to file)
-    if(!cfile.is_open()) {Logger(String("Script::save_cache : Could not open file: ") + "script_cache.txt");return;}
+    if(!cfile.is_open()) {dokun::Logger(String("Script::save_cache : Could not open file: ") + "script_cache.txt");return;}
     for(int i = 0; i < cache.size(); i++)
     {
         if(!cache[i].empty()) cfile << cache[i] << std::endl;

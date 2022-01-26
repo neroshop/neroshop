@@ -7,7 +7,7 @@ Plugin::Plugin(const std::string& file_name)
 {
 	if(!load(file_name))
 	{
-		Logger("Could not load module " + file_name);
+		dokun::Logger("Could not load module " + file_name);
 	}
 }
 /////////////
@@ -18,7 +18,7 @@ Plugin::~Plugin()
 /////////////
 bool Plugin::load(const std::string& file_name)
 {
-	#ifdef __windows__
+	#ifdef DOKUN_WIN32
 		module = LoadLibrary(static_cast<LPCTSTR>(file_name.c_str()));
 	#endif
 	#ifdef __gnu_linux__
@@ -45,7 +45,7 @@ bool Plugin::load_directory(std::string folder, std::string filter)
 /////////////
 void Plugin::free()
 {
-	#ifdef __windows__
+	#ifdef DOKUN_WIN32
         FreeLibrary(module);
     #endif	
 	#ifdef __gnu_linux__
@@ -56,7 +56,7 @@ void Plugin::free()
 /////////////
 void * Plugin::get(const std::string& data)
 {
-	#ifdef __windows__
+	#ifdef DOKUN_WIN32
 		return reinterpret_cast<void *>(GetProcAddress(module, static_cast<LPCTSTR>(data.c_str())));	
 	#endif
 	#ifdef __gnu_linux__

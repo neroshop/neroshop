@@ -85,8 +85,19 @@ if (WIN32)
 endif()
 
 message(STATUS EXTRA_LIBRARIES: ${EXTRA_LIBRARIES})
+
 ######################################
-# Epee
+# Protobuf (recent)
+include(FindProtobuf)
+find_package(Protobuf)
+message(STATUS "Protobuf lib: ${Protobuf_LIBRARY}, inc: ${Protobuf_INCLUDE_DIR}, protoc: ${Protobuf_PROTOC_EXECUTABLE}")
+include_directories(${Protobuf_INCLUDE_DIR})
+
+######################################
+# LibUSB (recent)
+find_library(usb_LIBRARY NAMES usb-1.0 libusb usb)
+set(LibUSB_LIBRARIES ${usb_LIBRARY})
+
 ######################################
 # Boost - sudo apt install libboost-dev, sudo apt-get install libboost-all-dev
 set(Boost_NO_BOOST_CMAKE 1)
@@ -158,8 +169,6 @@ if (APPLE AND NOT IOS)
     message(STATUS "Using OpenSSL found at ${OPENSSL_ROOT_DIR}")
   endif()
 endif()
-
-
 
 #find_package(HIDAPI REQUIRED)
 
@@ -268,7 +277,8 @@ add_library(randomx STATIC IMPORTED)
 set_target_properties(randomx PROPERTIES IMPORTED_LOCATION
     ${MONERO_PROJECT_BUILD}/external/randomx/librandomx.a)   
 ######################################
-set(monero_src wallet_merged wallet_crypto #[[wallet_api]] wallet lmdb epee unbound easylogging cryptonote_core cryptonote_basic cryptonote_format_utils_basic mnemonics ringct ringct_basic common cncrypto blockchain_db blocks checkpoints device device_trezor multisig version randomx ${boost_src} ${OPENSSL_LIBRARIES} ${SODIUM_LIBRARY} ${hidapi_src} ${EXTRA_LIBRARIES}) #${Boost_LIBRARIES} #${HIDAPI_LIBRARIES}
+set(monero_src wallet_merged wallet_crypto #[[wallet_api]] wallet lmdb epee unbound easylogging cryptonote_core cryptonote_basic cryptonote_format_utils_basic mnemonics ringct ringct_basic common cncrypto blockchain_db blocks checkpoints device device_trezor multisig version randomx 
+${boost_src} ${Protobuf_LIBRARY} ${LibUSB_LIBRARIES} ${OPENSSL_LIBRARIES} ${SODIUM_LIBRARY} ${hidapi_src} ${EXTRA_LIBRARIES}) #${Boost_LIBRARIES} #${HIDAPI_LIBRARIES}
 ######################################
 # monero-cpp-0.5.5 (wrapper)(started out with monero-cpp-0.5.1) - MIT (same as Monero)
 include_directories(external/monero-cpp/src/)
@@ -296,13 +306,19 @@ set(qr_code_generator_src ${CMAKE_CURRENT_SOURCE_DIR}/external/QR-Code-generator
 ######################################
 # json
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/json/single_include) # v3.10.3 (https://github.com/nlohmann/json/releases/) = MIT :)
-set(json_src ) # no source files whoot! XD
 ######################################
 # curl
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/curl/include) # v.7.74.0 = the curl license (MIT/X)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/curl/lib)
 set(curl_src ${CMAKE_CURRENT_SOURCE_DIR}/src/libcurl.a)
 add_definitions(-DCURL_STATICLIB)
+######################################
+# glfw (optional)(build dokun-ui with the DOKUN_GLFW definition)
+#[[
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/glfw/include)
+add_definitions(-DDOKUN_GLFW)
+]]
+# glfw depends on the following libs (on linux): libxrandr-dev libxinerama-dev libxi-dev
 ######################################
 ######################################
 # dokun-ui_dependencies
@@ -331,7 +347,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/glm)
 if(WIN32)
 set(opengl_src    opengl32.lib glu32.lib)
 set(openal_src    OpenAL32.lib          ) # not currently in use
-set(winsocket_src ws2_32.lib            )
+set(winsocket_src ws2_32.lib            ) # -lglfw3 -lgdi32 -lopengl32 -limm32
 endif()
 if(LINUX)
 set(opengl_src libGL.so libGLU.so                   )
@@ -339,7 +355,7 @@ set(OpenGL_GL_PREFERENCE "LEGACY"                   ) # LEGACY(libGL.so) OR GLVN
 set(openal_src libopenal.so                         ) # not currently in use
 set(posix_src  libpthread.so libdl.so libm.so       )
 set(x11_src    libX11.a libxcb.a libXau.a libXdmcp.a)
-endif()
+endif() # -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo
 ######################################
 # dokun-ui
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/include) # include
@@ -347,18 +363,22 @@ set(dokun_ui_src ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/src/libdokun-ui.a
 #add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui)
 ######################################
 # neroshop
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include) # includes (.hpp)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/dependencies) # dependencies (dokun, etc.)
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/src) # sources (.cpp, .a)
-set(neroshop_src src/main.cpp src/wallet.cpp src/db.cpp src/validator.cpp src/icon.cpp src/converter.cpp src/qr.cpp src/user.cpp src/buyer.cpp src/seller.cpp src/item.cpp src/cart.cpp src/order.cpp src/message.cpp src/client.cpp )
+set(neroshop_src src/buyer.cpp src/carrier.cpp src/cart.cpp #[[src/catalog.cpp]] src/client.cpp src/converter.cpp src/db.cpp src/icon.cpp src/item.cpp src/main.cpp src/message.cpp src/order.cpp src/qr.cpp src/seller.cpp src/server.cpp src/user.cpp src/validator.cpp src/wallet.cpp)
 add_definitions(-DNEROSHOP_DEBUG) # for more detailed debugging, use -DNEROSHOP_DEBUG0
 add_executable(neroshop ${neroshop_src} ${monero_cpp_src} ${bcrypt_src} ${sqlite_src} ${qr_code_generator_src})
 target_link_libraries(neroshop ${monero_src})
 target_link_libraries(neroshop ${dokun_ui_src})
-# daemon
+# daemon (change name to neromon = nero+daemon :D)
 add_executable(daemon src/daemon.cpp src/server.cpp) # server-daemon
 target_link_libraries(daemon ${dokun_ui_src})
 set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -ldl") # fixes undefined reference to symbol 'dlsym@@GLIBC_2.2.5' error
+set_target_properties(daemon PROPERTIES OUTPUT_NAME "neromon")
+######################################
+# linking
 if(LINUX) 
     target_link_libraries(neroshop ${posix_src})
     target_link_libraries(daemon ${posix_src})
@@ -375,8 +395,8 @@ if(OPENGL_FOUND)
 endif()
 find_package(CURL) # works
 if(CURL_FOUND)
-	target_link_libraries(neroshop ${curl_src}) # sudo apt install libcurl-dev => then choose one of the options # found in: /usr/local/lib  and  /usr/lib/x86_64-linux-gnu
-    target_link_libraries(daemon ${curl_src})
+	target_link_libraries(neroshop ${curl_src})
+    target_link_libraries(daemon ${curl_src} ${OPENSSL_LIBRARIES} ${dokun_ui_src}) # curl requires both openssl(used in monero) and zlib(used in dokun-ui)
 endif()
 # cmake -G"Unix Makefiles"
 # to set the current compiler manually, use the following commands:

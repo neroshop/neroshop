@@ -1,5 +1,5 @@
-#ifndef _UTILITY
-#define _UTILITY
+#ifndef UTILITY_HPP_DOKUN
+#define UTILITY_HPP_DOKUN
 
 #include "platform.hpp"
 #include "types.hpp"
@@ -38,7 +38,7 @@ namespace dokun // utility functions
 {
 	inline void sleep(unsigned int seconds)
 	{
-        #ifdef __windows__
+        #ifdef DOKUN_WIN32
 		    Sleep(seconds * 1000);
 		#endif
 		#ifdef __gnu_linux__
@@ -48,7 +48,7 @@ namespace dokun // utility functions
 	/////////
 	inline double memory() // returns memory usage
 	{
-		#ifdef __windows__
+		#ifdef DOKUN_WIN32
 		#endif
 		return (0);
 	}
@@ -71,7 +71,7 @@ namespace dokun // utility functions
 	/////////
 	inline void error(std::string what) // generates an error (basic printing to console)
 	{
-		#ifdef __windows__
+		#ifdef DOKUN_WIN32
 		    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 			SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_INTENSITY);
 		#endif
@@ -79,7 +79,7 @@ namespace dokun // utility functions
 		    std::cerr << "\033[1;31m"<< what << "\033[0m\n";
 		#endif
 		std::cerr << "(ERROR): " << what << std::endl;
-		#ifdef __windows__
+		#ifdef DOKUN_WIN32
 		    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
 		#endif
 	}
@@ -119,21 +119,21 @@ namespace dokun // utility functions
     /////////
 	inline void browse(std::string site_name) // opens browser and goes to specified link
 	{
-		#ifdef __windows__
+		#ifdef DOKUN_WIN32
 		    ShellExecute(nullptr, "open", site_name.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
 		#endif
 	}
 	/////////
 	inline void envset(const std::string& name, const std::string& value) // sets environmental path
 	{
-		#ifdef __windows__
+		#ifdef DOKUN_WIN32
 		    SetEnvironmentVariable(name.c_str(), value.c_str());
 		#endif
 	}
 	/////////
 	inline std::string platform()
 	{
-		#ifdef __windows__ 
+		#ifdef DOKUN_WIN32 
 		    return ("Windows");
 	    #endif
 	    #ifdef __gnu_linux__

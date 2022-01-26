@@ -25,7 +25,7 @@ int Mouse::is_moved(lua_State *L)
 ///////////// https://unix.stackexchange.com/questions/25601/how-do-mouse-events-work-in-linux : /dev/input/mice (this device collects events from all connected mice)
 bool Mouse::is_scrolled()
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 #endif
 #ifdef __gnu_linux__
 
@@ -130,8 +130,7 @@ bool Mouse::is_over(double x, double y, int width, int height) // hover over a 2
 {
     dokun::Window * window = dokun::Window::get_active();
 	if(!window) return false;
-	if((get_position(*window).x < x  + width) && (x < get_position(*window).x) && (get_position(*window).y < y + height) && (y < get_position(*window).y)) return true; 
-    return false;
+	return((get_position(*window).x < x  + width) && (x < get_position(*window).x) && (get_position(*window).y < y + height) && (y < get_position(*window).y) == true);
 }
 /////////////
 bool Mouse::is_over(const Vector2& pos, const Vector2& size)
@@ -178,7 +177,7 @@ int Mouse::is_over(lua_State *L)
 /////////////
 void Mouse::hide()
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 	ShowCursor(false);
 #endif
 #ifdef __gnu_linux__
@@ -210,7 +209,7 @@ int Mouse::hide(lua_State *L)
 /////////////
 void Mouse::show()
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 	ShowCursor(true);
 #endif
 #ifdef __gnu_linux__
@@ -230,7 +229,7 @@ void Mouse::restore() // restore cursor
 	dokun::Window * window = dokun::Window::get_active();
 	if(window)
 	{ 
-    #ifdef __windows__
+    #ifdef DOKUN_WIN32
 	    HCURSOR arrow = LoadCursor(nullptr, IDC_ARROW);
 		//SetCursor(HCURSOR hCursor);//SetClassLong(window->get_handle(), GCL_HCURSOR, (DWORD)arrow);
     #endif	
@@ -252,7 +251,7 @@ void Mouse::set_position(int x, int y) // set global position(on desktop)
 {
     Mouse::x = x;
 	Mouse::y = y;
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 	SetCursorPos(Mouse::x, Mouse::y);
 #endif
 
@@ -276,7 +275,7 @@ void Mouse::set_position(int x, int y, const dokun::Window& window) // set local
 {
     Mouse::x = x;
 	Mouse::y = y;
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 	POINT position;
 	position.x = Mouse::x;
 	position.y = Mouse::y;
@@ -320,7 +319,7 @@ void Mouse::set_cursor(unsigned long cursor)
 	dokun::Window * window = dokun::Window::get_active();
 	if(window != nullptr)
 	{
-	#ifdef __windows__
+	#ifdef DOKUN_WIN32
 		HCURSOR cursor0 = LoadCursor(nullptr, reinterpret_cast<LPCSTR>(cursor));
 		//SetCursor(HCURSOR hCursor);//SetClassLong(window->get_handle(), GCL_HCURSOR, (DWORD)cursor0); // DWORD = unsigned long
     #endif		
@@ -356,7 +355,7 @@ void Mouse::set_cursor(const Image& cursor) // doesnt work
 }
 void Mouse::set_cursor(const std::string& cursor_file, int width, int height)
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
     if(width <= 0) 
 	{
 	HCURSOR cursor = LoadCursorFromFile(cursor_file.c_str());  // uses standard cursor size
@@ -405,7 +404,7 @@ Vector2 Mouse::get_position() // get global position(on desktop)
 {
     int x = 0;
 	int y = 0;
-#ifdef __windows__
+#ifdef DOKUN_WIN32
     POINT position;
     GetCursorPos(& position);
 	x = position.x;
@@ -424,7 +423,7 @@ Vector2 Mouse::get_position() // get global position(on desktop)
                 &window_returned, &root_x, &root_y, &win_x, &win_y,
                 &mask_return) != 1)
 	{
-		Logger("Mouse not found");
+		dokun::Logger("Mouse not found");
 		return -1;
 	}
 	x = root_x;
@@ -440,7 +439,7 @@ Vector2 Mouse::get_position(const dokun::Window& window) // get local position (
 {
     int x = 0;
     int y = 0;
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 	POINT position;
 	GetCursorPos(& position);
 	ScreenToClient(window.get_handle(), & position);
@@ -457,7 +456,7 @@ Vector2 Mouse::get_position(const dokun::Window& window) // get local position (
                 &window_returned, &root_x, &root_y, &win_x, &win_y,
                 &mask_return) != 1)
 	{
-		Logger("Mouse not found");
+		dokun::Logger("Mouse not found");
 		return -1;
 	}
     x = win_x;
@@ -492,7 +491,7 @@ Vector3 Mouse::get_normalized_position(const dokun::Window& window)
 	int height = 0;
 	double mouse_x = get_position(window).x;
 	double mouse_y = get_position(window).y;
-#ifdef __windows__
+#ifdef DOKUN_WIN32
     HWND handle = ::GetActiveWindow();
 	if(IsWindow(handle) && (handle == GetForegroundWindow()))
 	{
@@ -518,7 +517,7 @@ Vector3 Mouse::get_normalized_position(const dokun::Window& window)
 /////////////
 int Mouse::get_delta() // returns -120 or lower if scrolling down, 120 or higher if scrolling up
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 #ifndef DOKUN_SDL2
 #ifndef DOKUN_GLFW
 	//return dokun::Window::
@@ -539,7 +538,7 @@ Vector3 Mouse::get_color(int x, int y) // new function!
 {
 	if(dokun::Window::get_active())
 	{
-	#ifdef __windows__
+	#ifdef DOKUN_WIN32
 	    COLORREF color = GetPixel(GetDC(dokun::Window::get_active()->get_handle()), (int)Mouse::get_position(*dokun::Window::get_active()).x, (int)Mouse::get_position(*dokun::Window::get_active()).y);
 		return Vector3(GetRValue(color), GetGValue(color), GetBValue(color));
 	#endif
@@ -561,7 +560,7 @@ int Mouse::get_color(lua_State *L)
 /////////////
 Vector2 Mouse::get_size() //const
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
     return Vector2(SM_CXCURSOR, SM_CYCURSOR);
 #endif
 #ifdef __gnu_linux__
@@ -575,7 +574,7 @@ int Mouse::get_size(lua_State * L)
     return 2;
 }
 /////////////
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 #ifndef DOKUN_SDL2
 #ifndef DOKUN_GLFW
 #endif

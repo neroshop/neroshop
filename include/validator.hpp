@@ -33,11 +33,11 @@ public:
     static bool validate_username(const std::string& username); // for registration
     static bool validate_password(const std::string& password); // for registration
     static bool validate_email(const std::string& email);
-    static bool validate_bcrypt_hash(const std::string& password, const std::string& hash); // for login
+    static bool validate_bcrypt_hash(const std::string& password, const std::string& hash); // for login // bycrypt only takes 55-72 character strings // https://security.stackexchange.com/questions/6623/pre-hash-password-before-applying-bcrypt-to-avoid-restricting-password-length
     static bool generate_bcrypt_salt(unsigned int workfactor, char salt[BCRYPT_HASHSIZE]);
     static bool generate_bcrypt_hash(const std::string& password, const char salt[BCRYPT_HASHSIZE], char hash[BCRYPT_HASHSIZE]);
     static bool validate_sha256_hash(const std::string& email, const std::string& hash); // emails do not need to be salted since they are not required for logins
-    static bool generate_sha256_hash_legacy(const std::string& email, std::string& hashed);
+    static bool generate_sha256_hash(const std::string& email, std::string& hashed); // legacy
     static bool generate_sha256_hash_evp(const std::string& email, std::string& hashed);
 private:
     //static Data * db;
@@ -45,6 +45,9 @@ private:
 }
 #endif
 /*
+testing speeds:
+openssl speed sha256 sha512
+
 usernames:
 // 2-30 characters in length
 // cannot contain any spaces
@@ -62,7 +65,7 @@ passwords:
 examples:
 	std::string email = "layter@pm.me";
 	std::string hash0;
-	Validator::generate_sha256_hash_legacy("layter@pm.me", hash0);
+	Validator::generate_sha256_hash("layter@pm.me", hash0);
 	std::cout << "sha256_hash (legacy): " << hash0 << std::endl;
 	//=> b4055e9e571ea8acf49e937c102901f3f29f50046c9157c4b1849b05bc050bd8
 	std::string hash1;

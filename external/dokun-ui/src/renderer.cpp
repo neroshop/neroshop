@@ -9,7 +9,7 @@ Renderer::~Renderer()
 ////////////
 Renderer * Renderer::render_ptr (new Renderer());
 ////////////
-Vector4 Renderer::color(32, 32, 32, 255);
+Vector4 Renderer::color(32, 32, 32, 255.0);
 ////////////
 unsigned int Renderer::window_width (DOKUN_DEFAULT_WIDTH );
 unsigned int Renderer::window_height(DOKUN_DEFAULT_HEIGHT);	
@@ -84,7 +84,7 @@ void Renderer::generate_vertex_array(double x, double y, unsigned int width, uns
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sprite_element_buffer_obj);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(element) * sizeof(GLuint), element, GL_STATIC_DRAW);
 	glBindVertexArray(0); // unbind	
-	Logger("Sprite vertex array and buffer objects generated");
+	dokun::Logger("Sprite vertex array and buffer objects generated");
 	}
 #endif	
 }
@@ -97,7 +97,7 @@ void Renderer::update_vertex_array(const std::vector<float>& vertex_array)
     glBindBuffer(GL_ARRAY_BUFFER, sprite_vertex_buffer_obj);
 	    glBufferSubData(GL_ARRAY_BUFFER, 0, vertex_array.size() * sizeof(GLfloat), vertex_array.data());
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	//glNamedBufferSubData(sprite_vertex_buffer_obj, 0, vertex_array.size() * sizeof(GLfloat), vertex_array.data()); //Logger("Sprite vertex data updated");// updates buffer_obj without having to bind it	
+	//glNamedBufferSubData(sprite_vertex_buffer_obj, 0, vertex_array.size() * sizeof(GLfloat), vertex_array.data()); //dokun::Logger("Sprite vertex data updated");// updates buffer_obj without having to bind it	
 #endif	
 }
 ////////////
@@ -106,11 +106,11 @@ void Renderer::destroy_vertex_array (void) // do not destroy vertex array until 
 #ifdef DOKUN_OPENGL	
 if(glIsVertexArray(sprite_vertex_array_obj)) {// if vao has been generated
 	// delete the buffers
-	glDeleteBuffers(1, &sprite_vertex_buffer_obj  );	Logger("Sprite vertex_buffer_object deleted");
-	glDeleteBuffers(1, &sprite_texcoord_buffer_obj);	Logger("Sprite texture_coordinate_buffer_object deleted");	
-	glDeleteBuffers(1, &sprite_element_buffer_obj );	Logger("Sprite element_buffer_object deleted");
+	glDeleteBuffers(1, &sprite_vertex_buffer_obj  );	dokun::Logger("Sprite vertex_buffer_object deleted");
+	glDeleteBuffers(1, &sprite_texcoord_buffer_obj);	dokun::Logger("Sprite texture_coordinate_buffer_object deleted");	
+	glDeleteBuffers(1, &sprite_element_buffer_obj );	dokun::Logger("Sprite element_buffer_object deleted");
     // delete the arrays
-	glDeleteVertexArrays(1, &sprite_vertex_array_obj);	Logger("Sprite vertex_array_object deleted");
+	glDeleteVertexArrays(1, &sprite_vertex_array_obj);	dokun::Logger("Sprite vertex_array_object deleted");
 }
 #endif	
 }
@@ -121,14 +121,14 @@ void Renderer::context_check(void)
 #ifdef DOKUN_OPENGL	// OpenGL is defined
     if(get_current_API() != "OpenGL") // but you don't set it as the current API, perhaps Vulkan is the current API?
 	{
-		Logger("Context check failed : \
+		dokun::Logger("Context check failed : \
 		    OpenGL not set as current API");
 		return;
 	}
 #ifdef __windows__
     if(!wglGetCurrentContext())
 	{
-		Logger("Context check failed : \
+		dokun::Logger("Context check failed : \
 		    No OpenGL Context was found.");
 		return;
 	}
@@ -137,7 +137,7 @@ void Renderer::context_check(void)
 #ifdef DOKUN_X11
     if(!glXGetCurrentContext())
 	{
-		Logger("Context check failed : \
+		dokun::Logger("Context check failed : \
 		    No OpenGL Context was found.");
 		return;
 	}	
@@ -203,7 +203,7 @@ void Renderer::device_check (void)
 ////////////
 ////////////
 ////////////
-void Renderer::draw_image(const unsigned int buffer, int width, int height, int depth, double x, double y, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha, int channel) // good !
+void Renderer::draw_image(const unsigned int buffer, int width, int height, int depth, double x, double y, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, int channel) // good !
 {
 #ifdef DOKUN_OPENGL	// OpenGL is defined
 	context_check();
@@ -318,7 +318,7 @@ void Renderer::draw_image(const unsigned int buffer, int width, int height, int 
 	glUniformMatrix4fv(glGetUniformLocation(shader.get_program(), "proj") , 1, GL_FALSE, glm::value_ptr(proj) );
 	glUniformMatrix4fv(glGetUniformLocation(shader.get_program(), "view") , 1, GL_FALSE, glm::value_ptr(view) );
 #endif	
-	shader.set_float("color", (red / 255), (green / 255), (blue / 255), (alpha / 255));	
+	shader.set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);	
 	shader.set_integer("has_texture", (buffer != 0));	
 	// Draw
 	glActiveTexture(GL_TEXTURE0 + 0);
@@ -394,7 +394,7 @@ void Renderer::draw_camera(double eye_x, double eye_y, double eye_z, double cent
 /////////////////////////////
 /////////////////////////////
 
-void Renderer::draw_box(int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha,
+void Renderer::draw_box(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,
     double radius, bool iconify,
     // title bar
 	bool title_bar,
@@ -484,7 +484,7 @@ void Renderer::draw_box(int x, int y, int width, int height, double angle, doubl
             "float aspect = resolution.x / resolution.y;"
             "vec2 uv = (2.0 * st - 1.0) * vec2(aspect, 1.0);"
             "vec2 half_res = 0.5 * resolution;"
-            "vec2 half_size = 0.5 * size;" // half of the box_size
+            "vec2 half_size = 0.5 * size;" // half of the box_size or center of box
 			"\n"
 			"\n"
 			//"if ( (length(Texcoord * size - vec2(0)) < radius)  || (length(Texcoord * size - vec2(0, size.y)) < radius) || (length(Texcoord * size - vec2(size.x, 0)) < radius) || (length(Texcoord * size - size) < radius) )"
@@ -493,7 +493,7 @@ void Renderer::draw_box(int x, int y, int width, int height, double angle, doubl
 			"\n" // size_x = (size.x / 2) * (size.x / size.y)    or  size_y = (size.y / 2) * (size.y / size.x)
 		    "float b = 1.0 - round_corner(Texcoord * size - half_res, half_res, abs(radius));  //(Texcoord - half_res, half_res, radius);\n" // position, size, radius // abs() turns a negative number into a positive number
 		    "float round = smoothstep(0.0, 1.0, b);          \n" //"vec4 pixel = texture2D(texture, Texcoord);" // if texture is present
-		    "out_color = vec4(color.xyz, color.w * round);   \n" // 1.0, 1.0, 1.0, 1.0 is default frag_color
+		    "out_color = vec4(color.x, color.y, color.z, color.w * round);//vec4(color.xyz, color.w);   \n" // 1.0, 1.0, 1.0, 1.0 is default frag_color
 		    "\n" // gradient
             "if(gradient.enabled == true)\n" 
 			"{"
@@ -514,10 +514,10 @@ void Renderer::draw_box(int x, int y, int width, int height, double angle, doubl
 	//--------------------------
 	// tex_coord_array
     GLfloat tex_coords[] = { // texture coordinates range from (0,0) to (1, 1)
-		0.0, 0.0,
-        1.0, 0.0,
-        1.0, 1.0,
-        0.0, 1.0, 
+		0.0,                0.0, // top-left (y = 0 = top)
+        1.0,                0.0, // top-right (y = 0 = top)
+        1.0,                1.0, // bottom-right (y = 1 = bot)
+        0.0,                1.0, // bottom-left (y = 1 = bot)
     };
 	// element_array
 	GLuint indices[] = {0, 1, 3,  1, 2, 3,}; 
@@ -563,7 +563,7 @@ void Renderer::draw_box(int x, int y, int width, int height, double angle, doubl
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
 	// State
-	glDisable(GL_DEPTH_TEST);                         // Disable 3d for User interdata
+	glDisable(GL_DEPTH_TEST);                         // Disable 3d for User interface
     glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA); // Enable transparent background
 	glEnable(GL_BLEND);
 	// Shader       - This is the part where the shader is going to start being used (for the purpose of keeping the code organized and in place) ******
@@ -595,10 +595,10 @@ void Renderer::draw_box(int x, int y, int width, int height, double angle, doubl
 	//glEnable(GL_POLYGON_OFFSET_FILL);  // for removing hidden line
 	// Draw title_bar
 	// title_bar : gradient
-	shader.set_float("gradient.color0", (title_bar_color.x/255), (title_bar_color.y/255), (title_bar_color.z/255), (title_bar_color.w/255)); // color0 will be a tint  (top)
-	shader.set_float("gradient.color1", (title_bar_color.x/255), (title_bar_color.y/255), (title_bar_color.z/255), (title_bar_color.w/255)); // color1 will be a shade (bottom)	
+	shader.set_float("gradient.color0", (title_bar_color.x/255.0), (title_bar_color.y/255.0), (title_bar_color.z/255.0), title_bar_color.w); // color0 will be a tint  (top)
+	shader.set_float("gradient.color1", (title_bar_color.x/255.0), (title_bar_color.y/255.0), (title_bar_color.z/255.0), title_bar_color.w); // color1 will be a shade (bottom)	
 	// title_bar : color
-	shader.set_float("color", (title_bar_color.x / 255), (title_bar_color.y / 255), (title_bar_color.z / 255), (title_bar_color.w / 255));	
+	shader.set_float("color", (title_bar_color.x / 255.0), (title_bar_color.y / 255.0), (title_bar_color.z / 255.0), title_bar_color.w);	
 	glBindVertexArray(title_bar_vertex_array_obj); // (vao start 2)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
@@ -607,13 +607,13 @@ void Renderer::draw_box(int x, int y, int width, int height, double angle, doubl
 	// What is drawn last should appear top, according to openGL, so outline will be drawn last
 	// Draw outline
 	if(outline) {
-	shader.set_float("color", (outline_color.x / 255), (outline_color.y / 255), (outline_color.z / 255), (outline_color.w / 255));
+	shader.set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
 	glLineWidth(outline_width);
 	glBindVertexArray(title_bar_vertex_array_obj); // use same vao data as title_bar but this time in a line loop
 	    glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 	}	
-	}
+	}      	
 	//--------------------------
 	// CLOSE_BUTTON
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -660,14 +660,14 @@ void Renderer::draw_box(int x, int y, int width, int height, double angle, doubl
 	if(title_bar) {
 	if(title_bar_button_close) {
 	// close_button : gradient
-	shader.set_float("gradient.color0", (title_bar_button_close_color.x/255), (title_bar_button_close_color.y/255), (title_bar_button_close_color.z/255), (title_bar_button_close_color.w/255)); // color0 will be a tint  (top)
-	shader.set_float("gradient.color1", (title_bar_button_close_color.x/255), (title_bar_button_close_color.y/255), (title_bar_button_close_color.z/255), (title_bar_button_close_color.w/255)); // color1 will be a shade (bottom)
+	shader.set_float("gradient.color0", (title_bar_button_close_color.x/255.0), (title_bar_button_close_color.y/255.0), (title_bar_button_close_color.z/255.0), title_bar_button_close_color.w); // color0 will be a tint  (top)
+	shader.set_float("gradient.color1", (title_bar_button_close_color.x/255.0), (title_bar_button_close_color.y/255.0), (title_bar_button_close_color.z/255.0), title_bar_button_close_color.w); // color1 will be a shade (bottom)
 	// close_button : color	- close_button has its own unique color while the other buttons copy the box's color because the close_button changes to red, on hover
-	shader.set_float("color", (title_bar_button_close_color.x / 255), (title_bar_button_close_color.y / 255), (title_bar_button_close_color.z / 255), (title_bar_button_close_color.w / 255));
+	shader.set_float("color", (title_bar_button_close_color.x / 255.0), (title_bar_button_close_color.y / 255.0), (title_bar_button_close_color.z / 255.0), title_bar_button_close_color.w);
     glBindVertexArray(close_button_vertex_array_obj);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
-	shader.set_float("color", (red / 255), (green / 255), (blue / 255), (alpha / 255)); // restore original color (close_button can change its color, which may also affect the box's outline color) (happens when close_button is the ONLY button on a title_bar)
+	shader.set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha); // restore original color (close_button can change its color, which may also affect the box's outline color) (happens when close_button is the ONLY button on a title_bar)
 	}
 	}
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -715,10 +715,10 @@ void Renderer::draw_box(int x, int y, int width, int height, double angle, doubl
 	if(title_bar) {
 	if(title_bar_button_maximize) {
     // maximize_button : gradient
-	shader.set_float("gradient.color0", (red/255), (green/255), (blue/255), (alpha/255)); // color0 will be a tint  (top)
-	shader.set_float("gradient.color1", (gradient_color.x/255), (gradient_color.y/255), (gradient_color.z/255), (gradient_color.w/255)); // color1 will be a shade (bottom)
+	shader.set_float("gradient.color0", (red/255.0), (green/255.0), (blue/255.0), (alpha/255.0)); // color0 will be a tint  (top)
+	shader.set_float("gradient.color1", (gradient_color.x/255.0), (gradient_color.y/255.0), (gradient_color.z/255.0), gradient_color.w); // color1 will be a shade (bottom)
 	// maximize_button : color
-	shader.set_float("color", (red / 255), (green / 255), (blue / 255), (alpha / 255));	
+	shader.set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);	
     glBindVertexArray(maximize_button_vertex_array_obj);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
@@ -768,10 +768,10 @@ void Renderer::draw_box(int x, int y, int width, int height, double angle, doubl
 	if(title_bar) {
 	if(title_bar_button_iconify) {	
     // iconify_button : gradient (will copy gradient color from maximize_button)
-	//shader.set_float("gradient.color0", (red/255), (green/255), (blue/255), (alpha/255)); // color0 will be a tint  (top)
-	//shader.set_float("gradient.color1", (gradient_color.x/255), (gradient_color.y/255), (gradient_color.z/255), (gradient_color.w/255)); // color1 will be a shade (bottom)	
+	//shader.set_float("gradient.color0", (red/255.0), (green/255.0), (blue/255.0), (alpha/255.0)); // color0 will be a tint  (top)
+	//shader.set_float("gradient.color1", (gradient_color.x/255.0), (gradient_color.y/255.0), (gradient_color.z/255.0), gradient_color.w); // color1 will be a shade (bottom)	
 	// iconify_button : color
-	shader.set_float("color", (red / 255), (green / 255), (blue / 255), alpha/*(alpha / 255)*/);	
+	shader.set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha/*(alpha / 255.0)*/);	
     glBindVertexArray(iconify_button_vertex_array_obj);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
@@ -797,6 +797,11 @@ void Renderer::draw_box(int x, int y, int width, int height, double angle, doubl
         glGenBuffers(1, &box_vertex_buffer_obj);
         glBindBuffer(GL_ARRAY_BUFFER, box_vertex_buffer_obj);
         GLfloat vertices[] = {
+		    //static_cast<GLfloat>(x + title_bar_x)                                          , static_cast<GLfloat>(y + title_bar_y),
+            //static_cast<GLfloat>(x + title_bar_x) + static_cast<GLfloat>(title_bar_width), static_cast<GLfloat>(y + title_bar_y),
+            //static_cast<GLfloat>(x + title_bar_x) + static_cast<GLfloat>(title_bar_width), static_cast<GLfloat>(y + title_bar_y) + static_cast<GLfloat>(title_bar_height),
+            //static_cast<GLfloat>(x + title_bar_x)                                          , static_cast<GLfloat>(y + title_bar_y) + static_cast<GLfloat>(title_bar_height),          
+        
 		    static_cast<GLfloat>(x)                                , static_cast<GLfloat>(y),
             static_cast<GLfloat>(x) + static_cast<GLfloat>(width), static_cast<GLfloat>(y),
             static_cast<GLfloat>(x) + static_cast<GLfloat>(width), static_cast<GLfloat>(y) + static_cast<GLfloat>(height),
@@ -826,10 +831,10 @@ void Renderer::draw_box(int x, int y, int width, int height, double angle, doubl
 	{
 	// restore gradient color (so outline does not copy gradient of close_button, in the case of close_button being the only button in the title_bar)
 	// outline, box : gradient
-	shader.set_float("gradient.color0", (red/255), (green/255), (blue/255), (alpha/255)); // color0 will be a tint  (top)
-	shader.set_float("gradient.color1", (gradient_color.x/255), (gradient_color.y/255), (gradient_color.z/255), (gradient_color.w/255)); // color1 will be a shade (bottom)
+	shader.set_float("gradient.color0", (red/255.0), (green/255.0), (blue/255.0), (alpha/255.0)); // color0 will be a tint  (top)
+	shader.set_float("gradient.color1", (gradient_color.x/255.0), (gradient_color.y/255.0), (gradient_color.z/255.0), gradient_color.w); // color1 will be a shade (bottom)
 	// outline : color
-    shader.set_float("color", (outline_color.x / 255), (outline_color.y / 255), (outline_color.z / 255), (outline_color.w / 255));//glEnable(GL_LINE_SMOOTH);
+    shader.set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);//glEnable(GL_LINE_SMOOTH);
 	glLineWidth(outline_width); // outline_width
 	glBindVertexArray(box_vertex_array_obj); // use same vao data as box but this time in a line loop
         glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
@@ -837,9 +842,11 @@ void Renderer::draw_box(int x, int y, int width, int height, double angle, doubl
 	}
 	// Draw box (last: on top of outline so diagonal lines do not show up)
 	// box : color
-	shader.set_float("color", static_cast<float>(red) / 255, static_cast<float>(green) / 255, static_cast<float>(blue) / 255, static_cast<float>(alpha) / 255);
+	shader.set_float("color", red / 255.0, green / 255.0, blue / 255.0, alpha);
     glBindVertexArray(box_vertex_array_obj); // (vao start 2)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        //shader.set_float("color", (title_bar_color.x / 255.0), (title_bar_color.y / 255.0), (title_bar_color.z / 255.0), title_bar_color.w);	
+        //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)2);
 	glBindVertexArray(0);                // (vao end 2  )
 	//glDisable(GL_POLYGON_OFFSET_FILL); // for removing hidden line
 	//glDisable(GL_DEPTH_TEST); // for removing hidden line
@@ -888,13 +895,13 @@ void Renderer::draw_box(int x, int y, int width, int height, double angle, doubl
 }
 ////////////////////////////
 ////////////
-void Renderer::draw_text (const std::string& text, double x, double y, int width, int height, double angle, double scale_x, double scale_y, const FONT& font, double red, double green, double blue, double alpha)
+void Renderer::draw_text (const std::string& text, double x, double y, int width, int height, double angle, double scale_x, double scale_y, const dokun::Font& font, unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {
 #ifdef DOKUN_OPENGL	
     context_check();
 	if(font.get_face() == nullptr) // check font
 	{
-		Logger("Font contains no data");
+		dokun::Logger("Font contains no data");
 		return;
 	}	
     const char * vertex_source[] =
@@ -1013,15 +1020,15 @@ void Renderer::draw_text (const std::string& text, double x, double y, int width
 	if(shader.get_uniform("view") != -1) glUniformMatrix4fv(glGetUniformLocation(shader.get_program(), "view" ),  1, false, glm::value_ptr(view) );
 #endif
 	// Draw text
-	glUniform3f(glGetUniformLocation(shader.get_program(), "color"), (red / 255), (green / 255), (blue / 255)); // alpha
+	glUniform3f(glGetUniformLocation(shader.get_program(), "color"), (red / 255.0), (green / 255.0), (blue / 255.0)); // alpha
 	glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(vertex_array_obj);
     for (std::string::const_iterator c = text.begin(); c != text.end(); c++) // scan through all characters in string  // Iterate through all characters
 	    {
-		    FONT::Character character = const_cast<FONT&>(font).character_array[*c];
+		    dokun::Font::Character character = const_cast<dokun::Font&>(font).character_array[*c];
             // how high or low character is
             GLfloat xpos = x + character.bearing_x * scale_x;
-            GLfloat ypos = y + (/*character*/const_cast<FONT&>(font).character_array['H'].bearing_y - character.bearing_y) * scale_y;
+            GLfloat ypos = y + (/*character*/const_cast<dokun::Font&>(font).character_array['H'].bearing_y - character.bearing_y) * scale_y;
             GLfloat glyph_width  = character.width  * scale_x;
             GLfloat glyph_height = character.height * scale_y;
             // Update vertex_buffer_obj for each character
@@ -1050,7 +1057,7 @@ void Renderer::draw_text (const std::string& text, double x, double y, int width
     glBindTexture(GL_TEXTURE_2D, 0);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 4); // restore original pixel_store
 	// Draw background ------------ NEW!!
-	shader.set_float("color", (0.0f / 255), (51.0f / 255), (102.0f / 255)); // alpha
+	shader.set_float("color", (0.0f / 255.0), (51.0f / 255.0), (102.0f / 255.0)); // alpha
 	glBindVertexArray(background_vertex_array_obj);
 	    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);    
@@ -1074,15 +1081,15 @@ void Renderer::draw_text (const std::string& text, double x, double y, int width
 } 
 ////////////////////////////
 // new version of draw_text (2019-07-29)
-void Renderer::draw_text2 (const std::string& text, double x, double y, int width, int height, double angle, double scale_x, double scale_y, const FONT& font, double red, double green, double blue, double alpha)
+void Renderer::draw_text2 (const std::string& text, double x, double y, int width, int height, double angle, double scale_x, double scale_y, const dokun::Font& font, unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {
-    FONT * font_ptr = &const_cast<FONT&>(font); // std::cout << const_cast<FONT&>(font).get_bitmap(*c)->get_size() << "; character: " << *c << " = size of bitmap" << std::endl; // prints the characters in the text (e.g 'S')
+    dokun::Font * font_ptr = &const_cast<dokun::Font&>(font); // std::cout << const_cast<dokun::Font&>(font).get_bitmap(*c)->get_size() << "; character: " << *c << " = size of bitmap" << std::endl; // prints the characters in the text (e.g 'S')
     /////////////////////////////////////////
 #ifdef DOKUN_OPENGL	
     context_check();
 	if(font.get_face() == nullptr) // check font
 	{
-		Logger("Font contains no data");
+		dokun::Logger("Font contains no data");
 		return;
 	}	
     const char * vertex_source[] =
@@ -1203,7 +1210,7 @@ void Renderer::draw_text2 (const std::string& text, double x, double y, int widt
 #endif	    
     /////////////////////////////////////////
 	// Draw text
-	glUniform3f(glGetUniformLocation(shader.get_program(), "color"), (red / 255), (green / 255), (blue / 255)); // alpha
+	glUniform3f(glGetUniformLocation(shader.get_program(), "color"), (red / 255.0), (green / 255.0), (blue / 255.0)); // alpha
 	glUniform1f(glGetUniformLocation(shader.get_program(), "alpha"), alpha);
 	glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(vertex_array_obj); // font_ptr->get_bitmap(*c)->get_name()
@@ -1243,7 +1250,7 @@ void Renderer::draw_text2 (const std::string& text, double x, double y, int widt
     glPixelStorei(GL_UNPACK_ALIGNMENT, 4); // restore original pixel_store
     /////////////////////////////////////////
     /*// Draw background ------------ NEW!!
-	shader.set_float("color", (0.0f / 255), (51.0f / 255), (102.0f / 255)); // alpha
+	shader.set_float("color", (0.0f / 255.0), (51.0f / 255.0), (102.0f / 255.0)); // alpha
 	glBindVertexArray(background_vertex_array_obj);
 	    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);*/
@@ -1267,13 +1274,13 @@ void Renderer::draw_text2 (const std::string& text, double x, double y, int widt
 #endif    
 }
 ////////////////////////////
-void Renderer::draw_glyph (unsigned char glyph, double x, double y, double angle, double scale_x, double scale_y, const FONT& font, double red, double green, double blue, double alpha)
+void Renderer::draw_glyph (unsigned char glyph, double x, double y, double angle, double scale_x, double scale_y, const dokun::Font& font, unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {
 #ifdef DOKUN_OPENGL	
     context_check();
 	if(font.get_face() == nullptr) // check font
 	{
-		Logger("Font contains no data");
+		dokun::Logger("Font contains no data");
 		return;
 	}	
     const char * vertex_source[] =
@@ -1337,8 +1344,8 @@ void Renderer::draw_glyph (unsigned char glyph, double x, double y, double angle
 #ifdef use_glm	
 	// uniform
 	glm::mat4 model = glm::mat4(1.0);; 
-	int width  = const_cast<FONT&>(font).character_array[glyph].width;
-	int height = const_cast<FONT&>(font).character_array[glyph].height;
+	int width  = const_cast<dokun::Font&>(font).character_array[glyph].width;
+	int height = const_cast<dokun::Font&>(font).character_array[glyph].height;
  	model = glm::translate(model, glm::vec3(x + width/2, y + height/2, 0));//model = glm::translate(model, glm::vec3(x, y, -1));
 	model = glm::rotate(model, static_cast<float>(angle * 0.0174533), glm::vec3(0, 0, 1));
 	model = glm::scale(model, glm::vec3(static_cast<float>(scale_x), static_cast<float>(scale_y), 1));
@@ -1351,16 +1358,16 @@ void Renderer::draw_glyph (unsigned char glyph, double x, double y, double angle
 	glUniformMatrix4fv(glGetUniformLocation(shader.get_program(), "proj" ),  1, false, glm::value_ptr(proj) );
 	if(shader.get_uniform("view") != -1) glUniformMatrix4fv(glGetUniformLocation(shader.get_program(), "view" ),  1, false, glm::value_ptr(view) );
 #endif	
-	glUniform3f(glGetUniformLocation(shader.get_program(), "color"), (red / 255), (green / 255), (blue / 255)); // alpha
+	glUniform3f(glGetUniformLocation(shader.get_program(), "color"), (red / 255.0), (green / 255.0), (blue / 255.0)); // alpha
 	glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(vertex_array_obj);
     // character (glpyh)
-	FONT::Character character = const_cast<FONT&>(font).character_array[glyph];
+	dokun::Font::Character character = const_cast<dokun::Font&>(font).character_array[glyph];
             // how high or low character is
-            GLfloat xpos = x +  const_cast<FONT&>(font).character_array[glyph].bearing_x * scale_x;
-            GLfloat ypos = y - (const_cast<FONT&>(font).character_array[glyph].height - const_cast<FONT&>(font).character_array[glyph].bearing_y) * scale_y;
-            GLfloat w = const_cast<FONT&>(font).get_width(glyph);//const_cast<FONT&>(font).character_array[glyph].width  * scale_x;
-            GLfloat h = const_cast<FONT&>(font).get_height(glyph);//const_cast<FONT&>(font).character_array[glyph].height * scale_y;
+            GLfloat xpos = x +  const_cast<dokun::Font&>(font).character_array[glyph].bearing_x * scale_x;
+            GLfloat ypos = y - (const_cast<dokun::Font&>(font).character_array[glyph].height - const_cast<dokun::Font&>(font).character_array[glyph].bearing_y) * scale_y;
+            GLfloat w = const_cast<dokun::Font&>(font).get_width(glyph);//const_cast<dokun::Font&>(font).character_array[glyph].width  * scale_x;
+            GLfloat h = const_cast<dokun::Font&>(font).get_height(glyph);//const_cast<dokun::Font&>(font).character_array[glyph].height * scale_y;
             // Update vertex_buffer_obj for each character
             GLfloat vertices[6][4] = {
                 { xpos,     ypos + h,   0.0, 0.0 },            
@@ -1372,7 +1379,7 @@ void Renderer::draw_glyph (unsigned char glyph, double x, double y, double angle
                 { xpos + w, ypos + h,   1.0, 0.0 }           
             };
         // Update content
-		GLuint texture = const_cast<FONT&>(font).character_array[glyph].id;
+		GLuint texture = const_cast<dokun::Font&>(font).character_array[glyph].id;
         glBindTexture(GL_TEXTURE_2D, texture);
         glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_obj);
             glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices); 
@@ -1380,7 +1387,7 @@ void Renderer::draw_glyph (unsigned char glyph, double x, double y, double angle
         // Draw text
         glDrawArrays(GL_TRIANGLES, 0, 6);
         // Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-        x += (const_cast<FONT&>(font).character_array[glyph].advance_x >> 6) * scale_x; // Bitshift by 6 to get value in pixels (2^6 = 64)
+        x += (const_cast<dokun::Font&>(font).character_array[glyph].advance_x >> 6) * scale_x; // Bitshift by 6 to get value in pixels (2^6 = 64)
     
 	glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -1398,7 +1405,7 @@ void Renderer::draw_glyph (unsigned char glyph, double x, double y, double angle
 }
 ////////////////////////////
 ////////////
-void Renderer::draw_button(int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha, 
+void Renderer::draw_button(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, 
 	// outline
 	bool outline, 
 	double outline_width, 
@@ -1566,7 +1573,7 @@ void Renderer::draw_button(int x, int y, int width, int height, double angle, do
 	// Draw button_outline
 	if(outline)
 	{
-    shader.set_float("color", (outline_color.x / 255), (outline_color.y / 255), (outline_color.z / 255), (outline_color.w / 255));
+    shader.set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
 	//glEnable(GL_LINE_SMOOTH);
 	glLineWidth(outline_width); // outline_width
 	glBindVertexArray(button_vertex_array_obj); // use same vao data as box but this time in a line loop
@@ -1575,10 +1582,10 @@ void Renderer::draw_button(int x, int y, int width, int height, double angle, do
 	}
 	// Draw button
     // button : gradient
-	shader.set_float("gradient.color0", (red / 255), (green / 255), (blue / 255), (alpha / 255)); // color0 will be a tint  (top)
-	shader.set_float("gradient.color1", (gradient_color.x/255), (gradient_color.y/255), (gradient_color.z/255), (gradient_color.w/255)); // color1 will be a shade (bottom)
+	shader.set_float("gradient.color0", (red / 255.0), (green / 255.0), (blue / 255.0), alpha); // color0 will be a tint  (top)
+	shader.set_float("gradient.color1", (gradient_color.x/255.0), (gradient_color.y/255.0), (gradient_color.z/255.0), gradient_color.w); // color1 will be a shade (bottom)
 	// button : color
-	shader.set_float("color", (red / 255), (green / 255), (blue / 255), (alpha / 255));
+	shader.set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
     glBindVertexArray(button_vertex_array_obj); // (vao start 2)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);                // (vao end 2  )
@@ -1598,7 +1605,7 @@ void Renderer::draw_button(int x, int y, int width, int height, double angle, do
 #endif
 }
 ////////////
-void Renderer::draw_progressbar(int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha, 
+void Renderer::draw_progressbar(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, 
     double min_value, double max_value, double value, const Vector4& background_color,
 	// outline
 	bool outline, 
@@ -1723,8 +1730,8 @@ void Renderer::draw_progressbar(int x, int y, int width, int height, double angl
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices2)* sizeof(GLuint), indices2, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
 	// Draw border
-	int border_red = 128; int border_green = 128; int border_blue = 128; int border_alpha = 255;
-    shader.set_float("color", (border_red / 255), (border_green / 255), (border_blue / 255), (border_alpha / 255));
+	int border_red = 128; int border_green = 128; int border_blue = 128; int border_alpha = 1.0;
+    shader.set_float("color", (border_red / 255.0), (border_green / 255.0), (border_blue / 255.0), border_alpha);
     glBindVertexArray(border_vertex_array_obj); // (vao start 2)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);                // (vao end 2  )
@@ -1770,7 +1777,7 @@ void Renderer::draw_progressbar(int x, int y, int width, int height, double angl
     // Draw static_bar (background) outline
 	if(outline == true)
 	{
-    shader.set_float("color", (outline_color.x / 255), (outline_color.y / 255), (outline_color.z / 255), (outline_color.w / 255));
+    shader.set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
 	//glEnable(GL_LINE_SMOOTH);
 	glLineWidth(outline_width); // outline_width
 	glBindVertexArray(background_vertex_array_obj); // use same vao data as background but this time in a line loop
@@ -1778,7 +1785,7 @@ void Renderer::draw_progressbar(int x, int y, int width, int height, double angl
 	glBindVertexArray(0);		
 	}
 	// Draw static_bar (background)
-	shader.set_float("color", (background_color.x / 255), (background_color.y / 255), (background_color.z / 255), (background_color.w / 255));
+	shader.set_float("color", (background_color.x / 255.0), (background_color.y / 255.0), (background_color.z / 255.0), background_color.w);
     glBindVertexArray(background_vertex_array_obj);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
@@ -1823,7 +1830,7 @@ void Renderer::draw_progressbar(int x, int y, int width, int height, double angl
 	// Draw moving_bar(foreground) outline
 	if(outline == true)
 	{
-	shader.set_float("color", (outline_color.x / 255), (outline_color.y / 255), (outline_color.z / 255), (outline_color.w / 255));
+	shader.set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
 	//glEnable(GL_LINE_SMOOTH); // may slow down performance
 	glLineWidth(outline_width); // outline_width
 	glBindVertexArray(foreground_vertex_array_obj); // use same vao data as _ but this time in a line loop
@@ -1831,7 +1838,7 @@ void Renderer::draw_progressbar(int x, int y, int width, int height, double angl
 	glBindVertexArray(0);
     }
 	// Draw moving_bar (foreground)
-	shader.set_float("color", (red / 255), (green / 255), (blue / 255), (alpha / 255)); //  foreground_color
+	shader.set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha); //  foreground_color
     glBindVertexArray(foreground_vertex_array_obj);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
@@ -1862,12 +1869,12 @@ void Renderer::draw_progressbar(int x, int y, int width, int height, double angl
 #endif
 }
 ////////////
-void Renderer::draw_edit(const std::string& text, int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha,
+void Renderer::draw_edit(const std::string& text, int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,
 	bool multilined,
 	// cursor
 	bool cursor,
 	double cursor_x,
-	double cursor_y, int cursor_height
+	double cursor_y, int cursor_width, int cursor_height, const Vector4& cursor_color
 )
 {
 #ifdef DOKUN_OPENGL	// OpenGL is defined
@@ -1983,19 +1990,20 @@ void Renderer::draw_edit(const std::string& text, int x, int y, int width, int h
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
 	// Draw edit outline
-	/*shader.set_float("color", (outline_color.x / 255), (outline_color.y / 255), (outline_color.z / 255), (outline_color.w / 255));
+	/*shader.set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
 	//glEnable(GL_LINE_SMOOTH); // may slow down performance
 	glLineWidth(outline_width); // outline_width
 	glBindVertexArray(vertex_array_obj); // use same vao data as _ but this time in a line loop
         glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);*/
 	// Draw edit
-	shader.set_float("color", (red / 255), (green / 255), (blue / 255), (alpha / 255));
+	shader.set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
     glBindVertexArray(vertex_array_obj);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
     //-----------------------------------
     // CURSOR
+	if(cursor) {    
     // vertex array obj  - stores vertices
     GLuint cursor_vertex_array_obj;
     glGenVertexArrays(1, &cursor_vertex_array_obj);	
@@ -2004,44 +2012,42 @@ void Renderer::draw_edit(const std::string& text, int x, int y, int width, int h
         GLuint cursor_vertex_buffer_obj;
         glGenBuffers(1, &cursor_vertex_buffer_obj);
         glBindBuffer(GL_ARRAY_BUFFER, cursor_vertex_buffer_obj);
-		int top_padding    = 1;
-		int bottom_padding = 2;
+		int top_padding    = 3;//1;
+		int bottom_padding = top_padding * 2; // makes bottom_padding look equal to top_padding
 		cursor_y = cursor_y + top_padding;
-		int cursor_width  = 0;
+		int cursor_left  = (cursor_width / 2) + 1;//0; // more like left padding (should be half of line_width, or 0-0.5 if the line_with is 1.0)
 		cursor_height = ((!multilined) ? height - bottom_padding : cursor_height - bottom_padding); // bottom_padding // edit height
         //if(multilined) cursor_height = (height/2);
 		GLfloat vertices1[] = { // when x and y are 0 then from wwidth-wheight
-		    static_cast<GLfloat>(x + cursor_x) + static_cast<float>(cursor_width), static_cast<GLfloat>(y + cursor_y),
-            static_cast<GLfloat>(x + cursor_x) + static_cast<float>(cursor_width), static_cast<GLfloat>(y + cursor_y) + static_cast<float>(cursor_height),
+		    static_cast<GLfloat>(x + cursor_x) + static_cast<float>(cursor_left), static_cast<GLfloat>(y + cursor_y),
+            static_cast<GLfloat>(x + cursor_x) + static_cast<float>(cursor_left), static_cast<GLfloat>(y + cursor_y) + static_cast<float>(cursor_height),
         };      
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices1)* sizeof(GLfloat), vertices1, GL_STATIC_DRAW);
         glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
         glEnableVertexAttribArray(0);
     glBindVertexArray(0); // vertex array obj (end 0)	
 	// Draw cursor
-	if(cursor) {
-	shader.set_float("color", (0 / 255), (0 / 255), (0 / 255), (255 / 255));
+	shader.set_float("color", (cursor_color.x / 255.0), (cursor_color.y / 255.0), (cursor_color.z / 255.0), cursor_color.w);
     //glEnable(GL_LINE_SMOOTH);
-	glLineWidth(1.0); // width of the cursor
+	glLineWidth(static_cast<GLfloat>(cursor_width));//(1.0); // *real* width of the cursor
 	glBindVertexArray(cursor_vertex_array_obj);
         glDrawArrays(GL_LINES, 0,  2);
-	glBindVertexArray(0);         
-	}
+	glBindVertexArray(0);
+	// Cleanup time 
+	// vertex_buffer_objs : cursor
+	glDeleteBuffers(1, &cursor_vertex_buffer_obj);	  
+	// vertex_array_objs : cursor
+	glDeleteVertexArrays(1, &cursor_vertex_array_obj);	    
+	} // end of if(cursor)
 	//-----------------------------------
 	// Clean textures
 	//glDeleteTextures(1, &base);
-	// Clean buffers
-	// : edit
+	// Clean vertex_buffers : edit
 	glDeleteBuffers(1, &tex_coord_buffer_obj);
 	glDeleteBuffers(1, &element_buffer_obj);
 	glDeleteBuffers(1, &vertex_buffer_obj );
-	// : cursor
-	glDeleteBuffers(1, &cursor_vertex_buffer_obj);
-	// Clean arrays
-	// :edit
+	// Clean vertex_arrays : edit
 	glDeleteVertexArrays(1, &vertex_array_obj);
-	// : cursor
-	glDeleteVertexArrays(1, &cursor_vertex_array_obj);
 	// Restore defaults
 	glDisable(GL_LINE_SMOOTH);
 	glLineWidth(1.0);
@@ -2051,7 +2057,125 @@ void Renderer::draw_edit(const std::string& text, int x, int y, int width, int h
 #endif
 }
 ////////////
-void Renderer::draw_slider(int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha,
+void Renderer::draw_cursor(double cursor_x, double cursor_y, int cursor_width, int cursor_height, const Vector4& cursor_color,
+    int parent_x, int parent_y, int parent_width, int parent_height) {
+    ///////////////
+#ifdef DOKUN_OPENGL	// OpenGL is defined
+	context_check();
+    // Disable 3d for User interdata
+	glDisable(GL_DEPTH_TEST);
+	// Enable transparent background
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA); 
+	glEnable(GL_BLEND);
+	// Set polygon mode 
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // wireframe 
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // normal
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);  // points (that you can barely see)
+    //if(!text.empty()) draw_label(text,);
+	const char * vertex_source[] =
+	{
+        "#version 330\n"
+        "\n"
+        "layout (location = 0) in vec2 position ;\n"
+        "layout (location = 1) in vec2 tex_coord;\n"
+		"out vec2 Texcoord;\n"
+		"\n"
+		"\n"
+		"uniform mat4 model;\n"
+		"uniform mat4 proj ;\n"
+		"\n"
+        "void main()\n"
+        "{\n"
+		    "Texcoord    = tex_coord;\n"
+            "gl_Position = proj * model * vec4(position, 0.0, 1.0);\n"
+        "}\n"
+	};
+	const char * fragment_source[] =
+	{
+	    "#version 330\n"
+        "\n"
+		"out vec4 out_color;\n"
+        "uniform vec4 color;\n"
+        "//uniform sampler2D base;\n"
+		"in vec2 Texcoord;\n"
+		"\n"
+		"\n"
+        "void main()\n"
+        "{\n"
+		"\n"
+		"\n"
+		"\n"
+            "out_color = color;\n"
+        "}\n"
+	};
+	// Shader
+	Shader shader;
+	shader.create();
+	shader.set_source(vertex_source  , 0);
+	shader.set_source(fragment_source, 1);
+	shader.prepare();
+	shader.use ();
+#ifdef use_glm	
+	// uniform
+	glm::mat4 model = glm::mat4(1.0);;
+	model = glm::translate(model, glm::vec3(/*parent_*/cursor_x + cursor_width/2, /*parent_*/cursor_y + cursor_height/2, 0));//model = glm::translate(model, glm::vec3(x, y, 0));
+	model = glm::rotate(model, static_cast<float>(0/*angle*/ * 0.0174533), glm::vec3(0, 0, 1));
+	model = glm::scale(model, glm::vec3(1, 1/*scale_x, scale_y*/, 1));
+	model = glm::translate(model, glm::vec3(/*parent_*/-cursor_x - cursor_width/2, /*parent_*/-cursor_y - cursor_height/2, 0));
+	//float window_width  = Renderer::get_display_width (); // maybe remove?
+	//float window_height = Renderer::get_display_height(); // maybe remove?
+	glm::mat4 proj  = glm::ortho(0.0f, static_cast<float>(window_width), static_cast<float>(window_height), 0.0f, -1.0f, 1.0f);
+	glUniformMatrix4fv(glGetUniformLocation(shader.get_program(), "model"), 1, GL_FALSE, glm::value_ptr(model));
+	glUniformMatrix4fv(glGetUniformLocation(shader.get_program(), "proj") , 1, GL_FALSE, glm::value_ptr(proj) );
+#endif	    
+    ///////////////
+    // CURSOR
+    // vertex array obj  - stores vertices
+    GLuint cursor_vertex_array_obj;
+    glGenVertexArrays(1, &cursor_vertex_array_obj);	
+    // vertex buffer obj
+    glBindVertexArray(cursor_vertex_array_obj); // bind vertex array obj
+        GLuint cursor_vertex_buffer_obj;
+        glGenBuffers(1, &cursor_vertex_buffer_obj);
+        glBindBuffer(GL_ARRAY_BUFFER, cursor_vertex_buffer_obj);
+		int top_padding    = 3;//1;
+		int bottom_padding = top_padding * 2; // makes bottom_padding look equal to top_padding
+		cursor_y = cursor_y + top_padding;
+		int cursor_left  = (cursor_width / 2) + 1;//0; // more like left padding (should be half of line_width, or 0-0.5 if the line_with is 1.0)
+		cursor_height = parent_height - bottom_padding;//((!multilined) ? parent_height - bottom_padding : cursor_height - bottom_padding); // bottom_padding // edit height
+        //if(multilined) cursor_height = (height/2);
+		GLfloat vertices1[] = { // when x and y are 0 then from wwidth-wheight
+		    static_cast<GLfloat>(parent_x + cursor_x) + static_cast<float>(cursor_left), static_cast<GLfloat>(parent_y + cursor_y),
+            static_cast<GLfloat>(parent_x + cursor_x) + static_cast<float>(cursor_left), static_cast<GLfloat>(parent_y + cursor_y) + static_cast<float>(cursor_height),
+        };      
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices1)* sizeof(GLfloat), vertices1, GL_STATIC_DRAW);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
+        glEnableVertexAttribArray(0);
+    glBindVertexArray(0); // vertex array obj (end 0)	
+	// Draw cursor
+	shader.set_float("color", (cursor_color.x / 255.0), (cursor_color.y / 255.0), (cursor_color.z / 255.0), cursor_color.w);
+    //glEnable(GL_LINE_SMOOTH);
+	glLineWidth(static_cast<GLfloat>(cursor_width));//(1.0); // *real* width of the cursor
+	glBindVertexArray(cursor_vertex_array_obj);
+        glDrawArrays(GL_LINES, 0,  2);
+	glBindVertexArray(0);
+    ///////////////
+    // Cleanup
+    // vertex_buffers
+    glDeleteBuffers(1, &cursor_vertex_buffer_obj);
+    // vertex_arrays
+	glDeleteVertexArrays(1, &cursor_vertex_array_obj);
+	// Restore defaults
+	glDisable(GL_LINE_SMOOTH);
+	glLineWidth(1.0);
+	// Disable program
+	shader.disable();
+	shader.destroy();
+#endif	
+}
+////////////
+////////////
+void Renderer::draw_slider(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,
     // beam
 	double min_value, double max_value, double value, const Vector4& background_color,
 	// ball
@@ -2170,14 +2294,14 @@ void Renderer::draw_slider(int x, int y, int width, int height, double angle, do
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
 	// Draw slider(beam) outline
-	/*shader.set_float("color", (outline_color.x / 255), (outline_color.y / 255), (outline_color.z / 255), (outline_color.w / 255));
+	/*shader.set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
 	//glEnable(GL_LINE_SMOOTH); // may slow down performance
 	glLineWidth(outline_width); // outline_width
 	glBindVertexArray(slider_vertex_array_obj); // use same vao data as _ but this time in a line loop
         glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);*/
 	// Draw slider (beam)
-	shader.set_float("color", (background_color.x / 255), (background_color.y / 255), (background_color.z / 255), (background_color.w / 255));
+	shader.set_float("color", (background_color.x / 255.0), (background_color.y / 255.0), (background_color.z / 255.0), background_color.w);
     glBindVertexArray(slider_vertex_array_obj); // (vao start 2)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);                // (vao end 2  )
@@ -2223,14 +2347,14 @@ void Renderer::draw_slider(int x, int y, int width, int height, double angle, do
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
 	/* // Draw beam_bar outline
-	shader.set_float("color", (outline_color.x / 255), (outline_color.y / 255), (outline_color.z / 255), (outline_color.w / 255));
+	shader.set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
 	//glEnable(GL_LINE_SMOOTH); // may slow down performance
 	glLineWidth(outline_width); // outline_width
 	glBindVertexArray(vertex_array_obj); // use same vao data as _ but this time in a line loop
         glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);*/
 	// Draw beam_bar (foreground)
-	shader.set_float("color", (red/ 255), (green / 255), (blue / 255), (alpha / 255)); //  foreground_color
+	shader.set_float("color", (red/ 255.0), (green / 255.0), (blue / 255.0), alpha); //  foreground_color
     glBindVertexArray(bar_vertex_array_obj); // (vao start 2)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);                // (vao end 2  )
@@ -2278,7 +2402,7 @@ void Renderer::draw_slider(int x, int y, int width, int height, double angle, do
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
 	// Draw ball / handle
-	shader.set_float("color", (ball_color.x/ 255), (ball_color.y / 255), (ball_color.z / 255), (ball_color.w / 255));
+	shader.set_float("color", (ball_color.x/ 255.0), (ball_color.y / 255.0), (ball_color.z / 255.0), ball_color.w);
     glBindVertexArray(ball_vertex_array_obj); // (vao start 2)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);                // (vao end 2  )	
@@ -2310,7 +2434,7 @@ void Renderer::draw_slider(int x, int y, int width, int height, double angle, do
 #endif
 }
 ////////////
-void Renderer::draw_slider_vertical(int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha,
+void Renderer::draw_slider_vertical(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,
     // beam
 	double min_value, double max_value, double value, const Vector4& background_color,
 	// ball
@@ -2429,14 +2553,14 @@ void Renderer::draw_slider_vertical(int x, int y, int width, int height, double 
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
 	// Draw slider(beam) outline
-	/*shader.set_float("color", (outline_color.x / 255), (outline_color.y / 255), (outline_color.z / 255), (outline_color.w / 255));
+	/*shader.set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
 	//glEnable(GL_LINE_SMOOTH); // may slow down performance
 	glLineWidth(outline_width); // outline_width
 	glBindVertexArray(slider_vertex_array_obj); // use same vao data as _ but this time in a line loop
         glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);*/
 	// Draw slider (beam)
-	shader.set_float("color", (background_color.x / 255), (background_color.y / 255), (background_color.z / 255), (background_color.w / 255));
+	shader.set_float("color", (background_color.x / 255.0), (background_color.y / 255.0), (background_color.z / 255.0), background_color.w);
     glBindVertexArray(slider_vertex_array_obj); // (vao start 2)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);                // (vao end 2  )
@@ -2482,14 +2606,14 @@ void Renderer::draw_slider_vertical(int x, int y, int width, int height, double 
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
 	/* // Draw beam_bar outline
-	shader.set_float("color", (outline_color.x / 255), (outline_color.y / 255), (outline_color.z / 255), (outline_color.w / 255));
+	shader.set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
 	//glEnable(GL_LINE_SMOOTH); // may slow down performance
 	glLineWidth(outline_width); // outline_width
 	glBindVertexArray(vertex_array_obj); // use same vao data as _ but this time in a line loop
         glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);*/
 	// Draw beam_bar (foreground)
-	shader.set_float("color", (red/ 255), (green / 255), (blue / 255), (alpha / 255)); //  foreground_color
+	shader.set_float("color", (red/ 255.0), (green / 255.0), (blue / 255.0), alpha); //  foreground_color
     glBindVertexArray(bar_vertex_array_obj); // (vao start 2)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);                // (vao end 2  )
@@ -2538,7 +2662,7 @@ void Renderer::draw_slider_vertical(int x, int y, int width, int height, double 
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
 	// Draw ball / handle
-	shader.set_float("color", (ball_color.x/ 255), (ball_color.y / 255), (ball_color.z / 255), (ball_color.w / 255));
+	shader.set_float("color", (ball_color.x/ 255.0), (ball_color.y / 255.0), (ball_color.z / 255.0), ball_color.w);
     glBindVertexArray(ball_vertex_array_obj); // (vao start 2)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);                // (vao end 2  )	
@@ -2570,10 +2694,9 @@ void Renderer::draw_slider_vertical(int x, int y, int width, int height, double 
 #endif
 }
 ////////////
-void Renderer::draw_switch(int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha,
+void Renderer::draw_switch(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,
 	int value,
-	const Vector4& background_color_on,
-	const Vector4& background_color_off,
+	const Vector4& background_color,
 	// border
 	bool outline,
 	double outline_width,
@@ -2690,7 +2813,7 @@ void Renderer::draw_switch(int x, int y, int width, int height, double angle, do
     // Draw switch(background) outline
 	if(outline)
 	{
-	shader.set_float("color", (outline_color.x / 255), (outline_color.y / 255), (outline_color.z / 255), (outline_color.w / 255));
+	shader.set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
 	//glEnable(GL_LINE_SMOOTH); // may slow down performance
 	glLineWidth(outline_width); // outline_width
 	glBindVertexArray(switch_vertex_array_obj); // use same vao data as _ but this time in a line loop
@@ -2698,8 +2821,7 @@ void Renderer::draw_switch(int x, int y, int width, int height, double angle, do
 	glBindVertexArray(0);
 	}
 	// Draw switch (background)
-	if(value == 0) shader.set_float("color", (background_color_off.x / 255), (background_color_off.y / 255), (background_color_off.z / 255), (background_color_off.w / 255));
-	if(value == 1) shader.set_float("color", (background_color_on.x  / 255), (background_color_on.y  / 255), (background_color_on.z  / 255), (background_color_on.w  / 255));
+	shader.set_float("color", (background_color.x / 255.0), (background_color.y / 255.0), (background_color.z / 255.0), background_color.w);
     glBindVertexArray(switch_vertex_array_obj); // (vao start 2)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);                // (vao end 2  )
@@ -2751,7 +2873,7 @@ void Renderer::draw_switch(int x, int y, int width, int height, double angle, do
     // Draw handle outline
 	if(outline)
 	{
-	shader.set_float("color", (outline_color.x / 255), (outline_color.y / 255), (outline_color.z / 255), (outline_color.w / 255));
+	shader.set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
 	//glEnable(GL_LINE_SMOOTH); // may slow down performance
 	glLineWidth(outline_width); // outline_width
 	glBindVertexArray(handle_vertex_array_obj); // use same vao data as _ but this time in a line loop
@@ -2759,7 +2881,7 @@ void Renderer::draw_switch(int x, int y, int width, int height, double angle, do
 	glBindVertexArray(0);		
 	}
 	// Draw handle switch
-	shader.set_float("color", (red / 255), (green / 255), (blue / 255), (alpha / 255));
+	shader.set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
     glBindVertexArray(handle_vertex_array_obj); // (vao start 2)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);  
@@ -2784,8 +2906,8 @@ void Renderer::draw_switch(int x, int y, int width, int height, double angle, do
 	shader.destroy();
 #endif
 }
-//////////// // Usage: Renderer::draw_tooltip("Hello", 750, 500, 100, 50, 0.0, 1, 1, 106, 106, 106, 255);
-void Renderer::draw_tooltip(const std::string& text, int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha,
+//////////// // Usage: Renderer::draw_tooltip("Hello", 750, 500, 100, 50, 0.0, 1, 1, 106, 106, 106, 255.0);
+void Renderer::draw_tooltip(const std::string& text, int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,
     std::string direction, int arrow_width, int arrow_height, double arrow_offset)
 {
 #ifdef DOKUN_OPENGL	// OpenGL is defined
@@ -2860,7 +2982,7 @@ void Renderer::draw_tooltip(const std::string& text, int x, int y, int width, in
 	glm::mat4 proj  = glm::ortho(0.0f, window_width, window_height, 0.0f, -1.0f, 1.0f);
 	glUniformMatrix4fv(glGetUniformLocation(shader.get_program(), "model"), 1, GL_FALSE, glm::value_ptr(model));
 	glUniformMatrix4fv(glGetUniformLocation(shader.get_program(), "proj") , 1, GL_FALSE, glm::value_ptr(proj) );
-	shader.set_float("color", (red / 255), (green / 255), (blue / 255), (alpha / 255));
+	shader.set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
     // vertex array obj  - stores vertices
     GLuint vertex_array_obj;
     glGenVertexArrays(1, &vertex_array_obj);
@@ -2903,7 +3025,7 @@ void Renderer::draw_tooltip(const std::string& text, int x, int y, int width, in
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
 	// Draw outline
-	/*shader.set_float("color", (outline_color.x / 255), (outline_color.y / 255), (outline_color.z / 255), (outline_color.w / 255));
+	/*shader.set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
 	//glEnable(GL_LINE_SMOOTH); // may slow down performance
 	glLineWidth(outline_width); // outline_width
 	glBindVertexArray(vertex_array_obj); // use same vao data as _ but this time in a line loop
@@ -2968,7 +3090,7 @@ void Renderer::draw_tooltip(const std::string& text, int x, int y, int width, in
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicestri)* sizeof(GLuint), indicestri, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
     // Draw outline
-	/*shader.set_float("color", (0.0 / 255), (0.0 / 255), (0.0 / 255), (255.0 / 255));
+	/*shader.set_float("color", (0.0 / 255.0), (0.0 / 255.0), (0.0 / 255.0), (255.0 / 255.0));
 	//glEnable(GL_LINE_SMOOTH); // may slow down performance
 	glLineWidth(2.0); // outline_width
 	glBindVertexArray(arrow_vertex_array_obj); // use same vao data as _ but this time in a line loop
@@ -2979,7 +3101,7 @@ void Renderer::draw_tooltip(const std::string& text, int x, int y, int width, in
 	double arrow_green = green;
 	double arrow_blue  = blue;
 	double arrow_alpha = alpha;
-	shader.set_float("color", (arrow_red / 255), (arrow_green / 255), (arrow_blue / 255), (arrow_alpha / 255)); //glBindTexture(GL_TEXTURE_2D, base);  // bind texture
+	shader.set_float("color", (arrow_red / 255.0), (arrow_green / 255.0), (arrow_blue / 255.0), arrow_alpha); //glBindTexture(GL_TEXTURE_2D, base);  // bind texture
     glBindVertexArray(arrow_vertex_array_obj); // (vao start 2)
         glDrawArrays(GL_TRIANGLES, 0, 3); // draw 3 points to form a triangle
 	glBindVertexArray(0);                // (vao end 2  ) //glBindTexture(GL_TEXTURE_2D, base);  // bind texture
@@ -3008,8 +3130,8 @@ void Renderer::draw_tooltip(const std::string& text, int x, int y, int width, in
 #endif	
 }
 ////////////
-void Renderer::draw_radio(int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha,
-	    int value, Vector4& background_color,
+void Renderer::draw_radio(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,
+	    int value, const Vector4& inner_color,
 		// outline
 		bool outline,
 		double outline_width,
@@ -3127,8 +3249,7 @@ void Renderer::draw_radio(int x, int y, int width, int height, double angle, dou
     // Draw radio outline
 	if(outline)
 	{
-	if(value == 0) shader.set_float("color", (64.0f / 255), (64.0f / 255), (64.0f / 255), (255.0f / 255)); 
-	if(value == 1) shader.set_float("color", (outline_color.x / 255), (outline_color.y / 255), (outline_color.z / 255), (outline_color.w / 255));
+	shader.set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
 	if(outline_antialiased) glEnable(GL_LINE_SMOOTH); // may slow down performance
 	glLineWidth(outline_width); // outline_width
 	glBindVertexArray(radio_vertex_array_obj); // use same vao data as _ but this time in a line loop
@@ -3136,7 +3257,7 @@ void Renderer::draw_radio(int x, int y, int width, int height, double angle, dou
 	glBindVertexArray(0);		
 	}
 	// Draw radio
-	shader.set_float("color", (background_color.x / 255), (background_color.y / 255), (background_color.z / 255), (background_color.w / 255));
+	shader.set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
     glBindVertexArray(radio_vertex_array_obj); // (vao start 2)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);                // (vao end 2  )
@@ -3185,8 +3306,8 @@ void Renderer::draw_radio(int x, int y, int width, int height, double angle, dou
     // Draw inner outline
 	/*if(outline)
 	{
-	if(value == 0) shader.set_float("color", (64.0f / 255), (64.0f / 255), (64.0f / 255), (255.0f / 255)); 
-	if(value == 1) shader.set_float("color", (outline_color.x / 255), (outline_color.y / 255), (outline_color.z / 255), (outline_color.w / 255));
+	if(value == 0) shader.set_float("color", (64.0f / 255.0), (64.0f / 255.0), (64.0f / 255.0), (255.0f / 255.0)); 
+	if(value == 1) shader.set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
 	if(outline_antialiased) glEnable(GL_LINE_SMOOTH); // may slow down performance
 	glLineWidth(outline_width); // 
 	glBindVertexArray(inner_vertex_array_obj); // use same vao data as _ but this time in a line loop
@@ -3194,11 +3315,12 @@ void Renderer::draw_radio(int x, int y, int width, int height, double angle, dou
 	glBindVertexArray(0);		
 	}*/
 	// Draw inner quad
-	if(value == 0) shader.set_float("color", (background_color.x / 255), (background_color.y / 255), (background_color.z / 255), (background_color.w / 255));
-	if(value == 1) shader.set_float("color", (red / 255), (green / 255), (blue / 255), (alpha / 255));
+	if(value == 1) { // only draw inner quad when value is 1
+	shader.set_float("color", (inner_color.x / 255.0), (inner_color.y / 255.0), (inner_color.z / 255.0), inner_color.w);
     glBindVertexArray(inner_vertex_array_obj); // (vao start 2)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);                // (vao end 2  )
+	}
 	//----------------------------
 	// Clean textures
 	//glDeleteTextures(1, &base);
@@ -3223,8 +3345,236 @@ void Renderer::draw_radio(int x, int y, int width, int height, double angle, dou
 #endif
 }
 ////////////
+void Renderer::draw_checkbox(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,
+    bool value, const Vector4& checkmark_color,
+	// outline or border
+	bool outline,
+	double outline_width,
+	const Vector4& outline_color,
+	bool outline_antialiased) {
+#ifdef DOKUN_OPENGL	// OpenGL is defined    
+	context_check();
+    // Disable 3d for User interdata
+	glDisable(GL_DEPTH_TEST);
+	// Enable transparent background
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA); 
+	glEnable(GL_BLEND);
+	// vertex shader
+	const char * vertex_source[] =
+	{
+        "#version 330\n"
+        "\n"
+        "layout (location = 0) in vec2 position ;\n"
+        "layout (location = 1) in vec2 tex_coord;\n"
+		"out vec2 Texcoord;\n"
+		"\n"
+		"\n"
+		"uniform mat4 model;\n"
+		"uniform mat4 proj ;\n"
+		"\n"
+        "void main()\n"
+        "{\n"
+		    "Texcoord    = tex_coord;\n"
+            "gl_Position = proj * model * vec4(position, 0.0, 1.0);\n"
+        "}\n"
+	};
+	const char * fragment_source[] =
+	{
+	    "#version 330\n"
+        "\n"
+		"out vec4 out_color;\n"
+        "uniform vec4 color;\n"
+        "//uniform sampler2D base;\n"
+		"in vec2 Texcoord;\n"
+		"\n"
+		"\n"
+        "void main()\n"
+        "{\n"
+		"\n"
+		"\n"
+		"\n"
+            "out_color = color;\n"
+        "}\n"
+	};
+	// Shader
+	Shader shader;
+	shader.create();
+	shader.set_source(vertex_source  , 0);
+	shader.set_source(fragment_source, 1);
+	shader.prepare();
+	shader.use ();
+#ifdef use_glm	
+	// uniform
+	glm::mat4 model = glm::mat4(1.0);;
+	model = glm::translate(model, glm::vec3(x + width/2, y + height/2, 0));//model = glm::translate(model, glm::vec3(x, y, 0));
+	model = glm::rotate(model, static_cast<float>(angle * 0.0174533), glm::vec3(0, 0, 1));
+	model = glm::scale(model, glm::vec3(1, 1, 1));
+	model = glm::translate(model, glm::vec3(-x - width/2, -y - height/2, 0));
+	float window_width  = Renderer::get_display_width ();
+	float window_height = Renderer::get_display_height();
+	glm::mat4 proj  = glm::ortho(0.0f, window_width, window_height, 0.0f, -1.0f, 1.0f);
+	glUniformMatrix4fv(glGetUniformLocation(shader.get_program(), "model"), 1, GL_FALSE, glm::value_ptr(model));
+	glUniformMatrix4fv(glGetUniformLocation(shader.get_program(), "proj") , 1, GL_FALSE, glm::value_ptr(proj) );
+#endif	
+	//----------------------------------
+	GLfloat tex_coords[] = { // texture coordinates range from (0,0) to (1, 1)
+		0.0, 0.0,
+        1.0, 0.0,
+        1.0, 1.0,
+        0.0, 1.0, 
+    };
+	GLuint indices[] = {0, 1, 3,  1, 2, 3,}; 	
+	// CHECKBOX (background)
+    // vertex array obj  - stores vertices
+    GLuint checkbox_vertex_array_obj;
+    glGenVertexArrays(1, &checkbox_vertex_array_obj);
+	// tex_coord buffer obj
+    glBindVertexArray(checkbox_vertex_array_obj); // bind again  
+	    GLuint checkbox_tex_coord_buffer_obj;
+        glGenBuffers( 1, &checkbox_tex_coord_buffer_obj);
+        glBindBuffer( GL_ARRAY_BUFFER, checkbox_tex_coord_buffer_obj);
+        glBufferData( GL_ARRAY_BUFFER, sizeof(tex_coords)* sizeof(GLfloat), tex_coords, GL_STATIC_DRAW);    
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), static_cast<void *>(0));			
+	    glEnableVertexAttribArray(1); 	
+	glBindVertexArray(0); // unbind
+	// vertex buffer obj
+    glBindVertexArray(checkbox_vertex_array_obj); // bind vertex array obj
+        GLuint checkbox_vertex_buffer_obj;
+        glGenBuffers(1, &checkbox_vertex_buffer_obj);
+        glBindBuffer(GL_ARRAY_BUFFER, checkbox_vertex_buffer_obj);
+		GLfloat vertices[] = { // when x and y are 0 then from wwidth-wheight
+		    static_cast<GLfloat>(x)                                , static_cast<GLfloat>(y),
+            static_cast<GLfloat>(x) + static_cast<GLfloat>(width), static_cast<GLfloat>(y),
+            static_cast<GLfloat>(x) + static_cast<GLfloat>(width), static_cast<GLfloat>(y) + static_cast<GLfloat>(height),
+            static_cast<GLfloat>(x)                                , static_cast<GLfloat>(y) + static_cast<GLfloat>(height),   
+        };      
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices)* sizeof(GLfloat), vertices, GL_STATIC_DRAW);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
+        glEnableVertexAttribArray(0);
+    glBindVertexArray(0); // vertex array obj (end 0)   
+	// element buffer obj
+	glBindVertexArray(checkbox_vertex_array_obj); // (vao start 1)
+	    GLuint checkbox_element_buffer_obj;
+        glGenBuffers(1, &checkbox_element_buffer_obj);
+	    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, checkbox_element_buffer_obj); 
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
+	glBindVertexArray(0);                // (vao end 1  )
+    // Draw checkbox outline or border
+	if(outline) {
+	shader.set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
+	if(outline_antialiased) glEnable(GL_LINE_SMOOTH); // may slow down performance
+	glLineWidth(outline_width); // outline_width
+	glBindVertexArray(checkbox_vertex_array_obj); // use same vao data as _ but this time in a line loop
+        glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);		
+	}
+	// Draw checkbox (background)
+	shader.set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
+    glBindVertexArray(checkbox_vertex_array_obj); // (vao start 2)
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);                // (vao end 2  )
+	//----------------------------
+#ifdef use_glm	// TEMPORARY
+	// uniform
+	glm::mat4 model1 = glm::mat4(1.0);;
+	model1 = glm::translate(model1, glm::vec3(x + width/2, y + height/2, 0));//model1 = glm::translate(model1, glm::vec3(x, y, 0));
+	model1 = glm::rotate(model1, static_cast<float>(45/*angle*/ * 0.0174533), glm::vec3(0, 0, 1));
+	model1 = glm::scale(model1, glm::vec3(1, 1, 1));
+	model1 = glm::translate(model1, glm::vec3(-x - width/2, -y - height/2, 0));
+	//float window_width  = Renderer::get_display_width ();
+	//float window_height = Renderer::get_display_height();
+	glm::mat4 proj1  = glm::ortho(0.0f, window_width, window_height, 0.0f, -1.0f, 1.0f);
+	glUniformMatrix4fv(glGetUniformLocation(shader.get_program(), "model"), 1, GL_FALSE, glm::value_ptr(model1));
+	glUniformMatrix4fv(glGetUniformLocation(shader.get_program(), "proj") , 1, GL_FALSE, glm::value_ptr(proj1) );
+#endif
+	// CHECKMARK
+	 // vertex array obj  - stores vertices
+    GLuint checkmark_vertex_array_obj;
+    glGenVertexArrays(1, &checkmark_vertex_array_obj);
+	/*// tex_coord buffer obj
+    glBindVertexArray(checkmark_vertex_array_obj); // bind again  
+	    GLuint checkmark_tex_coord_buffer_obj;
+        glGenBuffers( 1, &checkmark_tex_coord_buffer_obj);
+        glBindBuffer( GL_ARRAY_BUFFER, checkmark_tex_coord_buffer_obj);
+        glBufferData( GL_ARRAY_BUFFER, sizeof(tex_coords)* sizeof(GLfloat), tex_coords, GL_STATIC_DRAW);    
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), static_cast<void *>(0));			
+	    glEnableVertexAttribArray(1); 	
+	glBindVertexArray(0);*/ // unbind
+	// vertex buffer obj
+    glBindVertexArray(checkmark_vertex_array_obj); // bind vertex array obj
+        GLuint checkmark_vertex_buffer_obj;
+        glGenBuffers(1, &checkmark_vertex_buffer_obj);
+        glBindBuffer(GL_ARRAY_BUFFER, checkmark_vertex_buffer_obj);
+		// set position relative to checkbox
+		int checkmark_width  = width / 4;//5; // make vertical line longer than horz line //width  / 2;
+		int checkmark_height = (checkmark_width * 2);
+		int checkmark_x = (width / 2) - (checkmark_width  / 2);//width  / 4;         
+		int checkmark_y = (height / 2) - (checkmark_height  / 2);//height / 4;
+		GLfloat vertices1[] = { // when x and y are 0 then from wwidth-wheight
+            // horizontal line
+		    static_cast<GLfloat>(x + checkmark_x) + static_cast<float>(checkmark_width), static_cast<GLfloat>(y + checkmark_y) + static_cast<float>(checkmark_height),
+            static_cast<GLfloat>(x + checkmark_x)                                      , static_cast<GLfloat>(y + checkmark_y) + static_cast<float>(checkmark_height),
+            // vertical line
+		    static_cast<GLfloat>(x + checkmark_x) + static_cast<float>(checkmark_width), static_cast<GLfloat>(y + checkmark_y),                                   
+            static_cast<GLfloat>(x + checkmark_x) + static_cast<float>(checkmark_width), static_cast<GLfloat>(y + checkmark_y) + static_cast<float>(checkmark_height),
+        };      
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices1)* sizeof(GLfloat), vertices1, GL_STATIC_DRAW);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
+        glEnableVertexAttribArray(0);
+    glBindVertexArray(0); // vertex array obj (end 0)   
+	// element buffer obj
+	glBindVertexArray(checkmark_vertex_array_obj); // (vao start 1)
+	    GLuint checkmark_element_buffer_obj;
+        glGenBuffers(1, &checkmark_element_buffer_obj);
+	    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, checkmark_element_buffer_obj);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
+	glBindVertexArray(0);                // (vao end 1  )
+    // Draw inner outline
+	/*if(outline)
+	{
+	if(value == 0) shader.set_float("color", (64.0f / 255.0), (64.0f / 255.0), (64.0f / 255.0), (255.0f / 255.0)); 
+	if(value == 1) shader.set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
+	if(outline_antialiased) glEnable(GL_LINE_SMOOTH); // may slow down performance
+	glLineWidth(outline_width); // 
+	glBindVertexArray(checkmark_vertex_array_obj); // use same vao data as _ but this time in a line loop
+        glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);		
+	}*/
+	// Draw checkmark (foreground)
+	if(value == 1) { // only draw mark when box value is true (box is on)
+	shader.set_float("color", (checkmark_color.x / 255.0), (checkmark_color.y / 255.0), (checkmark_color.z / 255.0), checkmark_color.w);
+    glLineWidth(2.0);//(3.0);
+    glBindVertexArray(checkmark_vertex_array_obj); // (vao start 2)
+        glDrawArrays(GL_LINES, 0, 2); // start at index 0, 2 rects// draw 3 points to form a triangle
+	    glDrawArrays(GL_LINES, 2, 2); // start at index 2, 2 rects
+	glBindVertexArray(0);                // (vao end 2  )
+	}
+	//----------------------------
+	// Clean textures
+	//glDeleteTextures(1, &base);
+	// Clean buffers
+	glDeleteBuffers(1, &checkbox_tex_coord_buffer_obj);
+	glDeleteBuffers(1, &checkbox_element_buffer_obj);
+	glDeleteBuffers(1, &checkbox_vertex_buffer_obj );
+	// mark
+	//glDeleteBuffers(1, &checkmark_tex_coord_buffer_obj);
+	glDeleteBuffers(1, &checkmark_element_buffer_obj);
+	glDeleteBuffers(1, &checkmark_vertex_buffer_obj );	
+	// Clean arrays
+	glDeleteVertexArrays(1, &checkbox_vertex_array_obj);
+	glDeleteVertexArrays(1, &checkmark_vertex_array_obj);
+	// Restore defaults
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glLineWidth(1.0);
+	glDisable(GL_LINE_SMOOTH);
+	// Disable program
+	shader.disable();
+	shader.destroy();
+#endif            
+}
 ////////////
-void Renderer::draw_scrollbar(int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha,
+////////////
+void Renderer::draw_scrollbar(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,
 	double value, double min_value, double max_value, 
 	// handle
 	double handle_y, int handle_height, const Vector4& handle_color,
@@ -3356,7 +3706,7 @@ void Renderer::draw_scrollbar(int x, int y, int width, int height, double angle,
 	glBindVertexArray(0);                // (vao end 1  )
 	if(outline) {
 	// Draw scrollbar outline
-    shader.set_float("color", (outline_color.x / 255), (outline_color.y / 255), (outline_color.z / 255), (outline_color.w / 255));
+    shader.set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
 	//glEnable(GL_LINE_SMOOTH); // may slow down performance
 	glLineWidth(outline_width); // outline_width
 	glBindVertexArray(scrollbar_vertex_array_obj); // use same vao data as _ but this time in a line loop
@@ -3364,7 +3714,7 @@ void Renderer::draw_scrollbar(int x, int y, int width, int height, double angle,
 	glBindVertexArray(0);
 	}	
 	// Draw scrollbar
-    shader.set_float("color", (red/ 255), (green / 255), (blue / 255), (alpha / 255));
+    shader.set_float("color", (red/ 255.0), (green / 255.0), (blue / 255.0), alpha);
     glBindVertexArray(scrollbar_vertex_array_obj); // (vao start 2)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);                // (vao end 2  )
@@ -3412,7 +3762,7 @@ void Renderer::draw_scrollbar(int x, int y, int width, int height, double angle,
 	{
 	if(outline) {
 	// Draw top_button outline
-    shader.set_float("color", (outline_color.x / 255), (outline_color.y / 255), (outline_color.z / 255), (outline_color.w / 255));
+    shader.set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
 	//glEnable(GL_LINE_SMOOTH); // may slow down performance
 	glLineWidth(outline_width); // outline_width
 	glBindVertexArray(top_button_vertex_array_obj); // use same vao data as _ but this time in a line loop
@@ -3420,7 +3770,7 @@ void Renderer::draw_scrollbar(int x, int y, int width, int height, double angle,
 	glBindVertexArray(0);
 	}	
 	// Draw top_button
-	shader.set_float("color", (button_color.x / 255), (button_color.y / 255), (button_color.z / 255), (button_color.w / 255));
+	shader.set_float("color", (button_color.x / 255.0), (button_color.y / 255.0), (button_color.z / 255.0), button_color.w);
     glBindVertexArray(top_button_vertex_array_obj); // (vao start 2)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);                // (vao end 2  )
@@ -3428,7 +3778,7 @@ void Renderer::draw_scrollbar(int x, int y, int width, int height, double angle,
 	//-------------------------
 	// UP ARROW
 	// up_arrow_color
-	//shader.set_float("color", (32.0f / 255), (32.0f / 255), (32.0f / 255), (255 / 255));
+	//shader.set_float("color", (32.0f / 255.0), (32.0f / 255.0), (32.0f / 255.0), (255 / 255.0));
     //-------------------------
 	// BOTTOM BUTTON - optional
     // vertex array obj  - stores vertices
@@ -3475,7 +3825,7 @@ void Renderer::draw_scrollbar(int x, int y, int width, int height, double angle,
 	{
 	if(outline) {
 	// Draw scrollbar outline
-    shader.set_float("color", (outline_color.x / 255), (outline_color.y / 255), (outline_color.z / 255), (outline_color.w / 255));
+    shader.set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
 	//glEnable(GL_LINE_SMOOTH); // may slow down performance
 	glLineWidth(outline_width); // outline_width
 	glBindVertexArray(bottom_button_vertex_array_obj); // use same vao data as _ but this time in a line loop
@@ -3483,7 +3833,7 @@ void Renderer::draw_scrollbar(int x, int y, int width, int height, double angle,
 	glBindVertexArray(0);
 	}	
 	// Draw bottom_button
-	shader.set_float("color", (button_color.x / 255), (button_color.y / 255), (button_color.z / 255), (button_color.w / 255));
+	shader.set_float("color", (button_color.x / 255.0), (button_color.y / 255.0), (button_color.z / 255.0), button_color.w);
     glBindVertexArray(bottom_button_vertex_array_obj); // (vao start 2)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);                // (vao end 2  )	
@@ -3491,7 +3841,7 @@ void Renderer::draw_scrollbar(int x, int y, int width, int height, double angle,
 	// -------------------------------
 	// DOWN ARROW 
 	// down_arrow_color
-	//shader.set_float("color", (32.0f / 255), (32.0f / 255), (32.0f / 255), (255 / 255));
+	//shader.set_float("color", (32.0f / 255.0), (32.0f / 255.0), (32.0f / 255.0), (255 / 255.0));
     // -------------------------------
 	// HANDLE 
     // vertex array obj  - stores vertices
@@ -3543,7 +3893,7 @@ void Renderer::draw_scrollbar(int x, int y, int width, int height, double angle,
 	// Draw handle_outline
 	/*if(outline) {
 	// Draw scrollbar outline
-    shader.set_float("color", (outline_color.x / 255), (outline_color.y / 255), (outline_color.z / 255), (outline_color.w / 255));
+    shader.set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
 	//glEnable(GL_LINE_SMOOTH); // may slow down performance
 	glLineWidth(outline_width); // outline_width
 	glBindVertexArray(handle_vertex_array_obj); // use same vao data as _ but this time in a line loop
@@ -3551,7 +3901,7 @@ void Renderer::draw_scrollbar(int x, int y, int width, int height, double angle,
 	glBindVertexArray(0);
 	}*/	
 	// Draw handle
-    shader.set_float("color", (handle_color.x/ 255), (handle_color.y/ 255), (handle_color.z / 255), (handle_color.w / 255)); //  foreground_color	
+    shader.set_float("color", (handle_color.x/ 255.0), (handle_color.y/ 255.0), (handle_color.z / 255.0), handle_color.w); //  foreground_color	
     glBindVertexArray(handle_vertex_array_obj); // (vao start 2)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);                // (vao end 2  )
@@ -3708,14 +4058,14 @@ void Renderer::draw_scrollbar(int x, int y, int width, int height, double angle,
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
     // Draw outline
-	//shader.set_float("color", (outline_color.x / 255), (outline_color.y / 255), (outline_color.z / 255), (outline_color.w / 255));
+	//shader.set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
 	//glEnable(GL_LINE_SMOOTH); // may slow down performance
 	glLineWidth(outline_width); // outline_width
 	glBindVertexArray(vertex_array_obj); // use same vao data as _ but this time in a line loop
         glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);		
 	// Draw _
-	shader.set_float("color", (red / 255), (green / 255), (blue / 255), (alpha / 255));
+	shader.set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
     glBindVertexArray(vertex_array_obj); // (vao start 2)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -3740,7 +4090,7 @@ void Renderer::draw_scrollbar(int x, int y, int width, int height, double angle,
 ////////////
 ////////////
 ////////////
-void Renderer::draw_spinner(int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha,
+void Renderer::draw_spinner_old(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,
     double value,		
 	// button
     int button_width, const Vector4& button_color, 
@@ -3864,14 +4214,14 @@ void Renderer::draw_spinner(int x, int y, int width, int height, double angle, d
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
     // Draw outline
-	/*shader.set_float("color", (outline_color.x / 255), (outline_color.y / 255), (outline_color.z / 255), (outline_color.w / 255));
+	/*shader.set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
 	//glEnable(GL_LINE_SMOOTH); // may slow down performance
 	glLineWidth(outline_width); // outline_width
 	glBindVertexArray(spinner_vertex_array_obj); // use same vao data as _ but this time in a line loop
         glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);*/
 	// Draw _
-	shader.set_float("color", (red / 255), (green / 255), (blue / 255), (alpha / 255));
+	shader.set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
     glBindVertexArray(spinner_vertex_array_obj); // (vao start 2)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -3917,14 +4267,14 @@ void Renderer::draw_spinner(int x, int y, int width, int height, double angle, d
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
     // Draw outline
- 	/*shader.set_float("color", (outline_color.x / 255), (outline_color.y / 255), (outline_color.z / 255), (outline_color.w / 255));
+ 	/*shader.set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
 	//glEnable(GL_LINE_SMOOTH); // may slow down performance
 	glLineWidth(outline_width); // outline_width
 	glBindVertexArray(top_button_vertex_array_obj); // use same vao data as _ but this time in a line loop
         glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);*/ 		
 	// Draw _
-	shader.set_float("color", (button_color.x / 255), (button_color.y / 255), (button_color.z / 255), (button_color.w / 255));
+	shader.set_float("color", (button_color.x / 255.0), (button_color.y / 255.0), (button_color.z / 255.0), button_color.w);
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
     glBindVertexArray(top_button_vertex_array_obj); // (vao start 2)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -3971,14 +4321,14 @@ void Renderer::draw_spinner(int x, int y, int width, int height, double angle, d
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
     // Draw outline
- 	/*shader.set_float("color", (outline_color.x / 255), (outline_color.y / 255), (outline_color.z / 255), (outline_color.w / 255));
+ 	/*shader.set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
 	//glEnable(GL_LINE_SMOOTH); // may slow down performance
 	glLineWidth(outline_width); // outline_width
 	glBindVertexArray(bottom_button_vertex_array_obj); // use same vao data as _ but this time in a line loop
         glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);*/	
 	// Draw _
-	shader.set_float("color", (button_color.x / 255), (button_color.y / 255), (button_color.z / 255), (button_color.w / 255));
+	shader.set_float("color", (button_color.x / 255.0), (button_color.y / 255.0), (button_color.z / 255.0), button_color.w);
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
     glBindVertexArray(bottom_button_vertex_array_obj); // (vao start 2)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -4017,14 +4367,14 @@ void Renderer::draw_spinner(int x, int y, int width, int height, double angle, d
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicestri)* sizeof(GLuint), indicestri, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
     // Draw outline
-	/*shader.set_float("color", (0.0 / 255), (0.0 / 255), (0.0 / 255), (255.0 / 255));
+	/*shader.set_float("color", (0.0 / 255.0), (0.0 / 255.0), (0.0 / 255.0), (255.0 / 255.0));
 	//glEnable(GL_LINE_SMOOTH); // may slow down performance
 	glLineWidth(2.0); // outline_width
 	glBindVertexArray(top_arrow_vertex_array_obj); // use same vao data as _ but this time in a line loop
         glDrawArrays(GL_LINE_LOOP, 0, 3);//glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);*/	
 	// Draw triangle
-	shader.set_float("color", (255.0 / 255), (255.0 / 255), (255.0 / 255), (255.0 / 255));
+	shader.set_float("color", (255.0 / 255.0), (255.0 / 255.0), (255.0 / 255.0), (255.0 / 255.0));
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
     glBindVertexArray(top_arrow_vertex_array_obj); // (vao start 2)
         glDrawArrays(GL_TRIANGLES, 0, 3); // draw 3 points to form a triangle
@@ -4062,14 +4412,14 @@ void Renderer::draw_spinner(int x, int y, int width, int height, double angle, d
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicestrii)* sizeof(GLuint), indicestrii, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
     // Draw outline
-	/*shader.set_float("color", (0.0 / 255), (0.0 / 255), (0.0 / 255), (255.0 / 255));
+	/*shader.set_float("color", (0.0 / 255.0), (0.0 / 255.0), (0.0 / 255.0), (255.0 / 255.0));
 	//glEnable(GL_LINE_SMOOTH); // may slow down performance
 	glLineWidth(2.0); // outline_width
 	glBindVertexArray(bottom_arrow_vertex_array_obj); // use same vao data as _ but this time in a line loop
         glDrawArrays(GL_LINE_LOOP, 0, 3);//glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);*/	
 	// Draw triangle
-	shader.set_float("color", (255.0 / 255), (255.0 / 255), (255.0 / 255), (255.0 / 255));
+	shader.set_float("color", (255.0 / 255.0), (255.0 / 255.0), (255.0 / 255.0), (255.0 / 255.0));
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
     glBindVertexArray(bottom_arrow_vertex_array_obj); // (vao start 2)
         glDrawArrays(GL_TRIANGLES, 0, 3); // draw 3 points to form a triangle
@@ -4099,7 +4449,7 @@ void Renderer::draw_spinner(int x, int y, int width, int height, double angle, d
         glEnableVertexAttribArray(0);
     glBindVertexArray(0); // vertex array obj (end 0)	
 	// Draw seperator
-	shader.set_float("color", (0 / 255), (0 / 255), (0 / 255), (255 / 255));
+	shader.set_float("color", (0 / 255.0), (0 / 255.0), (0 / 255.0), (255 / 255.0));
     //glEnable(GL_LINE_SMOOTH);
 	glLineWidth(static_cast<float>(seperator_height)); // thickness of the seperator (will act as height since separator is horz)
 	glBindVertexArray(seperator_vertex_array_obj);
@@ -4144,11 +4494,386 @@ void Renderer::draw_spinner(int x, int y, int width, int height, double angle, d
 #endif
 }
 ////////////
+void Renderer::draw_spinner(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,
+    int button_width, const Vector4& button_color,        // shape (+, -)
+	int shape_size, const Vector4& shape_color, double shape_depth,
+	bool separator, int separator_size) {
+    // Disable 3d for User interdata
+	glDisable(GL_DEPTH_TEST);
+	// Enable transparent background
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA); 
+	glEnable(GL_BLEND);
+	// Set polygon mode 
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // wireframe 
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // normal
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);  // points (that you can barely see)
+	// vertex shader	
+	const char * vertex_source[] =
+	{
+        "#version 330\n"
+        "\n"
+        "layout (location = 0) in vec2 position ;\n"
+        "layout (location = 1) in vec2 tex_coord;\n"
+		"out vec2 Texcoord;\n"
+		"\n"
+		"\n"
+		"uniform mat4 model;\n"
+		"uniform mat4 proj ;\n"
+		"\n"
+        "void main()\n"
+        "{\n"
+		    "Texcoord    = tex_coord;\n"
+            "gl_Position = proj * model * vec4(position, 0.0, 1.0);\n"
+        "}\n"
+	};
+	const char * fragment_source[] =
+	{
+	    "#version 330\n"
+        "\n"
+		"out vec4 out_color;\n"
+        "uniform vec4 color;\n"
+        "//uniform sampler2D base;\n"
+		"in vec2 Texcoord;\n"
+		"\n"
+		"\n"
+        "void main()\n"
+        "{\n"
+		"\n"
+		"\n"
+		"\n"
+            "out_color = color;\n"
+        "}\n"
+	};
+	// Shader
+	Shader shader;
+	shader.create();
+	shader.set_source(vertex_source  , 0);
+	shader.set_source(fragment_source, 1);
+	shader.prepare();
+	shader.use ();
+#ifdef use_glm	
+	// uniform
+	glm::mat4 model = glm::mat4(1.0);;
+	model = glm::translate(model, glm::vec3(x + width/2, y + height/2, 0));//model = glm::translate(model, glm::vec3(x, y, 0));
+	model = glm::rotate(model, static_cast<float>(angle * 0.0174533), glm::vec3(0, 0, 1));
+	model = glm::scale(model, glm::vec3(1, 1, 1));
+	model = glm::translate(model, glm::vec3(-x - width/2, -y - height/2, 0));
+	float window_width  = Renderer::get_display_width ();
+	float window_height = Renderer::get_display_height();
+	glm::mat4 proj  = glm::ortho(0.0f, window_width, window_height, 0.0f, -1.0f, 1.0f);
+	glUniformMatrix4fv(glGetUniformLocation(shader.get_program(), "model"), 1, GL_FALSE, glm::value_ptr(model));
+	glUniformMatrix4fv(glGetUniformLocation(shader.get_program(), "proj") , 1, GL_FALSE, glm::value_ptr(proj) );
+#endif	
+	//---------------------------------
+	GLfloat tex_coords[] = { // texture coordinates range from (0,0) to (1, 1)
+		0.0, 0.0,
+        1.0, 0.0,
+        1.0, 1.0,
+        0.0, 1.0, 
+    };	
+	GLuint indices[] = {0, 1, 3,  1, 2, 3,}; 
+	// -------------------------------
+	// SPINNER
+    // vertex array obj  - stores vertices
+    GLuint spinner_vertex_array_obj;
+    glGenVertexArrays(1, &spinner_vertex_array_obj);
+	// tex_coord buffer obj
+    glBindVertexArray(spinner_vertex_array_obj); // bind again  
+	    GLuint spinner_tex_coord_buffer_obj;
+        glGenBuffers( 1, &spinner_tex_coord_buffer_obj);
+        glBindBuffer( GL_ARRAY_BUFFER, spinner_tex_coord_buffer_obj);
+        glBufferData( GL_ARRAY_BUFFER, sizeof(tex_coords)* sizeof(GLfloat), tex_coords, GL_STATIC_DRAW);    
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), static_cast<void *>(0));			
+	    glEnableVertexAttribArray(1); 	
+	glBindVertexArray(0); // unbind
+	// vertex buffer obj
+    glBindVertexArray(spinner_vertex_array_obj); // bind vertex array obj
+        GLuint spinner_vertex_buffer_obj;
+        glGenBuffers(1, &spinner_vertex_buffer_obj);
+        glBindBuffer(GL_ARRAY_BUFFER, spinner_vertex_buffer_obj);
+		GLfloat vertices[] = { // when x and y are 0 then from wwidth-wheight
+		    static_cast<GLfloat>(x)                                , static_cast<GLfloat>(y),
+            static_cast<GLfloat>(x) + static_cast<GLfloat>(width), static_cast<GLfloat>(y),
+            static_cast<GLfloat>(x) + static_cast<GLfloat>(width), static_cast<GLfloat>(y) + static_cast<GLfloat>(height),
+            static_cast<GLfloat>(x)                                , static_cast<GLfloat>(y) + static_cast<GLfloat>(height),   
+        };      
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices)* sizeof(GLfloat), vertices, GL_STATIC_DRAW);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
+        glEnableVertexAttribArray(0);
+    glBindVertexArray(0); // vertex array obj (end 0)   
+	// element buffer obj
+	glBindVertexArray(spinner_vertex_array_obj); // (vao start 1)
+	    GLuint spinner_element_buffer_obj;
+        glGenBuffers(1, &spinner_element_buffer_obj);
+	    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, spinner_element_buffer_obj);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
+	glBindVertexArray(0);                // (vao end 1  )
+    // Draw outline
+	/*shader.set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
+	//glEnable(GL_LINE_SMOOTH); // may slow down performance
+	glLineWidth(outline_width); // outline_width
+	glBindVertexArray(spinner_vertex_array_obj); // use same vao data as _ but this time in a line loop
+        glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);*/
+	// Draw _
+	shader.set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
+	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
+    glBindVertexArray(spinner_vertex_array_obj); // (vao start 2)
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);                // (vao end 2  )
+	// ------------------------------
+	//////////////////////
+	// LEFT_BUTTON
+    // vertex array obj  - stores vertices
+    GLuint left_button_vertex_array_obj;
+    glGenVertexArrays(1, &left_button_vertex_array_obj);
+	// tex_coord buffer obj
+    glBindVertexArray(left_button_vertex_array_obj); // bind again  
+	    GLuint left_button_tex_coord_buffer_obj;
+        glGenBuffers( 1, &left_button_tex_coord_buffer_obj);
+        glBindBuffer( GL_ARRAY_BUFFER, left_button_tex_coord_buffer_obj);
+        glBufferData( GL_ARRAY_BUFFER, sizeof(tex_coords)* sizeof(GLfloat), tex_coords, GL_STATIC_DRAW);    
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), static_cast<void *>(0));			
+	    glEnableVertexAttribArray(1); 	
+	glBindVertexArray(0); // unbind
+	// vertex buffer obj
+    glBindVertexArray(left_button_vertex_array_obj); // bind vertex array obj
+        GLuint left_button_vertex_buffer_obj;
+        glGenBuffers(1, &left_button_vertex_buffer_obj);
+        glBindBuffer(GL_ARRAY_BUFFER, left_button_vertex_buffer_obj);
+		// set properties
+		double left_button_x = (!separator) ? x - button_width : x - button_width - separator_size; // -1 is the gap between left-button and spinner-center
+		double left_button_y = y;
+		int left_button_width = button_width;//width / 2;//-5;
+		int left_button_height = height;
+		GLfloat verticeslef[] = { // when x and y are 0 then from wwidth-wheight
+		    static_cast<GLfloat>(left_button_x)                                          , static_cast<GLfloat>(left_button_y),
+            static_cast<GLfloat>(left_button_x) + static_cast<GLfloat>(left_button_width), static_cast<GLfloat>(left_button_y),
+            static_cast<GLfloat>(left_button_x) + static_cast<GLfloat>(left_button_width), static_cast<GLfloat>(left_button_y) + static_cast<GLfloat>(left_button_height),
+            static_cast<GLfloat>(left_button_x)                                          , static_cast<GLfloat>(left_button_y) + static_cast<GLfloat>(left_button_height),   
+        };      
+        glBufferData(GL_ARRAY_BUFFER, sizeof(verticeslef)* sizeof(GLfloat), verticeslef, GL_STATIC_DRAW);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
+        glEnableVertexAttribArray(0);
+    glBindVertexArray(0); // vertex array obj (end 0)   
+	// element buffer obj
+	glBindVertexArray(left_button_vertex_array_obj); // (vao start 1)
+	    GLuint left_button_element_buffer_obj;
+        glGenBuffers(1, &left_button_element_buffer_obj);
+	    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, left_button_element_buffer_obj);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
+	glBindVertexArray(0);                // (vao end 1  )
+    // Draw outline
+	/*shader.set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
+	//glEnable(GL_LINE_SMOOTH); // may slow down performance
+	glLineWidth(outline_width); // outline_width
+	glBindVertexArray(left_button_vertex_array_obj); // use same vao data as _ but this time in a line loop
+        glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);*/
+	// Draw _
+	shader.set_float("color", (button_color.x / 255.0), (button_color.y / 255.0), (button_color.z / 255.0), button_color.w);
+	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
+    glBindVertexArray(left_button_vertex_array_obj); // (vao start 2)
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);                // (vao end 2  )	
+	//////////////////////
+	// RIGHT_BUTTON
+    // vertex array obj  - stores vertices
+    GLuint right_button_vertex_array_obj;
+    glGenVertexArrays(1, &right_button_vertex_array_obj);
+	// tex_coord buffer obj
+    glBindVertexArray(right_button_vertex_array_obj); // bind again  
+	    GLuint right_button_tex_coord_buffer_obj;
+        glGenBuffers( 1, &right_button_tex_coord_buffer_obj);
+        glBindBuffer( GL_ARRAY_BUFFER, right_button_tex_coord_buffer_obj);
+        glBufferData( GL_ARRAY_BUFFER, sizeof(tex_coords)* sizeof(GLfloat), tex_coords, GL_STATIC_DRAW);    
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), static_cast<void *>(0));			
+	    glEnableVertexAttribArray(1); 	
+	glBindVertexArray(0); // unbind
+	// vertex buffer obj
+    glBindVertexArray(right_button_vertex_array_obj); // bind vertex array obj
+        GLuint right_button_vertex_buffer_obj;
+        glGenBuffers(1, &right_button_vertex_buffer_obj);
+        glBindBuffer(GL_ARRAY_BUFFER, right_button_vertex_buffer_obj);
+		// set properties
+		double right_button_x = (!separator) ? x + width : x + width + separator_size; // +1 is the gap between right-button and spinner-center
+		double right_button_y = y;
+		int right_button_width = button_width;
+		int right_button_height = height;		
+		GLfloat verticesrig[] = { // when x and y are 0 then from wwidth-wheight
+		    static_cast<GLfloat>(right_button_x)                                           , static_cast<GLfloat>(right_button_y),
+            static_cast<GLfloat>(right_button_x) + static_cast<GLfloat>(right_button_width), static_cast<GLfloat>(right_button_y),
+            static_cast<GLfloat>(right_button_x) + static_cast<GLfloat>(right_button_width), static_cast<GLfloat>(right_button_y) + static_cast<GLfloat>(right_button_height),
+            static_cast<GLfloat>(right_button_x)                                           , static_cast<GLfloat>(right_button_y) + static_cast<GLfloat>(right_button_height),   
+        };      
+        glBufferData(GL_ARRAY_BUFFER, sizeof(verticesrig)* sizeof(GLfloat), verticesrig, GL_STATIC_DRAW);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
+        glEnableVertexAttribArray(0);
+    glBindVertexArray(0); // vertex array obj (end 0)   
+	// element buffer obj
+	glBindVertexArray(right_button_vertex_array_obj); // (vao start 1)
+	    GLuint right_button_element_buffer_obj;
+        glGenBuffers(1, &right_button_element_buffer_obj);
+	    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, right_button_element_buffer_obj);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
+	glBindVertexArray(0);                // (vao end 1  )
+    // Draw outline
+	/*shader.set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
+	//glEnable(GL_LINE_SMOOTH); // may slow down performance
+	glLineWidth(outline_width); // outline_width
+	glBindVertexArray(right_button_vertex_array_obj); // use same vao data as _ but this time in a line loop
+        glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);*/
+	// Draw _
+	shader.set_float("color", (button_color.x / 255.0), (button_color.y / 255.0), (button_color.z / 255.0), button_color.w);
+	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
+    glBindVertexArray(right_button_vertex_array_obj); // (vao start 2)
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);                // (vao end 2  )
+	//////////////////////
+    // PLUS_SHAPE
+    // vertex array obj  - stores vertices
+    GLuint plus_vertex_array_obj;
+    glGenVertexArrays(1, &plus_vertex_array_obj);
+	// vertex buffer obj
+    glBindVertexArray(plus_vertex_array_obj); // bind vertex array obj
+        GLuint plus_vertex_buffer_obj;
+        glGenBuffers(1, &plus_vertex_buffer_obj);
+        glBindBuffer(GL_ARRAY_BUFFER, plus_vertex_buffer_obj);
+        // set properties
+        int plus_width  = shape_size;//10;
+        int plus_height = shape_size;//10; // height        
+        double plus_x = (right_button_width  / 2) - (plus_width  / 2);
+        double plus_y = (right_button_height / 2) - (plus_height / 2);
+		GLfloat verticesplu[] = { // when x and y are 0 then from wwidth-wheight
+            // horizontal line
+		    static_cast<GLfloat>(right_button_x + plus_x) + static_cast<float>(plus_width), static_cast<GLfloat>(right_button_y + plus_y) + static_cast<float>(plus_height / 2), // move y axis to middle of vertical line
+            static_cast<GLfloat>(right_button_x + plus_x)                                 , static_cast<GLfloat>(right_button_y + plus_y) + static_cast<float>(plus_height / 2), // move y axis to middle of vertical line               
+            // vertical line
+		    static_cast<GLfloat>(right_button_x + plus_x) + static_cast<float>(plus_width / 2), static_cast<GLfloat>(right_button_y + plus_y),                                   // move x axis to middle of horizontal line
+            static_cast<GLfloat>(right_button_x + plus_x) + static_cast<float>(plus_width / 2), static_cast<GLfloat>(right_button_y + plus_y) + static_cast<float>(plus_height), // move x axis to middle of horizontal line        
+        };              
+        glBufferData(GL_ARRAY_BUFFER, sizeof(verticesplu)* sizeof(GLfloat), verticesplu, GL_STATIC_DRAW);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
+        glEnableVertexAttribArray(0);
+    glBindVertexArray(0); // vertex array obj (end 0)   
+	// element buffer obj
+	glBindVertexArray(plus_vertex_array_obj); // (vao start 1)
+	    GLuint plus_element_buffer_obj;
+        glGenBuffers(1, &plus_element_buffer_obj);
+	    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, plus_element_buffer_obj);
+		//GLuint indicestri[] = {1, 2, 3,  0};
+		GLuint indicesplu[] = {1, 2, 3,  0};  
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesplu)* sizeof(GLuint), indicesplu, GL_STATIC_DRAW); 
+	glBindVertexArray(0);                // (vao end 1  )
+    // Draw outline
+	/*shader.set_float("color", (0.0 / 255.0), (0.0 / 255.0), (0.0 / 255.0), (255.0 / 255.0));
+	//glEnable(GL_LINE_SMOOTH); // may slow down performance
+	glLineWidth(2.0); // outline_width
+	glBindVertexArray(plus_vertex_array_obj); // use same vao data as _ but this time in a line loop
+        glDrawArrays(GL_LINE_LOOP, 0, 3);//glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);*/	
+	// Draw lines
+	shader.set_float("color", (shape_color.x / 255.0), (shape_color.y / 255.0), (shape_color.z / 255.0), shape_color.w);
+	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
+    glLineWidth(static_cast<GLfloat>(shape_depth)); // thickness // range from 0.0 -> 10.0
+    glBindVertexArray(plus_vertex_array_obj); // (vao start 2)
+        glDrawArrays(GL_LINES, 0, 2); // start at index 0, 2 rects// draw 3 points to form a triangle
+	    glDrawArrays(GL_LINES, 2, 2); // start at index 2, 2 rects
+	glBindVertexArray(0);                // (vao end 2  )
+    //glBindTexture(GL_TEXTURE_2D, base);  // bind texture
+	//////////////////////
+    // MINUS_SHAPE
+    // vertex array obj  - stores vertices
+    GLuint minus_vertex_array_obj;
+    glGenVertexArrays(1, &minus_vertex_array_obj);
+	// vertex buffer obj
+    glBindVertexArray(minus_vertex_array_obj); // bind vertex array obj
+        GLuint minus_vertex_buffer_obj;
+        glGenBuffers(1, &minus_vertex_buffer_obj);
+        glBindBuffer(GL_ARRAY_BUFFER, minus_vertex_buffer_obj);
+        // set properties
+        int minus_width = shape_size;//10;
+        int minus_top   = shape_size;//10; // height or top_padding
+        double minus_x = (left_button_width  / 2) - (minus_width / 2);
+        double minus_y = (left_button_height / 2) - (minus_top   / 2);
+		GLfloat verticesmin[] = { // when x and y are 0 then from wwidth-wheight
+            // horizontal line
+		    static_cast<GLfloat>(left_button_x + minus_x) + static_cast<float>(minus_width), static_cast<GLfloat>(left_button_y + minus_y) + static_cast<float>(minus_top / 2), // move y axis vertically
+            static_cast<GLfloat>(left_button_x + minus_x)                                  , static_cast<GLfloat>(left_button_y + minus_y) + static_cast<float>(minus_top / 2), // move y axis vertically        
+        };              
+        glBufferData(GL_ARRAY_BUFFER, sizeof(verticesmin)* sizeof(GLfloat), verticesmin, GL_STATIC_DRAW);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
+        glEnableVertexAttribArray(0);
+    glBindVertexArray(0); // vertex array obj (end 0)   
+	// element buffer obj
+	glBindVertexArray(minus_vertex_array_obj); // (vao start 1)
+	    GLuint minus_element_buffer_obj;
+        glGenBuffers(1, &minus_element_buffer_obj);
+	    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, minus_element_buffer_obj);
+		//GLuint indicestri[] = {1, 2, 3,  0};
+		GLuint indicesduo[] = {1, 2, 3,  0};  
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesduo)* sizeof(GLuint), indicesduo, GL_STATIC_DRAW); 
+	glBindVertexArray(0);                // (vao end 1  )
+    // Draw outline
+	/*shader.set_float("color", (0.0 / 255.0), (0.0 / 255.0), (0.0 / 255.0), (255.0 / 255.0));
+	//glEnable(GL_LINE_SMOOTH); // may slow down performance
+	glLineWidth(2.0); // outline_width
+	glBindVertexArray(minus_vertex_array_obj); // use same vao data as _ but this time in a line loop
+        glDrawArrays(GL_LINE_LOOP, 0, 3);//glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);*/	
+	// Draw lines
+	shader.set_float("color", (shape_color.x / 255.0), (shape_color.y / 255.0), (shape_color.z / 255.0), shape_color.w);
+	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
+	//already set above//glLineWidth(2.0); // thickness (real height) // range from 0.0 -> 10.0
+    glBindVertexArray(minus_vertex_array_obj); // (vao start 2)
+        glDrawArrays(GL_LINES, 0, 2); // draw 3 points to form a triangle
+	    //glDrawArrays(GL_LINES, 2, 2);
+	glBindVertexArray(0);                // (vao end 2  )
+    //glBindTexture(GL_TEXTURE_2D, base);  // bind texture
+	////////////////////// 	
+	//////////////////
+	// Clean buffers
+	// spinner
+	glDeleteBuffers(1, &spinner_tex_coord_buffer_obj);
+	glDeleteBuffers(1, &spinner_element_buffer_obj  );
+	glDeleteBuffers(1, &spinner_vertex_buffer_obj   );
+	// : left_button
+	glDeleteBuffers(1, &left_button_tex_coord_buffer_obj);
+	glDeleteBuffers(1, &left_button_element_buffer_obj  );
+	glDeleteBuffers(1, &left_button_vertex_buffer_obj   );
+    // right_button
+	glDeleteBuffers(1, &right_button_tex_coord_buffer_obj);
+	glDeleteBuffers(1, &right_button_element_buffer_obj);
+	glDeleteBuffers(1, &right_button_vertex_buffer_obj );	
+	// plus_
+	glDeleteBuffers(1, &plus_vertex_buffer_obj );
+	glDeleteBuffers(1, &plus_element_buffer_obj);
+	// minus_
+	glDeleteBuffers(1, &minus_vertex_buffer_obj );
+	glDeleteBuffers(1, &minus_element_buffer_obj);
+	//----------------------------------------------------
+	// Clean arrays
+	glDeleteVertexArrays(1, &spinner_vertex_array_obj     );
+	glDeleteVertexArrays(1, &left_button_vertex_array_obj );
+	glDeleteVertexArrays(1, &right_button_vertex_array_obj);
+	// use +1 and -1 as x_pos seperator gap 
+	glDeleteVertexArrays(1, &plus_vertex_array_obj        );
+	glDeleteVertexArrays(1, &minus_vertex_array_obj       );
+	// Restore defaults
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glLineWidth(1.0);
+	glDisable(GL_LINE_SMOOTH);
+	// Disable program
+	shader.disable();
+	shader.destroy();	
+		    
+}
 ////////////
 ////////////
 ////////////
 ////////////
-void Renderer::draw_combobox(int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha,
+void Renderer::draw_combobox(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,
     const Vector4& button_color, int button_width, bool button_on)
 {
 #ifdef DOKUN_OPENGL	// OpenGL is defined
@@ -4261,14 +4986,14 @@ void Renderer::draw_combobox(int x, int y, int width, int height, double angle, 
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
     // Draw outline
-	/*shader.set_float("color", (outline_color.x / 255), (outline_color.y / 255), (outline_color.z / 255), (outline_color.w / 255));
+	/*shader.set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
 	//glEnable(GL_LINE_SMOOTH); // may slow down performance
 	glLineWidth(outline_width); // outline_width
 	glBindVertexArray(combo_vertex_array_obj); // use same vao data as _ but this time in a line loop
         glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);*/		
 	// Draw combobox
-	shader.set_float("color", (red / 255), (green / 255), (blue / 255), (alpha / 255));
+	shader.set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
     glBindVertexArray(combo_vertex_array_obj); // (vao start 2)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);                // (vao end 2  )
@@ -4313,14 +5038,14 @@ void Renderer::draw_combobox(int x, int y, int width, int height, double angle, 
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
     // Draw outline
-	/*shader.set_float("color", (outline_color.x / 255), (outline_color.y / 255), (outline_color.z / 255), (outline_color.w / 255));
+	/*shader.set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
 	//glEnable(GL_LINE_SMOOTH); // may slow down performance
 	glLineWidth(outline_width); // outline_width
 	glBindVertexArray(vertex_array_obj); // use same vao data as _ but this time in a line loop
         glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);*/		
 	// Draw button
-	shader.set_float("color", (button_color.x / 255), (button_color.y / 255), (button_color.z / 255), (button_color.w / 255));//shader.set_float("color", (red / 255), (green / 255), (blue / 255), (alpha / 255));
+	shader.set_float("color", (button_color.x / 255.0), (button_color.y / 255.0), (button_color.z / 255.0), button_color.w);//shader.set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
     glBindVertexArray(button_vertex_array_obj); // (vao start 2)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);                // (vao end 2  )
@@ -4369,14 +5094,14 @@ void Renderer::draw_combobox(int x, int y, int width, int height, double angle, 
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicestri)* sizeof(GLuint), indicestri, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
     // Draw outline
-	/*shader.set_float("color", (0.0 / 255), (0.0 / 255), (0.0 / 255), (255.0 / 255));
+	/*shader.set_float("color", (0.0 / 255.0), (0.0 / 255.0), (0.0 / 255.0), (255.0 / 255.0));
 	//glEnable(GL_LINE_SMOOTH); // may slow down performance
 	glLineWidth(2.0); // outline_width
 	glBindVertexArray(arrow_vertex_array_obj); // use same vao data as _ but this time in a line loop
         glDrawArrays(GL_LINE_LOOP, 0, 3);//glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);*/	
 	// Draw triangle
-	shader.set_float("color", (255.0 / 255), (255.0 / 255), (255.0 / 255), (255.0 / 255));
+	shader.set_float("color", (255.0 / 255.0), (255.0 / 255.0), (255.0 / 255.0), (255.0 / 255.0));
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
     glBindVertexArray(arrow_vertex_array_obj); // (vao start 2)
         glDrawArrays(GL_TRIANGLES, 0, 3); // draw 3 points to form a triangle
@@ -4407,11 +5132,11 @@ void Renderer::draw_combobox(int x, int y, int width, int height, double angle, 
 	shader.disable();
 	shader.destroy();
 	//////////////////
-	//draw_triangle(x, y, 32, 32, -45.0f * 0.0174533, 1, 1, 255, 255, 255);
+	//draw_triangle(x, y, 32, 32, -45.0f * 0.0174533, 1, 1, 255, 255, 255.0);
 #endif
 }
 ////////////
-void Renderer::draw_tab(int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha,
+void Renderer::draw_tab(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,
     int tab_count, bool visible)
 {
 #ifdef DOKUN_OPENGL	// OpenGL is defined
@@ -4526,7 +5251,7 @@ void Renderer::draw_tab(int x, int y, int width, int height, double angle, doubl
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
     // Draw outline
-	shader.set_float("color", (32.0 / 255), (32.0 / 255), (32.0 / 255), (255.0 / 255));
+	shader.set_float("color", (32.0 / 255.0), (32.0 / 255.0), (32.0 / 255.0), (255.0 / 255.0));
 	//glEnable(GL_LINE_SMOOTH); // may slow down performance
 	glLineWidth(1.0); // outline_width
 	glBindVertexArray(tab_vertex_array_obj); // use same vao data as _ but this time in a line loop
@@ -4535,7 +5260,7 @@ void Renderer::draw_tab(int x, int y, int width, int height, double angle, doubl
 	// Draw tab (head)	
 	double current_x = x + tab_count * width;
 	double current_y = y + tab_count * height;
-	shader.set_float("color", (red / 255), (green / 255), (blue / 255), (alpha / 255));
+	shader.set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
     glBindVertexArray(tab_vertex_array_obj); // (vao start 2)  
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);//glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, 4); // (as we have 4 instances specified in array)
 	glBindVertexArray(0);                // (vao end 2  )
@@ -4590,14 +5315,14 @@ void Renderer::draw_tab(int x, int y, int width, int height, double angle, doubl
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(tab_body_indices)* sizeof(GLuint), tab_body_indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
     // Draw outline
-	shader.set_float("color", (32.0 / 255), (32.0 / 255), (32.0 / 255), (32.0 / 255));
+	shader.set_float("color", (32.0 / 255.0), (32.0 / 255.0), (32.0 / 255.0), (32.0 / 255.0));
 	//glEnable(GL_LINE_SMOOTH); // may slow down performance
 	glLineWidth(5.0); // outline_width
 	glBindVertexArray(tab_body_vertex_array_obj); // use same vao data as _ but this time in a line loop
         glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 	// Draw tab (body)
-	shader.set_float("color", (red / 255), (green / 255), (blue / 255), (alpha / 255));
+	shader.set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
     glBindVertexArray(tab_body_vertex_array_obj); // (vao start 2)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);                // (vao end 2  )	
@@ -4626,7 +5351,7 @@ void Renderer::draw_tab(int x, int y, int width, int height, double angle, doubl
         glEnableVertexAttribArray(0);
     glBindVertexArray(0); // vertex array obj (end 0)	
 	// Draw seperator
-	shader.set_float("color", (0 / 255), (0 / 255), (0 / 255), (255 / 255));
+	shader.set_float("color", (0 / 255.0), (0 / 255.0), (0 / 255.0), (255 / 255.0));
     //glEnable(GL_LINE_SMOOTH);
 	glLineWidth(1.0); // width of the seperator
 	glBindVertexArray(seperator_vertex_array_obj);
@@ -4687,7 +5412,7 @@ void Renderer::draw_tab(int x, int y, int width, int height, double angle, doubl
 ////////////
 void Renderer::draw_point()
 {}
-void Renderer::draw_line(double x, double y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha)
+void Renderer::draw_line(double x, double y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {
 #ifdef DOKUN_OPENGL	// OpenGL is defined
 	context_check();
@@ -4777,7 +5502,7 @@ void Renderer::draw_line(double x, double y, int width, int height, double angle
         glEnableVertexAttribArray(0);
     glBindVertexArray(0); // vertex array obj (end 0)	
 	// Draw line
-	shader.set_float("color", (red / 255), (green / 255), (blue / 255), (alpha / 255)); //glEnable(GL_LINE_SMOOTH);
+	shader.set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha); //glEnable(GL_LINE_SMOOTH);
 	glLineWidth(height); // line thickness (not width, but will act as height since the line is horizontal)
 	glBindVertexArray(line_vertex_array_obj);
         glDrawArrays(GL_LINES, 0, 2);
@@ -4895,7 +5620,7 @@ void Renderer::draw_circle()
 	glm::mat4 proj  = glm::ortho(0.0f, window_width, window_height, 0.0f, -1.0f, 1.0f);
 	glUniformMatrix4fv(glGetUniformLocation(shader.get_program(), "model"), 1, GL_FALSE, glm::value_ptr(model));
 	glUniformMatrix4fv(glGetUniformLocation(shader.get_program(), "proj") , 1, GL_FALSE, glm::value_ptr(proj) );
-	shader.set_float("color", (red / 255), (green / 255), (blue / 255), (alpha / 255));
+	shader.set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
     // vertex array obj  - stores vertices
     GLuint vertex_array_obj;
     glGenVertexArrays(1, &vertex_array_obj);
@@ -4977,8 +5702,8 @@ void Renderer::draw_circle()
 	shader.destroy();
 #endif			*/
 }
-//////////// //Renderer::draw_triangle(700, 500, 5, 5, 0.0, 1, 1, 255, 255, 255, 255);
-void Renderer::draw_triangle(double x, double y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha)
+//////////// //Renderer::draw_triangle(700, 500, 5, 5, 0.0, 1, 1, 255, 255, 255, 255.0);
+void Renderer::draw_triangle(double x, double y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {
 #ifdef DOKUN_OPENGL	// OpenGL is defined
 	context_check();
@@ -5081,14 +5806,14 @@ void Renderer::draw_triangle(double x, double y, int width, int height, double a
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
     // Draw outline
-	//shader.set_float("color", (outline_color.x / 255), (outline_color.y / 255), (outline_color.z / 255), (outline_color.w / 255));
+	//shader.set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
 	//glEnable(GL_LINE_SMOOTH); // may slow down performance
 	/*glLineWidth(1); // outline_width
 	glBindVertexArray(triangle_vertex_array_obj); // use same vao data as _ but this time in a line loop
         glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);*/		
 	// Draw _
-	shader.set_float("color", (red / 255), (green / 255), (blue / 255), (alpha / 255));
+	shader.set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
     glBindVertexArray(triangle_vertex_array_obj); // (vao start 2)
         glDrawArrays(GL_TRIANGLES, 0, 3); // draw 3 points to form a triangle
@@ -5145,12 +5870,12 @@ void Renderer::set_viewport(int x, int y, int width, int height)
 }
 ////////////
 ////////////
-void Renderer::set_clear(double red, double green, double blue, double alpha, double depth, int stencil)
+void Renderer::set_clear(unsigned int red, unsigned int green, unsigned int blue, double alpha, double depth, int stencil)
 {
 	color = Vector4(red, green, blue, alpha);
 #ifdef DOKUN_OPENGL
 	context_check();
-	glClearColor(static_cast<GLclampf>(color.x) / 255, static_cast<GLclampf>(color.y) / 255, static_cast<GLclampf>(color.z) / 255, static_cast<GLclampf>(color.w) / 255); 
+	glClearColor(static_cast<GLclampf>(color.x) / 255, static_cast<GLclampf>(color.y) / 255, static_cast<GLclampf>(color.z) / 255, static_cast<GLclampf>(color.w) / 255.0); 
     glClearDepth(depth); 
     glClearStencil(stencil);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);

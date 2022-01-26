@@ -138,7 +138,7 @@ int Entity::add_component(lua_State *L)
 	if(lua_isuserdata(L, -1)) 
 	{
 		Entity * entity = *static_cast<Entity **>(lua_touserdata(L, -1));
-		if(entity->has_component(lua_tostring(L, 2))) {Logger("Component " + std::string(lua_tostring(L, 2)) + " previously attached to entity"); return 0;}
+		if(entity->has_component(lua_tostring(L, 2))) {dokun::Logger("Component " + std::string(lua_tostring(L, 2)) + " previously attached to entity"); return 0;}
 		if(lua_type(L, 3) == LUA_TNUMBER) entity->add_component(new Component(lua_tostring(L, 2), lua_tonumber(L, 3)));
 		if(lua_type(L, 3) == LUA_TSTRING) entity->add_component(new Component(lua_tostring(L, 2), String(lua_tostring(L, 3))));
 		if(lua_type(L, 3) == LUA_TBOOLEAN) entity->add_component(new Component(lua_tostring(L, 2), lua_toboolean(L, 3), true));
@@ -253,7 +253,7 @@ int Entity::set_component(lua_State *L)
 	if(lua_isuserdata(L, -1))
 	{
 	    Entity * entity = *static_cast<Entity **>(lua_touserdata(L, -1));
-	    if(!entity->has_component(lua_tostring(L, 2))) {Logger("Component " + std::string(lua_tostring(L, 2)) + " not attached to entity"); return 0;}
+	    if(!entity->has_component(lua_tostring(L, 2))) {dokun::Logger("Component " + std::string(lua_tostring(L, 2)) + " not attached to entity"); return 0;}
 		if(lua_type(L, 3) == LUA_TNUMBER) entity->set_component(lua_tostring(L, 2), lua_tonumber(L, 3));
 		if(lua_type(L, 3) == LUA_TSTRING) entity->set_component(lua_tostring(L, 2), String(lua_tostring(L, 3)));
 		if(lua_type(L, 3) == LUA_TBOOLEAN) entity->set_component(lua_tostring(L, 2), lua_toboolean(L, 3), true);
@@ -568,7 +568,7 @@ static void entity_to_table(lua_State *L, Entity * object, bool reset) // , bool
 		std::ofstream file(fn.c_str(), mode | std::ios::binary);
 		if (!file.is_open()) 
 	    {
-			Logger("Could not generate lua");
+			dokun::Logger("Could not generate lua");
 			return;
 		}
 		file << "-- ";

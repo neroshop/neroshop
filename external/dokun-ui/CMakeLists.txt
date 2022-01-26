@@ -108,26 +108,16 @@ set(win32_src)
 set(x11_src     libX11.a libxcb.a libXau.a libXdmcp.a)
 set(wayland_src libwayland-client.so libwayland-server.so libwayland-cursor.so libwayland-egl.so libEGL.so)
 set(cocoa_src)
-set(glfw_src external/glfw/src/context.c external/glfw/src/init.c external/glfw/src/input.c external/glfw/src/monitor.c external/glfw/src/vulkan.c external/glfw/src/window.c # ${common_SOURCES}
-) # glfw-3.3.5 (https://www.glfw.org/)
+set(glfw_src external/glfw/src/context.c external/glfw/src/init.c external/glfw/src/input.c external/glfw/src/monitor.c external/glfw/src/vulkan.c external/glfw/src/window.c) # ${common_SOURCES}) # glfw-3.3.5 (https://www.glfw.org/)
 if(WINDOWS)
 endif()
-if(LINUX)
-# _GLFW_X11
-    list(APPEND glfw_src external/glfw/src/x11_init.c external/glfw/src/x11_monitor.c external/glfw/src/x11_window.c
+if(LINUX) # _GLFW_X11
+list(APPEND glfw_src external/glfw/src/x11_init.c external/glfw/src/x11_monitor.c external/glfw/src/x11_window.c
                      external/glfw/src/xkb_unicode.c external/glfw/src/posix_time.c external/glfw/src/posix_thread.c external/glfw/src/glx_context.c
                      external/glfw/src/egl_context.c external/glfw/src/osmesa_context.c)
-    list(APPEND glfw_src external/glfw/src/linux_joystick.c) # for both _GLFW_X11 OR _GLFW_WAYLAND
-endif() 
-# glfw requires libxrandr-dev for <X11/extensions/Xrandr.h>
-# glfw requires libxinerama-dev for <X11/extensions/Xinerama.h>
-# glfw requires libxi-dev for <X11/extensions/XInput2.h>
-set(DOKUN_GLFW OFF CACHE BOOL "glfw-3.3.5")
-if(DOKUN_GLFW)
-    message("Using GLFW for window creation")
-    add_definitions(-D_GLFW_X11) # _GLFW_GLX  |  _GLFW_USE_OPENGL
-    list(APPEND dokun_ui_src ${glfw_src})
+list(APPEND glfw_src external/glfw/src/linux_joystick.c) # for both _GLFW_X11 OR _GLFW_WAYLAND
 endif()
+# glfw depends on the following libs (on linux): libxrandr-dev libxinerama-dev libxi-dev # glfw requires libxrandr-dev for <X11/extensions/Xrandr.h>, libxinerama-dev for <X11/extensions/Xinerama.h>,libxi-dev for <X11/extensions/XInput2.h>
 #############
 # input
 #############
@@ -184,9 +174,6 @@ if(LINUX)
 endif()
 add_definitions(-DFT2_BUILD_LIBRARY) # define 'DLL_EXPORT' for freetype2 sharedlib (.dll). Other defines: -DFT_WITH_ZLIB=ON, -DFT_WITH_BZIP2=ON, -DFT_WITH_PNG=ON
 #############
-# network
-set(winsocket_src ws2_32.lib)
-#############
 # audio (playback)
 if(WIN32)
 set(openal_src ${CMAKE_CURRENT_SOURCE_DIR}/src/OpenAL32.lib) # openal-soft (https://kcat.strangesoft.net/openal.html) (LGPL-licensed)
@@ -194,9 +181,6 @@ endif()
 if(LINUX)
 set(openal_src libopenal.so)
 endif()
-#############
-# data (serialization)
-set(sqlite_src external/sqlite/sqlite3.c)
 #############
 # unicode
 set(icu_src)
@@ -266,6 +250,18 @@ link_directories(${CMAKE_CURRENT_SOURCE_DIR}/src) # stored in 'src' since librar
 # API definitions
 add_definitions(-DDOKUN_OPENGL) # add_definitions(-DDOKUN_VULKAN)
 add_definitions(-DDOKUN_OPENAL)
+if(DOKUN_GLFW) # cmake -G"Unix Makefiles" -DDOKUN_GLFW=ON
+    message("Using GLFW for window creation")
+if(LINUX)
+    add_definitions(-D_GLFW_X11)
+if(DOKUN_OPENGL)
+    add_definitions(-D_GLFW_GLX)
+    add_definitions(-D_GLFW_USE_OPENGL)
+endif()
+endif()
+    #list(REMOVE_ITEM dokun_ui_src src/window.cpp)
+    list(APPEND dokun_ui_src ${glfw_src} #[[src/window_glfw.cpp]])
+endif()
 add_definitions(-DDOKUN_DEBUG ) # dokun debug mode. Use -DDOKUN_DEBUG0 for more intense debugging#add_definitions(-DDOKUN_WAYLAND)
 #############
 # output folder - '.a' and '.lib' will go in folder "src"
@@ -273,8 +269,8 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/src)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/src)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}    )
 #############
-# build dokun-ui    # add_executable(dokun_ui           ${dokun_ui_src} ${lua_src} ${png_src} ${gif_src} ${jpeg_src} ${tiff_src} ${ogg_src} ${vorbis_src} ${flac_src} ${theora_src} ${freetype_src} #[[${sqlite_src}]] ${zlib_src} ${glew_src} ${dokun_res}              )
-add_library   (libdokun-ui STATIC ${dokun_ui_src} ${lua_src} ${png_src} ${gif_src} ${jpeg_src} ${tiff_src} ${ogg_src} ${vorbis_src} ${flac_src} ${theora_src} ${freetype_src} #[[${sqlite_src}]] ${zlib_src} ${glew_src}                           )
+# build dokun-ui    # add_executable(dokun_ui           ${dokun_ui_src} ${lua_src} ${png_src} ${gif_src} ${jpeg_src} ${tiff_src} ${ogg_src} ${vorbis_src} ${flac_src} ${theora_src} ${freetype_src} ${zlib_src} ${glew_src} ${dokun_res}              )
+add_library   (libdokun-ui STATIC ${dokun_ui_src} ${lua_src} ${png_src} ${gif_src} ${jpeg_src} ${tiff_src} ${ogg_src} ${vorbis_src} ${flac_src} ${theora_src} ${freetype_src} ${zlib_src} ${glew_src}                           )
 #############
 # set properties
 #set_target_properties(dokun_ui    PROPERTIES COMPILE_DEFINITIONS "DOKUN_BUILD_CONSOLE")

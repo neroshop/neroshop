@@ -463,6 +463,10 @@ bool neroshop::DB::create_config() { // good!
     "        file = \"\", -- include '.keys' ext\n"
     "        restore_height = 0, -- block height or date (YYYY-MM-DD)\n"    
     "    },\n"
+    "    account = {\n"
+    "        saved = false,\n"
+    "        username = \"\",\n"
+    "    },\n"
     "}\n";
     //"    \n"
     // swap data_dir with user
@@ -513,7 +517,34 @@ bool neroshop::DB::load_config(lua_State *L)
     return true; // default return-value
 }
 ////////////////////
-//void neroshop::DB::edit_config() {}
+void neroshop::DB::edit_config(const std::string& old_str, const std::string& new_str) { // bad - needs some fixing :/
+    ///////////////////////////////// get config file path and name
+    std::string user = System::get_user();
+    // "/home/<user>/.config/neroshop"
+    std::string neroshop_config_path = "/home/" + user + "/.config/neroshop";
+    // "/home/<user>/.config/neroshop/config.lua"
+    std::string neroshop_config_name = neroshop_config_path + "/config.lua";
+    ///////////////////////////////// dump contents
+	std::ifstream file(neroshop_config_name); // file_name.c_str()
+	if(!file.is_open()) {
+	    std::cout << "Could not open " << neroshop_config_name << std::endl;
+		return;// false;
+	}	
+	std::stringstream stream;
+	stream << file.rdbuf(); // dump file contents
+	file.close(); // close file when done retrieving contents    
+    ///////////////////////////////// look for then edit specific file content
+	if(String::contains(stream.str(), old_str)) {   
+		 std::string contents = String::swap_first_of(stream.str(), old_str, new_str);
+        // rewrite config file
+        std::ofstream cfg;
+        cfg.open (neroshop_config_name, std::ios::out | std::ios::trunc);
+        cfg << contents << "\n"; // write to file
+        cfg.close();
+        NEROSHOP_TAG std::cout << "\033[1;97;49m" << "rewrote file \"" << neroshop_config_name << "\"" << "\033[0m" << std::endl;      
+    }
+    /////////////////////////////////
+}
 // 1. dump file contents into string
 // 2. use String to add or remove specific contents
 // 3. re-write config

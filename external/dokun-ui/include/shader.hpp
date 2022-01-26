@@ -1,5 +1,5 @@
-#ifndef _SHADER
-#define _SHADER
+#ifndef SHADER_HPP_DOKUN
+#define SHADER_HPP_DOKUN
 
 #include "platform.hpp"
 #include "types.hpp"

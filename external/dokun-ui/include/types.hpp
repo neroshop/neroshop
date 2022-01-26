@@ -1,5 +1,5 @@
-#ifndef _TYPES 
-#define _TYPES
+#ifndef TYPES_HPP_DOKUN
+#define TYPES_HPP_DOKUN
 
 #include "platform.hpp"
 #include "vector.hpp"
@@ -354,7 +354,7 @@ typedef enum dokun_Style {
 	DOKUN_STYLE_UNDERLINED    = 8,
 	DOKUN_STYLE_STRIKETHROUGH = 16,
 	// Window
-#ifdef __windows__	
+#ifdef DOKUN_WIN32	
 	DOKUN_BORDER  = WS_BORDER,
 	DOKUN_CAPTION = WS_CAPTION,
 	DOKUN_CHILD   = WS_CHILD, // cannot be used with pop_up
@@ -440,7 +440,7 @@ typedef enum dokun_PolygonMode {
 } dokun_PolygonMode;
 
 typedef enum dokun_Cursor {
-#ifdef __windows__	
+#ifdef DOKUN_WIN32	
 	DOKUN_ARROW = 0,
 	DOKUN_MOVE  = 1,
 	DOKUN_CROSS = 2,
@@ -457,7 +457,7 @@ typedef enum dokun_Cursor {
 	DOKUN_WAIT     = 13,
 	DOKUN_UPARROW  = 14,
 #endif	
-#ifndef __windows__
+#ifndef DOKUN_WIN32
 	DOKUN_ARROW = 0,
 	DOKUN_MOVE  = 1,
 	DOKUN_CROSS = 2,
@@ -484,11 +484,11 @@ typedef enum dokun_MessageBox
 typedef enum dokun_Default {
 	DOKUN_DEFAULT_WIDTH  = 	800,
 	DOKUN_DEFAULT_HEIGHT =  600,
-#ifdef __windows__
+#ifdef DOKUN_WIN32
     DOKUN_DEFAULT_POSITION_X  = CW_USEDEFAULT,
 	DOKUN_DEFAULT_POSITION_Y  = CW_USEDEFAULT,
 #endif	
-#ifndef __windows__
+#ifndef DOKUN_WIN32
     DOKUN_DEFAULT_POSITION_X  = 200,
 	DOKUN_DEFAULT_POSITION_Y  = 200,
 #endif

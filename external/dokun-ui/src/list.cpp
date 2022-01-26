@@ -1,10 +1,10 @@
 #include "../include/list.hpp"
 
-List::List() : color(106, 106, 106, 255), selection(nullptr), image(nullptr),
+List::List() : color(106, 106, 106, 1.0), selection(nullptr), image(nullptr),
 // outline
 outline(true),
 outline_width(1.0),
-outline_color(0, 0, 0, 255),
+outline_color(0, 0, 0, 1.0),
 outline_antialiased(false),
 // gradient
 gradient(false),
@@ -14,33 +14,33 @@ gradient_color(color)
 	set_size(80, 20);
 	set_orientation(0);
 	
-	label = new Label();
+	label = new dokun::Label();
 }
-List::List(int x, int y) : color(106, 106, 106, 255), selection(nullptr), image(nullptr),
+List::List(int x, int y) : color(106, 106, 106, 1.0), selection(nullptr), image(nullptr),
 // outline (default)
 outline(true),
 outline_width(1.0),
-outline_color(0, 0, 0, 255),
+outline_color(0, 0, 0, 1.0),
 outline_antialiased(false)
 {
 	set_position(x, y);
 	set_size(80, 20);
 	set_orientation(0);
 	
-	label = new Label();
+	label = new dokun::Label();
 }
-List::List(int x, int y, int width, int height) : color(106, 106, 106, 255), selection(nullptr), image(nullptr),
+List::List(int x, int y, int width, int height) : color(106, 106, 106, 1.0), selection(nullptr), image(nullptr),
 // outline
 outline(true),
 outline_width(1.0),
-outline_color(0, 0, 0, 255),
+outline_color(0, 0, 0, 1.0),
 outline_antialiased(false)
 {
 	set_position(x, y);
 	set_size(width, height);
 	set_orientation(0);
 	
-	label = new Label();	
+	label = new dokun::Label();	
 }
 int List::new_(lua_State *L)
 {
@@ -83,7 +83,7 @@ void List::draw()
                 image->draw();				
 			}	
 			// Draw label
-			Label * label = item->get_label();
+			dokun::Label * label = item->get_label();
 			if(label)
 			{
 		        if(label->get_alignment() == "left"  ) { label->set_relative_position(0                                          , 0); } // default - relative_position will always be (0, 0) unless you change the alignment
@@ -129,12 +129,12 @@ int List::add(lua_State *L)
     return 0;
 }
 ////////////////
-void List::set_label(const Label& label)
+void List::set_label(const dokun::Label& label)
 {
-	this->label = &const_cast<Label&>(label);
+	this->label = &const_cast<dokun::Label&>(label);
 	//this->label->set_parent(*this);
 }
-void List::set_color(int red, int green, int blue, int alpha)
+void List::set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {
 	color = Vector4(red, green, blue, alpha);
 }
@@ -155,7 +155,7 @@ int List::set_selection(lua_State * L)
     return 0;
 }
 ///////////////
-Label * List::get_label() const
+dokun::Label * List::get_label() const
 {
 	return label;
 }
@@ -167,7 +167,7 @@ Box * List::get_item(int index) const
 {
 	if(item_list.size() < index + 1)
 	{
-		Logger("List::get_item : Attempting to access invalid item location", "error");
+		dokun::Logger("List::get_item : Attempting to access invalid item location", "error");
 		return nullptr;
 	}
 	return item_list[index];
@@ -202,7 +202,7 @@ int List::set_outline_width(lua_State * L)
 {
     return 0;
 }
-void List::set_outline_color(int red, int green, int blue, int alpha)
+void List::set_outline_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {
 	this->outline_color = Vector4(red, green, blue, alpha);
 }

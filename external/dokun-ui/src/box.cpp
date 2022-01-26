@@ -1,6 +1,6 @@
 #include "../include/box.hpp"
 
-Box::Box() : radius(0.0), color(64, 64, 64, 255), fill(true), image (nullptr), type("box"),
+Box::Box() : radius(0.0), color(160, 160, 160, 1.0)/*(64, 64, 64, 1.0)*/, fill(true), image (nullptr), type("box"),
 iconified(false),
 maximized(false),
 restored(true),
@@ -13,19 +13,19 @@ forbidden_area(0, 0, 0, 0), // forbidden area
 // title bar
 title_bar(false), 
 title_bar_height(30),
-title_bar_color(0, 51, 102, 255), // I call this color, dokun_blue
+title_bar_color(0, 51, 102, 1.0), // I call this color, dokun_blue
 title_bar_button_iconify(false),  // cannot have button_iconify  without button_close
 title_bar_button_maximize(false), // cannot have button_minimize without button_close
 title_bar_button_close(true),     // can have button_close by itself or with other buttons
 title_bar_button_width(10),
 title_bar_image(nullptr), // if you operate on this and do not assign it to nullptr or any value then the engine will crash (on Linux especially)
 title_bar_label(nullptr), // if you operate on this and do not assign it to nullptr or any value then the engine will crash (on Linux especially)
-title_bar_button_close_color(64, 64, 64, 255), // 235, 26, 34, 255
+title_bar_button_close_color(64, 64, 64, 1.0), // 235, 26, 34, 1.0
 title_bar_horizontal_padding(10), // for label, image and other content inside titlebar
 // outline
 outline(false),
 outline_width(2.0),
-outline_color(0, 51, 102, 255), // dokun_blue outline to match title_bar_color
+outline_color(0, 51, 102, 1.0), // dokun_blue outline to match title_bar_color
 outline_antialiased(false),
 // border
 border(false),
@@ -33,7 +33,7 @@ border_size(1, 1),
 border_thickness(0),
 border_style(0),
 border_radius(10.0),
-border_color(47, 79, 79, 255),
+border_color(47, 79, 79, 1.0),
 // gradient
 gradient(false),
 gradient_color(color),
@@ -43,14 +43,14 @@ gradient_type("linear"), // or radial (circle-like)
 shadow(false),
 // highlight - used when hovered over ui
 highlight(true),
-highlight_color(0, 51, 102, 255),
+highlight_color(0, 51, 102, 1.0),
 // separator - horizontal by default
 separator(false),
 separator_count(1), // add_separator(), separator_count = separator_count + 1 
 separator_width(200),
 separator_height(1), 
 separator_position(0, 10),
-separator_color(32, 32, 32, 255),
+separator_color(32, 32, 32, 1.0),
 // tooltip
 tooltip_arrow_direction("down"),
 tooltip_arrow_width(10),
@@ -64,7 +64,7 @@ next(nullptr)
 	set_position(0, 0);
 	set_size(200, 150);
 	set_orientation(0);
-	set_label(*new Label()); // create a(n)(initialized) label for widget (You will no longer need to check whether label is nullptr)
+	set_label(*new dokun::Label()); // create a(n)(initialized) label for widget (You will no longer need to check whether label is nullptr)
 }
 /////////////
 Box::Box(const Box& widget)
@@ -106,7 +106,7 @@ Box::Box(const std::string& type)
     set_position(0, 0);
 	set_size(200, 150);
 	set_orientation(0);		
-	set_label(*new Label());
+	set_label(*new dokun::Label());
 }
 /////////////
 Box::Box(int x, int y)
@@ -114,7 +114,7 @@ Box::Box(int x, int y)
     set_position(x, y);
 	set_size(200, 150);
 	set_orientation(0);
-	set_label(*new Label());
+	set_label(*new dokun::Label());
 }
 /////////////
 Box::Box(int x, int y, int width, int height)
@@ -123,7 +123,7 @@ Box::Box(int x, int y, int width, int height)
 	set_width  (width);
 	set_height(height);
 	set_orientation(0);
-	set_label(*new Label());
+	set_label(*new dokun::Label());
 }
 /////////////
 Box::~Box(void)
@@ -199,9 +199,6 @@ void Box::draw(void)
 			on_titlebar();
             on_drag();
 			on_resize();
-			// Close button mouse hover
-			if(Mouse::is_over(get_title_bar_button_close_position(), get_title_bar_button_close_size())) title_bar_button_close_color = Vector4(255, 51, 51, 255); // 227,38,54
-			else title_bar_button_close_color = color;
             /////////////////////////////////////////////////////////////////////////
             // Draw box	- at (0, 0) the titlebar will not show as it is the main widget at 0, 0 so the title bar would be hidden by the window's titlebar		
 			Renderer::draw_box(get_position().x, get_position().y, get_width(), get_height(), get_angle(), 
@@ -268,7 +265,7 @@ void Box::draw(void)
                 label_list[0]->set_position(label->get_x(), (label->get_y() + label->get_height()) + 2);//if(label ) label_list[0]->set_position(label->get_x(), (label->get_y() + label->get_height()) + 2);
                 //if(!label) label_list[0]->set_position(get_x() + label_list[0]->get_relative_x(), get_y() + label_list[0]->get_relative_y());
                 // label_list[0] is the default label, so exclude it
-                if(l != 0) { Label * prev = label_list[l-1];    label_list[l]->set_position(prev->get_x(), (prev->get_y() + prev->get_height())); }// set the sub labels position based on label0's position. Don't worry about alignments and whatnot       
+                if(l != 0) { dokun::Label * prev = label_list[l-1];    label_list[l]->set_position(prev->get_x(), (prev->get_y() + prev->get_height())); }// set the sub labels position based on label0's position. Don't worry about alignments and whatnot       
                 // NO need to draw label since child GUI are automatically drawn (via GUI::on_draw()). So DO NOT call draw function!!!
             }
             /////////////////////////////////////////////////////////////////////////
@@ -448,7 +445,7 @@ int Box::restore(lua_State * L)
 /* // deallocating box
 // delete all labels
 for(l = 0; l < label_list.size(); l++) {
-    Label * label = label_list[l];
+    dokun::Label * label = label_list[l];
     delete label;
 }
 // delete all images
@@ -463,18 +460,16 @@ for(i = 0; i < image_list.size(); i++) {
 /////////////
 /////////////
 // setters
-void Box::set_color(int red, int green, int blue, int alpha)
-{
-    // if box has been converted to an icon, set its image's color instead
-    //if(String::lower(type) == "icon") { image->set_color(red, green, blue, alpha); }
+void Box::set_color(unsigned int red, unsigned int green, unsigned int blue) {
+    color = Vector4(red, green, blue, color.w);
+}
+void Box::set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha) {// if box has been converted to an icon, set its image's color instead//if(String::lower(type) == "icon") { image->set_color(red, green, blue, alpha); }
 	color = Vector4(red, green, blue, alpha);
 }
-void Box::set_color(const Vector3& color)
-{
+void Box::set_color(const Vector3& color) {
 	set_color(color.x, color.y, color.z);
 }
-void Box::set_color(const Vector4& color)
-{
+void Box::set_color(const Vector4& color) {
 	set_color(color.x, color.y, color.z, color.w);
 }		
 int Box::set_color(lua_State * L)
@@ -483,7 +478,7 @@ int Box::set_color(lua_State * L)
 	luaL_checktype(L, 2, LUA_TNUMBER);
 	luaL_checktype(L, 3, LUA_TNUMBER);
 	luaL_checktype(L, 4, LUA_TNUMBER);
-	luaL_optnumber(L, 5, 255);
+	luaL_optnumber(L, 5, 1.0);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
@@ -566,13 +561,13 @@ int Box::set_outline_width(lua_State * L)
 	}
 	return 0;	
 }
-void Box::set_outline_color(int red, int green, int blue, int alpha)
+void Box::set_outline_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {
 	outline_color = Vector4(red, green, blue, alpha);
 }                        
 void Box::set_outline_color(const Vector3& color)
 {
-	set_outline_color(color.x, color.y, color.z);
+	set_outline_color(color.x, color.y, color.z, outline_color.w);
 }
 void Box::set_outline_color(const Vector4& color)
 {
@@ -584,7 +579,7 @@ int Box::set_outline_color(lua_State * L)
 	luaL_checktype(L, 2, LUA_TNUMBER);
 	luaL_checktype(L, 3, LUA_TNUMBER);
 	luaL_checktype(L, 4, LUA_TNUMBER);
-	luaL_optnumber(L, 5, 255);
+	luaL_optnumber(L, 5, 1.0);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
@@ -670,7 +665,7 @@ int Box::set_border_width(lua_State * L)
 	}
 	return 0;	
 }
-void Box::set_border_color(int red, int green, int blue, int alpha)
+void Box::set_border_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {}                          
 int Box::set_border_color(lua_State * L)
 {
@@ -678,7 +673,7 @@ int Box::set_border_color(lua_State * L)
 	luaL_checktype(L, 2, LUA_TNUMBER);
 	luaL_checktype(L, 3, LUA_TNUMBER);
 	luaL_checktype(L, 4, LUA_TNUMBER);
-	luaL_optnumber(L, 5, 255);
+	luaL_optnumber(L, 5, 1.0);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
@@ -788,13 +783,13 @@ int Box::set_gradient(lua_State * L)
 	}
 	return 0;	
 }
-void Box::set_gradient_color(int red, int green, int blue, int alpha)
+void Box::set_gradient_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {
 	gradient_color = Vector4(red, green, blue, alpha);
 }
 void Box::set_gradient_color(const Vector3& color)
 {
-	set_gradient_color(color.x, color.y, color.z);
+	set_gradient_color(color.x, color.y, color.z, gradient_color.w);
 }
 void Box::set_gradient_color(const Vector4& color)
 {
@@ -854,12 +849,7 @@ int Box::set_title_bar_size(lua_State * L)
 }
 void Box::set_title_bar_text(const std::string& text)
 {
-	if(!title_bar_label) {
-#ifdef DOKUN_DEBUG0
-		Logger("title_bar_label is null | Box::set_title_bar_text");
-#endif
-		return;
-	}
+	if(!title_bar_label) throw std::runtime_error("title_bar_label is not initialized");
 	title_bar_label->set_string(text);
 }                                    
 int Box::set_title_bar_text(lua_State * L)
@@ -875,18 +865,15 @@ int Box::set_title_bar_text(lua_State * L)
 	return 0;	
 }
 /////////////
-void Box::set_title_bar_text_color(int red, int green, int blue, int alpha)
+void Box::set_title_bar_text_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {
-	if(!title_bar_label) {
-		Logger("title_bar_label is null | Box::set_title_bar_text_color");
-		return;
-	}	
+	if(!title_bar_label) throw std::runtime_error("title_bar_label is not initialized");
 	title_bar_label->set_color(red, green, blue, alpha);
 }  
 /////////////
 void Box::set_title_bar_text_color(const Vector3& color)
 {
-	set_title_bar_text_color(color.x, color.y, color.z);
+	set_title_bar_text_color(color.x, color.y, color.z, title_bar_text_color.w);
 }
 /////////////
 void Box::set_title_bar_text_color(const Vector4& color)
@@ -900,7 +887,7 @@ int Box::set_title_bar_text_color(lua_State * L)
 	luaL_checktype(L, 2, LUA_TNUMBER);
 	luaL_checktype(L, 3, LUA_TNUMBER);
 	luaL_checktype(L, 4, LUA_TNUMBER);
-	luaL_optnumber(L, 5, 255);
+	luaL_optnumber(L, 5, 1.0);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
@@ -910,9 +897,9 @@ int Box::set_title_bar_text_color(lua_State * L)
 	return 0;	
 }
 //////////////
-void Box::set_title_bar_label(const Label& label)
+void Box::set_title_bar_label(const dokun::Label& label)
 {
-	title_bar_label = &const_cast<Label&>(label);
+	title_bar_label = &const_cast<dokun::Label&>(label);
 }
 int Box::set_title_bar_label(lua_State * L)
 {
@@ -921,7 +908,7 @@ int Box::set_title_bar_label(lua_State * L)
 	lua_getfield(L, 2, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		Label * label = *static_cast<Label **>(lua_touserdata(L, -1));
+		dokun::Label * label = *static_cast<dokun::Label **>(lua_touserdata(L, -1));
 		lua_getfield(L, 1, "udata");
 	    if(lua_isuserdata(L, -1))
 	    {
@@ -963,13 +950,13 @@ void Box::set_title_bar_icon(const Image& icon)
 {
 	set_title_bar_image(icon);
 }
-void Box::set_title_bar_color(int red, int green, int blue, int alpha)
+void Box::set_title_bar_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {
 	title_bar_color = Vector4(red, green, blue, alpha);
 }
 void Box::set_title_bar_color(const Vector3& color)
 {
-	set_title_bar_color(color.x, color.y, color.z);
+	set_title_bar_color(color.x, color.y, color.z, title_bar_color.w);
 }
 void Box::set_title_bar_color(const Vector4& color)
 {
@@ -981,7 +968,7 @@ int Box::set_title_bar_color(lua_State * L)
 	luaL_checktype(L, 2, LUA_TNUMBER);
 	luaL_checktype(L, 3, LUA_TNUMBER);
 	luaL_checktype(L, 4, LUA_TNUMBER);
-	luaL_optnumber(L, 5, 255);
+	luaL_optnumber(L, 5, 1.0);
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
@@ -1100,7 +1087,8 @@ int Box::set_image_list(lua_State *L)
 // label		
 void Box::set_text(const std::string& text)
 {
-	get_label()->set_string(text);
+    if(!label) throw std::runtime_error("label is not initialized");
+	label->set_string(text);
 }
 int Box::set_text(lua_State * L)
 {
@@ -1115,9 +1103,10 @@ int Box::set_text(lua_State * L)
 	return 0;
 }
 /////////////
-void Box::set_label(const Label& label) // Labels are GUI elements so they are drawn automatically once a parent is set
+void Box::set_label(const dokun::Label& label) // Labels are GUI elements so they are drawn automatically once a parent is set
 {
-	this->label = &const_cast<Label&>(label); // add label to box
+    //const_cast<dokun::Label&>(label).set_color(0, 0, 0, 1.0);
+	this->label = &const_cast<dokun::Label&>(label); // add label to box
 	this->label->set_parent(* this); // set parent to Box
 } 
 int Box::set_label(lua_State * L)	
@@ -1127,7 +1116,7 @@ int Box::set_label(lua_State * L)
 	lua_getfield(L, 2, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		Label * label = *static_cast<Label **>(lua_touserdata(L, -1));
+		dokun::Label * label = *static_cast<dokun::Label **>(lua_touserdata(L, -1));
         lua_getfield(L, 1, "udata");
 	    if(lua_isuserdata(L, -1))
 	    {
@@ -1136,16 +1125,16 @@ int Box::set_label(lua_State * L)
 			// set in Lua as well
 			lua_pushvalue(L, 2); // label
 			lua_setfield(L, 1, "label"); // box.label = label
-			// set Box as parent for Label
+			// set Box as parent for dokun::Label
 			lua_pushvalue(L, 1); // box
 			lua_setfield(L, 2, "parent"); // label.parent = box
 	    }
 	}
     return 0;	
 }	
-void Box::set_label_list(const Label& label) // Labels are GUI elements so they are drawn automatically once a parent is set
+void Box::set_label_list(const dokun::Label& label) // Labels are GUI elements so they are drawn automatically once a parent is set
 {
-    label_list.push_back(&const_cast<Label&>(label)); // store label in label_list (first label set will always be in index 0)
+    label_list.push_back(&const_cast<dokun::Label&>(label)); // store label in label_list (first label set will always be in index 0)
     label_list[label_list.size()-1]->set_parent(* this); // set Box as parent - C++ indexes start from 0
 }
 int Box::set_label_list(lua_State *L)
@@ -1155,7 +1144,7 @@ int Box::set_label_list(lua_State *L)
 	lua_getfield(L, 2, "udata");
 	if(lua_isuserdata(L, -1))
 	{
-		Label * label = *static_cast<Label **>(lua_touserdata(L, -1));
+		dokun::Label * label = *static_cast<dokun::Label **>(lua_touserdata(L, -1));
         lua_getfield(L, 1, "udata");
 	    if(lua_isuserdata(L, -1))
 	    {
@@ -1209,7 +1198,7 @@ int Box::set_alignment(lua_State * L)
 void Box::set_as_tooltip(bool tooltip)
 {
 	type = (tooltip == true) ? "tooltip" : "box";
-	color.w = 230;
+	color.w = 0.6;
 }
 /////////////
 int Box::set_as_tooltip(lua_State *L)
@@ -1295,7 +1284,7 @@ int Box::get_image_list(lua_State * L)
 	return 1;	
 }
 /////////////
-Label * Box::get_label() const
+dokun::Label * Box::get_label() const
 {
 	return label;
 }
@@ -1305,7 +1294,7 @@ int Box::get_label(lua_State * L)
 	lua_getfield(L, 1, "label");
 	return 1;	
 }
-Label * Box::get_label_list(int index) const
+dokun::Label * Box::get_label_list(int index) const
 {
 	return label_list[index];
 }
@@ -1344,23 +1333,20 @@ Vector4 Box::get_title_bar_color() const
 	return title_bar_color;
 }
 /////////////
-Label * Box::get_title_bar_label() const
+dokun::Label * Box::get_title_bar_label() const
 {
     return title_bar_label;
 }
 /////////////
 std::string Box::get_title_bar_text() const
 {
-	if(!title_bar_label) // title_bar_label is null
-		return "";       // return empty string
+	if(!title_bar_label) throw std::runtime_error("title_bar_label is not initialized"); //return "";       // return empty string
 	return title_bar_label->get_string();//title_bar_text;
 }
 /////////////
 Vector4 Box::get_title_bar_text_color() const
 {
-	if(!title_bar_label) {// title_bar_label is null
-	    return Vector4(255, 255, 255, 255);
-	}
+	if(!title_bar_label) throw std::runtime_error("title_bar_label is not initialized");// title_bar_label is null//    return Vector4(255, 255, 255, 1.0);
 	return title_bar_label->get_color();
 }
 /////////////
@@ -1547,36 +1533,53 @@ int Box::is_restored(lua_State * L)
 /////////////
 void Box::on_titlebar(void)
 {
-	if(!has_title_bar())
-	    return;
-	if(title_bar_button_iconify)
-	{
-		if(Mouse::is_over(get_title_bar_button_iconify_position(), get_title_bar_button_iconify_size()))
-		{
-			if(Mouse::is_pressed(1)) // ??
-			{
-				iconify();
-			}
-		}
+	if(!has_title_bar()) return; // if no titlebar, exit function
+	// iconify button (on titlebar)
+	on_titlebar_button_iconify();
+    // maximize button (on titlebar)
+	on_titlebar_button_maximize();
+	// close button (on titlebar)
+	on_titlebar_button_close();
+}
+/////////////
+void Box::on_titlebar_button_close(void) {
+    if(!has_title_bar()) return; // if no titlebar, exit function
+    if(!title_bar_button_close) return; // if no titlebar close button, exit function
+	// on mouse hover, change close button color
+    if(Mouse::is_over(get_title_bar_button_close_position(), get_title_bar_button_close_size())) {
+        title_bar_button_close_color = Vector4(255, 51, 51, 1.0); // 227,38,54
+        // hide if close button is pressed
+        if(Mouse::is_pressed(1)) set_visible(false);
+    }
+	else {
+		title_bar_button_close_color.x = title_bar_color.x + (255 - title_bar_color.x) * 0.05;/*tint_factor*/;// make it a tint of title_bar_color //color;
+		title_bar_button_close_color.y = title_bar_color.y + (255 - title_bar_color.y) * 0.05;/*tint_factor*/;
+		title_bar_button_close_color.z = title_bar_color.z + (255 - title_bar_color.z) * 0.05;/*tint_factor*/;
+		//title_bar_button_close_color.w = title_bar_color.w;
 	}
-	if(title_bar_button_maximize)
-	{
-		if(Mouse::is_over(get_title_bar_button_maximize_position(), get_title_bar_button_maximize_size()))
-		{
-			if(Mouse::is_pressed(1))
-			{
-                if(!restored) restore(); else maximize();
-			}
-		}
-	}
-	if(title_bar_button_close)
-	{
-		if(Mouse::is_over(get_title_bar_button_close_position(), get_title_bar_button_close_size()))
-		{
-			if(Mouse::is_pressed(1)) set_visible(false);
+}
+/////////////
+void Box::on_titlebar_button_maximize(void) {
+    if(!has_title_bar()) return; // if no titlebar, exit function
+    if(!title_bar_button_maximize) return; // if no titlebar maximize button, exit function    
+	// on maximize button pressed, either restore or maximize box
+	if(Mouse::is_over(get_title_bar_button_maximize_position(), get_title_bar_button_maximize_size())) {
+		if(Mouse::is_pressed(1)) {
+            if(!restored) restore(); 
+            else maximize();
 		}
 	}
 }
+/////////////
+void Box::on_titlebar_button_iconify(void) {
+    if(!has_title_bar()) return; // if no titlebar, exit function
+    if(!title_bar_button_iconify) return; // if no titlebar iconify button, exit function    
+	// on iconify button pressed, iconify box
+	if(Mouse::is_over(get_title_bar_button_iconify_position(), get_title_bar_button_iconify_size())) {
+	    if(Mouse::is_pressed(1)) iconify();
+	}
+}
+/////////////
 /////////////
 void Box::on_drag(void)
 {
@@ -1660,7 +1663,7 @@ void Box::on_resize(void)
 		// XC_left_side , XC_bottom_left_corner , XC_top_left_corner
 		// XC_bottom_side
 		// XC_top_side
-	#ifdef __windows__
+	#ifdef DOKUN_WIN32
 		HCURSOR cursor = LoadCursor(nullptr, IDC_ARROW);
 		//SetCursor(HCURSOR hCursor);//SetClassLong(window->get_handle(), GCL_HCURSOR, (DWORD)cursor);
 	#endif
@@ -1674,7 +1677,7 @@ void Box::on_resize(void)
 	} 
 	// restore original cursor
 	else {
-	#ifdef __windows__
+	#ifdef DOKUN_WIN32
 		HCURSOR cursor = LoadCursor(nullptr, IDC_ARROW);
 		//SetCursor(HCURSOR hCursor);//SetClassLong(window->get_handle(), GCL_HCURSOR, (DWORD)cursor);
 	#endif

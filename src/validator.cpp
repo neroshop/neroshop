@@ -6,27 +6,27 @@
 ////////////////////
 bool neroshop::Validator::register_user(const std::string& username, const std::string& password, const std::string& confirm_pw, std::string opt_email) // user would have to confirm their pw twice to make sure they match :O - I totally forgot!
 {
-    // username (will appear only in lower-case letters within the app)
-    if(!validate_username(username)) {return false;}
-    // password
-    if(!validate_password(password)) {return false;}
+    // validate username (will appear only in lower-case letters within the app)
+    if(!validate_username(username)) return false;
+    // validate password
+    if(!validate_password(password)) return false;
     if(password != confirm_pw){NEROSHOP_TAG std::cout << "\033[0;31;49m" << "Both passwords do not match. Try again" << "\033[0m" << std::endl;return false;}
-    // email
-    if(!opt_email.empty()) {
-        if(!validate_email(opt_email)) {return false;}
-        neroshop::print("email opted", 3);
-    }
-    // generate bcrypt salt (random)
+    // if email is opted, validate email
+    if(!opt_email.empty() && !validate_email(opt_email)) return false;
+    // generate bcrypt salt (random, with a workfactor of 12 or higher)
 	char salt[BCRYPT_HASHSIZE];//char * salt;
     if(!generate_bcrypt_salt(12, salt)) {return false;}
-    // generate bcrypt hash (from password and salt combination)
-    char pw_hash[BCRYPT_HASHSIZE];//char * pw_hash;
-    if(!generate_bcrypt_hash(password.c_str(), salt, pw_hash)) {return false;}
-    // generate sha256 hash (from email)(this is to hide the email from prying eyes)
+    // pre-hash password with sha256 (to circumvent bcrypt's pw length restrictions [55-72])
+    std::string pw_prehash;
+    if(!generate_sha256_hash_evp(password, pw_prehash)) {return false;}
+    // generate bcrypt hash (from pre-hashed password and salt combination)
+    char pw_hash[BCRYPT_HASHSIZE];//char * pw_hash;//if(!generate_bcrypt_hash(password, salt, pw_hash)) {return false;}    
+    if(!generate_bcrypt_hash(pw_prehash, salt, pw_hash)) {return false;}
+    // generate sha256 hash (from email)(this is to hide the email from prying eyes, in case of a hack)
     std::string email_hash;
     if(!generate_sha256_hash_evp(opt_email, email_hash)) {return false;}
     // saving (save user information to database)
-    save_user(username, pw_hash, email_hash);//{return;}
+    save_user(username, pw_hash, (!opt_email.empty()) ? email_hash : "");
 #ifdef NEROSHOP_DEBUG
     NEROSHOP_TAG std::cout << get_date() << "\033[1;32;49m" << " account registered" << "\033[0m" << std::endl;
 #endif    
@@ -53,12 +53,11 @@ void neroshop::Validator::save_user(const std::string& username, const char pw_h
         db.table("users");
         db.column("users", "ADD", "name", "TEXT");
         db.column("users", "ADD", "pw_hash", "TEXT");
-        db.column("users", "ADD", "email_hash", "TEXT");
+        db.column("users", "ADD", "email", "TEXT");
         db.column("users", "ADD", "role_id", "INTEGER");//db.column("users", "ADD", "role", "TEXT");//db.column("users", "ADD", "created_at", "TEXT");
         db.execute("CREATE UNIQUE INDEX idx_users_name ON Users (name);");// enforce that the user names are unique, in case there is an attempt to insert a new "name" of the same value - https://www.sqlitetutorial.net/sqlite-index/
     }
-    std::string blank = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"; // empty string
-    db.insert("users", "name, pw_hash, email_hash, role_id", DB::to_sql_string(String::lower(username)) + ", " + DB::to_sql_string(pw_hash) + ", " + ((email_hash == blank) ? DB::to_sql_string("") : DB::to_sql_string(email_hash)) + ", " + std::to_string(1)); // usernames are stored in lowercase
+    db.insert("users", "name, pw_hash, email, role_id", DB::to_sql_string(String::lower(username)) + ", " + DB::to_sql_string(pw_hash) + ", " + DB::to_sql_string(email_hash) + ", " + std::to_string(1)); // usernames are stored in lowercase
     db.close(); // don't forget to close the db after you're done :)
 }
 ////////////////////
@@ -71,12 +70,13 @@ bool neroshop::Validator::login(const std::string& username, const std::string& 
 	std::string pw_hash = db.get_column_text("users", "pw_hash", "name = " + DB::to_sql_string(String::lower(username)));
 	// if no pw_hash could be found then the user does not exist (or the db is missing or corrupted)
 	if(pw_hash.empty()) { NEROSHOP_TAG std::cout << "\033[0;33;49m" << "This user does not exist" << "\033[0m" << std::endl; return false; }
-	std::cout << "pw_hash: " << pw_hash << " (retrieved from db) "/* + username + ")"*/ << std::endl;
 	db.close(); // don't forget to close the db after you're done :)
-	// validate the pw
-	if(!validate_bcrypt_hash(password, pw_hash)) { //return validate_bcrypt_hash(password, account.second);
-	    return false;
-	}
+	// validate the pre-hashed pw
+    std::string pw_prehash;
+    if(!generate_sha256_hash(password, pw_prehash)) {return false;}
+    if(!validate_bcrypt_hash(pw_prehash, pw_hash)) { //if(!validate_bcrypt_hash(password, pw_hash)) {
+        return false;
+    }
 #ifdef NEROSHOP_DEBUG
     NEROSHOP_TAG std::cout << get_date() << "\033[1;32;49m" << " successfully logged in" << "\033[0m" << std::endl;
 #endif
@@ -89,22 +89,21 @@ bool neroshop::Validator::login_with_email(const std::string& email, const std::
 	if(!db.table_exists("users")) {NEROSHOP_TAG std::cout << "\033[0;33;49m" << "This account is not registered" << "\033[0m" << std::endl; return false;}
 	// get email_hash (from email)
 	std::string email_hash;
-	if(!generate_sha256_hash_evp(email, email_hash)) {
-	    neroshop::print("An error occured", 1);
-	    return false;
-	}
+	if(!generate_sha256_hash(email, email_hash)) { neroshop::print("An error occured", 1); return false;}
 	// SELECT pw_hash from Users WHERE email_hash=email_hash
-	std::string pw_hash = db.get_column_text("users", "pw_hash", "email_hash = " + DB::to_sql_string(email_hash));
+	std::string pw_hash = db.get_column_text("users", "pw_hash", "email = " + DB::to_sql_string(email_hash));
 	// if no pw_hash could be found then the user does not exist (or the db is missing or corrupted)
-	if(pw_hash.empty()) { NEROSHOP_TAG std::cout << "\033[0;33;49m" << "This user does not exist" << "\033[0m" << std::endl; return false; }
-	std::cout << "pw_hash: " << pw_hash << " (retrieved from db) "/* + username + ")"*/ << std::endl;
+	if(pw_hash.empty()) { NEROSHOP_TAG std::cout << "\033[0;33;49m" << "This user does not exist" << "\033[0m" << std::endl; return false; }//std::cout << "pw_hash: " << pw_hash << " (retrieved from db) "/* + username + ")"*/ << std::endl;
 	// also, get username from db (only for display purposes)
-	std::string username = db.get_column_text("users", "name", "email_hash = " + DB::to_sql_string(email_hash));
+	std::string username = db.get_column_text("users", "name", "email = " + DB::to_sql_string(email_hash));
 	db.close(); // don't forget to close the db after you're done :)
-	// validate the pw
-	if(!validate_bcrypt_hash(password, pw_hash)) { //return validate_bcrypt_hash(password, account.second);
-	    return false;
-	}
+	// validate the pre-hashed pw
+    std::string pw_prehash;
+    if(!generate_sha256_hash(password, pw_prehash)) {return false;}
+    if(!validate_bcrypt_hash(pw_prehash, pw_hash)) { //if(!validate_bcrypt_hash(password, pw_hash)) {
+        return false;
+    }	
+    // save the raw email within the application (for later use)
 #ifdef NEROSHOP_DEBUG
     NEROSHOP_TAG std::cout << get_date() << "\033[1;32;49m" << " successfully logged in" << "\033[0m" << std::endl;
 #endif
@@ -231,6 +230,28 @@ bool neroshop::Validator::validate_email(const std::string& email) {
         neroshop::print("Email address is not valid", 1);
         return false;
     }
+    // check db to see if email is not already taken (last thing to worry about)
+	// get email_hash (from email)
+	std::string email_hash;
+	if(!generate_sha256_hash/*_evp*/(email, email_hash)) {
+	    neroshop::print("An error occured", 1);
+	    return false;
+	}
+    DB db("neroshop.db");
+	if(db.table_exists("users")) {
+	    std::string email_taken = db.get_column_text("users", "email", "email = " + DB::to_sql_string(email_hash));
+	    if(email_taken.empty()) { // cannot process an empty string, so exit
+	        db.close();
+	        return true;
+	    }
+        // compare the email_hash with the email_taken_hash - if its a match then the email is already in use
+        if(email_hash == email_taken) {
+            neroshop::print("This email address is already in use", 1);
+            db.close();
+            return false;
+        }
+	}
+	db.close();
     return true;
 }
 ////////////////////
@@ -246,7 +267,7 @@ bool neroshop::Validator::validate_bcrypt_hash(const std::string& password, cons
 bool neroshop::Validator::generate_bcrypt_salt(unsigned int workfactor, char salt[BCRYPT_HASHSIZE])
 {   // generate a salt (random)
     int result = bcrypt_gensalt(workfactor, salt); // workfactor must be between 4 and 31 - default is 12
-#ifdef NEROSHOP_DEBUG
+#ifdef NEROSHOP_DEBUG0
     std::cout << ((result != 0) ? "bcrypt salt failed to generate" : "bcrypt_salt: " + std::string(salt)) << std::endl; // 0=success
     // two users with the same password results in the same exact hash, which is why a unique salt must be generated
 #endif
@@ -256,7 +277,7 @@ bool neroshop::Validator::generate_bcrypt_salt(unsigned int workfactor, char sal
 bool neroshop::Validator::generate_bcrypt_hash(const std::string& password, const char salt[BCRYPT_HASHSIZE], char hash[BCRYPT_HASHSIZE])
 {   // generate hash (from password and salt combination)
     int result = bcrypt_hashpw(password.c_str(), salt, hash);
-#ifdef NEROSHOP_DEBUG
+#ifdef NEROSHOP_DEBUG0
     std::cout << ((result != 0) ? "bcrypt hash failed to generate" : "bcrypt_hash: " + std::string(hash)) << std::endl;
 #endif
     return (result == 0);
@@ -264,11 +285,11 @@ bool neroshop::Validator::generate_bcrypt_hash(const std::string& password, cons
 ////////////////////
 bool neroshop::Validator::validate_sha256_hash(const std::string& email, const std::string& hash) { // raw/unsalted hash
     std::string temp_hash;
-    generate_sha256_hash_evp(email, temp_hash);
+    generate_sha256_hash/*_evp*/(email, temp_hash);
     return (temp_hash == hash);
 }
 ////////////////////
-bool neroshop::Validator::generate_sha256_hash_legacy(const std::string& email, std::string& hashed) {
+bool neroshop::Validator::generate_sha256_hash(const std::string& email, std::string& hashed) {
     // low-level interface (old)
     unsigned char hash[SHA256_DIGEST_LENGTH];
     SHA256_CTX sha256;
@@ -280,7 +301,7 @@ bool neroshop::Validator::generate_sha256_hash_legacy(const std::string& email, 
         ss << std::hex << std::setw(2) << std::setfill('0') << (int)hash[i];
     }
     hashed = ss.str();
-#ifdef NEROSHOP_DEBUG
+#ifdef NEROSHOP_DEBUG0
     if(!email.empty()) std::cout << "sha256_hash: " << hashed << std::endl;
 #endif
     return true;
@@ -314,8 +335,8 @@ bool neroshop::Validator::generate_sha256_hash_evp(const std::string& email, std
         }
         EVP_MD_CTX_free(context);
     }
-#ifdef NEROSHOP_DEBUG
-    if(!email.empty()) std::cout << "sha256_hash: " << hashed << std::endl;
+#ifdef NEROSHOP_DEBUG0
+    if(!email.empty()) std::cout << "sha256_hash: " << hashed /*<< " (" << email << ")"*/ << std::endl;
 #endif    
     return success;    
 }

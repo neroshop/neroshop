@@ -1,46 +1,43 @@
-#ifndef _PLATFORM
-#define _PLATFORM
-
-#ifdef  _WIN32 // for both 32-bit and 64-bit environments
-#define __windows__
-#define DOKUN_WINDOWS
-#define DOKUN_WIN32
-#endif
-#ifdef _WIN64
-#define DOKUN_WIN64
-#endif
-
-#ifdef __gnu_linux__
-#define __ubuntu__ 
-#define DOKUN_LINUX
-#endif
-
+#ifndef PLATFORM_HPP_DOKUN
+#define PLATFORM_HPP_DOKUN
+// windows
+#ifdef _WIN32 // for both 32-bit and 64-bit environments
+#define DOKUN_WINDOWS // custom (system name)
+#define DOKUN_WIN32   // custom (system api )
+#endif // endif _WIN32
+// macosx
 #ifdef __APPLE__
 #ifdef __MACH__
-#define __macosx__
-#define DOKUN_MACOSX
-#endif
-#endif
-
+#define DOKUN_MACOSX // custom
+#endif // endif __MACH__
+#endif // endif __APPLE__
+// android
 #ifdef __ANDROID__
-#define __android__
-#define DOKUN_ANDROID
-#endif
-
+#define DOKUN_ANDROID // custom
+#endif // endif __ANDROID__
+// linux (desktop)
 #ifdef __gnu_linux__
-#ifndef DOKUN_X11 
-#ifndef DOKUN_WAYLAND
-#ifndef DOKUN_MIR
-#ifndef DOKUN_SDL2
-#ifndef DOKUN_GLFW
-	#define DOKUN_X11
-#endif	
-#endif	
-#endif
-#endif
-#endif
+#define __ubuntu__  // custom
+#define DOKUN_LINUX // custom
+#define DOKUN_X11   // define X11 by default
+
+#ifdef DOKUN_WAYLAND // if using WAYLAND
+#undef DOKUN_X11     // un-define X11
 #endif
 
+#ifdef DOKUN_MIR // if using MIR
+#undef DOKUN_X11  // un-define X11
+#endif
+
+#ifdef DOKUN_SDL2 // if using SDL2
+#undef DOKUN_X11  // un-define X11
+#endif
+
+#ifdef DOKUN_GLFW // if using GLFW
+#undef DOKUN_X11  // un-define X11
+#endif
+#endif // endif __gnu_linux__
+// other
 #ifdef DOKUN_OPENGL
 #define DOKUN_USE_OPENGL
 #endif

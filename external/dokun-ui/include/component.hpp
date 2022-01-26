@@ -1,5 +1,5 @@
-#ifndef _COMPONENT // can be set to an entity as a part of a piece of data
-#define _COMPONENT	
+#ifndef COMPONENT_HPP_DOKUN // can be set to an entity as a part of a piece of data
+#define COMPONENT_HPP_DOKUN	
 
 #include "types.hpp" // custom data types
 #include "string.hpp" // dokun string

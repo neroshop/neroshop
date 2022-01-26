@@ -2,8 +2,8 @@
 
 Progressbar::Progressbar() : value(0), range(0, 100), direction(0), 
 // color
-   foreground_color(0, 51, 102, 255), 
-   background_color(160, 160, 160, 255),
+   foreground_color(0, 51, 102, 1.0), 
+   background_color(160, 160, 160, 1.0),
 // text   
    label(nullptr),
    text_direction(0),
@@ -11,7 +11,7 @@ Progressbar::Progressbar() : value(0), range(0, 100), direction(0),
     outline(false), 
 	outline_width(1.0), 
 	outline_antialiased(false),
-	outline_color(0, 0, 0, 255),
+	outline_color(0, 0, 0, 1.0),
 // gradient
     gradient(false),
 	gradient_color(background_color), // gradient.color1 = backgound_color, gradient.color0 = foreground_color
@@ -25,8 +25,8 @@ Progressbar::Progressbar() : value(0), range(0, 100), direction(0),
 /////////////
 Progressbar::Progressbar(int x, int y) : value(0), range(0, 100), direction(0), 
 // color
-   foreground_color(0, 51, 102, 255), 
-   background_color(160, 160, 160, 255),
+   foreground_color(0, 51, 102, 1.0), 
+   background_color(160, 160, 160, 1.0),
 // text   
    label(nullptr),
    text_direction(0),
@@ -34,7 +34,7 @@ Progressbar::Progressbar(int x, int y) : value(0), range(0, 100), direction(0),
     outline(false), 
 	outline_width(1.0), 
 	outline_antialiased(false),
-	outline_color(0, 0, 0, 255),
+	outline_color(0, 0, 0, 1.0),
 // border
     border(false)
 {
@@ -45,8 +45,8 @@ Progressbar::Progressbar(int x, int y) : value(0), range(0, 100), direction(0),
 /////////////
 Progressbar::Progressbar(int x, int y, int width, int height) : value(0), range(0, 100), direction(0), 
 // color
-   foreground_color(0, 51, 102, 255), 
-   background_color(160, 160, 160, 255),
+   foreground_color(0, 51, 102, 1.0), 
+   background_color(160, 160, 160, 1.0),
 // text   
    label(nullptr),
    text_direction(0),
@@ -54,7 +54,7 @@ Progressbar::Progressbar(int x, int y, int width, int height) : value(0), range(
     outline(false), 
 	outline_width(1.0), 
 	outline_antialiased(false),
-	outline_color(0, 0, 0, 255),
+	outline_color(0, 0, 0, 1.0),
 // border
     border(false)
 {
@@ -84,7 +84,7 @@ void Progressbar::draw()
         int red    = get_color().x;
         int green  = get_color().y;
         int blue   = get_color().z;		
-		int alpha  = get_color().w;
+		double alpha  = get_color().w;
 	
 		Renderer::draw_progressbar(x, y, width, height, angle, scale_x, scale_y,
 		    red, green, blue, alpha,
@@ -150,9 +150,9 @@ int Progressbar::set_text(lua_State *L)
 	return 0;
 }
 /////////////
-void Progressbar::set_label(const Label& label)
+void Progressbar::set_label(const dokun::Label& label)
 {
-	(this)->label = &const_cast<Label&>(label);
+	(this)->label = &const_cast<dokun::Label&>(label);
 	this->label->set_parent(* this); // also set as child
 }   
 /////////////
@@ -163,7 +163,7 @@ int Progressbar::set_label(lua_State *L)
 	lua_getfield(L, 2, "udata");
 	if(lua_isuserdata(L, -1))
 	{	
-        Label * label = *static_cast<Label **>(lua_touserdata(L, -1));
+        dokun::Label * label = *static_cast<dokun::Label **>(lua_touserdata(L, -1));
         lua_getfield(L, 1, "udata");
         if(lua_isuserdata(L, -1))
 	    {
@@ -179,7 +179,10 @@ int Progressbar::set_label(lua_State *L)
 /////////////
 //////////////
 //////////////
-void Progressbar::set_foreground_color(int red, int green, int blue, int alpha)
+void Progressbar::set_foreground_color(unsigned int red, unsigned int green, unsigned int blue) {
+    foreground_color = Vector4(red, green, blue, foreground_color.w);
+}
+void Progressbar::set_foreground_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {
 	foreground_color = Vector4(red, green, blue, alpha);
 }
@@ -200,9 +203,9 @@ int Progressbar::set_foreground_color(lua_State *L)
 	luaL_checktype(L, 2, LUA_TNUMBER);
 	luaL_checktype(L, 3, LUA_TNUMBER);
 	luaL_checktype(L, 4, LUA_TNUMBER);
-	luaL_optnumber(L, 5, 255);
+	luaL_optnumber(L, 5, 1.0);
 	int d = lua_tonumber(L, 5);
-	if(d == 0) d = 255;
+	if(d == 0) d = 1.0;
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
@@ -212,7 +215,11 @@ int Progressbar::set_foreground_color(lua_State *L)
 	return 0;	
 }
 //////////////
-void Progressbar::set_background_color(int red, int green, int blue, int alpha)
+void Progressbar::set_background_color(unsigned int red, unsigned int green, unsigned int blue) {
+    background_color = Vector4(red, green, blue, background_color.w);
+}
+//////////////
+void Progressbar::set_background_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {
 	background_color = Vector4(red, green, blue, alpha);
 }
@@ -233,9 +240,9 @@ int Progressbar::set_background_color(lua_State *L)
 	luaL_checktype(L, 2, LUA_TNUMBER);
 	luaL_checktype(L, 3, LUA_TNUMBER);
 	luaL_checktype(L, 4, LUA_TNUMBER);
-	luaL_optnumber(L, 5, 255);
+	luaL_optnumber(L, 5, 1.0);
 	int d = lua_tonumber(L, 5);
-	if(d == 0) d = 255;
+	if(d == 0) d = 1.0;
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
@@ -417,7 +424,11 @@ int Progressbar::set_outline_width(lua_State *L)
 	return 0;
 }
 /////////////
-void Progressbar::set_outline_color(int red, int green, int blue, int alpha)
+void Progressbar::set_outline_color(unsigned int red, unsigned int green, unsigned int blue) {
+    outline_color = Vector4(red, green, blue, outline_color.w);
+}
+/////////////
+void Progressbar::set_outline_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {
 	outline_color = Vector4(red, green, blue, alpha);
 }
@@ -438,9 +449,9 @@ int Progressbar::set_outline_color(lua_State *L)
 	luaL_checktype(L, 2, LUA_TNUMBER);
 	luaL_checktype(L, 3, LUA_TNUMBER);
 	luaL_checktype(L, 4, LUA_TNUMBER);
-	luaL_optnumber(L, 5, 255);
+	luaL_optnumber(L, 5, 1.0);
 	int d = lua_tonumber(L, 5);
-	if(d == 0) {Logger("color.w is 0 ?? | progressbar.cpp (143)\n");d=255;};
+	if(d == 0) {dokun::Logger("color.w is 0 ?? | progressbar.cpp (143)\n");d=1.0;};
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
@@ -498,7 +509,7 @@ int Progressbar::get_text(lua_State *L)
 	return 1;
 } 
 /////////////
-Label * Progressbar::get_label()const
+dokun::Label * Progressbar::get_label()const
 {
 	return label;
 }

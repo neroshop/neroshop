@@ -1,5 +1,5 @@
-#ifndef _FILE
-#define _FILE
+#ifndef FILE_HPP_DOKUN
+#define FILE_HPP_DOKUN
 
 #include "string.hpp"
 #include "types.hpp"
@@ -26,7 +26,7 @@ class File { // file system
 		void getline(std::string line); // will be equivalent to std::getline
 	// setters
 	void set_filter
-	#ifdef __windows__
+	#ifdef DOKUN_WIN32
 		(LPTSTR filter);
 	#else
 		(std::string filter);
@@ -61,7 +61,7 @@ class File { // file system
 		std::string file;
 		std::vector<std::string> line;
 	// platform-specific
-	#ifdef __windows__
+	#ifdef DOKUN_WIN32
 		LPTSTR filter ;//= (LPTSTR)"All Files \0*.*\0\0";
 	#else
 		std::string filter;

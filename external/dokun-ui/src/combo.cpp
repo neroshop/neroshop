@@ -1,18 +1,18 @@
 #include "../include/combo.hpp"
 
-Combobox::Combobox() : color(106, 106, 106, 255), list(nullptr), scrollbar(nullptr), image(nullptr), label(nullptr),
+Combobox::Combobox() : color(106, 106, 106, 1.0), list(nullptr), scrollbar(nullptr), image(nullptr), label(nullptr),
 // button
-button_color(0, 51, 102, 255),
+button_color(0, 51, 102, 1.0),
 button_width(20),
 button_activated (false),
 // outline
 outline(false),
 outline_width(2.0),
-outline_color(0, 51, 102, 255),
+outline_color(0, 51, 102, 1.0),
 outline_antialiased(false),
 // highlight
 highlight(true),
-highlight_color(0, 51, 102, 255)
+highlight_color(0, 51, 102, 1.0)
 {
 	set_position(0, 0);
 	set_size(90, 20); // 50, 25
@@ -117,7 +117,7 @@ int Combobox::set_scrollbar(lua_State * L)
 /////////////
 void Combobox::set_text(const std::string& text)
 {
-    if(!label) Logger("Combo::set_text: attempting to access function of nullptr, label", "error");
+    if(!label) dokun::Logger("Combo::set_text: attempting to access function of nullptr, label", "error");
 	label->set_string(text);
 }     
 int Combobox::set_text(lua_State *L)
@@ -125,9 +125,9 @@ int Combobox::set_text(lua_State *L)
     return 0;
 }
 /////////////
-void Combobox::set_label(const Label& label)
+void Combobox::set_label(const dokun::Label& label)
 {
-	if(!this->label) { this->label = new Label(); this->label->set_parent(*this); } // if self.label does not exist, create it and set as child
+	if(!this->label) { this->label = new dokun::Label(); this->label->set_parent(*this); } // if self.label does not exist, create it and set as child
 	this->label->copy(label); // copy the label data, instead of setting a new one (that may already have its own parent)
 }
 int Combobox::set_label(lua_State *L)
@@ -145,7 +145,7 @@ int Combobox::set_image(lua_State *L)
     return 0;
 }
 /////////////
-void Combobox::set_color(int red, int green, int blue, int alpha)
+void Combobox::set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {
 	color = Vector4(red, green, blue, alpha);
 }
@@ -171,7 +171,7 @@ int Combobox::get_text(lua_State *L)
     return 1;
 }
 /////////////
-Label * Combobox::get_label()const
+dokun::Label * Combobox::get_label()const
 {
 	return label;
 }
@@ -310,7 +310,7 @@ void Combobox::on_select() // what happens after selecting an item
 	else if(!selection->get_image()) {
 	    if(image) image->set_visible(false);  // what if selection has no image, hide image
 	}
-    // copy Label from selection
+    // copy dokun::Label from selection
     if(selection->get_label())
 	{
 		if(!selection->get_label()->get_string().empty()) set_label(*selection->get_label()); // copy label

@@ -1,5 +1,5 @@
-#ifndef _SYSTEM
-#define _SYSTEM
+#ifndef SYSTEM_HPP_DOKUN
+#define SYSTEM_HPP_DOKUN
 
 #include "platform.hpp"
 #ifdef __cplusplus
@@ -10,7 +10,7 @@ public:
 	static std::string get_current_dir()
 	{
 		std::string current;
-    #ifdef __windows__
+    #ifdef DOKUN_WIN32
 	    char buffer[1024];
 	    GetModuleFileName(nullptr, buffer, 1024);
 	    current =  buffer;
@@ -26,7 +26,7 @@ public:
     // user
 	static std::string get_user()
 	{
-	#ifdef __windows__ // ??
+	#ifdef DOKUN_WIN32 // ??
 	    char username[UNLEN+1];
         DWORD username_len = UNLEN+1;
         if(GetUserName(username, &username_len) == 0)
@@ -47,7 +47,7 @@ public:
 	// visual
 	static int get_display_count()
 	{
-	#ifdef __windows__
+	#ifdef DOKUN_WIN32
 		return GetSystemMetrics(SM_CMONITORS);
 	#endif
 	#ifdef __gnu_linux__
@@ -56,7 +56,7 @@ public:
 	}
 	static int get_monitor_width()
 	{
-	#ifdef __windows__
+	#ifdef DOKUN_WIN32
 		return GetSystemMetrics(SM_CXSCREEN); // 
 	#endif
 	#ifdef __gnu_linux__
@@ -71,7 +71,7 @@ public:
 	}
 	static int get_monitor_height()
 	{
-	#ifdef __windows__
+	#ifdef DOKUN_WIN32
 	    return GetSystemMetrics(SM_CYSCREEN);
 	#endif
 	#ifdef __gnu_linux__
@@ -94,7 +94,7 @@ public:
 	// mouse
 	static bool is_mouse_installed()
 	{
-	#ifdef __windows__
+	#ifdef DOKUN_WIN32
 	    return GetSystemMetrics(SM_MOUSEPRESENT);
 	#endif
 	#ifdef __gnu_linux__
@@ -103,7 +103,7 @@ public:
 	}
 	static int get_mouse_button_count()
 	{
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 	    return GetSystemMetrics(SM_CMOUSEBUTTONS); // returns 0 if no mouse is installed
 #endif
 #ifdef __gnu_linux__
@@ -114,7 +114,7 @@ public:
 	// time
 	static void get_time()
 	{
-	#ifdef __windows__
+	#ifdef DOKUN_WIN32
 		/*
 	SYSTEMTIME st;
 GetSystemTime(&st);

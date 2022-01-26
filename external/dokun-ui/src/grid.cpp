@@ -1,14 +1,14 @@
 #include "../include/grid.hpp"
 
-Grid::Grid() : rows(0), columns(0), color(64, 64, 64, 255),
+Grid::Grid() : rows(0), columns(0), color(64, 64, 64, 1.0),
 // outline
 outline(true), 
 outline_width(2.0), 
 outline_antialiased(false),
-outline_color(255, 255, 255, 255),
+outline_color(255, 255, 255, 1.0),
 // highlight
 highlight(true),//(false),
-highlight_color(0, 51, 102, 255),
+highlight_color(0, 51, 102, 1.0),
 // gradient
 gradient(false),
 gradient_color(color)
@@ -18,15 +18,15 @@ gradient_color(color)
 	set_orientation(0);
 }
 //////////////
-Grid::Grid(int row, int column) :  color(64, 64, 64, 255),
+Grid::Grid(int row, int column) :  color(64, 64, 64, 1.0),
 // outline
 outline(true), 
 outline_width(2.0), 
 outline_antialiased(false),
-outline_color(255, 255, 255, 255),
+outline_color(255, 255, 255, 1.0),
 // highlight
 highlight(false),
-highlight_color(0, 51, 102, 255),
+highlight_color(0, 51, 102, 1.0),
 // gradient
 gradient(false),
 gradient_color(color)
@@ -208,7 +208,7 @@ int Grid::set_block(lua_State *L)
 	}
     return 0;		
 }
-void Grid::set_color(int red, int green, int blue, int alpha)
+void Grid::set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {
 	color = Vector4(red, green, blue, alpha);
 }
@@ -226,7 +226,7 @@ int Grid::set_color(lua_State *L)
 	luaL_checktype(L, 2, LUA_TNUMBER);
 	luaL_checktype(L, 3, LUA_TNUMBER);
 	luaL_checktype(L, 4, LUA_TNUMBER);
-	luaL_optnumber(L, 5, 255);
+	luaL_optnumber(L, 5, 1.0);
 	std::cout << "alpha "<< lua_tonumber(L, 5) << "\n";
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
@@ -242,7 +242,7 @@ Box * Grid::get_block(int row, int column)
 {
 	if(block.size() < row + 1) 
 	{
-		Logger("Attempt to access invalid location | grid.cpp (114)");
+		dokun::Logger("Attempt to access invalid location | grid.cpp (114)");
 		return nullptr;
 	}
 	return /*&*/block[row][column];

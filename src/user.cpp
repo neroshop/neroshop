@@ -380,7 +380,7 @@ bool neroshop::User::is_logged() const
 bool neroshop::User::has_email() const {
     if(is_guest()) return false;
     DB db("neroshop.db");
-    std::string email_hash = db.get_column_text("users", "email_hash", "id = " + std::to_string(get_id()));
+    std::string email_hash = db.get_column_text("users", "email", "id = " + std::to_string(get_id()));
     if(email_hash.empty()) return false;
     db.close();
     return true;

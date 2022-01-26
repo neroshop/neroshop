@@ -1,5 +1,5 @@
-#ifndef _MATH
-#define _MATH // an extension of the lua math library
+#ifndef MATH_HPP_DOKUN
+#define MATH_HPP_DOKUN // an extension of the lua math library
 #define dokun_pi 3.14159265359
 #include "vector.hpp"
 
@@ -22,6 +22,26 @@ struct Math  { // helps with your math homework :)
 	static double mul(double x, double y){return (x * y);}		
 	static double div(double x, double y){return (x / y);}
     /////////////
+    // rounding
+    static int round10(double number) {
+        float dec,numcpy;  int n;
+        dec = number - floor(number);        
+        n = floor(number);
+        if(n % 10 < 5) {
+            n = (n / 10) * 10;
+        }
+        else if(n % 10 == 5)
+        {
+            if(dec > 0) n = (((n + 10) / 10) * 10);
+            else n = (n / 10) * 10;
+        }
+        else {
+            n = (((n + 10) / 10) * 10);
+        }
+        //std::cout << "The rounded off number is: " << n << std::endl;
+        return n;
+    }
+    /////////////	
 	// algebra, linear algebra
 	
     /////////////

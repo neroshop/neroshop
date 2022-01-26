@@ -3,12 +3,13 @@
 ////////////
 dokun::Window::Window(void) : width (DOKUN_DEFAULT_WIDTH), height (DOKUN_DEFAULT_HEIGHT), mode (0), x (DOKUN_DEFAULT_POSITION_X), y (DOKUN_DEFAULT_POSITION_Y)
 , color (0.0, 0.0, 0.0, 0.0) // screen properties
-#ifdef __windows__
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
 , handle (nullptr), instance (nullptr), style (WS_OVERLAPPEDdokun::Window | WS_CLIPSIBLINGS | WS_CLIPCHILDREN)
 #endif
-#ifdef __gnu_linux__
-#ifdef DOKUN_X11
 #endif
+
+#ifdef DOKUN_X11
 #endif
 {	
 	Factory::get_window_factory()->store(this);
@@ -21,7 +22,8 @@ dokun::Window::~Window(void)
 ////////////
 void dokun::Window::create()
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
 	if (instance == nullptr) // register window once
 	{
 	    WNDCLASS wc       = { 0 };
@@ -56,6 +58,8 @@ void dokun::Window::create()
 		SetWindowPos(handle, HWND_TOPMOST, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), SWP_FRAMECHANGED);
 	}
 #endif
+#endif
+
 #ifdef __gnu_linux__
 #ifdef DOKUN_X11
 	display = XOpenDisplay(nullptr);
@@ -221,18 +225,15 @@ if(Renderer::get_current_API() == "OpenGL") {
 #endif    
 #endif // endif DOKUN_WAYLAND
 #endif // endif __gnu_linux__
-#ifdef DOKUN_GLFW
-/* Initialize the library */
-    if (!glfwInit()) {
-        std::cout << "failed to initialize GLFW" << std::endl;
-        exit(1);
-    }
-/* Create a windowed mode window and its OpenGL context */
+
+#ifdef DOKUN_GLFW // library already initialized in Engine::on_open()
+    /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
     if (!window) {
         glfwTerminate();
     }
 #endif
+
 #ifdef DOKUN_OPENGL
 	if(Renderer::get_current_API() == "OpenGL") {	// must set the current API before creating a window
 		set_context();
@@ -310,16 +311,20 @@ int dokun::Window::create(lua_State *L)
 ////////////
 void dokun::Window::show()
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
     ShowWindow(handle, SW_SHOW);
     SetForegroundWindow(handle);
 #endif
+#endif
    
-#ifdef __gnu_linux__
 #ifdef DOKUN_X11
     XMapWindow(display, window); // opposite is XLowerWindow(display, window); which sends it to the back of the stack
 	XMapRaised(display, window);
 #endif
+
+#ifdef DOKUN_GLFW
+    std::cout << "GLFW: window_show function not implemented\n";
 #endif
 }
 //////////// 
@@ -337,14 +342,18 @@ int dokun::Window::show(lua_State *L)
 ////////////
 void dokun::Window::hide()
 {	
-#ifdef __windows__
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
     ShowWindow(handle, SW_HIDE);
 #endif
+#endif
    
-#ifdef __gnu_linux__
 #ifdef DOKUN_X11
     XUnmapWindow(display, window);
 #endif
+
+#ifdef DOKUN_GLFW
+    
 #endif
 }
 ////////////
@@ -362,104 +371,37 @@ int dokun::Window::hide(lua_State *L)
 ////////////
 void dokun::Window::update() // retrieves window messages; updates drawing (called in a loop)
 {
-#ifdef __windows__
-	Renderer::set_display_size(get_client_width (), get_client_height ());
-	MSG message;
-    if(PeekMessage(&message, nullptr, 0, 0, PM_REMOVE)) // if (GetMessage (&message, nullptr, 0, 0)) // wait for messages(input or mouse movement){
-	{    
-        TranslateMessage(&message);  
-        DispatchMessage (&message); 	
-    }
+#ifdef DOKUN_WIN32
 #ifdef DOKUN_OPENGL
 	if(Renderer::get_current_API() != "OpenGL") return;
-	if(!is_context()) // must be an OpenGL context
-	{
+	if(!is_context()) { // must be an OpenGL context
 		Logger("Window is not an OpenGL context");
 		return;
 	}
 	SwapBuffers(device);
-#endif
-#endif
-#ifdef __gnu_linux__
+#endif // endif DOKUN_OPENGL
+#endif // endif DOKUN_WIN32
+
 #ifdef DOKUN_X11
-/*  if(XPeekEvent(display, &xev))
-    {
-        // translate_message
-        // dispatch_message
-    }*/
-/////////////////////// 
-/////////////////////// temp code above (delete soon)
-    // https://stackoverflow.com/questions/41005367/get-x11-window-inside-the-main-loop-for-an-event
-    // All events: https://tronche.com/gui/x/xlib/events/structures.html#XEvent
-	//XKeyEvent event_send;//XEvent event_send;
-    //event_send.type = KeyPress;
-    //event_send.state = XK_Escape;
-    //XSendEvent(display, window, true, KeyPressMask, (XEvent *)&event_send);
-    // find a way to send a fake keyboard press event to keep the window updating constantly ...
-    //if(XPending(display)) {//while(XPending(display)) { //  returns the number of events that have been received from the X server but have not been removed from the event queue
-	    XNextEvent(display, &xev);//XPeekEvent(display, &xev);//if (XEventsQueued(display, QueuedAfterFlush/*QueuedAfterReading*/)) {
-	//}
-	if(xev.type == Expose) // on window show
-	{}
-	if(xev.type == ConfigureNotify) // notify if window is resized
-	{
-		//On Linux the renderable area is the entire window size (updated through viewport), on Windows it is the client size.
-        // Whatever you do, don't remove this, as it updates the Renderable area each time the window size changes 
-        // To know if the Rendererable area is updated, sprites should be the same size on file***
-        // If the image on the file is a different size from the sprite on the renderer screen, then it means you did not update the window client size
-        // Also if Sprite::lock does not work it means the window size is not updated
-        XConfigureEvent xce = xev.xconfigure; // https://tronche.com/gui/x/xlib/events/window-state-change/configure.html#XConfigureEvent
-        if (xce.width != Renderer::window_width || xce.height != Renderer::window_height) {
-            Renderer::window_width = xce.width;
-            Renderer::window_height = xce.height;
-#ifdef DOKUN_DEBUG0          
-            std::cout << "Renderer size updated: " << Vector2(Renderer::window_width, Renderer::window_height) << std::endl; // display size
-#endif
-        }
-	}
-	if(xev.type == DestroyNotify) { // on destroying a window
-	    //XDestroyWindowEvent xdwe = xev.xdestroywindow; // https://tronche.com/gui/x/xlib/events/window-state-change/destroy.html#XDestroyWindowEvent
-	}
-	if(xev.type == KeyPress)
-    {
-#ifdef DOKUN_DEBUG0
-		if(XLookupKeysym(&xev.xkey, 0) == XK_Escape)
-			destroy();	
-#endif
-	}
-	if(xev.type == KeyRelease)
-    {}
-	if(xev.type == ButtonPress)  {mouse_button = xev.xbutton.button;mouse_released=0;mouse_pressed=1;}
-	if(xev.type == ButtonRelease){mouse_button = xev.xbutton.button;mouse_pressed=0;mouse_released = 1;}
-	
-	Keyboard::get_input(XLookupKeysym(&xev.xkey, 0), (xev.type == KeyPress), (xev.type == KeyRelease));
-	//std::cout << XLookupKeysym(&xev.xkey, 0) << std::endl;
-	//}//while xpending	
 #ifdef DOKUN_OPENGL
-	if(Renderer::get_current_API() != "OpenGL")
-		return;
+	if(Renderer::get_current_API() != "OpenGL") return;
 	if(!is_context()) {// must be an OpenGL context
 		Logger("Window is not an OpenGL context");
 		return;
 	}
 	glXSwapBuffers(display, window);
-#endif
-#ifdef DOKUN_VULKAN
-#endif
+#endif // endif DOKUN_OPENGL
 #endif // endif DOKUN_X11
+
 #ifdef DOKUN_WAYLAND
     wl_display_dispatch_pending (display);
 #ifdef DOKUN_OPENGL
     eglSwapBuffers (egl_display, this->egl_surface);
 #endif
 #endif //endif DOKUN_WAYLAND
-#endif // endif __gnu_linux__
+
 #ifdef DOKUN_GLFW
-    /* Swap front and back buffers */
-    glfwSwapBuffers(window);
-    /* Poll for and process events */
-    //glfwPostEmptyEvent();
-    glfwPollEvents();//glfwWaitEvents (void);//
+    glfwSwapBuffers(window); /* Swap front and back buffers */
 #endif
 }
 ////////////
@@ -477,7 +419,8 @@ int dokun::Window::update(lua_State *L)
 ////////////
 void dokun::Window::destroy()
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
 #ifdef DOKUN_OPENGL
 	wglMakeCurrent(nullptr, nullptr);
     wglDeleteContext(context);
@@ -487,6 +430,7 @@ void dokun::Window::destroy()
     DestroyWindow(handle);
 	instance = nullptr;
 	Logger("Window destroyed.");
+#endif
 #endif
     
 #ifdef __gnu_linux__
@@ -506,9 +450,11 @@ void dokun::Window::destroy()
  	XCloseDisplay(display);
 	exit(1);
 #endif // endif DOKUN_X11
+
 #ifdef DOKUN_XCB
 	xcb_disconnect (connection);
 #endif
+
 #ifdef DOKUN_WAYLAND
 #ifdef DOKUN_OPENGL
     eglDestroySurface (egl_display, this->egl_surface);
@@ -521,8 +467,9 @@ void dokun::Window::destroy()
 #endif
 #endif // endif DOKUN_WAYLAND
 #endif // endif __gnu_linux__
+
 #ifdef DOKUN_GLFW
-    glfwDestroyWindow(window);//glfwTerminate();
+    glfwDestroyWindow(window);
 #endif
 }
 ////////////
@@ -587,14 +534,14 @@ int dokun::Window::clear(lua_State *L)
 ////////////
 void dokun::Window::iconify()
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
 	ShowWindow(get_handle(), SW_MINIMIZE);
 #endif
+#endif
 	
-#ifdef __gnu_linux__
 #ifdef DOKUN_X11
     XIconifyWindow(display, window, DefaultScreen(display));
-#endif
 #endif
 }
 int dokun::Window::iconify(lua_State * L)
@@ -610,13 +557,13 @@ int dokun::Window::iconify(lua_State * L)
 }
 void dokun::Window::maximize()
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
 	ShowWindow(get_handle(), SW_MAXIMIZE);
 #endif
-	
-#ifdef __gnu_linux__
-#ifdef DOKUN_X11
 #endif
+	
+#ifdef DOKUN_X11
 #endif
 }
 int dokun::Window::maximize(lua_State * L)
@@ -632,13 +579,13 @@ int dokun::Window::maximize(lua_State * L)
 }
 void dokun::Window::restore()
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
 	ShowWindow(get_handle(), SW_RESTORE);
 #endif
-	
-#ifdef __gnu_linux__
-#ifdef DOKUN_X11
 #endif
+	
+#ifdef DOKUN_X11
 #endif
 }
 int dokun::Window::restore(lua_State * L)
@@ -653,87 +600,242 @@ int dokun::Window::restore(lua_State * L)
 	return 0;
 }
 ////////////
-void dokun::Window::loop()
-{
-	/*
-	if(!get_event())
+////////////
+////////////
+void dokun::Window::poll_events() {
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
+	Renderer::set_display_size(get_client_width (), get_client_height ());
+	MSG message;
+    if(PeekMessage(&message, nullptr, 0, 0, PM_REMOVE)) { // if (GetMessage (&message, nullptr, 0, 0)) // wait for messages(input or mouse movement){
+        TranslateMessage(&message);  
+        DispatchMessage (&message); 	
+    }
+#endif
+#endif // endif DOKUN_WIN32
+
+#ifdef DOKUN_X11
+    //if(XPeekEvent(display, &event)) {
+    //     translate_message
+    //     dispatch_message
+    //}
+    // https://stackoverflow.com/questions/41005367/get-x11-window-inside-the-main-loop-for-an-event
+    // All events: https://tronche.com/gui/x/xlib/events/structures.html#XEvent
+	//XKeyEvent event_send;//XEvent event_send;
+    //event_send.type = KeyPress;
+    //event_send.state = XK_Escape;
+    //XSendEvent(display, window, true, KeyPressMask, (XEvent *)&event_send);
+    // find a way to send a fake keyboard press event to keep the window updating constantly ...
+    //if(XPending(display) > 0) { //if(XEventsQueued(display, QueuedAlready)) { {//while(XPending(display)) { //  returns the number of events that have been received from the X server but have not been removed from the event queue
+	    XNextEvent(display, &event);//XPeekEvent(display, &event);//if (XEventsQueued(display, QueuedAfterFlush/*QueuedAfterReading*/)) {
+	//} 
+        //Atom selection = XInternAtom(display, "CLIPBOARD", 0);          
+		if(event.type == SelectionRequest) {
+		    // configure atom settings (for copy clipboard)
+			Atom targets_atom, text_atom, UTF8;
+	        targets_atom = XInternAtom(display, "TARGETS", 0);
+	        text_atom = XInternAtom(display, "TEXT", 0);
+	        UTF8 = XInternAtom(display, "UTF8_STRING", 1);
+	        if (UTF8 == None) UTF8 = XA_STRING;//std::cout << "XA_STRING: " << XA_STRING << std::endl;//std::cout << "XA_ATOM: " << XA_ATOM << std::endl;
+	        Atom selection = XInternAtom(display, "CLIPBOARD", 0);
+	        // the text to be copied along with its size
+	        unsigned char * text = reinterpret_cast<unsigned char *>(const_cast<char *>(clipboard_text.c_str())); // removed const from string
+	        int size = strlen(clipboard_text.c_str());
+			if (event.xselectionrequest.selection != selection) return;//break;
+			XSelectionRequestEvent * xsr = &event.xselectionrequest;
+			XSelectionEvent ev = {0};
+			int R = 0;
+			ev.type = SelectionNotify, ev.display = xsr->display, ev.requestor = xsr->requestor,
+			ev.selection = xsr->selection, ev.time = xsr->time, ev.target = xsr->target, ev.property = xsr->property;
+			if (ev.target == targets_atom) R = XChangeProperty (ev.display, ev.requestor, ev.property, XA_ATOM, 32,
+					PropModeReplace, (unsigned char*)&UTF8, 1);
+			else if (ev.target == XA_STRING || ev.target == text_atom) 
+				R = XChangeProperty(ev.display, ev.requestor, ev.property, XA_STRING, 8, PropModeReplace, text, size);
+			else if (ev.target == UTF8)
+				R = XChangeProperty(ev.display, ev.requestor, ev.property, UTF8, 8, PropModeReplace, text, size);
+			else ev.property = None;
+			if ((R & 2) == 0) XSendEvent (display, ev.requestor, 0, 0, (XEvent *)&ev);
+			//break;
+			//case SelectionClear:
+			//return;
+		}	
+		// paste event	
+        if(event.type == SelectionNotify) {
+            int format; unsigned long N, size; char * data;/*, * s = 0;*/
+	        Atom target, CLIPBOARD = XInternAtom(display, "CLIPBOARD", 0),
+	             UTF8 = XInternAtom(display, "UTF8_STRING", True);
+	        //clipboard_text.clear();// clear the clipboard_text first		
+		    if(event.xselection.selection != CLIPBOARD) return;//break;
+		    if(event.xselection.property) {
+			    XGetWindowProperty(event.xselection.display, event.xselection.requestor,
+				    event.xselection.property, 0L,(~0L), 0, AnyPropertyType, &target,
+				    &format, &size, &N,(unsigned char**)&data);
+			    if(target == UTF8 || target == XA_STRING) {
+				    /*s*/clipboard_text = strndup(data, size);
+				    XFree(data);
+			    }
+			    XDeleteProperty(event.xselection.display, event.xselection.requestor, event.xselection.property);
+		    }
+	    }		
+	if(event.type == Expose) // on window show
+	{}
+	if(event.type == ConfigureNotify) // notify if window is resized
 	{
-		event = new Event();
-		set_event(event);
+		//On Linux the renderable area is the entire window size (updated through viewport), on Windows it is the client size.
+        // Whatever you do, don't remove this, as it updates the Renderable area each time the window size changes 
+        // To know if the Rendererable area is updated, sprites should be the same size on file***
+        // If the image on the file is a different size from the sprite on the renderer screen, then it means you did not update the window client size
+        // Also if Sprite::lock does not work it means the window size is not updated
+        XConfigureEvent xce = event.xconfigure; // https://tronche.com/gui/x/xlib/events/window-state-change/configure.html#XConfigureEvent
+        if (xce.width != Renderer::window_width || xce.height != Renderer::window_height) {
+            Renderer::window_width = xce.width;
+            Renderer::window_height = xce.height;
+#ifdef DOKUN_DEBUG0          
+            std::cout << "Renderer size updated: " << Vector2(Renderer::window_width, Renderer::window_height) << std::endl; // display size
+#endif
+        }
 	}
-	
-	get_event()->on_load();
-	while(is_open())
-	{
-		get_event()->on_draw();
-		get_event()->on_focus();
-		get_event()->on_update();
-		update();
+	if(event.type == DestroyNotify) { // on destroying a window
+	    //XDestroyWindowEvent xdwe = event.xdestroywindow; // https://tronche.com/gui/x/xlib/events/window-state-change/destroy.html#XDestroyWindowEvent
+	    std::cout << "DestroyNotify: window has been destroyed\n";
 	}
-	get_event()->on_quit();
-	*/
+///////////////////////////// KEY EVENT - TEMP
+/*if(event.type == KeyPress) { // XKeyEvent: KeyPress, KeyReleased
+XKeyEvent *key_event;
+int count;
+int buffer_size = 80;
+char buffer[80];
+KeySym keysym;//XK_Control_L;// = XLookupKeysym(&event.xkey, 0);*/
+// XComposeStatus compose; is not used, though it's in some books
+   //count = XLookupString(&event.xkey/*key_event*/,buffer,buffer_size, &keysym, nullptr); // causes SEGFAULT
+//if ((keysym >= XK_space) && (keysym <= XK_asciitilde)){
+//      printf ("Ascii key:- ");
+//      if (event.xkey.state/*key_event->state*/ & ShiftMask)
+//             printf("(Shift) %s\n", buffer); // capital letter or symbol
+//      else if (event.xkey.state/*key_event->state*/ & LockMask)
+//             printf("(Caps Lock) %s\n", buffer); // capital letter
+//      else if (event.xkey.state/*key_event->state*/ & ControlMask)
+//             printf("(Control) %c\n", 'a'+ buffer[0]-1) ;
+//      else printf("%s\n", buffer) ;
+//   }
+/*
+   else if ((keysym >= XK_Shift_L) && (keysym <= XK_Hyper_R)){
+      printf ("modifier key:- ");
+      switch (keysym){
+      case XK_Shift_L: printf("Left Shift\n"); break;
+      case XK_Shift_R: printf("Right Shift\n");break;
+      case XK_Control_L: printf("Left Control\n");break;
+      case XK_Control_R: printf("Right Control\n");	break;
+      case XK_Caps_Lock: printf("Caps Lock\n");	break;
+      case XK_Shift_Lock: printf("Shift Lock\n");break;
+      case XK_Meta_L: printf("Left Meta\n");	break;
+      case XK_Meta_R: printf("Right Meta\n");	break;
+
+      }
+    }  
+   else if ((keysym >= XK_Left) && (keysym <= XK_Down)){
+      printf("Arrow Key:-");
+      switch(keysym){
+      case XK_Left: printf("Left\n");break;
+      case XK_Up: printf("Up\n");break;
+      case XK_Right: printf("Right\n");break;
+      case XK_Down: printf("Down\n");break;	
+      }
+    }     
+}*/ // keypressed
+/////////////////////////////
+	if(event.type == KeyPress)
+    {
+        //std::cout << "A key has been pressed\n"; // prints multiple times even when XPending is called
+#ifdef DOKUN_DEBUG0
+		if(XLookupKeysym(&event.xkey, 0) == XK_Escape)
+			destroy();	
+#endif
+        int buffer_size = 1;//80;
+        char buffer[1];//[80];
+        KeySym keysym;// = XLookupKeysym(&event.xkey, 0); // represents key(s) on a keyboard
+        int count = XLookupString(&event.xkey, buffer, buffer_size, &keysym, nullptr);
+        // store keyboard input - change keysym to buffer ?      
+        Keyboard::get_input(keysym, true/*(event.type == KeyPress)*/, false/*(event.type == KeyRelease)*/);
+	    // debug
+	    //std::cout << buffer << " was pressed (length: " << strlen(buffer)/* << ")"*/ << ", count: " << count << ")" << std::endl;
+	    //std::cout << XLookupKeysym(&event.xkey, 0) << std::endl;
+	    // if one wants to find out if another client has changed the key mappings, select MappingNotify and do
+	    //XRefreshKeyboardMapping(XMappingEvent* event);
+	}
+	// Keyboard (release)
+	if(event.type == KeyRelease)
+    {
+        int buffer_size = 1;//80;
+        char buffer[1];//[80];
+        KeySym keysym;// = XLookupKeysym(&event.xkey, 0); // represents key(s) on a keyboard
+        XLookupString(&event.xkey, buffer, buffer_size, &keysym, nullptr);
+        // store keyboard input - change keysym to buffer ?      
+        Keyboard::get_input(keysym, false/*pressed*/, true/*release*/);//Keyboard::get_release_event(XLookupKeysym(&event.xkey, 0), (event.type == KeyRelease));
+        //std::cout << buffer << " was released (length: " << strlen(buffer) << ")" << std::endl;
+    }
+    // Mouse (press, release)
+	if(event.type == ButtonPress)  {
+	    mouse_button = event.xbutton.button;
+	    mouse_released = 0;
+	    mouse_pressed = 1;
+	    //std::cout << "mouse is pressed\n"; // prints multiple times, even when XPending is being called
+	}
+	if(event.type == ButtonRelease){
+	    mouse_button = event.xbutton.button;
+	    mouse_pressed = 0;
+	    mouse_released = 1;
+	}
+	//}//while xpending	
+#endif	
 }
 ////////////
-int dokun::Window::loop(lua_State * L) // int main ()
-{	/*
-	luaL_checktype(L, 1, LUA_TTABLE); // 1 st
-	lua_getfield(L, 1, "udata"); // 2 nd
-	if(lua_isuserdata(L, -1))
-	{
-		dokun::Window * window = *static_cast<dokun::Window **>(lua_touserdata(L, -1));
-		/////////////////////////	
-		lua_pop(L, 1); // pop userdata
-		/////////////////////////
-		if(!window->get_event())
-		{
-			Event * event = new Event();
-			window->set_event(event);
-		}
-		////////////////////////
-		// load (only once)
-        window->get_event()->on_load(L);
-		////////////////////////
-		while(window->is_open())
-		{
-			// set viewport
-			//window->resize(window->get_width(), window->get_height());
-			// callback functions
-			////////////////////////
-			// draw (in loop)
-			window->get_event()->on_draw(L);
-			////////////////////////
-			// input
-			////////////////////////
-			// focus (in loop)
-			window->get_event()->on_focus(L);
-			////////////////////////
-			// update
-			window->get_event()->on_update(L);
-			////////////////////////		
-			// prevent stack overflow
-			if(lua_gettop(L) >= 20)
-			{
-			    lua_pop(L, lua_gettop(L) - 1);
-			}
-			// update
-			window->update();
-		}
-		// quit before window closes
-		window->get_event()->on_quit(L);
-	}*/
-	return 0;
+void dokun::Window::wait_events() {
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
+	Renderer::set_display_size(get_client_width (), get_client_height ());
+	MSG message;
+    if(GetMessage(&message, nullptr, 0, 0)) { // wait for messages(input or mouse movement) {
+        TranslateMessage(&message);  
+        DispatchMessage (&message); 	
+    }
+#endif
+#endif // endif DOKUN_WIN32
+
+
+}
+////////////		
+void dokun::Window::copy_clipboard(const char * text) {
+#ifdef DOKUN_X11
+	// selection owner - will override whatever text you copied from another window with a new string from our dokun window
+	Atom selection = XInternAtom(display, "CLIPBOARD", 0);
+	XSetSelectionOwner (display, selection, window, 0);
+	if (XGetSelectionOwner (display, selection) != window) return;
+	clipboard_text = text;
+#endif
 }
 ////////////
+std::string dokun::Window::paste_clipboard() {
+	// (for paste clipboard)
+	Atom UTF8 = XInternAtom(display, "UTF8_STRING", True);
+	Atom CLIPBOARD = XInternAtom(display, "CLIPBOARD", 0),
+	     XSEL_DATA = XInternAtom(display, "XSEL_DATA", 0);
+	XConvertSelection(display, CLIPBOARD, UTF8, XSEL_DATA, window, CurrentTime);
+	XSync(display, 0);
+    return clipboard_text;
+}
+//////////// 
 //////////// 
 // SETTERS
 ////////////
 void dokun::Window::set_title(const std::string& title)
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
     SetWindowText(get_handle(), title.c_str());
 #endif
+#endif
     
-#ifdef __gnu_linux__
 #ifdef DOKUN_X11
     XTextProperty window_title_property;
     char * window_title = const_cast<char *>(title.c_str());
@@ -741,8 +843,11 @@ void dokun::Window::set_title(const std::string& title)
 	    Logger("Failure to set window title");
 	XSetWMName(display, window, &window_title_property);  // causes seg fault
 #endif
+
+#ifdef DOKUN_GLFW
+    glfwSetWindowTitle (window, title.c_str());
 #endif
-    (this)-> title = title;
+    this->title = title;
 }
 ////////////
 int dokun::Window::set_title(lua_State *L)
@@ -760,20 +865,24 @@ int dokun::Window::set_title(lua_State *L)
 ////////////
 void dokun::Window::set_width(int width)
 {    
-#ifdef __windows__
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
 	if(MoveWindow(get_handle(), get_x(), get_y(), width, get_height(), FALSE) == 0)
 	{
 		Logger("Failure to set width");
 		return;
 	}
 #endif
+#endif
 	
-#ifdef __gnu_linux__
 #ifdef DOKUN_X11
 	XResizeWindow(display, window, width, get_height());                   //XMoveResizeWindow(display, window, get_x(), get_y(), width, get_height());  // causes seg fault
 #endif
+
+#ifdef DOKUN_GLFW
+    glfwSetWindowSize (window, width, get_height());
 #endif
-    this->width     = width;
+    this->width = width;
 }
 ////////////
 int dokun::Window::set_width(lua_State *L)
@@ -792,18 +901,22 @@ int dokun::Window::set_width(lua_State *L)
 ////////////
 void dokun::Window::set_height(int height)
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
 	if(MoveWindow(get_handle(), get_x(), get_y(), get_width(), height, false) == 0)
 	{
 		Logger("Failure to set height");
 		return;
 	}	
 #endif	
+#endif
 	
-#ifdef __gnu_linux__
 #ifdef DOKUN_X11
 	XResizeWindow(display, window, get_width(), height);         // OR // XMoveResizeWindow(display, window, get_x(), get_y(), get_width(), height);
 #endif
+
+#ifdef DOKUN_GLFW
+    glfwSetWindowSize (window, get_width(), height);
 #endif
     this->height    = height;
 }
@@ -823,9 +936,21 @@ int dokun::Window::set_height(lua_State *L)
 }
 ////////////
 void dokun::Window::set_size(int width, int height)
-{	
-    set_width (width );
-    set_height(height);
+{
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GFLW
+	if(MoveWindow(handle, get_x(), get_y(), width, height, false) == 0)
+		return;
+#endif
+#endif
+
+#ifdef DOKUN_X11
+	XResizeWindow(display, window, width, height);         // OR // XMoveResizeWindow(display, window, get_x(), get_y(), get_width(), height);
+#endif
+
+#ifdef DOKUN_GLFW
+    glfwSetWindowSize (window, width, height);
+#endif
 }
 ////////////
 int dokun::Window::set_size(lua_State *L)
@@ -846,7 +971,8 @@ int dokun::Window::set_size(lua_State *L)
 ////////////
 void dokun::Window::set_mode(int mode)
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
     switch(mode) {
 	    case 1: 
 		{   
@@ -863,8 +989,8 @@ void dokun::Window::set_mode(int mode)
 	    } break;		
 	}	
 #endif	
+#endif
 	
-#ifdef __gnu_linux__
 #ifdef DOKUN_X11
     Atom    atom_list[2] = { XInternAtom(display, "_NET_WM_STATE_FULLSCREEN", False), None};
     switch(mode) {
@@ -876,8 +1002,7 @@ void dokun::Window::set_mode(int mode)
 		    break;
 	}
 #endif
-#endif
-    this->mode = (mode);
+    this->mode = mode;
 }
 ////////////
 int dokun::Window::set_mode(lua_State *L)
@@ -895,14 +1020,18 @@ int dokun::Window::set_mode(lua_State *L)
 ////////////
 void dokun::Window::set_position(int x, int y)
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
 	MoveWindow(handle, x, y, get_width(), get_height(), false);
 #endif	
+#endif
 	
-#ifdef __gnu_linux__
 #ifdef DOKUN_X11
 	XMoveWindow(display, window, x, y);
 #endif
+
+#ifdef DOKUN_GLFW
+    glfwSetWindowPos (window, x, y);
 #endif
 	this->x = x;
 	this->y = y;
@@ -925,7 +1054,6 @@ int dokun::Window::set_position(lua_State *L)
 ////////////
 void dokun::Window::set_style(long style)
 {
-#ifdef __gnu_linux__
 #ifdef DOKUN_X11
 	switch(style)
 	{
@@ -978,7 +1106,6 @@ void dokun::Window::set_style(long style)
         XA_ATOM, 32, PropModeReplace, (unsigned char *)&style, 1);
     this->style = style;
 #endif   
-#endif    
 }
 ////////////
 int dokun::Window::set_style(lua_State *L)
@@ -996,12 +1123,13 @@ int dokun::Window::set_style(lua_State *L)
 ////////////
 void dokun::Window::set_icon(const std::string& file_name) // from .ICO
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
     HANDLE icon = LoadImage(instance, file_name.c_str(), IMAGE_ICON, 32, 32, LR_LOADFROMFILE);
 	SendMessage(get_handle(), (UINT)WM_SETICON, ICON_BIG, (LPARAM)icon);
 #endif
-	
-#ifdef __gnu_linux__
+#endif
+
 #ifdef DOKUN_X11
 /*
 
@@ -1041,6 +1169,8 @@ XSetWMHints(display, window, win_hints);
 XFree(win_hints);
 */
 #endif
+#ifdef DOKUN_GLFW
+    //glfwSetWindowIcon (GLFWwindow *window, int count, const GLFWimage *images)
 #endif
 }
 ////////////    
@@ -1063,7 +1193,7 @@ void dokun::Window::set_cursor(int cursor) // DWORD = unsigned long
 	{
 		case DOKUN_ARROW: // arrow (default)
 		{
-			#ifdef __windows__
+			#ifdef DOKUN_WIN32
 		        HCURSOR arrow = LoadCursor(nullptr, IDC_ARROW);
 		        //SetClassLong(get_handle(), GCL_HCURSOR, (DWORD)arrow); // HCURSOR SetCursor(HCURSOR hCursor);
 				this->cursor = cursor;
@@ -1072,7 +1202,7 @@ void dokun::Window::set_cursor(int cursor) // DWORD = unsigned long
 		}
 		case DOKUN_START:
 		{
-			#ifdef __windows__
+			#ifdef DOKUN_WIN32
 		        HCURSOR start = LoadCursor(nullptr, IDC_APPSTARTING);
 		        //SetClassLong(get_handle(), GCL_HCURSOR, (DWORD)start); // HCURSOR SetCursor(HCURSOR hCursor);
 				this->cursor = cursor;
@@ -1081,7 +1211,7 @@ void dokun::Window::set_cursor(int cursor) // DWORD = unsigned long
 		}
 		case DOKUN_CROSS:
 		{
-			#ifdef __windows__
+			#ifdef DOKUN_WIN32
 		        HCURSOR cross = LoadCursor(nullptr, IDC_CROSS);
 		        //SetClassLong(get_handle(), GCL_HCURSOR, (DWORD)cross); // HCURSOR SetCursor(HCURSOR hCursor);
 				this->cursor = cursor;
@@ -1090,7 +1220,7 @@ void dokun::Window::set_cursor(int cursor) // DWORD = unsigned long
 		}		
 		case DOKUN_HAND:
 		{
-			#ifdef __windows__
+			#ifdef DOKUN_WIN32
 		        HCURSOR hand = LoadCursor(nullptr, IDC_HAND);
 		        //SetClassLong(get_handle(), GCL_HCURSOR, (DWORD)hand); // HCURSOR SetCursor(HCURSOR hCursor);
 				this->cursor = cursor;
@@ -1099,7 +1229,7 @@ void dokun::Window::set_cursor(int cursor) // DWORD = unsigned long
 		}
 		case DOKUN_HELP:
 		{
-			#ifdef __windows__
+			#ifdef DOKUN_WIN32
 		        HCURSOR help = LoadCursor(nullptr, IDC_HELP);
 		        //SetClassLong(get_handle(), GCL_HCURSOR, (DWORD)help); // HCURSOR SetCursor(HCURSOR hCursor);
 				this->cursor = cursor;
@@ -1108,7 +1238,7 @@ void dokun::Window::set_cursor(int cursor) // DWORD = unsigned long
 		}
 		case DOKUN_BEAM:
 		{
-			#ifdef __windows__
+			#ifdef DOKUN_WIN32
 		        HCURSOR lbeam = LoadCursor(nullptr, IDC_IBEAM);
 		        //SetClassLong(get_handle(), GCL_HCURSOR, (DWORD)lbeam); // HCURSOR SetCursor(HCURSOR hCursor);
 				this->cursor = cursor;
@@ -1117,7 +1247,7 @@ void dokun::Window::set_cursor(int cursor) // DWORD = unsigned long
 		}
 		case DOKUN_ICON:
 		{
-			#ifdef __windows__
+			#ifdef DOKUN_WIN32
 		        HCURSOR icon = LoadCursor(nullptr, IDC_ICON);
 		        //SetClassLong(get_handle(), GCL_HCURSOR, (DWORD)icon); // HCURSOR SetCursor(HCURSOR hCursor);
 				this->cursor = cursor;
@@ -1126,7 +1256,7 @@ void dokun::Window::set_cursor(int cursor) // DWORD = unsigned long
 		}
 		case DOKUN_NON:
 		{
-			#ifdef __windows__
+			#ifdef DOKUN_WIN32
 		        HCURSOR no = LoadCursor(nullptr, IDC_NO);
 		        //SetClassLong(get_handle(), GCL_HCURSOR, (DWORD)no); // HCURSOR SetCursor(HCURSOR hCursor);
 				this->cursor = cursor;
@@ -1135,7 +1265,7 @@ void dokun::Window::set_cursor(int cursor) // DWORD = unsigned long
 		}
 		case DOKUN_MOVE:
 		{
-			#ifdef __windows__
+			#ifdef DOKUN_WIN32
 		        HCURSOR size_all = LoadCursor(nullptr, IDC_SIZEALL);
 		        //SetClassLong(get_handle(), GCL_HCURSOR, (DWORD)size_all); // HCURSOR SetCursor(HCURSOR hCursor);
 				this->cursor = cursor;
@@ -1144,7 +1274,7 @@ void dokun::Window::set_cursor(int cursor) // DWORD = unsigned long
 		}			
 		case DOKUN_SIZENESW:
 		{
-			#ifdef __windows__
+			#ifdef DOKUN_WIN32
 		        HCURSOR size_nesw = LoadCursor(nullptr, IDC_SIZENESW);
 		        //SetClassLong(get_handle(), GCL_HCURSOR, (DWORD)size_nesw); // HCURSOR SetCursor(HCURSOR hCursor);
 				this->cursor = cursor;
@@ -1153,7 +1283,7 @@ void dokun::Window::set_cursor(int cursor) // DWORD = unsigned long
 		}
 		case DOKUN_SIZENS:
 		{
-			#ifdef __windows__
+			#ifdef DOKUN_WIN32
 			#ifndef DOKUN_SDL2
             #ifndef DOKUN_GLFW
 		        HCURSOR size_ns = LoadCursor(nullptr, IDC_SIZENS);
@@ -1166,7 +1296,7 @@ void dokun::Window::set_cursor(int cursor) // DWORD = unsigned long
 		}
 		case DOKUN_SIZENWSE:
 		{
-			#ifdef __windows__
+			#ifdef DOKUN_WIN32
 		        HCURSOR size_nwse = LoadCursor(nullptr, IDC_SIZENWSE);
 		        //SetClassLong(get_handle(), GCL_HCURSOR, (DWORD)size_nwse); // HCURSOR SetCursor(HCURSOR hCursor);
 				this->cursor = cursor;
@@ -1175,7 +1305,7 @@ void dokun::Window::set_cursor(int cursor) // DWORD = unsigned long
 		}			
 		case DOKUN_SIZEWE:
 		{
-			#ifdef __windows__
+			#ifdef DOKUN_WIN32
 		        HCURSOR size_we = LoadCursor(nullptr, IDC_SIZEWE);
 		        //SetClassLong(get_handle(), GCL_HCURSOR, (DWORD)size_we); // HCURSOR SetCursor(HCURSOR hCursor);
 				this->cursor = cursor;
@@ -1184,7 +1314,7 @@ void dokun::Window::set_cursor(int cursor) // DWORD = unsigned long
 		}
 		case DOKUN_UPARROW:
 		{
-			#ifdef __windows__
+			#ifdef DOKUN_WIN32
 		        HCURSOR up_arrow = LoadCursor(nullptr, IDC_UPARROW);
 		        //SetClassLong(get_handle(), GCL_HCURSOR, (DWORD)up_arrow); // HCURSOR SetCursor(HCURSOR hCursor);
 				this->cursor = cursor;
@@ -1193,7 +1323,7 @@ void dokun::Window::set_cursor(int cursor) // DWORD = unsigned long
 		}
 		case DOKUN_WAIT: // hourglass
 		{
-			#ifdef __windows__
+			#ifdef DOKUN_WIN32
 		        HCURSOR wait = LoadCursor(nullptr, IDC_WAIT); 
 		        //SetClassLong(get_handle(), GCL_HCURSOR, (DWORD)wait); // HCURSOR SetCursor(HCURSOR hCursor);
                 this->cursor = cursor;			
@@ -1201,17 +1331,16 @@ void dokun::Window::set_cursor(int cursor) // DWORD = unsigned long
 		    break;
 		}	
 	}
-	#ifdef __gnu_linux__
 	#ifdef DOKUN_X11
 	    this->cursor = XCreateFontCursor(display, XC_xterm); 
         XDefineCursor(display, window, cursor);
-    #endif    
-	#endif
+    #endif
 }
 ////////////
 void dokun::Window::set_cursor(std::string file_name, int width, int height) // from a .CUR or .ANI file
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
 	    if(!width && !height)
 	    {
 		    HCURSOR cursor = LoadCursorFromFile(file_name.c_str());  // uses standard cursor size
@@ -1232,13 +1361,12 @@ void dokun::Window::set_cursor(std::string file_name, int width, int height) // 
 			SetCursor(cursor);
 	    }
 #endif
+#endif
 	
-#ifdef __gnu_linux__
 #ifdef DOKUN_X11
 	    //Pixmap pixmap = XCreatePixmap(display, Drawable d, unsignedintwidth, height, unsignedint depth);
 	    //cursor = XCreatePixmapCursor(display, Pixmap source, Pixmap mask, XColor *foreground_color, XColor *background_color, unsignedintx, y);
 		//XDefineCursor(display, window, cursor); // XUndefineCursor (display, w)   // resets the cursor
-#endif
 #endif
 } 
 ////////////
@@ -1271,14 +1399,14 @@ void dokun::Window::set_vertical_synchronization(bool v_sync)
 #ifdef DOKUN_OPENGL
 	if(!is_context())
 	    return;
-#ifdef __windows__
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
 	wglSwapIntervalEXT(v_sync);
 #endif
+#endif
 
-#ifdef __gnu_linux__
 #ifdef DOKUN_X11
 	glXSwapIntervalEXT(display, window, v_sync); // 
-#endif
 #endif
 #endif
 }
@@ -1367,7 +1495,8 @@ void dokun::Window::set_context()
 #ifdef DOKUN_OPENGL
 	if(Renderer::get_current_API() != "OpenGL")
 	    return;
-#ifdef __windows__
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
 	if(wglGetCurrentContext()) // context already exists, delete it
     {
 	    wglMakeCurrent(nullptr, nullptr);
@@ -1400,6 +1529,8 @@ void dokun::Window::set_context()
 	context = wglCreateContext(device);
     wglMakeCurrent(device, context);		
 #endif
+#endif
+
 #ifdef __gnu_linux__
 #ifdef DOKUN_X11    
 	if(glXGetCurrentContext()) // if context already exists, delete it
@@ -1433,9 +1564,9 @@ void dokun::Window::set_context()
     eglMakeCurrent (egl_display, this->egl_surface, this->egl_surface, this->egl_context);
 #endif // DOKUN_WAYLAND
 #endif // __gnu_linux__
+
 #ifdef DOKUN_GLFW
-/* Make the window's context current */
-    glfwMakeContextCurrent(window);    
+    glfwMakeContextCurrent(window);    /* Make the window's context current */
 #endif
 	glewExperimental = GL_TRUE;
     GLenum error  = glewInit();
@@ -1475,7 +1606,8 @@ void dokun::Window::set_surface() // set window as vulkan surface
 #ifdef DOKUN_VULKAN
 	if(Renderer::get_current_API() != "Vulkan")
 	    return;
-#ifdef __windows__
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
 	VkWin32SurfaceCreateInfoKHR surface_info = {};
 	surface_info.sType     = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
     surface_info.pNext     = nullptr;
@@ -1485,6 +1617,7 @@ void dokun::Window::set_surface() // set window as vulkan surface
 			
 	if(vkCreateWin32SurfaceKHR (Renderer::get_pointer()->instance, & surface_info, nullptr, & surface) != VK_SUCCESS)
 		Logger("Could not create Vulkan surface");
+#endif
 #endif
 #ifdef __gnu_linux__
 #ifdef DOKUN_X11
@@ -1519,8 +1652,8 @@ void dokun::Window::set_surface() // set window as vulkan surface
 	if (vkCreateMirSurfaceKHR(Renderer::get_default()->instance, & surface_info, nullptr, & surface) != VK_SUCCESS)
 		Logger("Could not create Vulkan surface");
 #endif
-#endif
-#ifdef __android__
+#endif // endif __gnu_linux__
+#ifdef DOKUN_ANDROID
 	VkAndroidSurfaceCreateInfoKHR surface_info = {};
 	surface_info.sType     = VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR;
     surface_info.pNext     = nullptr;
@@ -1607,23 +1740,27 @@ int dokun::Window::get_title(lua_State *L)
 int dokun::Window::get_width()const
 {
 	int width = 0;
-#ifdef __windows__
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
 	if (!is_open())
 		return -1;
 	RECT size;
 	GetWindowRect(get_handle(), & size); //-- WindowRect includes titlebar and ClientRect excludes titlebar
 	width = (size.right - size.left);
 #endif
+#endif
 	
-#ifdef __gnu_linux__
 #ifdef DOKUN_X11
     XWindowAttributes gwa;
 	XGetWindowAttributes(display, window, &gwa); // get attributes while app is running; only gets width and height no x and y
 	width = gwa.width;
 #endif
+
+#ifdef DOKUN_GLFW
+    glfwGetWindowSize(window, &width, nullptr);
 #endif
 	
-#ifdef __android__
+#ifdef DOKUN_ANDROID
 	return ANativeWindow_getWidth	(window);
 #endif
     return width;
@@ -1646,23 +1783,27 @@ int dokun::Window::get_width(lua_State *L)
 int dokun::Window::get_height()const // returns the height of the window, includes the title bar's height
 {
 	int height = 0;
-#ifdef __windows__
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
 	if (!is_open())
 	    return -1;
     RECT size;
     GetWindowRect(get_handle(), & size); //-- WindowRect includes titlebar and ClientRect excludes titlebar
     height = (size.bottom - size.top);
 #endif
+#endif
 	
-#ifdef __gnu_linux__
 #ifdef DOKUN_X11
     XWindowAttributes gwa;
 	XGetWindowAttributes(display, window, &gwa); // get attributes while app is running; only gets width and height no x and y
 	height = gwa.height; 
 #endif
+
+#ifdef DOKUN_GLFW
+    glfwGetWindowSize(window, nullptr, &height);
 #endif
 
-#ifdef __android__
+#ifdef DOKUN_ANDROID
 	return ANativeWindow_getHeight	(window);	
 #endif
     return height;
@@ -1705,21 +1846,27 @@ int dokun::Window::get_size(lua_State *L)
 int dokun::Window::get_client_width()const
 {
 	int width = 0;
-#ifdef __windows__
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
 	if (!is_open())
 		return -1;
 	RECT size;
 	GetClientRect(handle, &size);//GetWindowRect(get_handle(), & size); - WindowRect includes titlebar and ClientRect excludes titlebar
 	width = (size.right - size.left);
 #endif
-#ifdef __gnu_linux__
+#endif
+
 #ifdef DOKUN_X11
     XWindowAttributes gwa;
 	XGetWindowAttributes(display, window, &gwa); // get attributes while app is running; only gets width and height no x and y
 	width = gwa.width;
 #endif
+
+#ifdef DOKUN_GLFW
+    glfwGetFramebufferSize(window, &width, nullptr);
 #endif
-#ifdef __android__
+
+#ifdef DOKUN_ANDROID
 	return ANativeWindow_getWidth	(window);
 #endif
     return width;
@@ -1742,21 +1889,27 @@ int dokun::Window::get_client_width(lua_State *L)
 int dokun::Window::get_client_height()const // returns the height of the window, includes the title bar's height
 {
 	int height = 0;
-#ifdef __windows__
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
 	if (!is_open())
 	    return -1;
     RECT size;
     GetClientRect(handle, &size);//GetWindowRect(get_handle(), & size); - WindowRect includes titlebar and ClientRect excludes titlebar
     height = (size.bottom - size.top);
 #endif
-#ifdef __gnu_linux__
+#endif
+
 #ifdef DOKUN_X11
     XWindowAttributes gwa;
 	XGetWindowAttributes(display, window, &gwa); // get attributes while app is running; only gets width and height no x and y
 	height = gwa.height; 
 #endif
+
+#ifdef DOKUN_GLFW
+    glfwGetFramebufferSize(window, nullptr, &height);
 #endif
-#ifdef __android__
+
+#ifdef DOKUN_ANDROID
 	return ANativeWindow_getHeight	(window);	
 #endif
     return height;
@@ -1820,15 +1973,16 @@ int dokun::Window::get_mode(lua_State *L)
 int dokun::Window::get_x()const
 {
 	int x = 0;
-#ifdef __windows__
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
 	if (!is_open())
 	    return -1;	
 	RECT rect;
     GetWindowRect(get_handle(), & rect);
 	x = rect.left;
 #endif
+#endif
 	
-#ifdef __gnu_linux__
 #ifdef DOKUN_X11
     XWindowAttributes xwa;
 	int y;
@@ -1836,7 +1990,6 @@ int dokun::Window::get_x()const
 	XTranslateCoordinates(display, window, DefaultRootWindow(display), 0, 0, &x, &y, &child );
     XGetWindowAttributes(display, window, &xwa);
     x = x - xwa.x;
-#endif
 #endif
 	return x;
 }
@@ -1858,15 +2011,16 @@ int dokun::Window::get_x(lua_State *L)
 int dokun::Window::get_y()const
 {
 	int y = 0;
-#ifdef __windows__
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
 	if (!is_open())
 	    return -1;
 	RECT rect;
     GetWindowRect(get_handle(), & rect);
 	y = rect.top;
 #endif
-	
-#ifdef __gnu_linux__
+#endif
+
 #ifdef DOKUN_X11
     XWindowAttributes xwa;
     int x;
@@ -1874,7 +2028,6 @@ int dokun::Window::get_y()const
 	XTranslateCoordinates(display, window, DefaultRootWindow(display), 0, 0, &x, &y, &child );
     XGetWindowAttributes(display, window, &xwa);
 	y = y - xwa.y;
-#endif
 #endif
 	return y;
 }
@@ -1897,7 +2050,8 @@ Vector2 dokun::Window::get_position()const
 {
 	int x = 0;
     int	y = 0; 
-#ifdef __windows__
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
 	if (!is_open())
 	    return -1;
 	RECT rect;
@@ -1905,8 +2059,8 @@ Vector2 dokun::Window::get_position()const
 	x = rect.left;
  	y = rect.top;
 #endif
+#endif
 	
-#ifdef __gnu_linux__
 #ifdef DOKUN_X11
     XWindowAttributes xwa;
 	::Window child;
@@ -1914,7 +2068,6 @@ Vector2 dokun::Window::get_position()const
     XGetWindowAttributes(display, window, &xwa);
     x = x - xwa.x;
 	y = y - xwa.y;
-#endif
 #endif
 	return Vector2(x, y);
 }
@@ -1937,10 +2090,8 @@ int dokun::Window::get_position(lua_State *L)
 // get style
 long dokun::Window::get_style()const
 {
-#ifdef __gnu_linux__	
 #ifdef DOKUN_X11
 	return style;
-#endif
 #endif
     return 0;
 }
@@ -1968,7 +2119,7 @@ dokun::Window * dokun::Window::get_active() // returns window with current focus
     for(int i = 0; i < Factory::get_window_factory()->get_size(); i++)
 	{
 		dokun::Window * window = static_cast<dokun::Window *>(Factory::get_window_factory()->get_object(i));
-		if(window->is_focused())
+		if(window->is_focused()) // only one window can have focus at a time
 		{
 			return window;
 		}
@@ -1981,12 +2132,11 @@ int dokun::Window::get_active(lua_State *L)
     return 0;
 }
 ////////////
-#ifdef __gnu_linux__
 #ifdef DOKUN_X11
-    Display * dokun::Window::get_display()const
-	{
-		return display;
-	}
+::Display * dokun::Window::get_display()const {
+	return display;
+}
+////////////
 int dokun::Window::get_display(lua_State *L)
 {
     luaL_checktype(L, 1, LUA_TTABLE);
@@ -2001,63 +2151,77 @@ int dokun::Window::get_display(lua_State *L)
 	return 1;
 }	
 #endif
-#endif
 ////////////
-#ifdef __windows__
-HINSTANCE dokun::Window::get_instance()const
-{
+////////////
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
+HINSTANCE dokun::Window::get_instance()const {
 	return instance;
 }
 #endif
-////////////
-#ifdef __windows__
-    HWND dokun::Window::get_handle()const
-    {
-	    return handle;
-    }
 #endif
 ////////////
-#ifdef __gnu_linux__
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
+HWND dokun::Window::get_handle()const {
+    return handle;
+}
+#endif
+#endif
+////////////
 #ifdef DOKUN_X11
-	::Window dokun::Window::get_handle()const
-	{
-		return window;
-	}
+::Window dokun::Window::get_handle()const {
+	return window;
+}
+::Window dokun::Window::get_window()const {
+	return window;
+}
+#endif
+////////////
+#ifdef DOKUN_GLFW
+GLFWwindow* dokun::Window::get_handle() const {
+    return window; // GLFWwindow* window; (window.hpp:164)
+}
+#endif
+////////////
+////////////
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
+HGLRC dokun::Window::get_context()const {
+    return context;
+}
 #endif
 #endif
 ////////////
-#ifdef __windows__
-    HGLRC dokun::Window::get_context()const
-    {
-	    return context;
-    }
-#endif
-////////////
-#ifdef __gnu_linux__
 #ifdef DOKUN_X11
 #ifdef DOKUN_OPENGL
-	GLXContext dokun::Window::get_context()const
-    {
-	    return context;
-    }	
+GLXContext dokun::Window::get_context()const {
+	return context;
+}	
 #endif
 #endif
+////////////
+#ifdef DOKUN_X11
+XEvent dokun::Window::get_xevent() {//const {
+    return event;
+}
 #endif
-//////////// 
+////////////
 ////////////
 // BOOLEAN
 ////////////
 bool dokun::Window::is_open()const
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
 	return (IsWindow(get_handle()) != 0);
 #endif
+#endif
 	
-#ifdef __gnu_linux__
 #ifdef DOKUN_X11
 	return (display != 0);
 #endif
-#endif
+
 #ifdef DOKUN_GLFW
     return !glfwWindowShouldClose(window);
 #endif
@@ -2080,13 +2244,17 @@ int dokun::Window::is_open(lua_State *L)
 ////////////
 bool dokun::Window::is_visible()const
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
 	return (IsWindowVisible(get_handle()) != 0);
 #endif
+#endif
 	
-#ifdef __gnu_linux__
 #ifdef DOKUN_X11
 #endif
+
+#ifdef DOKUN_GLFW
+    
 #endif
 	return false;
 }
@@ -2107,17 +2275,21 @@ int dokun::Window::is_visible(lua_State *L)
 ////////////
 bool dokun::Window::is_focused()const
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
 	return (get_handle() == GetFocus());
 #endif
+#endif
 	
-#ifdef __gnu_linux__
 #ifdef DOKUN_X11
 	::Window focus;
     int revert_to;
     XGetInputFocus(display, &focus, &revert_to);
     return (get_handle() == focus);	
 #endif
+
+#ifdef DOKUN_GLFW
+    
 #endif
 	return false;
 }
@@ -2138,13 +2310,17 @@ int dokun::Window::is_focused(lua_State *L)
 ////////////
 bool dokun::Window::is_iconified()const
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
 	return (IsIconic(get_handle()) != 0);
 #endif
+#endif
 	
-#ifdef __gnu_linux__
 #ifdef DOKUN_X11
 #endif
+
+#ifdef DOKUN_GLFW
+    
 #endif
 	return false;
 }
@@ -2165,13 +2341,17 @@ int dokun::Window::is_iconified(lua_State *L)
 ////////////
 bool dokun::Window::is_maximized()const
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
 	return (IsZoomed(get_handle()) != 0);
 #endif
+#endif
 	
-#ifdef __gnu_linux__
 #ifdef DOKUN_X11
 #endif
+
+#ifdef DOKUN_GLFW
+    
 #endif
 	return false;	
 }
@@ -2211,15 +2391,21 @@ int dokun::Window::is_window(lua_State *L)
 bool dokun::Window::is_context()const
 {
 #ifdef DOKUN_OPENGL
-#ifdef __windows__
+
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
 	return (wglGetCurrentContext() == context);
 #endif
-#ifdef __gnu_linux__
+#endif
+
 #ifdef DOKUN_X11
 	return (glXGetCurrentContext() == context);
 #endif
+
+#ifdef DOKUN_GLFW
+    
 #endif
-#endif
+#endif // endif DOKUN_OPENGL
 	return false;
 }
 ////////////
@@ -2239,7 +2425,8 @@ int dokun::Window::is_context(lua_State *L)
 ////////////
 ////////////
 ////////////
-#ifdef __windows__
+#ifdef DOKUN_WIN32
+#ifndef DOKUN_GLFW
 HHOOK dokun::Window::hMouseHook;
 LRESULT CALLBACK dokun::Window::MouseProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
@@ -2398,6 +2585,7 @@ LRESULT CALLBACK dokun::Window::MouseProc(int nCode, WPARAM wParam, LPARAM lPara
 		return DefWindowProc(handle, mes, wParam, lParam);
 	}
 #endif
+#endif
 ////////////
 int dokun::Window::mouse_button  (0);
 int dokun::Window::mouse_pressed (0);
@@ -2406,6 +2594,18 @@ int dokun::Window::mouse_dragged (0);
 int dokun::Window::mouse_moved   (0);
 int dokun::Window::mouse_leave   (0);
 //int dokun::Window::mouse_   (0);
+////////////
+#ifdef DOKUN_GLFW
+void dokun::Window::glfw_error_callback(int error, const char* description) {
+    std::cout << "\033[1;90m[GLFW]: " << description << " (" << error << ")\033[0m" << std::endl;//fprintf(stderr, "Glfw Error %d: %s\n", error, description);
+}
+void dokun::Window::glfw_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) { // if ESC is pressed
+        glfwSetWindowShouldClose(window, GLFW_TRUE); // close the window
+    }
+}
+#endif
 ////////////
 int dokun::Window::window_new(lua_State *L)
 {

@@ -1,5 +1,5 @@
-#ifndef _LINUX_HEADER
-#define _LINUX_HEADER
+#ifndef LINUX_HEADER_HPP_DOKUN
+#define LINUX_HEADER_HPP_DOKUN
 
 #ifdef __cplusplus // if c++
 extern "C" {       // make c code compatible with c++

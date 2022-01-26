@@ -1,5 +1,5 @@
-#ifndef _CONSOLE
-#define _CONSOLE
+#ifndef CONSOLE_HPP_DOKUN
+#define CONSOLE_HPP_DOKUN
 #include "platform.hpp"
 #include "string.hpp"
 #include "box.hpp"
@@ -37,7 +37,7 @@ class Console // static class
 		static void hide_edit();                    static int hide_edit(lua_State *L);
 		static void show_edit();                    static int show_edit(lua_State *L);
 	private: // 
-	    #ifdef __windows__
+	    #ifdef DOKUN_WIN32
 		    static HANDLE rHnd;
 			static HANDLE wHnd;
 		#endif // 735, 345
@@ -49,7 +49,7 @@ class Console // static class
 		Box * box;
 		Edit * edit;
 		Scrollbar * scrollbar;
-		std::vector<Label *> label_list;
+		std::vector<dokun::Label *> label_list;
 		std::vector<std::string> discarded_string_list;
 		std::string cache; // last saved string in edit
 };

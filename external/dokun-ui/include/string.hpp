@@ -1,5 +1,5 @@
-#ifndef _STRING
-#define _STRING
+#ifndef STRING_HPP_DOKUN
+#define STRING_HPP_DOKUN
 
 #include "platform.hpp"
 #include "vector.hpp"

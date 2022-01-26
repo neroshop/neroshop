@@ -1,5 +1,5 @@
-#ifndef _GRID
-#define _GRID
+#ifndef GRID_HPP_DOKUN
+#define GRID_HPP_DOKUN
 
 #include "ui.hpp"
 #include "box.hpp"
@@ -18,7 +18,7 @@ public:
 	void set_row(int rows);                    static int set_row(lua_State *L);
 	void set_column(int columns);              static int set_column(lua_State *L);
 	void set_block(int rows, int columns);     static int set_block(lua_State *L);
-	void set_color(int red, int green, int blue, int alpha = 225);
+	void set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0);
 	void set_color(const Vector3& color);
 	void set_color(const Vector4& color);	   static int set_color(lua_State *L);
 	

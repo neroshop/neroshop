@@ -1,12 +1,13 @@
 #include "../include/toggle.hpp"
 
-Toggle::Toggle() : value (false), foreground_color(255, 255, 255, 255), background_color(255, 255, 255, 255), background_color_on(0, 51, 102, 255), background_color_off(64, 64, 64, 255), type("switch"),
+Toggle::Toggle() : value (false), foreground_color(255, 255, 255, 1.0), background_color(160, 160, 160, 1.0), on_color(0, 51, 102, 1.0), off_color(background_color/*64, 64, 64, 1.0*/), type("switch"),
     // handle
 	// outline (or border)
     outline(false),
 	outline_width(1.0),
-	outline_color(0, 0, 0, 255),
+	outline_color(0, 0, 0, 1.0),
 	outline_antialiased(false),
+	restore_outline_color(outline_color),
     // gradient
     gradient(false),
 	gradient_color(background_color) // gradient.color1 = backgound_color, gradient.color0 = foreground_color	
@@ -21,48 +22,32 @@ Toggle::~Toggle()
 /////////////		
 void Toggle::draw()
 {
-	if(is_visible())  // is it visible? 
-	{
-		if(is_active()) // is it disabled?
-		{}
-		double value = get_value();
-	    double x = get_position().x;
-		double y = get_position().y;
-		double angle = get_angle();
-		double scale_x = get_scale().x;
-		double scale_y = get_scale().y;
-		int width  = get_width();
-		int height = get_height();
-        int red    = get_foreground_color().x;
-        int green  = get_foreground_color().y;
-        int blue   = get_foreground_color().z;		
-		int alpha  = get_foreground_color().w;	
-	    // mouse is over toggle
-	    if(Mouse::is_over(get_rect())) {
-			if(Mouse::is_pressed(1)) {
-				set_value((get_value() == 0) ? 1 : 0);
-			}
-		}			
-        if(is_switch()) {			
-		Renderer::draw_switch(x, y, width, height, angle, scale_x, scale_y,
-		    red, green, blue, alpha, 
-			value, background_color_on, background_color_off, 
-			outline, outline_width, outline_color, outline_antialiased
+	if(!is_visible()) return; // if not visible, exit function
+	if(is_active()) {}// is it disabled?
+	// mouse is over toggle and pressed, change the value
+	on_mouse_press();
+    if(is_switch()) {
+            background_color = (value == 0) ? off_color : on_color;//Vector4(64, 64, 64, 1.0) : Vector4(0, 51, 102, 1.0);
+		    Renderer::draw_switch(get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y,
+		        foreground_color.x, foreground_color.y, foreground_color.z, foreground_color.w, // handle (foreground - white)
+			    value, background_color, 
+			    outline, outline_width, outline_color, outline_antialiased
 			);
-		}
-        if(is_radio()) {
-		Renderer::draw_radio(x, y, width, height, angle, scale_x, scale_y,
-		    red, green, blue, alpha, 
-			value, background_color, 
-			outline, outline_width, outline_color, outline_antialiased
-			);	
-		}
-        if(is_checkbox())
-		{
-		    //Renderer::draw_box(x, y, width, height, angle, scale_x, scale_y,
-		    //    red, green, blue, alpha, 0, false, false, 0, Vector4(255, 255, 255, 255), false, false, false, Vector4(255, 255, 255, 255), outline, outline_width, outline_color, outline_antialiased, false, 0, Vector4(255, 255, 255, 255), false, Vector4(255, 255, 255, 255), false);
-		}
-	}	
+	}
+    if(is_radio()) {
+            //outline_color = (value == 0) ? Vector4(64, 64, 64, 1.0) : restore_outline_color;
+		    Renderer::draw_radio(get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y,
+		        background_color.x, background_color.y, background_color.z, background_color.w, 
+			    value, foreground_color, // inner color (dokun_blue)
+			    outline, outline_width, outline_color, outline_antialiased
+			);
+	}
+    if(is_checkbox()) {
+            background_color = (value == 0) ? off_color : on_color;
+            Renderer::draw_checkbox(get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y, background_color.x, background_color.y, background_color.z, background_color.w,
+	            value, foreground_color, // value, mark_color (white)
+		        outline, outline_width, outline_color, outline_antialiased); // outline
+	}
     on_draw(); // callback for all gui	
 }
 /////////////
@@ -121,37 +106,34 @@ void Toggle::set_switch()
 {
 	type = "switch";
 	set_size(50, 20);
-	set_foreground_color(255, 255, 255, 255);
-	set_background_color_on(0, 51, 102, 255); 
-	set_background_color_off(64, 64, 64, 255);
-}  
+	// same foreground color as both checkmark and radio (checkbox)
+	// same background color as both checkmark and radio (checkbox)
+	// background color changes
+}
 /////////////
 void Toggle::set_radio()
 {
 	type = "radio";
 	set_size(20, 20);
-	set_foreground_color(0, 51, 102, 255);
-	set_background_color(255, 255, 255, 255);
-	set_outline(true);
-	set_outline_color(0, 51, 102, 255);
-	set_outline_width(2.0);
+	set_foreground_color(on_color); // inner box // default foreground color
+	// same background color as both switch and checkbox
+	// foreground color changes	
+	// background color stays the same
 }
 /////////////
 void Toggle::set_checkbox()
 {
 	type = "check";
 	set_size(20, 20);
-	set_foreground_color(0, 51, 102, 255);
-	set_background_color(255, 255, 255, 255);
-    set_outline(true);
-	set_outline_color(0, 51, 102, 255);
-	set_outline_width(2.0);	
+	// same foreground color as both switch and radio
+	// same background color as both switch and radio
+	// background color changes
 }
 /////////////
 void Toggle::set_value(bool value)
 {
-	if(value >= 1) {this->value = 1;return;} // an attempt to exceed max_value
-	if(value <= 0) {this->value = 0;return;} // an attempt to go below min_value	
+	//if(value >= 1) {this->value = 1;return;} // an attempt to exceed max_value
+	//if(value <= 0) {this->value = 0;return;} // an attempt to go below min_value	
 	this->value = value;
 }
 /////////////
@@ -159,47 +141,33 @@ int Toggle::set_value_lua(lua_State *L)
 {
 	return 0;
 }
-/////////////
-void Toggle::set_foreground_color(int red, int green, int blue, int alpha)
+//////////////
+//////////////
+void Toggle::set_foreground_color(unsigned int red, unsigned int green, unsigned int blue) {
+    foreground_color = Vector4(red, green, blue, foreground_color.w);
+}
+//////////////
+void Toggle::set_foreground_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {
 	foreground_color = Vector4(red, green, blue, alpha);
 }
+//////////////
 void Toggle::set_foreground_color(const Vector3& color)
 {
 	set_foreground_color(color.x, color.y, color.z);
 }
+//////////////
 void Toggle::set_foreground_color(const Vector4& color)
 {
 	set_foreground_color(color.x, color.y, color.z, color.w);
 }
 //////////////
-void Toggle::set_background_color_on(int red, int green, int blue, int alpha)
-{
-	background_color_on = Vector4(red, green, blue, alpha);
+//////////////
+//////////////
+void Toggle::set_background_color(unsigned int red, unsigned int green, unsigned int blue) {
+    background_color = Vector4(red, green, blue, background_color.w);
 }
-void Toggle::set_background_color_on(const Vector3& color)
-{
-	set_background_color_on(color.x, color.y, color.z);
-}
-void Toggle::set_background_color_on(const Vector4& color)
-{
-	set_background_color_on(color.x, color.y, color.z, color.w);
-}
-/////////////
-void Toggle::set_background_color_off(int red, int green, int blue, int alpha)
-{
-	background_color_off = Vector4(red, green, blue, alpha);
-}
-void Toggle::set_background_color_off(const Vector3& color)
-{
-	set_background_color_off(color.x, color.y, color.z);
-}
-void Toggle::set_background_color_off(const Vector4& color)
-{
-	set_background_color_off(color.x, color.y, color.z, color.w);
-}
-/////////////
-void Toggle::set_background_color(int red, int green, int blue, int alpha)
+void Toggle::set_background_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {
 	background_color = Vector4(red, green, blue, alpha);
 }
@@ -213,6 +181,48 @@ void Toggle::set_background_color(const Vector4& color)
 {
 	set_background_color(color.x, color.y, color.z, color.w); 
 }
+//////////////
+//////////////
+//////////////
+void Toggle::set_on_color(unsigned int red, unsigned int green, unsigned int blue) {
+    on_color = Vector4(red, green, blue, on_color.w);
+}
+//////////////
+void Toggle::set_on_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
+{
+	on_color = Vector4(red, green, blue, alpha);
+}
+//////////////
+void Toggle::set_on_color(const Vector3& color)
+{
+	set_on_color(color.x, color.y, color.z);
+}
+//////////////
+void Toggle::set_on_color(const Vector4& color)
+{
+	set_on_color(color.x, color.y, color.z, color.w);
+}
+//////////////
+//////////////
+//////////////
+void Toggle::set_off_color(unsigned int red, unsigned int green, unsigned int blue) {
+    off_color = Vector4(red, green, blue, off_color.w);
+}
+//////////////
+void Toggle::set_off_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
+{
+	off_color = Vector4(red, green, blue, alpha);
+}
+//////////////
+void Toggle::set_off_color(const Vector3& color)
+{
+	set_off_color(color.x, color.y, color.z);
+}
+//////////////
+void Toggle::set_off_color(const Vector4& color)
+{
+	set_off_color(color.x, color.y, color.z, color.w);
+}
 /////////////
 /////////////
 void Toggle::set_outline(bool outline)
@@ -223,13 +233,18 @@ void Toggle::set_outline_width(double width)
 {
 	outline_width = width;
 }
-void Toggle::set_outline_color(int red, int green, int blue, int alpha)
+//void Toggle::set_outline_color(unsigned int red, unsigned int green, unsigned int blue) {
+//    outline_color = Vector4(red, green, blue, outline_color.w);
+//    restore_outline_color = outline_color;
+//}
+void Toggle::set_outline_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {
 	outline_color = Vector4(red, green, blue, alpha);
+	restore_outline_color = outline_color;
 }
 void Toggle::set_outline_color(const Vector3& color)
 {
-	set_outline_color(color.x, color.y, color.z);
+	set_outline_color(color.x, color.y, color.z, outline_color.w);
 }
 void Toggle::set_outline_color(const Vector4& color)
 {
@@ -269,13 +284,13 @@ Vector4 Toggle::get_foreground_color()const
 {
 	return foreground_color;
 }
-Vector4 Toggle::get_background_color_on()const
+Vector4 Toggle::get_on_color()const
 {
-	return background_color_on;
+	return on_color;
 }
-Vector4 Toggle::get_background_color_off()const
+Vector4 Toggle::get_off_color()const
 {
-	return background_color_off;
+	return off_color;
 }
 /////////////
 double Toggle::get_handle_x()const
@@ -332,6 +347,25 @@ int Toggle::new_(lua_State *L)
 }
 /////////////
 /////////////
+void Toggle::on_mouse_press() {
+	    // mouse is over toggle
+    if(Mouse::is_over(get_x(), get_y(), get_width(), get_height()) ) {
+	    if(Mouse::is_pressed(1) && value == 0) {
+			set_value(1);//( (value == 0) ? 1 : 0 );// find a way to detect when the value has changed, then trigger an event when we get a specific value
+		#ifdef DOKUN_DEBUG
+			std::cout << DOKUN_UI_TAG "Toggle value has changed: \033[0;32m" << value << "\033[0m" << std::endl;
+		#endif //trigger_event(eat(), value); // trigger an event based on the value received
+		    return; // exit function so it doesn't change the toggle value twice
+		}
+		if(Mouse::is_pressed(1) && value == 1) {
+			set_value(0);
+		#ifdef DOKUN_DEBUG
+			std::cout << DOKUN_UI_TAG "Toggle value has changed: \033[0;91m" << value << "\033[0m" << std::endl;
+		#endif
+		    return; // exit function
+		}			
+    }	
+}
 /////////////
 /////////////
 /////////////

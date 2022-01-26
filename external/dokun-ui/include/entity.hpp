@@ -1,5 +1,5 @@
-#ifndef _ENTITY
-#define _ENTITY
+#ifndef ENTITY_HPP_DOKUN
+#define ENTITY_HPP_DOKUN
 
 #include "utility.hpp"
 #include "types.hpp"

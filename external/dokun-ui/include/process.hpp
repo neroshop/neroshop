@@ -1,5 +1,5 @@
-#ifndef _PROCESS
-#define _PROCESS
+#ifndef PROCESS_HPP_DOKUN
+#define PROCESS_HPP_DOKUN
 #include "platform.hpp"
 #include "utility.hpp"
 #include "logger.hpp"
@@ -30,7 +30,7 @@ public:
 #endif
 	static void * get_active();
 private:
-#ifdef _WIN32
+#ifdef DOKUN_WIN32
     void * handle;
 #endif  
 #ifdef __gnu_linux__

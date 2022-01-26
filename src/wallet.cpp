@@ -217,7 +217,7 @@ void neroshop::Wallet::daemon_open(const std::string& ip, const std::string& por
 ////////////////////
 Progressbar * neroshop::Wallet::sync_bar (nullptr);
 ////////////////////
-Label * neroshop::Wallet::sync_label (nullptr);
+dokun::Label * neroshop::Wallet::sync_label (nullptr);
 ////////////////////
 ////////////////////
 // create wallet_listener to synchronize the wallet and receive progress notifications
@@ -240,7 +240,7 @@ struct : monero_wallet_listener { // listener	- listener to receive notification
         if(!neroshop::Wallet::sync_bar) {
             neroshop::Wallet::sync_bar = new Progressbar();//sync_bar->set_range(0.0, 100.0); // 0-100%//sync_bar->set_outline(true);
             neroshop::Wallet::sync_bar->set_size(300, 30);
-            neroshop::Wallet::sync_label = new Label();
+            neroshop::Wallet::sync_label = new dokun::Label();
             neroshop::Wallet::sync_label->set_alignment("center");
             neroshop::Wallet::sync_bar->set_label(*neroshop::Wallet::sync_label);
         }
@@ -250,11 +250,9 @@ struct : monero_wallet_listener { // listener	- listener to receive notification
         double progress = percent_done * 100; //sync_bar->set_range(0, 100);
         //////////
         if(progress < 100) { // while progress is not 100%, send a fake event to keep the progressbar going
-        #ifdef __gnu_linux__ 
-        	XKeyEvent event_send;
-            event_send.type = KeyPress;
-            XSendEvent(window->get_display(), window->get_handle(), true, KeyPressMask, (XEvent *)&event_send);// ...
-        #endif    
+        #ifdef DOKUN_X11 // if using X Window System on Linux
+            dokun::Keyboard::fake_event(window->get_display(), window->get_handle());
+        #endif
         }
         //////////        
         neroshop::Wallet::sync_bar->get_label()->set_string(std::to_string(progress) + "%");
@@ -282,7 +280,11 @@ struct : monero_wallet_listener {
         if(is_locked) {
             std::cout << "\033[1;32;49m" << "You have received " << std::fixed << std::setprecision(12) << balance << std::fixed << std::setprecision(2) << " xmr "/* << subaddress.m_address.get()*/ << "(txid: " << tx_hash << ", account_idx: " << account_index << ", subaddress_idx: " << subaddress_index << ")" << "\033[0m" << std::endl;
             //std::cout << "\033[1;32;49m" << "txid <" << tx_hash << ">, " << std::fixed << std::setprecision(12) << (amount * piconero) << std::fixed << std::setprecision(2) << ", idx (" << account_index << ", " << subaddress_index << ")" << "\033[0m" << std::endl;
+            std::setiosflags(std::ios::fixed); // set flag
+            std::setprecision(12); // monero has 12 decimal places
             neroshop::Message(std::string("output received: " + std::to_string(balance) + " xmr"), 34, 139, 34);
+            std::setprecision(std::cout.precision()); // restore default precision
+            std::resetiosflags(std::ios::fixed); // reset flag
             neroshop::Message::show();
         }
     }

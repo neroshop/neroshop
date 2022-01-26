@@ -8,7 +8,7 @@ Console::Console(void) // 0=terminal_mode (.sh), 1=script_mode (.lua)
 Console::~Console(void)
 {}
 /////////////
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 HANDLE Console::rHnd (GetStdHandle(STD_INPUT_HANDLE));
 /////////////
 HANDLE Console::wHnd (GetStdHandle(STD_OUTPUT_HANDLE));
@@ -18,7 +18,7 @@ Console * Console::console_ptr (nullptr);
 /////////////
 void Console::destroy() // destroys console
 {
-	#ifdef __windows__
+	#ifdef DOKUN_WIN32
         FreeConsole();
     #endif
 }
@@ -31,7 +31,7 @@ int Console::destroy(lua_State *L)
 /////////////
 void Console::create() // creates a new console
 {
-	#ifdef __windows__
+	#ifdef DOKUN_WIN32
 	    // don't do anything if we already have a console
     if (GetStdHandle(STD_OUTPUT_HANDLE))
         return;
@@ -47,7 +47,7 @@ int Console::create(lua_State *L)
 /////////////
 void Console::write(const std::string& text) // writes to console window
 {
-	#ifdef __windows__
+	#ifdef DOKUN_WIN32
 	//wHnd = GetStdHandle(STD_OUTPUT_HANDLE);
 	#endif
 	//////////////////////////////////////////
@@ -58,7 +58,7 @@ void Console::write(const std::string& text) // writes to console window
     // add / append new label to chat_box (with a copy of edit_label's string)
     if(console_ptr->label_list.size() < console_ptr->label_list.capacity())  // if capacity has not yet been reached
     {
-        console_ptr->label_list.push_back(new Label(text));
+        console_ptr->label_list.push_back(new dokun::Label(text));
     } // label_less
     else if(console_ptr->label_list.size() >= console_ptr->label_list.capacity()) {// capacity has been reached
         // store string that will be discarded (or hidden from chatbox) for later use
@@ -89,11 +89,11 @@ std::string Console::on_enter()
     // if text (in edit) is empty, exit function (cannot submit empty text)_
     if(console_ptr->edit->get_label()->get_string().empty()) return "";
     // if the "Enter" key is pressed
-    if(Keyboard::is_pressed(DOKUN_KEY_RETURN)) {
+    if(dokun::Keyboard::is_pressed(DOKUN_KEY_RETURN)) {
          // add / append new label to chat_box (with a copy of edit_label's string)
         if(console_ptr->label_list.size() < console_ptr->label_list.capacity())  // if capacity has not yet been reached
         {
-            console_ptr->label_list.push_back(new Label(console_ptr->edit->get_label()->get_string()));
+            console_ptr->label_list.push_back(new dokun::Label(console_ptr->edit->get_label()->get_string()));
             // execute the command
             output = execute(console_ptr->edit->get_label()->get_string());
             // save last string in text edit
@@ -141,11 +141,11 @@ std::string Console::on_enter_code(lua_State *L)
     // if text (in edit) is empty, exit function (cannot submit empty text)_
     if(console_ptr->edit->get_label()->get_string().empty()) return "";
     // if the "Enter" key is pressed
-    if(Keyboard::is_pressed(DOKUN_KEY_RETURN)) {
+    if(dokun::Keyboard::is_pressed(DOKUN_KEY_RETURN)) {
          // add / append new label to chat_box (with a copy of edit_label's string)
         if(console_ptr->label_list.size() < console_ptr->label_list.capacity())  // if capacity has not yet been reached
         {
-            console_ptr->label_list.push_back(new Label(console_ptr->edit->get_label()->get_string()));
+            console_ptr->label_list.push_back(new dokun::Label(console_ptr->edit->get_label()->get_string()));
             // execute the lua code
             output = code(L, console_ptr->edit->get_label()->get_string());
             // save last string in text edit
@@ -195,7 +195,7 @@ int Console::write(lua_State *L)
 /////////////
 void Console::read()
 {
-	#ifdef __windows__
+	#ifdef DOKUN_WIN32
 	//rHnd = GetStdHandle(STD_INPUT_HANDLE);
 	#endif
 }
@@ -301,7 +301,7 @@ void Console::init()
         console_ptr->box->set_title_bar_size(30);
         console_ptr->box->set_title_bar_color(console_ptr->box->get_color());
         // title_bar : labels
-        console_ptr->box->set_title_bar_label(*new Label("Console"));
+        console_ptr->box->set_title_bar_label(*new dokun::Label("Console"));
         console_ptr->box->get_title_bar_label()->set_alignment("center");
         // title_bar : buttons
         console_ptr->box->set_title_bar_button_iconify(true);
@@ -315,7 +315,7 @@ void Console::init()
 	    console_ptr->edit->set_character_limit(console_ptr->box->get_width() / 10);//(50); // dimensions for label is estimated to be 10 //std::cout << "Character limit for console is: " << console_ptr->box->get_width() / 10 << std::endl;
  	    console_ptr->edit->set_size(console_ptr->box->get_width(), 20);
 	    //edit->set_position(700, 600);
-	    Label * edit_label = new Label();
+	    dokun::Label * edit_label = new dokun::Label();
 	    edit_label->set_color(49, 39, 19, 255);
 	    edit_label->set_relative_position(0, 4);
 	    console_ptr->edit->set_label(* edit_label);      
@@ -377,7 +377,7 @@ int Console::draw(lua_State *L)
 /////////////
 void Console::set_title(std::string title)
 {
-	#ifdef __windows__
+	#ifdef DOKUN_WIN32
 	    SetConsoleTitle(TEXT(title.c_str()) );
 	#endif
 }
@@ -390,7 +390,7 @@ int Console::set_title(lua_State *L)
 /////////////
 void Console::set_size(int width, int height)
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
     HWND console = GetConsoleWindow();
     RECT console_rect;
     GetWindowRect(console, &console_rect); //stores the console's current dimensions

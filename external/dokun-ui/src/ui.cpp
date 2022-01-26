@@ -5,8 +5,8 @@ GUI::GUI (void) : x (0), y (0), angle(0), scale_x(1), scale_y(1), width (0), hei
 {
 	Factory::get_gui_factory()->store(this);
 #ifdef DOKUN_DEBUG 	
-	Logger::push("dokun: " + String(this).str() + " has been allocated with GUI::new ()");
-	Logger::push("       (index=" + std::to_string(Factory::get_gui_factory()->get_location(this)) + ", total_gui_count=" + std::to_string(Factory::get_gui_factory()->get_size()) + ")");
+	dokun::Logger::push("dokun: " + String(this).str() + " has been allocated with GUI::new ()");
+	dokun::Logger::push("       (index=" + std::to_string(Factory::get_gui_factory()->get_location(this)) + ", total_gui_count=" + std::to_string(Factory::get_gui_factory()->get_size()) + ")");
 #endif		
 }
 /////////////
@@ -14,7 +14,7 @@ GUI::~GUI(void)
 {
 	Factory::get_gui_factory()->release(this); 
 #ifdef DOKUN_DEBUG 	
-	Logger::push("dokun: " + String(this).str() + " deallocated with GUI::~GUI()\n       (total_gui_count=" + String(Factory::get_gui_factory()->get_size()).str() + ")");
+	dokun::Logger::push("dokun: " + String(this).str() + " deallocated with GUI::~GUI()\n       (total_gui_count=" + String(Factory::get_gui_factory()->get_size()).str() + ")");
 #endif	
 }
 /////////////
@@ -480,7 +480,11 @@ int GUI::set_visible(lua_State *L)
 ///////////// 
 void GUI::set_focused(bool focused)
 {
-    GUI::focused = ((focused == true) ? this : nullptr); 
+    //dokun::Window * window = static_cast<dokun::Window *>(Factory::get_window_factory()->get_object(0)); // get the current window
+    //if(!window)	return; // cannot set gui focus without a window
+	// bring window to the foreground (get window back in focus)
+	// set gui focus if window is focused
+    GUI::focused = (focused == true/* && window->is_focused()*/) ? this : nullptr; 
 }
 /////////////
 int GUI::set_focused(lua_State *L)
@@ -708,7 +712,7 @@ double GUI::get_relative_x() const
 {
     if(!parent) { 
  #ifdef DOKUN_DEBUG1   
-		Logger("warning! Calling GUI::get_relative_x without a parent.", "warning"); // this is not that serious
+		dokun::Logger("warning! Calling GUI::get_relative_x without a parent.", "warning"); // this is not that serious
  #endif
 	}
 	return relative.x;	
@@ -732,7 +736,7 @@ double GUI::get_relative_y() const
 {
     if(!parent) { 
  #ifdef DOKUN_DEBUG1   
-		Logger("warning! Calling GUI::get_relative_y without a parent.", "warning"); // this is not that serious
+		dokun::Logger("warning! Calling GUI::get_relative_y without a parent.", "warning"); // this is not that serious
  #endif
 	}
 	return relative.y;  
@@ -1115,24 +1119,33 @@ void GUI::on_create()
 /////////////
 void GUI::on_trigger()
 {
-    if(this == nullptr) return; // cannot draw a null gui
+    // ** if window does not have focus gui cannot have focus as well **
     if(!is_visible()) return;
-	// if self is pressed, set it as the current "focused" GUI
-	if(is_pressed()) {
-	    set_focused  (true);
-	}
-	// if mouse is pressed elsewhere
-	else if(!Mouse::is_over(get_rect()) && Mouse::is_pressed(1)) {
-	    set_focused(false);
-	}   
+// if self is pressed, set it as the current "focused" GUI
+	if(Mouse::is_over(get_rect()) && Mouse::is_pressed(1)) {
+	    GUI::focused = this;//set_focused  (true);
 #ifdef DOKUN_DEBUG0
+	if(GUI::focused) std::cout << "GUI" << ":" << String(GUI::focused) << " gained focus" << std::endl; // #include <typeinfo>
+#endif
+	    return; // exit function so we do not set focus twice
+	}
+/*	
+// The goal is to get all the positions of every gui and check if wherever the mouse is pressed, no gui is present!
+// if mouse is pressed elsewhere - this is the problem
+// check if mouse is over any gui
+	if(!Mouse::is_over(get_rect()) && Mouse::is_pressed(1)) {
+	    GUI::focused = nullptr;//set_focused(false);
+#ifdef DOKUN_DEBUG
 	if(GUI::focused) std::cout << String(String::no_digit( typeid(*this).name()) ).str() << ":" << String(GUI::focused) << " gained focus" << std::endl; // #include <typeinfo>
-#endif		
+#endif
+	    return;	    
+	}
+*/		
 }
 /////////////
-void GUI::on_draw()
+void GUI::on_draw() // NOTE: position can be set regardless of whether gui is visible or not
 {
-    if(this == nullptr) return; // cannot draw a null gui
+    // NOTE: positions must ALWAYS be set before drawing
 	if(parent) // if self has a parent
 	{
 	    // set self_position to parent_position + self_relative_position
@@ -1161,13 +1174,14 @@ void GUI::on_draw()
 		{
 			GUI * gui = static_cast<GUI*>(Factory::get_gui_factory()->get_object(i));
 			// draw all children of self
-			if(gui->parent == this && gui->visible) gui->draw();
+			if(gui->parent == this/* && gui->visible*/) gui->draw(); // no need to check if child is visible since draw() calls already do that
 		}
+		//////////////////////////////////////////////////////////
 		// if self is pressed, set it as the current "focused" GUI
 		if(is_pressed()) set_focused  (true);
 		// if mouse is pressed elsewhere
 		else if(!Mouse::is_over(get_rect()) && Mouse::is_pressed(1)) set_focused(false);   
-		#ifdef DOKUN_DEBUG0  
+		#ifdef DOKUN_DEBUG0
 		   if(GUI::focused) std::cout << String(String::no_digit( typeid(*this).name()) ).str() << ":" << String(GUI::focused) << " gained focus" << std::endl; // #include <typeinfo>
 		#endif		
 	} // end of is_visible()
@@ -1175,9 +1189,8 @@ void GUI::on_draw()
 /////////////
 void GUI::on_draw_before() // call this before drawing self
 {
-    if(this == nullptr) return; // cannot draw a null gui
     on_trigger(); // if self is triggered (pressed)
-    // if self has a parent
+    // if self has no parent, exit function
 	if(!has_parent()) return;
 	// set position of child
 	// only the child's position relative to the parent can be changed, meaning the child no longer has a position of its own once the parent is set
@@ -1196,16 +1209,17 @@ void GUI::on_draw_before() // call this before drawing self
 #endif
 }
 /////////////
-void GUI::on_draw_after() // call this after drawing self
-{
-    if(this == nullptr) return; // cannot draw a null gui
-	if(!is_visible()) return; // ONLY if self is visible, then draw all children (child GUI can also have their own visibility)
-	for(int i = 0; i < Factory::get_gui_factory()->get_size(); i++)
-	{
-		GUI * gui = static_cast<GUI*>(Factory::get_gui_factory()->get_object(i));
-		if(gui->parent == this && gui->visible) gui->draw(); // draw all children
-	}
-}
+// this is for drawing GUI children, but its best to draw the children manually
+// so this function is marked for deprecation and will soon be deprecated!
+//void GUI::on_draw_after() // call this after drawing self (children are drawn last, meaning they are drawn on top of parent)
+//{
+//	if(!is_visible()) return; // ONLY if self is visible, then draw all children (child GUI can also have their own visibility)
+//	for(int i = 0; i < Factory::get_gui_factory()->get_size(); i++)
+//	{
+//		GUI * gui = static_cast<GUI*>(Factory::get_gui_factory()->get_object(i));
+//		if(gui->parent == this && gui->visible) gui->draw(); // draw all children of self
+//	}
+//}
 /////////////
 /////////////
 /////////////

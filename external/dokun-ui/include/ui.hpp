@@ -1,5 +1,5 @@
-#ifndef _UI
-#define _UI
+#ifndef UI_HPP_DOKUN
+#define UI_HPP_DOKUN
 
 #include "platform.hpp"
 #include "utility.hpp"
@@ -101,7 +101,7 @@ class GUI: public Entity
 		virtual void on_trigger(); // ??
 		virtual void on_draw();
 		virtual void on_draw_before();
-		virtual void on_draw_after();
+		//virtual void on_draw_after();
 		// interaction checks
 	    bool is_hovered(); static int is_hovered(lua_State * L);// mouse over
 	    bool is_pressed(); static int is_pressed(lua_State * L); // executes many times in loop

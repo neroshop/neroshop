@@ -1,19 +1,40 @@
 [HIGH PRIORITY]
-- rewrite renderer.cpp from scratch (if I can't find an experienced graphics programmer)
-- fix GUI focus thingy
+- rewrite renderer.cpp from scratch (if I can't find an experienced graphics programmer) or just use imgui
+- fix GUI focus thingy [x]
 - figure out how to turn qrcode data into png and jpeg
 - host database on decentralized file hosting networking like sia, filecoin/ipfs, etc.
-- create a server daemon (neroshopd) that communicates with the main client app and does the heavy handling [x]
-- put all classes under "neroshop" namespace [x]
 - tor integration
 - change network type to mainnet
 
+
 [LOW PRIORITY]
-- create neroshop domain name (.org preffered)             []
-- create neroshop onion address                            []
-- neroshop matrix server                                   []
-- neroshop subreddit                                       [x]
-- neroshop github                                          [x]
+- create neroshop domain name (.org preffered)
+- create neroshop onion address
+- neroshop matrix server
+
+
+[UI]
+// to-do:
+- fix on_hover [text edit]                               []
+- make cursor follow mouse pointer on click              [x] 2021-12-14
+- blinking cursor [text edit]                            [x] 2021-12-15
+- copy to clipboard                                      [x] 2021-12-16
+- placeholder text [text edit]                           [x] 2021-12-17
+- add rounded corners [all]                              []
+- get key combination input (e.g. shift + A) [text edit] [x] 2022-01-02
+- hide sensative text [text edit]                        [x] 2022-01-03
+- remove length restrictions and add scrolling text      [x] 2022-01-25
+- add unicode support [text edit]                        []
+- add multi-line label [text edit]                       []
+- fix alpha values to 1.0 [all]                          [x] 2021-12-17
+- add namespace dokun to every dokun-ui class            []
+- fix scrollbar-mouse move                               []
+- created a new version of spinner                       [x] 2021-12-18
+- add functional tab widget                              []
+
+[Spinner][Progress:98%]
+[Edit][Progress:79%]
+[Slider][Progress:88%]
 
 [HIRING]
 - hire graphics programmer to fix and optimize rendering code in "renderer.cpp"
@@ -23,9 +44,10 @@
 
 [NOTES]
 since monero uses openssl as a dependency (https://github.com/monero-project/monero#dependencies), I will use openssl's sha-256 for hashing emails.
+passwords will be salted and hashed with bcrypt
 
 hashing (pw)   : [bcrypt], scrypt, argon2, PBKDF2
 hashing (email): [SHA256], MD5, SHA1
 encryption     : [openssl], crypto++ (cryptopp), libsodium
-decentralized file hosting: siacoin, filecoin, ipfs (free), bittorent, fleek.co (ipfs)
+decentralized file hosting: siacoin, filecoin, ipfs (free), bittorent
 

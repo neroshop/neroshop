@@ -22,6 +22,14 @@ neroshop::Message::Message(const std::string& text, std::string color) : nerosho
 ////////////////////
 neroshop::Message::~Message()
 {/*
+    ok_button->get_label();
+    delete ok_button;
+    
+    delete cancel_button;
+    
+    delete edit->get_label();
+    delete edit;
+
     delete box->get_label();
     delete box->get_title_bar_label();
     delete box;*/    
@@ -47,14 +55,15 @@ void neroshop::Message::init()
         box->set_size(200, 50);
         //box->set_position((window.get_width() / 2) - (box->get_width() / 2), 
         //    (window.get_height() / 2) - (box->get_height() / 2));
-        Label * box_label = new Label();
+        dokun::Label * box_label = new dokun::Label();
         box->set_label(*box_label);
+        box->get_label()->set_color(64, 64, 64, 1.0);
         box->get_label()->set_alignment("center");
         // title bar
         box->set_title_bar(true);
         box->set_title_bar_color(15, 46, 83, 255);
         // title bar label
-        Label * title_label = new Label();
+        dokun::Label * title_label = new dokun::Label();
         title_label->set_string("neroshop");
         title_label->set_alignment("center");
         box->set_title_bar_label(*title_label);
@@ -92,7 +101,7 @@ void neroshop::Message::restore()
 {
     if(box == nullptr) throw std::runtime_error("message box is not initialized");
     box->get_label()->set_string("");
-    box->get_label()->set_color(255, 255, 255, 1.0);// restore original color (on hide)
+    box->get_label()->set_color(64, 64, 64, 1.0);//(255, 255, 255, 1.0);// restore original color (on hide)
     box->get_label()->set_alignment("center"); // restore alignment
     box->set_size(200, 50); // restore original size
     // hide all buttons, edits, etc.
@@ -107,7 +116,7 @@ void neroshop::Message::add_button(const std::string& text) {
 		// ok_button
 		ok_button = new Button();// ok button // delete ok_button
 		ok_button->set_size(50, 30);//cancel_button=150, 30//ok_button->set_color(192, 192, 192);
-		Label * ok_label = new Label("OK"); // delete ok_label
+		dokun::Label * ok_label = new dokun::Label("OK"); // delete ok_label
 		ok_label->set_alignment("center");
 		ok_button->set_label(*ok_label);// ok_button->set_relative_position(message_edit->get_relative_x() + message_edit->get_width() + 10, message_edit->get_relative_y());
 		ok_button->hide();
@@ -128,7 +137,7 @@ void neroshop::Message::add_edit() {
 	edit = new Edit(); // delete
 	edit->set_size(300, 30);
 	edit->set_character_limit(256);
-	Label * edit_label = new Label(); // delete // free(): invalid pointer - if not on heap
+	dokun::Label * edit_label = new dokun::Label(); // delete // free(): invalid pointer - if not on heap
 	edit->set_label(*edit_label); // set label to prevent crash
 	edit->hide();
 	// adjust size of message_box so it can fit everything
@@ -222,11 +231,11 @@ bool neroshop::Message::is_visible()
 ////////////////////
 ////////////////////
 void neroshop::Message::on_draw() { // call this function BEFORE calling draw()
-	//if(Keyboard::is_pressed(DOKUN_KEY_ESCAPE) && !Message::is_visible()) {
+	//if(dokun::Keyboard::is_pressed(DOKUN_KEY_ESCAPE) && !Message::is_visible()) {
 	    // do you wish to exit the program
 		//window.destroy();
 	//}		    
-	if(Keyboard::is_pressed(DOKUN_KEY_ESCAPE)) Message::hide();
+	if(dokun::Keyboard::is_pressed(DOKUN_KEY_ESCAPE)) Message::hide();
 	if(!Message::is_visible()) Message::restore(); // restore defaults if hidden
 }
 ////////////////////

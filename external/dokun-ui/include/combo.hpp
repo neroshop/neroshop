@@ -1,5 +1,5 @@
-#ifndef _COMBOBOX
-#define _COMBOBOX
+#ifndef COMBOBOX_HPP_DOKUN
+#define COMBOBOX_HPP_DOKUN
 
 #include "list.hpp"
 #include "scrollbar.hpp"
@@ -18,14 +18,14 @@ public:
 	void set_list(const List& list);           static int set_list(lua_State * L);
 	void set_scrollbar(const Scrollbar& scrollbar); static int set_scrollbar(lua_State * L);
 	void set_text(const std::string& text);    static int set_text(lua_State *L);
-	void set_label(const Label& label);        static int set_label(lua_State *L);
+	void set_label(const dokun::Label& label);        static int set_label(lua_State *L);
 	void set_image(const Image& image);        static int set_image(lua_State *L);
-	void set_color(int red, int green, int blue, int alpha = 225);
+	void set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0);
 	void set_color(const Vector3& color);      static int set_color(lua_State *L);
 	void set_color(const Vector4& color);
 	
     std::string get_text()const;               static int get_text(lua_State *L);
-	Label * get_label()const;                  static int get_label(lua_State *L);
+	dokun::Label * get_label()const;                  static int get_label(lua_State *L);
 	Image * get_image()const;                  static int get_image(lua_State *L);
 	Vector4 get_color()const;                  static int get_color(lua_State *L);	
 	List * get_list() const;                   static int get_list(lua_State * L);
@@ -42,7 +42,7 @@ private:
 	Box * selection;
     Vector4 selection_color;
     Vector4 color;
-	Label * label;
+	dokun::Label * label;
 	Image * image;
 	List * list;
 	Scrollbar * scrollbar;

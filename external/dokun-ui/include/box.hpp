@@ -1,5 +1,5 @@
-#ifndef _WIDGET
-#define _WIDGET
+#ifndef WIDGET_HPP_DOKUN
+#define WIDGET_HPP_DOKUN
 
 #include "ui.hpp"
 #include "label.hpp"
@@ -27,7 +27,8 @@ class Box : public GUI { // A box ui - ui element that can act as a container fo
 		void iconify(void);                                                            static int iconify(lua_State * L);
 		void restore(void);                                                            static int restore(lua_State * L);
 		// setters
-		void set_color(int red, int green, int blue, int alpha = 255);                 static int set_color(lua_State * L);
+		void set_color(unsigned int red, unsigned int green, unsigned int blue);
+		void set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha);                 static int set_color(lua_State * L);
 		void set_color(const Vector3& color);
 		void set_color(const Vector4& color);
 		void set_alpha(double alpha);                                                  static int set_alpha(lua_State * L);
@@ -35,7 +36,7 @@ class Box : public GUI { // A box ui - ui element that can act as a container fo
 		// outline - is line drawn around border?
 		void set_outline(bool outline);                                                static int set_outline(lua_State * L);
 		void set_outline_width(double width);                                          static int set_outline_width(lua_State * L);
-		void set_outline_color(int red, int green, int blue, int alpha = 255);         static int set_outline_color(lua_State * L);
+		void set_outline_color(unsigned int red, unsigned int green, unsigned int blue, double alpha);         static int set_outline_color(lua_State * L);
 		void set_outline_color(const Vector3& color);
 		void set_outline_color(const Vector4& color);
 		void set_outline_style(int style);                                             static int set_outline_style(lua_State * L);
@@ -44,7 +45,7 @@ class Box : public GUI { // A box ui - ui element that can act as a container fo
 		void set_border(bool border);                                                  static int set_border(lua_State * L);
 		void set_border_size(int width, int height);                                   static int set_border_size(lua_State * L);
 		void set_border_width(int width, int side = 0);                                static int set_border_width(lua_State * L);
-		void set_border_color(int red, int green, int blue, int alpha = 255);          static int set_border_color(lua_State * L);
+		void set_border_color(unsigned int red, unsigned int green, unsigned int blue, double alpha);          static int set_border_color(lua_State * L);
 		void set_border_color(const Vector3& color);
 		void set_border_color(const Vector4& color);
 		void set_border_style(int style, int side = 0);                                static int set_border_style(lua_State * L);
@@ -57,7 +58,7 @@ class Box : public GUI { // A box ui - ui element that can act as a container fo
 	    void set_shadow(bool shadow);                                                  static int set_shadow(lua_State * L);
 		// gradient - do the colors mix?
 		void set_gradient(bool gradient);                                              static int set_gradient(lua_State * L);
-		void set_gradient_color(int red, int green, int blue, int alpha = 255);
+		void set_gradient_color(unsigned int red, unsigned int green, unsigned int blue, double alpha);
 		void set_gradient_color(const Vector3& color);
 		void set_gradient_color(const Vector4& color);
 		void set_gradient_color(const Vector3& color0, const Vector3& color1);
@@ -66,13 +67,13 @@ class Box : public GUI { // A box ui - ui element that can act as a container fo
 		void set_title_bar(bool has_title_bar);                                        static int set_title_bar(lua_State * L);
 		void set_title_bar_size(int height);                                           static int set_title_bar_size(lua_State * L);
 		void set_title_bar_text(const std::string& text);                              static int set_title_bar_text(lua_State * L);
-		void set_title_bar_text_color(int red, int green, int blue, int alpha = 255);  static int set_title_bar_text_color(lua_State * L);
+		void set_title_bar_text_color(unsigned int red, unsigned int green, unsigned int blue, double alpha);  static int set_title_bar_text_color(lua_State * L);
 		void set_title_bar_text_color(const Vector3& color);
 		void set_title_bar_text_color(const Vector4& color);
-		void set_title_bar_label(const Label& label);                                  static int set_title_bar_label(lua_State * L);
+		void set_title_bar_label(const dokun::Label& label);                                  static int set_title_bar_label(lua_State * L);
 		void set_title_bar_image(const Image& image);                                  static int set_title_bar_image(lua_State * L);
 		void set_title_bar_icon(const Image& icon);
-		void set_title_bar_color(int red, int green, int blue, int alpha = 255);       static int set_title_bar_color(lua_State * L);
+		void set_title_bar_color(unsigned int red, unsigned int green, unsigned int blue, double alpha);       static int set_title_bar_color(lua_State * L);
         void set_title_bar_color(const Vector3& color);
 		void set_title_bar_color(const Vector4& color);		
 		void set_title_bar_button_iconify(bool button_iconify);                        static int set_title_bar_button_iconify(lua_State * L);
@@ -87,16 +88,16 @@ class Box : public GUI { // A box ui - ui element that can act as a container fo
 		// label
 		void set_text(const std::string& text);                                        static int set_text(lua_State * L);
         void set_text_list(const std::string& text, int index);                        static int set_text_list(lua_State * L);
-		void set_label(const Label& label);                                            static int set_label(lua_State * L);
-        void set_label_list(const Label& label);                                       static int set_label_list(lua_State * L);
+		void set_label(const dokun::Label& label);                                            static int set_label(lua_State * L);
+        void set_label_list(const dokun::Label& label);                                       static int set_label_list(lua_State * L);
         // tooltip
         void set_as_tooltip(bool tooltip);                                             static int set_as_tooltip(lua_State *L);
 		// getters
 		Vector4 get_color() const;                                                     static int get_color(lua_State * L);
 		Image * get_image () const;                                                    static int get_image(lua_State * L);	
         Image * get_image_list (int index) const;                                      static int get_image_list(lua_State * L);
-		Label * get_label() const;                                                     static int get_label(lua_State * L);
-        Label * get_label_list(int index) const;                                       static int get_label_list(lua_State * L);
+		dokun::Label * get_label() const;                                                     static int get_label(lua_State * L);
+        dokun::Label * get_label_list(int index) const;                                       static int get_label_list(lua_State * L);
 		std::string get_text() const;                                                  static int get_text(lua_State * L);
         std::string get_text_list(int index) const;                                    static int get_text_list(lua_State * L);
 		std::string get_alignment()const;                                              static int get_alignment(lua_State * L);
@@ -105,7 +106,7 @@ class Box : public GUI { // A box ui - ui element that can act as a container fo
 		Vector2 get_title_bar_position()const;
 		Vector2 get_title_bar_size()const;
 		Vector4 get_title_bar_color() const;
-		Label * get_title_bar_label() const;
+		dokun::Label * get_title_bar_label() const;
 		std::string get_title_bar_text() const;
 		Vector4 get_title_bar_text_color() const;
 		Image * get_title_bar_icon() const;
@@ -135,7 +136,12 @@ class Box : public GUI { // A box ui - ui element that can act as a container fo
 	private:
 	    // callbacks
 	    //void on_draw(void); // not needed for now
+		// callbacks: titlebar
 		void on_titlebar(void);
+		void on_titlebar_button_close(void);
+		void on_titlebar_button_maximize(void);
+		void on_titlebar_button_iconify(void);
+		// callbacks: box
 		void on_drag(void);
 		void on_resize(void);
 	    // friend
@@ -173,18 +179,18 @@ class Box : public GUI { // A box ui - ui element that can act as a container fo
 		double tooltip_arrow_position; // can be either x or y
 		Vector4 tooltip_arrow_color;
 		// Box : contents
-		Label * label; // default label
+		dokun::Label * label; // default label
 		Image * image; // default image
 		std::vector<GUI *> box; // can store lists
         // NEW! 2019-07-27. Boxs can now have multiple labels and images. The default label and image will be push_back to 0 index.
-        std::vector<Label *> label_list;
+        std::vector<dokun::Label *> label_list;
         std::vector<Image *> image_list;
         std::vector<GUI *> child_list; // 2021-10-17
 		// Box : title_bar
 		bool title_bar;
 		int title_bar_height;
 		Vector4 title_bar_color;// = Vector4(47, 79, 79, 255);
-		Label * title_bar_label;//std::string title_bar_text;
+		dokun::Label * title_bar_label;//std::string title_bar_text;
 		Vector4 title_bar_text_color;
 		Image * title_bar_image;// = nullptr; //double title_bar_radius;
 		bool title_bar_button_iconify;

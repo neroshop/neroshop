@@ -1,8 +1,8 @@
 #include "../include/logger.hpp"
 
-Logger::Logger() : type("default") {} // types: ERROR, WARNING, INFO
+dokun::Logger::Logger() : type("default") {} // types: ERROR, WARNING, INFO
 ////////////
-Logger::Logger(int code, std::string type) // Usage: Logger(1, "error");
+dokun::Logger::Logger(int code, std::string type) // Usage: Logger(1, "error");
 {
     this->type   = type;
     this->buffer = print_error(code);
@@ -18,7 +18,7 @@ Logger::Logger(int code, std::string type) // Usage: Logger(1, "error");
 #endif    
 }
 ////////////
-Logger::Logger(const String& message, std::string type) // Usage: Logger("Hello from Logger", "info");
+dokun::Logger::Logger(const String& message, std::string type) // Usage: Logger("Hello from Logger", "info");
 {
     this->type   = type;
     this->buffer = message.str();
@@ -36,7 +36,7 @@ Logger::Logger(const String& message, std::string type) // Usage: Logger("Hello 
 #endif
 }
 ////////////
-Logger::Logger(const String& message, /*const std::string& function,*/ const std::string& filename, const std::string& line) // set print_out to 0 if using std::cout << operator
+dokun::Logger::Logger(const String& message, /*const std::string& function,*/ const std::string& filename, const std::string& line) // set print_out to 0 if using std::cout << operator
 {
     logger_ptr->buffer = message.str();
 #ifdef DOKUN_LINUX // change console color
@@ -53,51 +53,51 @@ Logger::Logger(const String& message, /*const std::string& function,*/ const std
 #endif
 }
 //////////// error=red, warning=yellow, info=green or white https://stackoverflow.com/questions/2616906/how-do-i-output-coloured-text-to-a-linux-terminal : Daniel Langr
-Logger::~Logger() {}
+dokun::Logger::~Logger() {}
 ////////////
-Logger * Logger::logger_ptr (new Logger());
+dokun::Logger * dokun::Logger::logger_ptr (new dokun::Logger());
 ////////////
-void Logger::open() // private: can only be called by engine
+void dokun::Logger::open() // private: can only be called by engine
 {
-    Logger::push("=======================================================================================================");
-	Logger::push("Started dokun " + Logger::format("[%Y-%m-%d  %H:%M:%S %p]"));
-	Logger::push("=======================================================================================================");	
-    Logger::push("\n\n");	
-	Logger::push(String("Running dokun version  ") + String("1.0.0"));
-	Logger::push(String("Running Lua version    ") + String::to_string(LUA_VERSION_MAJOR) + "." + String::to_string(LUA_VERSION_MINOR) + "." + String::to_string(LUA_VERSION_RELEASE));//Logger::push("\n\n");
+    dokun::Logger::push("=======================================================================================================");
+	dokun::Logger::push("Started dokun " + dokun::Logger::format("[%Y-%m-%d  %H:%M:%S %p]"));
+	dokun::Logger::push("=======================================================================================================");	
+    dokun::Logger::push("\n\n");	
+	dokun::Logger::push(String("Running dokun version  ") + String("1.0.0"));
+	dokun::Logger::push(String("Running Lua version    ") + String::to_string(LUA_VERSION_MAJOR) + "." + String::to_string(LUA_VERSION_MINOR) + "." + String::to_string(LUA_VERSION_RELEASE));//dokun::Logger::push("\n\n");
 
 #ifdef DOKUN_PRINT_ALL_LIB_VERSIONS // native - these libearies are a core part of dokun
-    Logger::push(String("Using png version      ") + String("1.6"));
-    Logger::push(String("Using ogg version      ") + String("1.3.3"));
-    Logger::push(String("Using vorbis version   ") + String("1.3.6"));
-    Logger::push(String("Using theora version   ") + String("1.1.1"));
-    Logger::push(String("Using freetype version ") + String(FREETYPE_MAJOR).str() + "." + String(FREETYPE_MINOR).str() +  "." + String(FREETYPE_PATCH).str());
+    dokun::Logger::push(String("Using png version      ") + String("1.6"));
+    dokun::Logger::push(String("Using ogg version      ") + String("1.3.3"));
+    dokun::Logger::push(String("Using vorbis version   ") + String("1.3.6"));
+    dokun::Logger::push(String("Using theora version   ") + String("1.1.1"));
+    dokun::Logger::push(String("Using freetype version ") + String(FREETYPE_MAJOR).str() + "." + String(FREETYPE_MINOR).str() +  "." + String(FREETYPE_PATCH).str());
     // non-native - these libraries are just extras and can be dropped anytime
-    Logger::push(String("Using jpeg version     ") + String::get_first_character(std::to_string(JPEG_LIB_VERSION));// + String(".x.x"));
-    Logger::push(String("Using gif version      ") + String(GIFLIB_MAJOR).str  () + "." + String(GIFLIB_MINOR).str  () +  "." + String(GIFLIB_RELEASE).str()); // JPEG_LIB_VERSION, TIFFLIB_VERSION
-    Logger::push(String("Using tiff version     ") + String("4.0"));// # 14//Logger::push(String("   ") + String(""));
-    Logger::push(String("Using flac version     ") + String("1.3.3"));
+    dokun::Logger::push(String("Using jpeg version     ") + String::get_first_character(std::to_string(JPEG_LIB_VERSION));// + String(".x.x"));
+    dokun::Logger::push(String("Using gif version      ") + String(GIFLIB_MAJOR).str  () + "." + String(GIFLIB_MINOR).str  () +  "." + String(GIFLIB_RELEASE).str()); // JPEG_LIB_VERSION, TIFFLIB_VERSION
+    dokun::Logger::push(String("Using tiff version     ") + String("4.0"));// # 14//dokun::Logger::push(String("   ") + String(""));
+    dokun::Logger::push(String("Using flac version     ") + String("1.3.3"));
 #endif
     // create dir for logfiles//if(!File::checkdir("log")) File::makedir("log");
-	if(!Logger::save("dokun_log.txt")) Logger("Logger::save : Could not save log to: dokun_log.txt");// save in append mode
+	if(!dokun::Logger::save("dokun_log.txt")) Logger("dokun::Logger::save : Could not save log to: dokun_log.txt");// save in append mode
 	// pop a number of times after saving first section
 #ifndef DOKUN_PRINT_ALL_LIB_VERSIONS
-	for(int i = 0; i < 6; i++) Logger::pop();	
+	for(int i = 0; i < 6; i++) dokun::Logger::pop();	
 #endif
 #ifdef DOKUN_PRINT_ALL_LIB_VERSIONS
-	for(int i = 0; i < 15; i++) Logger::pop();	
+	for(int i = 0; i < 15; i++) dokun::Logger::pop();	
 #endif
 }
 ////////////	
-void Logger::close() // private: can only be called by engine
+void dokun::Logger::close() // private: can only be called by engine
 {
-    Logger::push("\n=======================================================================================================");
-    Logger::push("Closed dokun " + Logger::format("[%Y-%m-%d  %H:%M:%S %p]"));
-    Logger::push("=======================================================================================================\n");
-	if(!Logger::save("dokun_log.txt")) Logger("Logger::save : Could not save log to: dokun_log.txt");
+    dokun::Logger::push("\n=======================================================================================================");
+    dokun::Logger::push("Closed dokun " + dokun::Logger::format("[%Y-%m-%d  %H:%M:%S %p]"));
+    dokun::Logger::push("=======================================================================================================\n");
+	if(!dokun::Logger::save("dokun_log.txt")) Logger("dokun::Logger::save : Could not save log to: dokun_log.txt");
 }
 ////////////
-void Logger::push(const String& message) 
+void dokun::Logger::push(const String& message) 
 {
     //if(logger_ptr->session.size() > 1) 
     //{
@@ -107,14 +107,14 @@ void Logger::push(const String& message)
     logger_ptr->session.push_back(message.str());
 }
 ////////////
-void Logger::push(const Logger& logger ) // Usage: Logger::push(Logger("This is a warning", "warning"));
+void dokun::Logger::push(const Logger& logger ) // Usage: dokun::Logger::push(Logger("This is a warning", "warning"));
 {
     push(const_cast<Logger&>(logger).buffer);
 }
 ////////////
-void Logger::pop () { logger_ptr->session.pop_back();}
+void dokun::Logger::pop () { logger_ptr->session.pop_back();}
 ////////////
-bool Logger::save(const String& file_name)
+bool dokun::Logger::save(const String& file_name)
 {
 	std::ofstream file(file_name.c_str(), std::ios::app);
 	if(!file.is_open())
@@ -126,7 +126,7 @@ bool Logger::save(const String& file_name)
 	return true;
 }
 ////////////
-std::string Logger::format(const std::string& fmt)// // returns date and time as a string
+std::string dokun::Logger::format(const std::string& fmt)// // returns date and time as a string
 {
 #if defined(__cplusplus) && (__cplusplus >= 201103L) // C++11 style - Unfortunately a few compilers dont support std::put_time :c
 	auto now = std::chrono::system_clock::now();
@@ -146,9 +146,9 @@ std::string Logger::format(const std::string& fmt)// // returns date and time as
 #endif	
 }
 ////////////
-void Logger::box(const String& text, std::string caption, unsigned int type)
+void dokun::Logger::box(const String& text, std::string caption, unsigned int type)
 	{
-#ifdef __windows__
+#ifdef DOKUN_WIN32
     int id = MessageBox(nullptr, static_cast<LPCTSTR>(text.c_str()), static_cast<LPCTSTR>(caption.c_str()), static_cast<UINT>(type)); 
     switch(id)
 	{
@@ -183,7 +183,7 @@ void Logger::box(const String& text, std::string caption, unsigned int type)
 ////////////
 // errors
 ////////////
-std::string Logger::print_error(int error_code)
+std::string dokun::Logger::print_error(int error_code)
 {
 	std::string message;
 	if(error_code != 0) // 0 = no error
@@ -216,7 +216,7 @@ std::string Logger::print_error(int error_code)
 	return message;
 }
 ////////////
-unsigned int Logger::opengl_error(const std::string& filename, const std::string& line)
+unsigned int dokun::Logger::opengl_error(const std::string& filename, const std::string& line)
 {
 		unsigned int error_code = 0;
     #ifdef DOKUN_OPENGL	
@@ -253,7 +253,7 @@ unsigned int Logger::opengl_error(const std::string& filename, const std::string
 		return error_code; 
 }
 ////////////
-int Logger::vulkan_error(int result, const std::string& filename, const std::string& line)
+int dokun::Logger::vulkan_error(int result, const std::string& filename, const std::string& line)
 {
 #ifdef DOKUN_VULKAN
         switch(result)
@@ -309,7 +309,7 @@ const char * GetOpenALErrorString(int errID)
 }
 */
 ////////////
-void Logger::lua_err(lua_State *L, const String& message, bool print_out) // posts a Lua error + saves to LOG
+void dokun::Logger::lua_err(lua_State *L, const String& message, bool print_out) // posts a Lua error + saves to LOG
 {
 	    std::ofstream file("log/dokun_log (lua).txt", std::ios::out | std::ios::app);
 		lua_Debug info;
@@ -343,7 +343,7 @@ void Logger::lua_err(lua_State *L, const String& message, bool print_out) // pos
 	    file.close();			
 }
 ////////////
-int Logger::lua_error_test(lua_State * L) // // same as function "error" except this saves it to a log
+int dokun::Logger::lua_error_test(lua_State * L) // // same as function "error" except this saves it to a log
 {
 	luaL_checktype(L, 1, LUA_TSTRING);
 	bool print_out = 1; // print to console
@@ -354,7 +354,7 @@ int Logger::lua_error_test(lua_State * L) // // same as function "error" except 
 ////////////
 // instances
 ////////////
-void Logger::print_instance(const String& class_name)
+void dokun::Logger::print_instance(const String& class_name)
 {
 	if(String::lower(class_name.str()) == "sprite") std::cout << "Sprite count: " << Factory::get_sprite_factory()->get_size() << std::endl;
 	if(String::lower(class_name.str()) == "model" || String::lower(class_name.str()) == "mesh") std::cout << "Model  count: " << Factory::get_model_factory ()->get_size() << std::endl;
@@ -380,13 +380,13 @@ void Logger::print_instance(const String& class_name)
 }
 ////////////
 ////////////
-// Logger::print(bool enable)
+// dokun::Logger::print(bool enable)
 ////////////
 ////////////
 ////////////
 // setters
 ////////////
-void Logger::set_type(const std::string& type)
+void dokun::Logger::set_type(const std::string& type)
 {
     logger_ptr->type = type;
 }
@@ -394,14 +394,14 @@ void Logger::set_type(const std::string& type)
 ////////////
 //getters
 ////////////
-std::string Logger::get_type()
+std::string dokun::Logger::get_type()
 {
     return logger_ptr->type;
 }
 ////////////
-std::string Logger::get_string(int index) { return logger_ptr->session[index];}
+std::string dokun::Logger::get_string(int index) { return logger_ptr->session[index];}
 ////////////
-int Logger::get_index(const String& content) { for (unsigned int i = 0; i < logger_ptr->session.size(); i++) { if(String::match(logger_ptr->session[i], content.str(), true) || String::contains(logger_ptr->session[i], content.str()) ) return i;}return -1;}
+int dokun::Logger::get_index(const String& content) { for (unsigned int i = 0; i < logger_ptr->session.size(); i++) { if(String::match(logger_ptr->session[i], content.str(), true) || String::contains(logger_ptr->session[i], content.str()) ) return i;}return -1;}
 ////////////
 ////////////
 ////////////

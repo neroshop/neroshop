@@ -1,5 +1,5 @@
-#ifndef _FACTORY
-#define _FACTORY
+#ifndef FACTORY_HPP_DOKUN
+#define FACTORY_HPP_DOKUN
 
 #ifdef __cplusplus // if c++
 #include <iostream>

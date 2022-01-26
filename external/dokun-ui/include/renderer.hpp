@@ -1,5 +1,5 @@
-#ifndef _RENDER
-#define _RENDER
+#ifndef RENDERER_HPP_DOKUN
+#define RENDERER_HPP_DOKUN
 
 #include "platform.hpp"
 #include "vector.hpp"
@@ -31,15 +31,15 @@ public:
 	static void start   (void); // initializes renderer
 	static void destroy (void); // destroy renderer and all objects
 	// entity -------------------
-	static void draw_sprite(const Texture& texture, double x, double y, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha,// = 255,
+	static void draw_sprite(const Texture& texture, double x, double y, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,// = 1.0,
 	    const std::vector<float>& vertex_array, const Shader& shader, const std::vector<Texture *>& map); // fast (uses 2-7% CPU)
-	static void draw_atlas(const Texture& texture, int width, int height, double x, double y, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha, int frame, const Shader& shader);
+	static void draw_atlas(const Texture& texture, int width, int height, double x, double y, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, int frame, const Shader& shader);
 	static void draw_model (const std::vector<Vector3>& vertex_array, const std::vector<unsigned int>& element_array, const std::vector<Vector2>& uv_array, const std::vector<Vector3>& normal_array, double x, double y, double z, double rx, double ry, double rz, double sx, double sy, double sz, 
 		double ox, double oy, double oz, 
 		const std::vector<Texture *>& texture_array, const Vector4& ambient, const Vector4& diffuse, const Vector4& specular, const Vector4& emission, double shininess, const Shader& shader);	
-	static void draw_image(const unsigned int buffer/*Texture& texture*/, int width, int height, int depth, double x, double y, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha = 255, int channel=4); // complete!
+	static void draw_image(const unsigned int buffer/*Texture& texture*/, int width, int height, int depth, double x, double y, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0, int channel=4); // complete!
     // ui -----------------------
-	static void draw_box(int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha, 
+	static void draw_box(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, 
 		double radius, bool iconified,
 		// title bar
 		bool title_bar,
@@ -65,11 +65,11 @@ public:
 		bool shadow
 	);
 	//--------------------------
-	static void draw_text (const std::string& text, double x, double y, int width, int height, double angle, double scale_x, double scale_y, const FONT& font, double red, double green, double blue, double alpha = 255);
-	static void draw_glyph (unsigned char glyph, double x, double y, double angle, double scale_x, double scale_y, const FONT& font, double red, double green, double blue, double alpha = 255);
-	static void draw_text2 (const std::string& text, double x, double y, int width, int height, double angle, double scale_x, double scale_y, const FONT& font, double red, double green, double blue, double alpha = 255);
+	static void draw_text (const std::string& text, double x, double y, int width, int height, double angle, double scale_x, double scale_y, const dokun::Font& font, unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0);
+	static void draw_glyph (unsigned char glyph, double x, double y, double angle, double scale_x, double scale_y, const dokun::Font& font, unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0);
+	static void draw_text2 (const std::string& text, double x, double y, int width, int height, double angle, double scale_x, double scale_y, const dokun::Font& font, unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0);
 	//--------------------------
-	static void draw_button(int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha, 
+	static void draw_button(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, 
 		// outline
 		bool outline, 
 		double outline_width, 
@@ -83,7 +83,7 @@ public:
 		const Vector4& gradient_color//,
 	);
 	//--------------------------
-	static void draw_progressbar(int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha, 
+	static void draw_progressbar(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, 
 		double min_value, double max_value, double value, const Vector4& background_color,
 		// outline
 		bool outline, 
@@ -95,28 +95,29 @@ public:
 		//const Vector4& border_color,
 		);
 	//--------------------------
-	static void draw_edit(const std::string& text, int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha,
+	static void draw_edit(const std::string& text, int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,
 	    bool multilined,
 		// cursor
-		bool cursor, double cursor_x, double cursor_y, int cursor_height
+		bool cursor, double cursor_x, double cursor_y, int cursor_width, int cursor_height, const Vector4& cursor_color
 	);
+	static void draw_cursor(double cursor_x, double cursor_y, int cursor_width, int cursor_height, const Vector4& cursor_color,
+	    int parent_x, int parent_y, int parent_width, int parent_height);
 	//--------------------------
-	static void draw_slider(int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha,  // good!
+	static void draw_slider(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,  // good!
         // beam
 		double min_value, double max_value, double value, const Vector4& background_color, 
 		// ball
 		int ball_width, const Vector4& ball_color
 	);
-    static void draw_slider_vertical(int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha,
+    static void draw_slider_vertical(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,
     // beam
 	double min_value, double max_value, double value, const Vector4& background_color,
 	// ball
 	int ball_height, const Vector4& ball_color);
 	//--------------------------
-	static void draw_switch(int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha, // good!
+	static void draw_switch(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, // good!
 		int value,
-		const Vector4& background_color_on,
-		const Vector4& background_color_off,
+		const Vector4& background_color,
 		// border
 		bool outline,
 		double outline_width,
@@ -124,8 +125,8 @@ public:
 		bool outline_antialiased
 	);
 	//--------------------------
-	static void draw_radio(int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha,
-	    int value, Vector4& background_color,
+	static void draw_radio(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,
+	    int value, const Vector4& inner_color,
 		// outline
 		bool outline,
 		double outline_width,
@@ -133,13 +134,19 @@ public:
 		bool outline_antialiased
 	);
 	//--------------------------
-	static void draw_checkbox(int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha);
+	static void draw_checkbox(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,
+	    bool value, const Vector4& checkmark_color,
+		// outline
+		bool outline,
+		double outline_width,
+		const Vector4& outline_color,
+		bool outline_antialiased	    );
 	//--------------------------
-	static void draw_tooltip(const std::string& text, int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha,
+	static void draw_tooltip(const std::string& text, int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,
 	    // arrow - placement("up", "down"=default, "left", "right")
 	    std::string placement = "down", int arrow_width = 10, int arrow_height = 5, double arrow_offset = -1.0);
 	//--------------------------
-	static void draw_scrollbar(int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha,
+	static void draw_scrollbar(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,
 	    double value, double min_value, double max_value,
 		// handle
 		double handle_y, int handle_height, const Vector4& handle_color,
@@ -156,7 +163,7 @@ public:
 		bool border
 	);
 	//--------------------------
-	static void draw_spinner(int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha,
+	static void draw_spinner_old(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,
 	    double value,
 		// button
         int button_width, const Vector4& button_color, 		
@@ -167,34 +174,42 @@ public:
 		bool outline_antialiased	
 	);
 	//--------------------------
-	static void draw_combobox(int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha,
+    static void draw_spinner(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,
+	    // button
+        int button_width, const Vector4& button_color,
+        // shape (+, -)
+	    int shape_size, const Vector4& shape_color, double shape_depth,
+	    // separator (gap)
+	    bool separator, int separator_size); // added 2021-12-17		
+	//--------------------------
+	static void draw_combobox(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,
 	    const Vector4& button_color, int button_width, bool button_on);
 	//--------------------------
-	static void draw_tab(int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha,
+	static void draw_tab(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,
 	    // tab
 	    int tab_count = 1, 
 	    // tab body
 	    bool visible = true
 	);
 	//--------------------------
-	//use quad_ui for this - static void draw_menubar(int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha);
-	//use quad_ui for this - static void draw_grid(int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha);
-	//static void draw_(int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha);
-	//static void draw_(int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha);
-	//static void draw_(int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha);
-	//static void draw_(int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha);
-	//static void draw_(int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha);
-	//static void draw_(int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha);
-	//static void draw_(int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha);
-	//static void draw_(int x, int y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha);
+	//use quad_ui for this - static void draw_menubar(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha);
+	//use quad_ui for this - static void draw_grid(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha);
+	//static void draw_(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha);
+	//static void draw_(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha);
+	//static void draw_(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha);
+	//static void draw_(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha);
+	//static void draw_(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha);
+	//static void draw_(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha);
+	//static void draw_(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha);
+	//static void draw_(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha);
 	// levels and maps ---------
 	static void draw_level ();
 	static void draw_sky ();
 	// 2d primitives -----------
 	static void draw_point   ();
-	static void draw_line    (double x, double y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha = 255);
+	static void draw_line    (double x, double y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0);
 	static void draw_circle  ();
-	static void draw_triangle(double x, double y, int width, int height, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha = 255);
+	static void draw_triangle(double x, double y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0);
 	static void draw_quad    ();
 	static void draw_polygon ();
 	// 3d primitives -----------
@@ -209,7 +224,7 @@ public:
 	void display(); // shows rendering information
 	// setters
 	static void set_viewport(int x, int y, int width, int height);
-	static void set_clear(double red, double green, double blue, double alpha = 255, double depth = 1.0, int stencil = 0);
+	static void set_clear(unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0, double depth = 1.0, int stencil = 0);
 	static void set_vertical_synchronization(bool v_sync);
 	static void set_current_API(const std::string& API); static int set_current_API(lua_State *L);
 	static void set_background_alpha(bool bg_alpha); // 0 = transparent 1 = visible
@@ -248,7 +263,7 @@ public:
 	static unsigned int window_height;	
 	static void set_display_size(int width, int height);
     // Test
-    static void draw_sprite_test(double x, double y, double angle, double scale_x, double scale_y, double red, double green, double blue, double alpha,
+    static void draw_sprite_test(double x, double y, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,
     const std::vector<float>& vertex_array, const Shader& shader, const Texture& texture);
     /////////////////////////////////////////
     static void context_check(void);

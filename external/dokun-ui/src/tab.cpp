@@ -3,9 +3,9 @@
 Tab::Tab()
 {
     set_size(100, 50);//(50, 10);
-    set_color(64, 64, 64, 225);
+    set_color(64, 64, 64, 1.0);
 
-	label = new Label();
+	label = new dokun::Label();
 }
 ////////////
 Tab::~Tab()
@@ -70,9 +70,9 @@ void Tab::set_text(const std::string& text)
 ////////////
 int Tab::set_text(lua_State *L){return 0;}
 ////////////
-void Tab::set_label(const Label& label)
+void Tab::set_label(const dokun::Label& label)
 {
-    this->label = &const_cast<Label&>(label);
+    this->label = &const_cast<dokun::Label&>(label);
     this->label->set_parent(* this);
 }         
 ////////////
@@ -85,7 +85,7 @@ void Tab::set_image(const Image& image)
 ////////////
 int Tab::set_image(lua_State *L){return 0;}
 ////////////
-void Tab::set_color(int red, int green, int blue, int alpha)
+void Tab::set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {
     color = Vector4(red, green, blue, alpha);
 }
@@ -105,7 +105,7 @@ int Tab::set_color(lua_State *L){return 0;}
 std::string Tab::get_text()const{return label->get_string();}                
 int Tab::get_text(lua_State *L){return 1;}
 ////////////
-Label * Tab::get_label()const{return label;}                   
+dokun::Label * Tab::get_label()const{return label;}                   
 int Tab::get_label(lua_State *L){return 1;}
 ////////////
 Image * Tab::get_image()const{return image;}                   

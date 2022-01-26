@@ -1,6 +1,6 @@
 #include "../include/image.hpp"
 /////////////
-Image::Image() : width(0), height(0), depth(1), channel(4), data (nullptr), x(0), y(0), angle(0), scale(1, 1), color(255, 255, 255, 255), 
+Image::Image() : width(0), height(0), depth(1), channel(4), data (nullptr), x(0), y(0), angle(0), scale(1, 1), color(255, 255, 255, 1.0), 
     relative_x(0), relative_y(0), alignment("none"), visible(true)
 {
 #ifdef DOKUN_OPENGL	
@@ -15,26 +15,26 @@ Image::Image() : width(0), height(0), depth(1), channel(4), data (nullptr), x(0)
 	Factory::get_image_factory()->store(this);
 }
 /////////////
-Image::Image(const Image& image) : x(0), y(0), angle(0), scale(1, 1), color(255, 255, 255, 255), 
+Image::Image(const Image& image) : x(0), y(0), angle(0), scale(1, 1), color(255, 255, 255, 1.0), 
     relative_x(0), relative_y(0), alignment("none"), visible(true)
 {
 	copy(image);
 	Factory::get_image_factory()->store(this);
 }
 /////////////
-Image::Image(const Texture& texture) : x(0), y(0), angle(0), scale(1, 1), color(255, 255, 255, 255), 
+Image::Image(const Texture& texture) : x(0), y(0), angle(0), scale(1, 1), color(255, 255, 255, 1.0), 
     relative_x(0), relative_y(0), alignment("none"), visible(true)
 {
 	copy(texture);
     Factory::get_image_factory()->store(this);
 }
 /////////////
-Image::Image(const std::string& file_name) : x(0), y(0), angle(0), scale(1, 1), color(255, 255, 255, 255), 
+Image::Image(const std::string& file_name) : x(0), y(0), angle(0), scale(1, 1), color(255, 255, 255, 1.0), 
     relative_x(0), relative_y(0), alignment("none"), visible(true)
 {
 	if(!load(file_name))
 	{
-		Logger("Could not load " + file_name);
+		dokun::Logger("Could not load " + file_name);
 	}
 #ifdef DOKUN_OPENGL	
 	buffer          = 0;	
@@ -48,11 +48,11 @@ Image::Image(const std::string& file_name) : x(0), y(0), angle(0), scale(1, 1), 
 	Factory::get_image_factory()->store(this);
 }
 /////////////
-Image::Image(void * data, int width, int height, int depth, int channel) : width(0), height(0), depth(1), data (nullptr), x(0), y(0), angle(0), scale(1, 1), color(255, 255, 255, 255), 
+Image::Image(void * data, int width, int height, int depth, int channel) : width(0), height(0), depth(1), data (nullptr), x(0), y(0), angle(0), scale(1, 1), color(255, 255, 255, 1.0), 
     relative_x(0), relative_y(0), alignment("none"), visible(true)
 {
 	if(!load(data, width, height, depth, channel))
-		Logger("Could not load image from data");
+		dokun::Logger("Could not load image from data");
 #ifdef DOKUN_OPENGL	
 	buffer          = 0;	
     mag_filter      = GL_LINEAR;
@@ -79,8 +79,8 @@ bool Image::load(const std::string& file_name) // from file
 	if(extension == "bmp" || extension == "dib") return load_bmp(file_name);
 	if(extension == "gif") return load_gif(file_name);
 	if(extension == "tif" || extension == "tiff") return load_tiff(file_name);
-	Logger("Unsupported format " + extension);
-	Logger("Loading as .PNG by default");
+	dokun::Logger("Unsupported format " + extension);
+	dokun::Logger("Loading as .PNG by default");
     return load_png(file_name); // default
 }
 /////////////
@@ -369,7 +369,7 @@ void Image::generate()
         glGenerateMipmap(GL_TEXTURE_2D); // generate mipmaps
 		glBindTexture(GL_TEXTURE_2D, 0); // unbind buffer
 	#ifdef DOKUN_DEBUG0
-	    Logger("Image" + String(Factory::get_image_factory()->get_location(this)).str() + " buffer " + std::to_string(buffer) + " generated");
+	    dokun::Logger("Image" + String(Factory::get_image_factory()->get_location(this)).str() + " buffer " + std::to_string(buffer) + " generated");
     #endif	
 	}
 #endif	
@@ -396,7 +396,7 @@ void Image::destroy()
         glDeleteTextures(1, static_cast<GLuint *>(&buffer)); // delete old texture buffer obj
         buffer = 0;	// to ensure its deleted
 	#ifdef DOKUN_DEBUG0
-	    if(!glIsTexture(buffer)) Logger("Image::destroy(): " + String(Factory::get_image_factory()->get_location(this)).str() + " buffer destroyed");
+	    if(!glIsTexture(buffer)) dokun::Logger("Image::destroy(): " + String(Factory::get_image_factory()->get_location(this)).str() + " buffer destroyed");
     #endif
 #endif	
 	}
@@ -656,7 +656,7 @@ int Image::set_scale(lua_State *L)
 	return 0;
 }
 /////////////
-void Image::set_color(int red, int green, int blue, int alpha)
+void Image::set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {
 	color = Vector4(red, green, blue, alpha);
 }
@@ -677,7 +677,7 @@ int Image::set_color(lua_State *L)
 	luaL_checktype(L, 2, LUA_TNUMBER); // red
 	luaL_checktype(L, 3, LUA_TNUMBER); // green
 	luaL_checktype(L, 4, LUA_TNUMBER); // blue
-	luaL_optnumber(L, 5, 255);         // alpha
+	luaL_optnumber(L, 5, 1.0);         // alpha
 	lua_getfield(L, 1, "udata");
 	if(lua_isuserdata(L, -1))
 	{
@@ -1621,7 +1621,7 @@ bool Image::load_gif(std::string file_name)
 		return false;
 	}
 	if(gif->ImageCount <= 0)     {
-		Logger("Gif does not contain any image.");
+		dokun::Logger("Gif does not contain any image.");
 		return false;
 	}
     //-------------------
@@ -1689,13 +1689,13 @@ bool Image::load_tiff(std::string file_name)
 	npixels = width * height;
     raster=(uint32 *) _TIFFmalloc(npixels *sizeof(uint32));
 	if(raster == nullptr){
-		Logger("Could not allocate memory");
+		dokun::Logger("Could not allocate memory");
 		return false;
 	}
 
     if(TIFFReadRGBAImage(tiff, width, height, raster, 0) == 0)
 	{
-	    Logger("Could not read image");
+	    dokun::Logger("Could not read image");
 		_TIFFfree(raster);
 		return false;
 	}

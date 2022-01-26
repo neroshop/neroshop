@@ -4334,6 +4334,7 @@ CMakeFiles/libdokun-ui.dir/src/console.cpp.o: include/keyboard.hpp
 CMakeFiles/libdokun-ui.dir/src/console.cpp.o: include/label.hpp
 CMakeFiles/libdokun-ui.dir/src/console.cpp.o: include/linux_header.hpp
 CMakeFiles/libdokun-ui.dir/src/console.cpp.o: include/logger.hpp
+CMakeFiles/libdokun-ui.dir/src/console.cpp.o: include/math.hpp
 CMakeFiles/libdokun-ui.dir/src/console.cpp.o: include/mouse.hpp
 CMakeFiles/libdokun-ui.dir/src/console.cpp.o: include/platform.hpp
 CMakeFiles/libdokun-ui.dir/src/console.cpp.o: include/renderer.hpp
@@ -4343,6 +4344,7 @@ CMakeFiles/libdokun-ui.dir/src/console.cpp.o: include/shader.hpp
 CMakeFiles/libdokun-ui.dir/src/console.cpp.o: include/string.hpp
 CMakeFiles/libdokun-ui.dir/src/console.cpp.o: include/system.hpp
 CMakeFiles/libdokun-ui.dir/src/console.cpp.o: include/texture.hpp
+CMakeFiles/libdokun-ui.dir/src/console.cpp.o: include/timer.hpp
 CMakeFiles/libdokun-ui.dir/src/console.cpp.o: include/types.hpp
 CMakeFiles/libdokun-ui.dir/src/console.cpp.o: include/ui.hpp
 CMakeFiles/libdokun-ui.dir/src/console.cpp.o: include/utility.hpp
@@ -4719,6 +4721,7 @@ CMakeFiles/libdokun-ui.dir/src/edit.cpp.o: include/keyboard.hpp
 CMakeFiles/libdokun-ui.dir/src/edit.cpp.o: include/label.hpp
 CMakeFiles/libdokun-ui.dir/src/edit.cpp.o: include/linux_header.hpp
 CMakeFiles/libdokun-ui.dir/src/edit.cpp.o: include/logger.hpp
+CMakeFiles/libdokun-ui.dir/src/edit.cpp.o: include/math.hpp
 CMakeFiles/libdokun-ui.dir/src/edit.cpp.o: include/mouse.hpp
 CMakeFiles/libdokun-ui.dir/src/edit.cpp.o: include/platform.hpp
 CMakeFiles/libdokun-ui.dir/src/edit.cpp.o: include/renderer.hpp
@@ -4727,6 +4730,7 @@ CMakeFiles/libdokun-ui.dir/src/edit.cpp.o: include/shader.hpp
 CMakeFiles/libdokun-ui.dir/src/edit.cpp.o: include/string.hpp
 CMakeFiles/libdokun-ui.dir/src/edit.cpp.o: include/system.hpp
 CMakeFiles/libdokun-ui.dir/src/edit.cpp.o: include/texture.hpp
+CMakeFiles/libdokun-ui.dir/src/edit.cpp.o: include/timer.hpp
 CMakeFiles/libdokun-ui.dir/src/edit.cpp.o: include/types.hpp
 CMakeFiles/libdokun-ui.dir/src/edit.cpp.o: include/ui.hpp
 CMakeFiles/libdokun-ui.dir/src/edit.cpp.o: include/utility.hpp

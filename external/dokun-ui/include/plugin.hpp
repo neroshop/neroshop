@@ -1,5 +1,5 @@
-#ifndef _PLUGIN
-#define _PLUGIN
+#ifndef PLUGIN_HPP_DOKUN
+#define PLUGIN_HPP_DOKUN
 #include "platform.hpp"
 #include "file.hpp"
 #include "logger.hpp"
@@ -18,7 +18,7 @@ class Plugin
 		~Plugin();
 		bool load(const std::string& file_name); // load a single module(.so, .dll, .dylib)
 
-		#ifdef __windows__
+		#ifdef DOKUN_WIN32
 		  bool load_directory(std::string folder, std::string filter = "*.dll*"); // load all modules from a folder
 		#endif
 		#ifdef __gnu_linux__
@@ -31,7 +31,7 @@ class Plugin
 		// getters
 		void * get(const std::string& data); // function = dlsym(module, "my_function");
 	private:
-        #ifdef __windows__
+        #ifdef DOKUN_WIN32
 	        HMODULE module;
         #endif
 		#ifdef __gnu_linux__

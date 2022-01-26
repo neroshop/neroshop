@@ -378,7 +378,7 @@ std::string Timer::get_format(std::string format)
 /////////////
 void Timer::start_performance_counter() // source: https://gist.github.com/ikhramts/5798661 https://stackoverflow.com/questions/1739259/how-to-use-queryperformancecounter
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
     LARGE_INTEGER li;
     if(!QueryPerformanceFrequency(&li)) {std::cout << "QueryPerformanceFrequency failed!" << std::endl; return;} // get ticks per second
 
@@ -393,7 +393,7 @@ void Timer::start_performance_counter() // source: https://gist.github.com/ikhra
 /////////////
 double Timer::get_performance_counter() 
 {
-#ifdef __windows__ // source: https://gist.github.com/ikhramts/5798661 https://stackoverflow.com/questions/1739259/how-to-use-queryperformancecounter
+#ifdef DOKUN_WIN32 // source: https://gist.github.com/ikhramts/5798661 https://stackoverflow.com/questions/1739259/how-to-use-queryperformancecounter
     LARGE_INTEGER li;
     QueryPerformanceCounter(&li);
     return double(li.QuadPart-CounterStart)/PCFreq;
@@ -405,7 +405,7 @@ double Timer::get_performance_counter()
 /////////////
 double Timer::get_performance_frequency() // long long is more portable than int64_t. They are pretty much the same too.
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
     return PCFreq; // This is all you need to get the performance frequency // QueryPerformanceCounter((LARGE_INTEGER *)&frequency)
 #endif
 #ifdef __gnu_linux__
@@ -415,7 +415,7 @@ double Timer::get_performance_frequency() // long long is more portable than int
 /////////////
 double Timer::get_tick_count(void) 
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
     return timeGetTime(); // or GetTickCount(); - The return value is the number of milliseconds that have elapsed since the system was started // or GetTickCount64 // or timeGetTime(); - Returns the system time, in milliseconds. //  timeGetTime is a better choice if you want to calculate fps for your game
 #endif
 #ifdef __gnu_linux__

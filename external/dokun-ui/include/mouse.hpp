@@ -63,7 +63,7 @@ class Mouse {
 		// bonus functions
 		static double  rotate(double x, double y);
 		static Vector3 rotate(double x, double y, double z);
-		#ifdef __windows__
+		#ifdef DOKUN_WIN32
 		#endif
 		static void get_input(int button, int pressed, int released);
     private:

@@ -1,5 +1,5 @@
-#ifndef _WIN32_HEADER
-#define _WIN32_HEADER
+#ifndef WIN32_HEADER_HPP_DOKUN
+#define WIN32_HEADER_HPP_DOKUN
 
 #ifdef __cplusplus // if c++
 extern "C" {       // make c code compatible with c++

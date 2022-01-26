@@ -81,6 +81,7 @@ public:
 	// Lua
 	static bool load_config(lua_State *L);
 	static bool create_config();
+	static void edit_config(const std::string& old_str, const std::string& new_str);
 	static lua_State * get_lua_state();
 	//////////////////////////////////
 	// TEXT, BINARY

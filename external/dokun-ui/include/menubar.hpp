@@ -1,5 +1,5 @@
-#ifndef _MENUBAR
-#define _MENUBAR
+#ifndef MENUBAR_HPP_DOKUN
+#define MENUBAR_HPP_DOKUN
 
 #include "ui.hpp"
 #include "label.hpp"
@@ -22,17 +22,17 @@ public:
 	void sub(const Box& sub_menu, int index);
 	void sub(const std::string& menu, const std::string& sub_menu);
     // setters
-	void set_color(int red, int green, int blue, int alpha = 225);
+	void set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0);
 	void set_color(const Vector3& color);
 	void set_color(const Vector4& color);
-	void set_submenu_color(int red, int green, int blue, int alpha = 225);
+	void set_submenu_color(unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0);
 	void set_submenu_color(const Vector3& color);
 	void set_submenu_color(const Vector4& color);
 	void set_fill(bool fill); static int set_fill(lua_State *L);
 	// outline
 	void set_outline(bool outline); static int set_outline(lua_State *L);
 	void set_outline_width(double width); static int set_outline_width(lua_State *L);
-	void set_outline_color(int red, int green, int blue, int alpha = 255); static int set_outline_color(lua_State *L);
+	void set_outline_color(unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0); static int set_outline_color(lua_State *L);
 	void set_outline_color(const Vector3& color);// static int set_(lua_State *L);
 	void set_outline_color(const Vector4& color);// static int set_(lua_State *L);
 	void set_outline_antialiased(bool antialised); static int set_outline_antialiased(lua_State *L);	

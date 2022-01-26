@@ -12,14 +12,14 @@ File::~File()
 void File::cout() // shows content of file
 {
 	if(!is_open()) {
-		Logger("File is not opened");
+		dokun::Logger("File is not opened");
 		return;
 	}
 	std::ifstream file(get_file().c_str());
 	
 	if(!file.is_open())
 	{
-		Logger("Could not display content in " + get_file());
+		dokun::Logger("Could not display content in " + get_file());
 		return;
 	}
 	
@@ -33,7 +33,7 @@ void File::cout() // shows content of file
 void File::write(const std::string& text, int flag, bool binary) // write to file
 {
 	if(!is_open()) {
-		Logger("File is not opened");
+		dokun::Logger("File is not opened");
 		return;
 	}	
 	std::ios_base::openmode mode;
@@ -55,7 +55,7 @@ void File::write(const std::string& text, int flag, bool binary) // write to fil
     std::ofstream file(get_file().c_str(), mode);
 	if(!file.is_open())
 	{
-		Logger("Could not write to " + get_file());
+		dokun::Logger("Could not write to " + get_file());
 		return;
 	}
 	file << text << std::endl;	
@@ -65,7 +65,7 @@ void File::write(const std::string& text, int flag, bool binary) // write to fil
 void File::read(int flag, bool binary)
 {
 	if(!is_open()) {
-		Logger("File is not opened");
+		dokun::Logger("File is not opened");
 		return;
 	}	
 	std::ios_base::openmode  mode  ;
@@ -84,7 +84,7 @@ void File::read(int flag, bool binary)
 	std::ifstream file(get_file().c_str(), mode);
 	if(!file.is_open())
 	{
-		Logger("Could not read from " + get_file());
+		dokun::Logger("Could not read from " + get_file());
 		return;
 	}
 	std::string line;
@@ -122,7 +122,7 @@ std::string File::dialog(int mode)
 	static_cast<std::string>(filter) = (format_name + token_1 + format + token_2);
 	std::cout << filter << "\n";
 	*/
-#ifdef __windows__	
+#ifdef DOKUN_WIN32	
 	std::string file_name;
 	filter = "All Files \0*.*\0\0";
 	if(mode == 0) // open mode
@@ -210,7 +210,7 @@ std::string File::get_line(int index)
 {
 	if(line.empty())
 	{
-		Logger("File is empty");
+		dokun::Logger("File is empty");
 		return "";
 	}
 	return line[index];
@@ -220,7 +220,7 @@ std::string File::get_content()
 {
 	if(line.empty())
 	{
-		Logger("File is empty");
+		dokun::Logger("File is empty");
 		return ("");
 	}
 	std::string content;
@@ -332,7 +332,7 @@ std::string File::extension(const std::string& file_name) // ex. player.png => .
 /////////////
 bool File::check_dir(const std::string& path)
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 	DWORD dwAttrib = GetFileAttributes(path.c_str());
     return (dwAttrib != INVALID_FILE_ATTRIBUTES && 
 	    (dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
@@ -351,7 +351,7 @@ bool File::check_dir(const std::string& path)
 std::vector<std::string> File::get_dir  (const std::string& path, std::string filter)
 {
 	std::vector<std::string> file;
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 	filter = "%s/" + filter;
 	char search_path[200];
 #if defined(_MSC_VER) && (_MSC_VER >= 1020)
@@ -397,7 +397,7 @@ std::vector<std::string> File::get_dir  (const std::string& path, std::string fi
 std::string File::get_current_dir        ()
 {
 	std::string current;
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 	char buffer[1024];
 	GetModuleFileName(nullptr, buffer, 1024);
 	current =  buffer;
@@ -413,7 +413,7 @@ std::string File::get_current_dir        ()
 /////////////	
 bool File::make_dir                     (const std::string& path)
 {
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 	return (CreateDirectory  (path.c_str(), nullptr) != 0);
 #endif
 #ifdef __gnu_linux__

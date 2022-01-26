@@ -1,5 +1,5 @@
-#ifndef _SCROLLBAR
-#define _SCROLLBAR
+#ifndef SCROLLBAR_HPP_DOKUN
+#define SCROLLBAR_HPP_DOKUN
 
 #include "ui.hpp"
 
@@ -19,33 +19,33 @@ public:
 	void draw(double x, double y);
 	void draw(const Vector2& position);
 		
-	void set_color(int red, int green, int blue, int alpha = 255); static int set_color(lua_State *L);// beam color
+	void set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0); static int set_color(lua_State *L);// beam color
 	void set_color(const Vector3& color);
 	void set_color(const Vector4& color);
 	void set_value(double value);static int set_value(lua_State *L);
 	void set_step(double step); // number of items to scroll
 	// handle properties
-	void set_handle_color(int layer, int red, int green, int blue); static int set_handle_color(lua_State *L);// handle color; 0 = inner, 1 = outer
-	void set_handle_inner_color(int red, int green, int blue, int alpha = 255); static int set_handle_inner_color(lua_State *L);// handle and beam parts of slider
-	void set_handle_outer_color(int red, int green, int blue, int alpha = 255); static int set_handle_outer_color(lua_State *L);// handle and beam parts of slider
+	void set_handle_color(unsigned int red, unsigned int green, unsigned int blue, double alpha); static int set_handle_color(lua_State *L);// handle color; 0 = inner, 1 = outer
+	void set_handle_inner_color(unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0); static int set_handle_inner_color(lua_State *L);// handle and beam parts of slider
+	void set_handle_outer_color(unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0); static int set_handle_outer_color(lua_State *L);// handle and beam parts of slider
 	void set_handle_size(int handle_size);
 	// scrollbar properties
 	void set_radius(double radius); static int set_radius(lua_State *L);// roundness of beam edges [===========]
 	// button properties
 	void set_button(bool button);
 	void set_button_height(int height);
-	void set_button_color(int red, int green, int blue, int alpha = 255);
+	void set_button_color(unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0);
 	void set_button_color(const Vector3& color);
 	void set_button_color(const Vector4& color);
 	// arrow properties
 	void set_arrow(bool arrow);
-	void set_arrow_color(int red, int green, int blue, int alpha = 255);
+	void set_arrow_color(unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0);
 	void set_arrow_color(const Vector3& color);
 	void set_arrow_color(const Vector4& color);
 	// outline properties
 	void set_outline(bool outline); static int set_outline(lua_State *L);
 	void set_outline_width(double width); static int set_outline_width(lua_State *L);
-	void set_outline_color(int red, int green, int blue, int alpha = 255); static int set_outline_color(lua_State *L);
+	void set_outline_color(unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0); static int set_outline_color(lua_State *L);
 	void set_outline_color(const Vector3& color);// static int set_(lua_State *L);
 	void set_outline_color(const Vector4& color);// static int set_(lua_State *L);
 	void set_outline_antialiased(bool antialised); static int set_outline_antialiased(lua_State *L);		

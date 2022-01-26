@@ -1,5 +1,5 @@
-#ifndef _TEXTURE
-#define _TEXTURE
+#ifndef TEXTURE_HPP_DOKUN
+#define TEXTURE_HPP_DOKUN
 
 #include "platform.hpp"
 #include "utility.hpp"

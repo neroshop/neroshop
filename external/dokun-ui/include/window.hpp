@@ -14,7 +14,7 @@
 #include <lua.hpp>
 
 namespace dokun {
-    class Window {
+class Window {
     public:
         Window();                             static int window_new(lua_State *L);
 		~Window();
@@ -33,8 +33,11 @@ namespace dokun {
         void iconify();                           static int iconify(lua_State * L);
 		void maximize();                               static int maximize(lua_State * L);
 	    void restore();                           static int restore(lua_State * L);
-		// NOTE: when using the loop function, you must use window callback functions
-		void loop();                              static int loop(lua_State * L); // uses callback functions: dokun.load, dokun.draw, dokun.update, etc.
+		void poll_events(); // added 2021-12-16
+		void wait_events(); // added 2021-12-16
+		// clipboard
+		void copy_clipboard(const char * text);
+		std::string paste_clipboard();
 		// setters
         void set_title(const std::string& title);        static int set_title(lua_State *L);
         void set_width (int width);               static int set_width(lua_State *L);
@@ -73,13 +76,11 @@ namespace dokun {
 		static dokun::Window * get_active();             static int get_active(lua_State *L);
 		//Event * get_event()const;                      static int get_event(lua_State *L);
 		long get_style()const;                         static int get_style(lua_State *L);
-		#ifdef __gnu_linux__
-		#ifdef DOKUN_X11
-		    Display * get_display()const;             static int get_display(lua_State *L);
-		#endif
-		#endif
-		
-		#ifdef __windows__
+	#ifdef DOKUN_X11
+		::Display * get_display()const;             static int get_display(lua_State *L);
+	#endif
+		// Win32 functions
+		#ifdef DOKUN_WIN32
 		#ifndef DOKUN_SDL2
         #ifndef DOKUN_GLFW
 		    HINSTANCE get_instance()const;
@@ -88,19 +89,21 @@ namespace dokun {
 		#endif
 		#endif
 		#endif
-		
-		#ifdef __gnu_linux__
+		// X11 functions
 		#ifdef DOKUN_X11
-		#ifndef DOKUN_SDL2
-        #ifndef DOKUN_GLFW
-		    ::Window     get_handle ()const;	
+		    ::Window get_handle() const;
+		    ::Window get_window() const; // same as get_handle()
+		    XEvent get_xevent();// const;
 		#ifdef DOKUN_OPENGL
-			GLXContext get_context()const;
+			GLXContext get_context() const;
 		#endif
 		#endif
-		#endif
-		#endif
-		#endif
+		// GLFW functions
+		#ifdef DOKUN_GLFW
+		    GLFWwindow* get_handle() const;
+		    static void glfw_error_callback(int error, const char* description);
+		    static void glfw_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+		#endif		
 		// boolean
 		bool is_open()const;                           static int is_open(lua_State *L);
 		bool is_visible()const;                        static int is_visible(lua_State *L);
@@ -110,7 +113,7 @@ namespace dokun {
 		bool is_window()const;                         static int is_window(lua_State *L);
 		bool is_context()const;                        static int is_context(lua_State *L);
 		// procedure
-		#ifdef __windows__
+		#ifdef DOKUN_WIN32
 		    static LRESULT CALLBACK WndProc
 			    (HWND handle, UINT mes, WPARAM wParam, LPARAM lParam);
 		    static LRESULT CALLBACK MouseProc(int nCode, WPARAM wParam, LPARAM lParam);
@@ -137,28 +140,27 @@ private:
 		//Event * event;
 		Vector4 color;
 		static std::string name;
-        #ifdef __windows__
+        #ifdef DOKUN_WIN32
 		    int cursor;
 		#endif
 		// OpenGL
 		#ifdef DOKUN_OPENGL
-		    #ifdef __gnu_linux__
 		    #ifdef DOKUN_X11
 		        GLXContext context;
 			    XVisualInfo * visual_info;
 			    GLXFBConfig *fbc;
-		    #endif
 		    #endif
 		#endif		
 		// Vulkan
         #ifdef DOKUN_VULKAN
 		    VkSurfaceKHR surface;
 		#endif
+		// GLFW
         #ifdef DOKUN_GLFW
             GLFWwindow* window;
         #endif
 		// Windows (Win32)
-        #ifdef __windows__
+        #ifdef DOKUN_WIN32
 		    HWND handle;
 	        DWORD style;
 		    HINSTANCE instance;
@@ -176,12 +178,14 @@ private:
 			unsigned int style;
 			::Window root;
 			Visual * visual;
-			XEvent                  xev; // next_event
+			XEvent                  event; // next_event
 			XEvent                  nev; // peek_event
             XEvent                  xevent; // temp
             XSetWindowAttributes    swa;	
             GC gc;		
             Cursor cursor;
+            // Clipboard
+            std::string clipboard_text; 
 		#ifdef DOKUN_XCB
 		    xcb_connection_t*             connection;
 			xcb_window_t                  window;

@@ -1,5 +1,5 @@
-#ifndef _LOGGER
-#define _LOGGER
+#ifndef LOGGER_HPP_DOKUN
+#define LOGGER_HPP_DOKUN
 
 #define DOKUN_FUNCTION  String(__FUNCTION__).str()
 #define DOKUN_FILE      String(__FILE__).str()
@@ -24,6 +24,7 @@
 #include <typeinfo>
 #include <lua.hpp>
 
+namespace dokun {
 struct Logger {
 	Logger();// {}
 	Logger(int code, std::string type = "error"); // prints an error (string) depending on arg "code"
@@ -85,7 +86,7 @@ struct Logger {
 	friend class Texture;
 	friend class Renderer;
 	friend class FONT;
-#ifdef __windows__
+#ifdef DOKUN_WIN32
 	friend class Window;
 #endif
 #ifdef __gnu_linux__
@@ -130,7 +131,7 @@ private:
 		dokun_session.push_back(" line     : " + String::to_string(line));
 		dokun_session.push_back(" date     : " + date.str());
 		dokun_session.push_back(" time     : " + time.str());
-	#ifdef __windows__
+	#ifdef DOKUN_WIN32
 		dokun_session.push_back(" system   : Win32");
 	#endif
 	#ifdef __gnu_linux__
@@ -146,6 +147,7 @@ private:
 			//pop();
 	//}
 };
+}
 /* 
 ex. Logger(String("I" " love " "you"));
     Logger("I love you");

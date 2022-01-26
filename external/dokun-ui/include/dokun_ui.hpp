@@ -7,12 +7,12 @@
     for details please see LICENSE file or the website
     http://www.opensource.org/licenses/mit-license.php
 */
-#ifndef _DOKUN
-#define _DOKUN
-#define DOKUN_VERSION_MAJOR 1
-#define DOKUN_VERSION_MINOR 0
-#define DOKUN_VERSION_PATCH 0
-#define DOKUN_VERSION DOKUN_VERSION_MAJOR "." DOKUN_VERSION_MINOR "." DOKUN_VERSION_PATCH
+#ifndef DOKUN_UI_HPP
+#define DOKUN_UI_HPP
+#define DOKUN_UI_VERSION_MAJOR 1
+#define DOKUN_UI_VERSION_MINOR 0
+#define DOKUN_UI_VERSION_PATCH 0
+#define DOKUN_UI_VERSION DOKUN_UI_VERSION_MAJOR "." DOKUN_UI_VERSION_MINOR "." DOKUN_UI_VERSION_PATCH
 // header-only files.
 #include "platform.hpp"
 #include "types.hpp" 

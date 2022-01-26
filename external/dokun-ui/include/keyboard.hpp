@@ -1,8 +1,8 @@
-#ifndef _KEYBOARD
-#define _KEYBOARD
+#ifndef KEYBOARD_HPP_DOKUN
+#define KEYBOARD_HPP_DOKUN
 #include "platform.hpp"
 
-#ifdef __windows__ // must be Windows.
+#ifdef DOKUN_WIN32 // must be Windows.
 /*
 // confirmed !
 #define SPACEBAR 0x20
@@ -383,6 +383,7 @@
 #include <iostream>
 #include <lua.hpp>
 
+namespace dokun {
 class Keyboard {
 public:
     Keyboard();
@@ -391,29 +392,16 @@ public:
     static bool is_released(int key);                       static int is_released(lua_State *L);
     static bool is_down();                                  static int is_down(lua_State *L);
     static bool is_up();                                    static int is_up(lua_State *L);
-    enum Key { Up, Down, Left, Right,};
-	// window can now access Keyboard's private members
-	#ifndef __gnu_linux__
-	    friend class Window;
-	#endif
-	#ifdef __gnu_linux__
-	    friend class XWindow;
-	#endif
-	//friend class WINDOW;
+#ifdef DOKUN_X11    
+    static void fake_event(Display* display, const ::Window& window);
+#endif
+	friend class Window; // Window can now access Keyboard's private members //not XWindow but dokun::Window
 	static bool up;
 	static bool down;
 	static int key;
 private:
-#ifdef __gnu_linux__
-#ifdef DOKUN_X11
-public:
-static KeySym KeycodeToKeysym(Display *d, KeyCode k, unsigned i, unsigned l);
-static XKeyEvent createKeyEvent(Display *display, Window &win,
-                           Window &winRoot, bool press,
-                           int keycode, int modifiers);					   
-#endif
-#endif
-static void get_input(int key, bool pressed, bool released);
+    static void get_input(int key, bool pressed, bool released);
 };
+}
 #endif
 #endif
