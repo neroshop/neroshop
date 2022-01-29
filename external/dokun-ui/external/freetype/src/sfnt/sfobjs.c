@@ -4,7 +4,7 @@
  *
  *   SFNT object management (base).
  *
- * Copyright (C) 1996-2019 by
+ * Copyright (C) 1996-2021 by
  * David Turner, Robert Wilhelm, and Werner Lemberg.
  *
  * This file is part of the FreeType project, and may only be used,
@@ -16,22 +16,22 @@
  */
 
 
-#include <ft2build.h>
 #include "sfobjs.h"
 #include "ttload.h"
 #include "ttcmap.h"
 #include "ttkern.h"
 #include "sfwoff.h"
-#include FT_INTERNAL_SFNT_H
-#include FT_INTERNAL_DEBUG_H
-#include FT_TRUETYPE_IDS_H
-#include FT_TRUETYPE_TAGS_H
-#include FT_SERVICE_POSTSCRIPT_CMAPS_H
-#include FT_SFNT_NAMES_H
+#include "sfwoff2.h"
+#include <freetype/internal/sfnt.h>
+#include <freetype/internal/ftdebug.h>
+#include <freetype/ttnameid.h>
+#include <freetype/tttags.h>
+#include <freetype/internal/services/svpscmap.h>
+#include <freetype/ftsnames.h>
 
 #ifdef TT_CONFIG_OPTION_GX_VAR_SUPPORT
-#include FT_SERVICE_MULTIPLE_MASTERS_H
-#include FT_SERVICE_METRICS_VARIATIONS_H
+#include <freetype/internal/services/svmm.h>
+#include <freetype/internal/services/svmetric.h>
 #endif
 
 #include "sferrors.h"
@@ -65,7 +65,7 @@
 
     len = (FT_UInt)entry->stringLength / 2;
 
-    if ( FT_NEW_ARRAY( string, len + 1 ) )
+    if ( FT_QNEW_ARRAY( string, len + 1 ) )
       return NULL;
 
     for ( n = 0; n < len; n++ )
@@ -100,7 +100,7 @@
 
     len = (FT_UInt)entry->stringLength;
 
-    if ( FT_NEW_ARRAY( string, len + 1 ) )
+    if ( FT_QNEW_ARRAY( string, len + 1 ) )
       return NULL;
 
     for ( n = 0; n < len; n++ )
@@ -341,7 +341,9 @@
   /* synthesized into a TTC with one offset table.              */
   static FT_Error
   sfnt_open_font( FT_Stream  stream,
-                  TT_Face    face )
+                  TT_Face    face,
+                  FT_Int*    face_instance_index,
+                  FT_Long*   woff2_num_faces )
   {
     FT_Memory  memory = stream->memory;
     FT_Error   error;
@@ -377,6 +379,25 @@
         return error;
 
       error = woff_open_font( stream, face );
+      if ( error )
+        return error;
+
+      /* Swap out stream and retry! */
+      stream = face->root.stream;
+      goto retry;
+    }
+
+    if ( tag == TTAG_wOF2 )
+    {
+      FT_TRACE2(( "sfnt_open_font: file is a WOFF2; synthesizing SFNT\n" ));
+
+      if ( FT_STREAM_SEEK( offset ) )
+        return error;
+
+      error = woff2_open_font( stream,
+                               face,
+                               face_instance_index,
+                               woff2_num_faces );
       if ( error )
         return error;
 
@@ -425,7 +446,7 @@
         return FT_THROW( Array_Too_Large );
 
       /* now read the offsets of each font in the file */
-      if ( FT_NEW_ARRAY( face->ttc_header.offsets, face->ttc_header.count ) )
+      if ( FT_QNEW_ARRAY( face->ttc_header.offsets, face->ttc_header.count ) )
         return error;
 
       if ( FT_FRAME_ENTER( face->ttc_header.count * 4L ) )
@@ -443,7 +464,7 @@
       face->ttc_header.version = 1 << 16;
       face->ttc_header.count   = 1;
 
-      if ( FT_NEW( face->ttc_header.offsets ) )
+      if ( FT_QNEW( face->ttc_header.offsets ) )
         return error;
 
       face->ttc_header.offsets[0] = offset;
@@ -461,9 +482,10 @@
                   FT_Parameter*  params )
   {
     FT_Error      error;
-    FT_Library    library = face->root.driver->root.library;
+    FT_Library    library         = face->root.driver->root.library;
     SFNT_Service  sfnt;
     FT_Int        face_index;
+    FT_Long       woff2_num_faces = 0;
 
 
     /* for now, parameters are unused */
@@ -514,15 +536,18 @@
 
     FT_TRACE2(( "SFNT driver\n" ));
 
-    error = sfnt_open_font( stream, face );
+    error = sfnt_open_font( stream,
+                            face,
+                            &face_instance_index,
+                            &woff2_num_faces );
     if ( error )
       return error;
 
     /* Stream may have changed in sfnt_open_font. */
     stream = face->root.stream;
 
-    FT_TRACE2(( "sfnt_init_face: %08p (index %d)\n",
-                face,
+    FT_TRACE2(( "sfnt_init_face: %p (index %d)\n",
+                (void *)face,
                 face_instance_index ));
 
     face_index = FT_ABS( face_instance_index ) & 0xFFFF;
@@ -618,8 +643,8 @@
        */
 
       if ( ( face->variation_support & TT_FACE_FLAG_VAR_FVAR ) &&
-           !( FT_ALLOC( default_values, num_axes * 4 )  ||
-              FT_ALLOC( instance_values, num_axes * 4 ) )      )
+           !( FT_QALLOC(  default_values, num_axes * 4 ) ||
+              FT_QALLOC( instance_values, num_axes * 4 ) )     )
       {
         /* the current stream position is 16 bytes after the table start */
         FT_ULong  array_start = FT_STREAM_POS() - 16 + offset;
@@ -688,6 +713,10 @@
 
     face->root.num_faces  = face->ttc_header.count;
     face->root.face_index = face_instance_index;
+
+    /* `num_faces' for a WOFF2 needs to be handled separately. */
+    if ( woff2_num_faces )
+      face->root.num_faces = woff2_num_faces;
 
     return error;
   }
@@ -791,7 +820,8 @@
     /* it doesn't contain outlines.                                */
     /*                                                             */
 
-    FT_TRACE2(( "sfnt_load_face: %08p\n\n", face ));
+    FT_TRACE2(( "sfnt_load_face: %p\n", (void *)face ));
+    FT_TRACE2(( "\n" ));
 
     /* do we have outlines in there? */
 #ifdef FT_CONFIG_OPTION_INCREMENTAL
@@ -1120,9 +1150,10 @@
         }
 
         /* synthesize Unicode charmap if one is missing */
-        if ( !has_unicode )
+        if ( !has_unicode                                &&
+             root->face_flags & FT_FACE_FLAG_GLYPH_NAMES )
         {
-          FT_CharMapRec cmaprec;
+          FT_CharMapRec  cmaprec;
 
 
           cmaprec.face        = root;
@@ -1207,7 +1238,7 @@
           }
 
           /* reduce array size to the actually used elements */
-          (void)FT_RENEW_ARRAY( sbit_strike_map, count, bsize_idx );
+          (void)FT_QRENEW_ARRAY( sbit_strike_map, count, bsize_idx );
 
           /* from now on, all strike indices are mapped */
           /* using `sbit_strike_map'                    */

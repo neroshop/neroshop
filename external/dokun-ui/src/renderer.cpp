@@ -3543,7 +3543,7 @@ void Renderer::draw_checkbox(int x, int y, int width, int height, double angle, 
 	// Draw checkmark (foreground)
 	if(value == 1) { // only draw mark when box value is true (box is on)
 	shader.set_float("color", (checkmark_color.x / 255.0), (checkmark_color.y / 255.0), (checkmark_color.z / 255.0), checkmark_color.w);
-    glLineWidth(2.0);//(3.0);
+    glLineWidth(4.0);
     glBindVertexArray(checkmark_vertex_array_obj); // (vao start 2)
         glDrawArrays(GL_LINES, 0, 2); // start at index 0, 2 rects// draw 3 points to form a triangle
 	    glDrawArrays(GL_LINES, 2, 2); // start at index 2, 2 rects

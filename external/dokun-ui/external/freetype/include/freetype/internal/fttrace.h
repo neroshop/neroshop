@@ -4,7 +4,7 @@
  *
  *   Tracing handling (specification only).
  *
- * Copyright (C) 2002-2019 by
+ * Copyright (C) 2002-2021 by
  * David Turner, Robert Wilhelm, and Werner Lemberg.
  *
  * This file is part of the FreeType project, and may only be used,
@@ -17,6 +17,11 @@
 
 
   /* definitions of trace levels for FreeType 2 */
+
+  /* the maximum string length (if the argument to `FT_TRACE_DEF` */
+  /* gets used as a string) plus one charachter for ':' plus      */
+  /* another one for the trace level                              */
+#define FT_MAX_TRACE_LEVEL_LENGTH  (9 + 1 + 1)
 
   /* the first level must always be `trace_any' */
 FT_TRACE_DEF( any )
@@ -38,17 +43,20 @@ FT_TRACE_DEF( checksum )  /* bitmap checksum         (ftobjs.c)   */
 FT_TRACE_DEF( mm )        /* MM interface            (ftmm.c)     */
 FT_TRACE_DEF( psprops )   /* PS driver properties    (ftpsprop.c) */
 FT_TRACE_DEF( raccess )   /* resource fork accessor  (ftrfork.c)  */
-FT_TRACE_DEF( raster )    /* monochrome rasterizer   (ftraster.c) */
-FT_TRACE_DEF( smooth )    /* anti-aliasing raster    (ftgrays.c)  */
 FT_TRACE_DEF( synth )     /* bold/slant synthesizer  (ftsynth.c)  */
 
-  /* Cache sub-system */
-FT_TRACE_DEF( cache )     /* cache sub-system        (ftcache.c, etc.) */
+  /* rasterizers */
+FT_TRACE_DEF( raster )    /* monochrome rasterizer   (ftraster.c) */
+FT_TRACE_DEF( smooth )    /* anti-aliasing raster    (ftgrays.c)  */
+
+  /* cache sub-system */
+FT_TRACE_DEF( cache )     /* cache sub-system   (ftcache.c, etc.) */
 
   /* SFNT driver components */
 FT_TRACE_DEF( sfdriver )  /* SFNT font driver        (sfdriver.c) */
 FT_TRACE_DEF( sfobjs )    /* SFNT object handler     (sfobjs.c)   */
 FT_TRACE_DEF( sfwoff )    /* WOFF format handler     (sfwoff.c)   */
+FT_TRACE_DEF( sfwoff2 )   /* WOFF2 format handler    (sfwoff2.c)  */
 FT_TRACE_DEF( ttbdf )     /* TrueType embedded BDF   (ttbdf.c)    */
 FT_TRACE_DEF( ttcmap )    /* charmap handler         (ttcmap.c)   */
 FT_TRACE_DEF( ttcolr )    /* glyph layer table       (ttcolr.c)   */
@@ -76,6 +84,7 @@ FT_TRACE_DEF( t1objs )
 FT_TRACE_DEF( t1parse )
 
   /* PostScript helper module `psaux' */
+FT_TRACE_DEF( afmparse )
 FT_TRACE_DEF( cffdecode )
 FT_TRACE_DEF( psconv )
 FT_TRACE_DEF( psobjs )
@@ -150,8 +159,10 @@ FT_TRACE_DEF( afglobal )
 FT_TRACE_DEF( afhints )
 FT_TRACE_DEF( afmodule )
 FT_TRACE_DEF( aflatin )
-FT_TRACE_DEF( aflatin2 )
 FT_TRACE_DEF( afshaper )
-FT_TRACE_DEF( afwarp )
+
+  /* SDF components */
+FT_TRACE_DEF( sdf )       /* signed distance raster for outlines (ftsdf.c) */
+FT_TRACE_DEF( bsdf )      /* signed distance raster for bitmaps (ftbsdf.c) */
 
 /* END */

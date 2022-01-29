@@ -47,11 +47,11 @@ Edit * neroshop::Message::edit (nullptr);
 ////////////////////
 void neroshop::Message::init() 
 {
-    if(box == nullptr) 
+    if(!box) 
     {
         box = new Box();
         box->set_outline(true);
-        //box->set_draggable(true);
+        box->set_draggable(true);
         box->set_size(200, 50);
         //box->set_position((window.get_width() / 2) - (box->get_width() / 2), 
         //    (window.get_height() / 2) - (box->get_height() / 2));
@@ -73,41 +73,41 @@ void neroshop::Message::init()
 ////////////////////
 void neroshop::Message::show()
 {
-    if(box == nullptr) throw std::runtime_error("message box is not initialized");
+    if(!box) throw std::runtime_error("message box is not initialized");
     // if message is already being showned, create a second instance of message or ?
     box->show();
 }
 ////////////////////
 void neroshop::Message::hide()
 {
-    if(box == nullptr) throw std::runtime_error("message box is not initialized");
+    if(!box) throw std::runtime_error("message box is not initialized");
     box->hide();
 }
 ////////////////////
 void neroshop::Message::draw()
 {
-    if(box == nullptr) throw std::runtime_error("message box is not initialized");
+    if(!box) throw std::runtime_error("message box is not initialized");
     on_draw();
     box->draw();
 }
 ////////////////////
 void neroshop::Message::center(unsigned int window_width, unsigned int window_height) 
 {
-    if(box == nullptr) throw std::runtime_error("message box is not initialized");
+    if(!box) throw std::runtime_error("message box is not initialized");
     box->set_position((window_width / 2) - (box->get_width() / 2), (window_height / 2) - (box->get_height() / 2));    
 }
 ////////////////////
 void neroshop::Message::restore() 
 {
-    if(box == nullptr) throw std::runtime_error("message box is not initialized");
-    box->get_label()->set_string("");
+    if(!box) throw std::runtime_error("message box is not initialized");
+    box->get_label()->clear();
     box->get_label()->set_color(64, 64, 64, 1.0);//(255, 255, 255, 1.0);// restore original color (on hide)
     box->get_label()->set_alignment("center"); // restore alignment
     box->set_size(200, 50); // restore original size
     // hide all buttons, edits, etc.
-    if(ok_button) ok_button->set_visible(false);
-    if(cancel_button) cancel_button->set_visible(false);
-    if(edit) edit->set_visible(false);
+    if(ok_button) ok_button->hide();
+    if(cancel_button) cancel_button->hide();
+    if(edit) edit->hide(); //edit->set_sensative(false); // restore sensativeity
 }
 ////////////////////
 void neroshop::Message::add_button(const std::string& text) {
@@ -138,6 +138,7 @@ void neroshop::Message::add_edit() {
 	edit->set_size(300, 30);
 	edit->set_character_limit(256);
 	dokun::Label * edit_label = new dokun::Label(); // delete // free(): invalid pointer - if not on heap
+	edit_label->set_color(32, 32, 32);//Message::get_edit()->get_label()->set_color(32, 32, 32);
 	edit->set_label(*edit_label); // set label to prevent crash
 	edit->hide();
 	// adjust size of message_box so it can fit everything
@@ -150,15 +151,15 @@ void neroshop::Message::add_edit() {
 ////////////////////
 void neroshop::Message::set_text(const std::string& text) 
 {
-    if(box == nullptr) throw std::runtime_error("message box is not initialized");
+    if(!box) throw std::runtime_error("message box is not initialized");
     box->get_label()->set_string(text);
     // adjust box width based on label width
-    box->set_width(box->get_label()->get_width() * 1.5);
+    box->set_width(box->get_label()->get_width() * 1.5);//(box->get_label()->get_string().length() * (10 * 2));
 }
 ////////////////////
 void neroshop::Message::set_text(const std::string& text, int red, int green, int blue, double alpha) 
 {
-    if(box == nullptr) throw std::runtime_error("message box is not initialized");
+    if(!box) throw std::runtime_error("message box is not initialized");
     box->get_label()->set_string(text);
     // set text color
     box->get_label()->set_color(red, green, blue, alpha);
@@ -168,7 +169,7 @@ void neroshop::Message::set_text(const std::string& text, int red, int green, in
 ////////////////////
 void neroshop::Message::set_text(const std::string& text, std::string color) 
 {
-    if(box == nullptr) throw std::runtime_error("message box is not initialized");
+    if(!box) throw std::runtime_error("message box is not initialized");
     box->get_label()->set_string(text);
     // set text color
     if(String::lower(color) == "white") box->get_label()->set_color(255, 255, 255, 1.0);
@@ -196,7 +197,7 @@ void neroshop::Message::set_text(const std::string& text, std::string color)
 ////////////////////
 void neroshop::Message::set_title(const std::string& title) 
 {
-    if(box == nullptr) throw std::runtime_error("message box is not initialized");
+    if(!box) throw std::runtime_error("message box is not initialized");
     box->get_title_bar_label()->set_string(title);
 }
 ////////////////////
@@ -223,7 +224,7 @@ Edit * neroshop::Message::get_edit() {
 ////////////////////
 bool neroshop::Message::is_visible() 
 {
-    if(box == nullptr) throw std::runtime_error("message box is not initialized");
+    if(!box) throw std::runtime_error("message box is not initialized");
     return box->is_visible();
 }
 ////////////////////

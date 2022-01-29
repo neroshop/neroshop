@@ -4,19 +4,23 @@ An attempt to create an online marketplace for [Monero](https://getmonero.org/) 
 
 [![alt text](res/neroshop-logo.png)](https://github.com/larteyoh/neroshop "neroshop logo")
 
-language: `c++`
 
 ### naming: 
 The name neroshop comes from "nero", meaning black combined with the word "shop"
 
 ## dependencies:
-* [monero-cpp](https://github.com/monero-ecosystem/monero-cpp) (MIT) <!-- * [monero](https://github.com/monero-project/monero) (MIT) -->
-* [bcrypt](https://github.com/libbcrypt/) (public domain)
-* [sqlite3](https://www.sqlite.org/) (public domain)
-* [QR Code generator](https://github.com/nayuki/QR-Code-generator) (MIT)
-* [json](https://github.com/nlohmann/json/) (MIT)
-* [curl](https://curl.se/libcurl/) (The curl license - inspired by MIT/X)
+<!-- * [monero](https://github.com/monero-project/monero) (MIT) -->
+|      Library                                                       | Minimum Ver.    | Package                | License                |         Purpose                                                        |
+|--------------------------------------------------------------------|-----------------|------------------------|------------------------|------------------------------------------------------------------------|
+| * [monero-cpp](https://github.com/monero-ecosystem/monero-cpp)     | latest          |                        | MIT                    | monero wallet and payment system                                       |
+| * [bcrypt](https://github.com/rg3/libbcrypt.git)                          | ?               |                        | public domain          | password hashing                                                       |
+| * [sqlite3](https://sqlite.org/)                               | ?               |                        | public domain          | database management                                                    |
+| * [QR Code generator](https://github.com/nayuki/QR-Code-generator) | ?               |                        | MIT                    | qr code generation                                                     |
+| * [json](https://github.com/nlohmann/json/)                        | ?               |                        | MIT                    | json parsing (used in conjunction with libcurl)                        |
+| * [curl](https://curl.se/libcurl/)                                 | ?               | `libcurl4-openssl-dev` | curl (inspired by MIT) | multiprotocol file transfer (used to retrieve currency exchange rates) |
+| * [postgresql](https://www.postgresql.org/)                        | ?               | `postgresql`           | MIT                    | client-server database management                                      |
 <!-- [dokun-ui](custom library) (MIT) -->
+
 
 ### features:
 * no registration required (for buyers)
@@ -29,71 +33,56 @@ The name neroshop comes from "nero", meaning black combined with the word "shop"
 * product rating system (stars from 1-5)
 * and much more ...
 
-## Building neroshop
+
+# Compiling neroshop from source
+0. Install dependencies
 ```sh
-# before you start, install ccache for faster rebuilds: sudo apt install ccache
-# install essential build tools:
-sudo apt install build-essential                      # required by both monero and neroshop (g++, make)(min_version: 5)
-sudo apt install cmake                                # required by both monero and neroshop (min_version: 3.5)
-sudo apt install git                                  # required by both monero and neroshop (min_version: ?)
+sudo apt install build-essential cmake pkg-config
+# neroshop, dokun-ui
+sudo apt install libcurl4-openssl-dev postgresql
+# monero, monero-cpp
+sudo apt install git libboost-all-dev cmake g++ make libssl-dev libzmq3-dev libhidapi-dev libudev-dev libusb-1.0-0-dev libfox-1.6-dev # copied from https://github.com/monero-ecosystem/monero-cpp#using-this-library-in-your-project
+sudo apt update && sudo apt install build-essential cmake pkg-config libssl-dev libzmq3-dev libunbound-dev libsodium-dev libunwind8-dev liblzma-dev libreadline6-dev libldns-dev libexpat1-dev libpgm-dev qttools5-dev-tools libhidapi-dev libusb-1.0-0-dev libprotobuf-dev protobuf-compiler libudev-dev libboost-chrono-dev libboost-date-time-dev libboost-filesystem-dev libboost-locale-dev libboost-program-options-dev libboost-regex-dev libboost-serialization-dev libboost-system-dev libboost-thread-dev ccache doxygen graphviz # copied from https://github.com/monero-project/monero#dependencies
+```
 
-# install neroshop dependencies:
-sudo apt install libx11-dev                       # required by both dokun-ui and neroshop (min_version: ?)
-sudo apt install libgl1-mesa-dev libglu1-mesa-dev # required by both dokun-ui and neroshop (min_version: 3.3)
-sudo apt install libcurl4-openssl-dev             # required by neroshop (min_version: ?)
+1. Clone submodules and nested submodules
+```sh
+cd external
+git clone --recurse-submodules https://github.com/monero-ecosystem/monero-cpp.git
+git clone --recurse-submodules https://github.com/rg3/libbcrypt.git
+git clone --recurse-submodules https://github.com/nayuki/QR-Code-generator.git
+cd ../
+```
 
-#install monero dependencies (required):
-sudo apt install pkg-config             #  (min_version: any)
+2. Modify "external/monero-cpp/external/monero-project/CMakeLists.txt":
+`option(BUILD_GUI_DEPS "Build GUI dependencies." ON)`
+<!-- Step 2 is probably not necessary :/ -->
 
-# install monero and monero-cpp dependencies (required):
-sudo apt install libboost-all-dev libssl-dev libzmq3-dev             # (min_version_Boost: 1.58, min_version_OpenSSL: any, min_version_libzmq: 4.2.0)
-
-# install monero dependencies (required, but not listed by monero-cpp):
-# sudo apt install libpgm-dev libunbound-dev libsodium-dev             # (min_version_OpenPGM: ?, min_version_libunbound: 1.4.16, min_version_libsodium: ?)
-
-# install hw dependencies (for hardware wallet support):
-sudo apt install libhidapi-dev libprotobuf-dev libudev-dev libusb-1.0-0-dev protobuf-compiler             # (min_version: ?, min_version: ?, min_version: ?, min_version: ?, min_version: ?)
-
-# install monero-cpp dependencies (required - for GUI):
-# sudo apt install libfox-1.6-dev             # x11, opengl, png, etc. (min_version: )
-
-# to build the latest version of monero-cpp, follow the instructions here: https://github.com/monero-ecosystem/monero-cpp#using-this-library-in-your-project
-# or https://github.com/monero-project/monero#compiling-monero-from-source
-# update submodules (dependencies)
-##################################
-# git clone --recurse-submodules https://github.com/monero-ecosystem/monero-cpp.git
-# cd ./monero-cpp
-##                              ##
-#!/usr/bin/env bash
-
-# initialize submodules recursively
-git submodule update --init --force --recursive
-
-# update monero-project
-cd ./external/monero-project
-git checkout master
-git pull --ff-only origin master
-cd ../../
-##################################
-# modify "external/monero-cpp/external/monero-project/CMakeLists.txt"
-option(BUILD_GUI_DEPS "Build GUI dependencies." ON)
-# build monero-project twice to create libwallet_merged.a and other .a libraries
+3. Build monero-project twice to create libwallet_merged.a and other .a libraries
+```sh
 cd external/monero-cpp/external/monero-project && make release-static -j8 && make release-static -j8
+cd ../../../../
+```
 
-# next, build dokun-ui as static library (.a)
+4. Build neroshop (along with dokun-ui)
+```sh
+sudo -s -- << EOF
+# Build dokun-ui
+# make sure CMakeCache.txt, cmake_install.cmake, and Makefile have all been deleted if not
 cd external/dokun-ui
 cmake -G"Unix Makefiles"
 make
-# finally, we can build neroshop
 cd ../../
+# Build neroshop
 cmake -G"Unix Makefiles"
 make
+EOF
 ```
 
 ### NOTE:
 I am an awful programmer and still consider myself a noob at it since I don't know what I'm doing half of the time, so if there's anyone out there who can help me bring
-my project to life, I'd highly appreciate it! 
-I am also willing to compensate any contributors with Monero when I become financially stable.
+my project to life, I'd highly appreciate it :3 ! 
+I am also willing to compensate any contributors with Monero when I become financially stable >.< .
 
 [//]: # (git add CMakeLists.txt external/ include/ readme.md res/neroshop-logo.png res/wallets src/ todo.txt)
 [//]: # (git commit -m"empty commit")

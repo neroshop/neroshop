@@ -184,6 +184,7 @@ void Box::remove(const GUI& gui) // for box widgets only
         //auto iter = std::find_if(child_list.begin(), child_list.end(),
         //                     (GUI * child){return child == &gui;});
         //if (iter != child_list.end()) child_list.erase(iter);
+        //if(std::find(contents.begin(), contents.end(), &const_cast<neroshop::Item&>(item)) != contents.end());
         std::cout << "child removed from box (parent)" << std::endl;
     }
 }

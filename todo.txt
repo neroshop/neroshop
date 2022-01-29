@@ -36,6 +36,18 @@
 [Edit][Progress:79%]
 [Slider][Progress:88%]
 
+
+[DATABASE DESIGN]
+neroshop - for storing application data and transactions
+neroshop_user - for storing user data (accounts, settings, etc.)
+
+* guests' cart database will be stored locally and registered users' cart data will be stored on server.
+
+tables:
+users [stored in neroshop_user]
+
+
+
 [HIRING]
 - hire graphics programmer to fix and optimize rendering code in "renderer.cpp"
 - hire network programmer to implement communication between applications and servers.
@@ -50,4 +62,20 @@ hashing (pw)   : [bcrypt], scrypt, argon2, PBKDF2
 hashing (email): [SHA256], MD5, SHA1
 encryption     : [openssl], crypto++ (cryptopp), libsodium
 decentralized file hosting: siacoin, filecoin, ipfs (free), bittorent
+
+I realize that I need an online database that is scalable like MySQL or PostgreSQL 
+and I cannot use SQLite since its only for offline use :(
+
+Database Management Systems:
+mySQL (GNU, paid): https://dev.mysql.com/downloads/mysql/
+       https://dev.mysql.com/downloads/c-api/
+       https://dev.mysql.com/downloads/connector/cpp/
+postgreSQL (BSD or MIT): https://www.postgresql.org/download/    =>    https://www.postgresql.org/download/linux/ubuntu/
+                         source - https://www.postgresql.org/ftp/source/
+                         license - https://postgresql.org/about/licence
+                         cpp_bindings - http://www.pqxx.org/development/libpqxx/
+
+Converting from SQLite to PostgreSQL:
+pgloader: https://pgloader.io/about/
+          docs - https://pgloader.readthedocs.io/en/latest/
 

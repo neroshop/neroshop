@@ -1635,6 +1635,60 @@ external/freetype/src/cid/type1cid.c.s:
 	$(MAKE) -f CMakeFiles/libdokun-ui.dir/build.make CMakeFiles/libdokun-ui.dir/external/freetype/src/cid/type1cid.c.s
 .PHONY : external/freetype/src/cid/type1cid.c.s
 
+external/freetype/src/dlg/dlg.o: external/freetype/src/dlg/dlg.c.o
+
+.PHONY : external/freetype/src/dlg/dlg.o
+
+# target to build an object file
+external/freetype/src/dlg/dlg.c.o:
+	$(MAKE) -f CMakeFiles/libdokun-ui.dir/build.make CMakeFiles/libdokun-ui.dir/external/freetype/src/dlg/dlg.c.o
+.PHONY : external/freetype/src/dlg/dlg.c.o
+
+external/freetype/src/dlg/dlg.i: external/freetype/src/dlg/dlg.c.i
+
+.PHONY : external/freetype/src/dlg/dlg.i
+
+# target to preprocess a source file
+external/freetype/src/dlg/dlg.c.i:
+	$(MAKE) -f CMakeFiles/libdokun-ui.dir/build.make CMakeFiles/libdokun-ui.dir/external/freetype/src/dlg/dlg.c.i
+.PHONY : external/freetype/src/dlg/dlg.c.i
+
+external/freetype/src/dlg/dlg.s: external/freetype/src/dlg/dlg.c.s
+
+.PHONY : external/freetype/src/dlg/dlg.s
+
+# target to generate assembly for a file
+external/freetype/src/dlg/dlg.c.s:
+	$(MAKE) -f CMakeFiles/libdokun-ui.dir/build.make CMakeFiles/libdokun-ui.dir/external/freetype/src/dlg/dlg.c.s
+.PHONY : external/freetype/src/dlg/dlg.c.s
+
+external/freetype/src/dlg/dlgwrap.o: external/freetype/src/dlg/dlgwrap.c.o
+
+.PHONY : external/freetype/src/dlg/dlgwrap.o
+
+# target to build an object file
+external/freetype/src/dlg/dlgwrap.c.o:
+	$(MAKE) -f CMakeFiles/libdokun-ui.dir/build.make CMakeFiles/libdokun-ui.dir/external/freetype/src/dlg/dlgwrap.c.o
+.PHONY : external/freetype/src/dlg/dlgwrap.c.o
+
+external/freetype/src/dlg/dlgwrap.i: external/freetype/src/dlg/dlgwrap.c.i
+
+.PHONY : external/freetype/src/dlg/dlgwrap.i
+
+# target to preprocess a source file
+external/freetype/src/dlg/dlgwrap.c.i:
+	$(MAKE) -f CMakeFiles/libdokun-ui.dir/build.make CMakeFiles/libdokun-ui.dir/external/freetype/src/dlg/dlgwrap.c.i
+.PHONY : external/freetype/src/dlg/dlgwrap.c.i
+
+external/freetype/src/dlg/dlgwrap.s: external/freetype/src/dlg/dlgwrap.c.s
+
+.PHONY : external/freetype/src/dlg/dlgwrap.s
+
+# target to generate assembly for a file
+external/freetype/src/dlg/dlgwrap.c.s:
+	$(MAKE) -f CMakeFiles/libdokun-ui.dir/build.make CMakeFiles/libdokun-ui.dir/external/freetype/src/dlg/dlgwrap.c.s
+.PHONY : external/freetype/src/dlg/dlgwrap.c.s
+
 external/freetype/src/gzip/ftgzip.o: external/freetype/src/gzip/ftgzip.c.o
 
 .PHONY : external/freetype/src/gzip/ftgzip.o
@@ -1850,6 +1904,114 @@ external/freetype/src/raster/raster.s: external/freetype/src/raster/raster.c.s
 external/freetype/src/raster/raster.c.s:
 	$(MAKE) -f CMakeFiles/libdokun-ui.dir/build.make CMakeFiles/libdokun-ui.dir/external/freetype/src/raster/raster.c.s
 .PHONY : external/freetype/src/raster/raster.c.s
+
+external/freetype/src/sdf/ftbsdf.o: external/freetype/src/sdf/ftbsdf.c.o
+
+.PHONY : external/freetype/src/sdf/ftbsdf.o
+
+# target to build an object file
+external/freetype/src/sdf/ftbsdf.c.o:
+	$(MAKE) -f CMakeFiles/libdokun-ui.dir/build.make CMakeFiles/libdokun-ui.dir/external/freetype/src/sdf/ftbsdf.c.o
+.PHONY : external/freetype/src/sdf/ftbsdf.c.o
+
+external/freetype/src/sdf/ftbsdf.i: external/freetype/src/sdf/ftbsdf.c.i
+
+.PHONY : external/freetype/src/sdf/ftbsdf.i
+
+# target to preprocess a source file
+external/freetype/src/sdf/ftbsdf.c.i:
+	$(MAKE) -f CMakeFiles/libdokun-ui.dir/build.make CMakeFiles/libdokun-ui.dir/external/freetype/src/sdf/ftbsdf.c.i
+.PHONY : external/freetype/src/sdf/ftbsdf.c.i
+
+external/freetype/src/sdf/ftbsdf.s: external/freetype/src/sdf/ftbsdf.c.s
+
+.PHONY : external/freetype/src/sdf/ftbsdf.s
+
+# target to generate assembly for a file
+external/freetype/src/sdf/ftbsdf.c.s:
+	$(MAKE) -f CMakeFiles/libdokun-ui.dir/build.make CMakeFiles/libdokun-ui.dir/external/freetype/src/sdf/ftbsdf.c.s
+.PHONY : external/freetype/src/sdf/ftbsdf.c.s
+
+external/freetype/src/sdf/ftsdf.o: external/freetype/src/sdf/ftsdf.c.o
+
+.PHONY : external/freetype/src/sdf/ftsdf.o
+
+# target to build an object file
+external/freetype/src/sdf/ftsdf.c.o:
+	$(MAKE) -f CMakeFiles/libdokun-ui.dir/build.make CMakeFiles/libdokun-ui.dir/external/freetype/src/sdf/ftsdf.c.o
+.PHONY : external/freetype/src/sdf/ftsdf.c.o
+
+external/freetype/src/sdf/ftsdf.i: external/freetype/src/sdf/ftsdf.c.i
+
+.PHONY : external/freetype/src/sdf/ftsdf.i
+
+# target to preprocess a source file
+external/freetype/src/sdf/ftsdf.c.i:
+	$(MAKE) -f CMakeFiles/libdokun-ui.dir/build.make CMakeFiles/libdokun-ui.dir/external/freetype/src/sdf/ftsdf.c.i
+.PHONY : external/freetype/src/sdf/ftsdf.c.i
+
+external/freetype/src/sdf/ftsdf.s: external/freetype/src/sdf/ftsdf.c.s
+
+.PHONY : external/freetype/src/sdf/ftsdf.s
+
+# target to generate assembly for a file
+external/freetype/src/sdf/ftsdf.c.s:
+	$(MAKE) -f CMakeFiles/libdokun-ui.dir/build.make CMakeFiles/libdokun-ui.dir/external/freetype/src/sdf/ftsdf.c.s
+.PHONY : external/freetype/src/sdf/ftsdf.c.s
+
+external/freetype/src/sdf/ftsdfcommon.o: external/freetype/src/sdf/ftsdfcommon.c.o
+
+.PHONY : external/freetype/src/sdf/ftsdfcommon.o
+
+# target to build an object file
+external/freetype/src/sdf/ftsdfcommon.c.o:
+	$(MAKE) -f CMakeFiles/libdokun-ui.dir/build.make CMakeFiles/libdokun-ui.dir/external/freetype/src/sdf/ftsdfcommon.c.o
+.PHONY : external/freetype/src/sdf/ftsdfcommon.c.o
+
+external/freetype/src/sdf/ftsdfcommon.i: external/freetype/src/sdf/ftsdfcommon.c.i
+
+.PHONY : external/freetype/src/sdf/ftsdfcommon.i
+
+# target to preprocess a source file
+external/freetype/src/sdf/ftsdfcommon.c.i:
+	$(MAKE) -f CMakeFiles/libdokun-ui.dir/build.make CMakeFiles/libdokun-ui.dir/external/freetype/src/sdf/ftsdfcommon.c.i
+.PHONY : external/freetype/src/sdf/ftsdfcommon.c.i
+
+external/freetype/src/sdf/ftsdfcommon.s: external/freetype/src/sdf/ftsdfcommon.c.s
+
+.PHONY : external/freetype/src/sdf/ftsdfcommon.s
+
+# target to generate assembly for a file
+external/freetype/src/sdf/ftsdfcommon.c.s:
+	$(MAKE) -f CMakeFiles/libdokun-ui.dir/build.make CMakeFiles/libdokun-ui.dir/external/freetype/src/sdf/ftsdfcommon.c.s
+.PHONY : external/freetype/src/sdf/ftsdfcommon.c.s
+
+external/freetype/src/sdf/sdf.o: external/freetype/src/sdf/sdf.c.o
+
+.PHONY : external/freetype/src/sdf/sdf.o
+
+# target to build an object file
+external/freetype/src/sdf/sdf.c.o:
+	$(MAKE) -f CMakeFiles/libdokun-ui.dir/build.make CMakeFiles/libdokun-ui.dir/external/freetype/src/sdf/sdf.c.o
+.PHONY : external/freetype/src/sdf/sdf.c.o
+
+external/freetype/src/sdf/sdf.i: external/freetype/src/sdf/sdf.c.i
+
+.PHONY : external/freetype/src/sdf/sdf.i
+
+# target to preprocess a source file
+external/freetype/src/sdf/sdf.c.i:
+	$(MAKE) -f CMakeFiles/libdokun-ui.dir/build.make CMakeFiles/libdokun-ui.dir/external/freetype/src/sdf/sdf.c.i
+.PHONY : external/freetype/src/sdf/sdf.c.i
+
+external/freetype/src/sdf/sdf.s: external/freetype/src/sdf/sdf.c.s
+
+.PHONY : external/freetype/src/sdf/sdf.s
+
+# target to generate assembly for a file
+external/freetype/src/sdf/sdf.c.s:
+	$(MAKE) -f CMakeFiles/libdokun-ui.dir/build.make CMakeFiles/libdokun-ui.dir/external/freetype/src/sdf/sdf.c.s
+.PHONY : external/freetype/src/sdf/sdf.c.s
 
 external/freetype/src/sfnt/sfnt.o: external/freetype/src/sfnt/sfnt.c.o
 
@@ -8778,6 +8940,12 @@ help:
 	@echo "... external/freetype/src/cid/type1cid.o"
 	@echo "... external/freetype/src/cid/type1cid.i"
 	@echo "... external/freetype/src/cid/type1cid.s"
+	@echo "... external/freetype/src/dlg/dlg.o"
+	@echo "... external/freetype/src/dlg/dlg.i"
+	@echo "... external/freetype/src/dlg/dlg.s"
+	@echo "... external/freetype/src/dlg/dlgwrap.o"
+	@echo "... external/freetype/src/dlg/dlgwrap.i"
+	@echo "... external/freetype/src/dlg/dlgwrap.s"
 	@echo "... external/freetype/src/gzip/ftgzip.o"
 	@echo "... external/freetype/src/gzip/ftgzip.i"
 	@echo "... external/freetype/src/gzip/ftgzip.s"
@@ -8802,6 +8970,18 @@ help:
 	@echo "... external/freetype/src/raster/raster.o"
 	@echo "... external/freetype/src/raster/raster.i"
 	@echo "... external/freetype/src/raster/raster.s"
+	@echo "... external/freetype/src/sdf/ftbsdf.o"
+	@echo "... external/freetype/src/sdf/ftbsdf.i"
+	@echo "... external/freetype/src/sdf/ftbsdf.s"
+	@echo "... external/freetype/src/sdf/ftsdf.o"
+	@echo "... external/freetype/src/sdf/ftsdf.i"
+	@echo "... external/freetype/src/sdf/ftsdf.s"
+	@echo "... external/freetype/src/sdf/ftsdfcommon.o"
+	@echo "... external/freetype/src/sdf/ftsdfcommon.i"
+	@echo "... external/freetype/src/sdf/ftsdfcommon.s"
+	@echo "... external/freetype/src/sdf/sdf.o"
+	@echo "... external/freetype/src/sdf/sdf.i"
+	@echo "... external/freetype/src/sdf/sdf.s"
 	@echo "... external/freetype/src/sfnt/sfnt.o"
 	@echo "... external/freetype/src/sfnt/sfnt.i"
 	@echo "... external/freetype/src/sfnt/sfnt.s"

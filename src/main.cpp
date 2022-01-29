@@ -260,62 +260,58 @@ int main() {
     //font->set_height(20);//set_pixel_size(0, 18);
     font->load("res/Mecha-GXPg.ttf");//https://github.com/tonsky/FiraCode
     // -------------------------------- login -------------------------------------------
-    // temp
-    Edit * temp_edit = new Edit();
-    // user_edit
+    // user_edit ***************************************
     Edit * user_edit = new Edit();
     user_edit->set_size(500, 30); // try using an odd number for width=511
-    user_edit->set_character_limit(32);//(64);//(500);//temp - 500 for testing//(user_edit->get_width() / 10); // 50 characters MAX (width / space_cursor_takes_up_each_increment)
+    user_edit->set_character_limit(500);//(32);//(64);//(500);//temp - 500 for testing//(user_edit->get_width() / 10); // 50 characters MAX (width / space_cursor_takes_up_each_increment)
     user_edit->set_position((window.get_width() / 2) - (user_edit->get_width() / 2), (window.get_height() / 2) - (user_edit->get_height() / 2));
     Label user_edit_label;//(*font); // = new Label(); // Label causes a segment fault in GLFW!!
     //user_edit_label.set_font(static_cast<dokun::Font&>(*font));
-    user_edit_label.set_color(32, 32, 32);//(49, 39, 19, 1.0);
+    user_edit_label.set_color(0, 0, 0, 1.0);//(49, 39, 19, 1.0);
     user_edit_label.set_relative_position(0, 4);
     user_edit->set_label(user_edit_label);
     user_edit->set_placeholder_text("Username");
     user_edit->set_focus(true);
-    //user_edit->set_text("layter");//user_edit->set_cursor_color(0, 0, 255, 1.0);
     //user_edit->hide();
-    //user_edit->set_cursor_width(4);
     //user_edit->set_cursor_advance(9);
     //mecha_font->set_width(18);
-    // password_edit
+    // password_edit ***********************************
     Edit * pw_edit = new Edit();
     pw_edit->set_size(user_edit->get_width(), user_edit->get_height());
     pw_edit->set_character_limit(128);//(256);//(pw_edit->get_width() / 10);
     pw_edit->set_position(user_edit->get_x(), user_edit->get_y() + user_edit->get_height() + 5);
     Label pw_edit_label;
     pw_edit->set_label(pw_edit_label);
-    pw_edit->get_label()->set_color(32, 32, 32);
+    pw_edit->get_label()->set_color(0, 0, 0, 1.0);
     pw_edit->set_placeholder_text("Password");
-    //pw_edit->set_text("Password!23");
     pw_edit->set_sensative(true);
-    //pw_edit->set_readonly(true); // temporary [DELETE SOON!!]
     //pw_edit->hide();	
+    //pw_edit->set_text("Password!23");
     // user_icon - replace with label "Username"
     //Box * user_edit_icon = new Box();
-    Image user_edit_image(Icon::get["user_login"]->get_data(), 64, 64, 1, 4);
-    /*user_edit_icon->set_image(user_edit_image);
-    user_edit_icon->set_as_icon(true);
-    user_edit_icon->set_size(32, user_edit->get_height());
-    user_edit_icon->set_position(user_edit->get_x() - user_edit_icon->get_width() - 5, user_edit->get_y());*/
     // user_edit placeholder image ******************
-    //user_edit->set_placeholder_image(user_edit_image);    
-    // user_label
+    Image user_edit_image(Icon::get["user_login"]->get_data(), 64, 64, 1, 4);
+    user_edit_image.resize(24, 24);
+    user_edit_image.set_color(32, 32, 32, 0.6);
+    user_edit_image.set_alignment("right");
+    user_edit->set_placeholder_image(user_edit_image);    
+    // user_label ***********************************
     Label user_label;
     user_label.set_string("Username:");
     user_label.set_position(user_edit->get_x() - user_label.get_width() - 5, user_edit->get_y());
     //user_edit_icon->hide();
     // pw_icon - replace with label "Password"
     //Box * pw_edit_icon = new Box();
-    Image pw_edit_image(Icon::get["padlock"]->get_data(), 64, 64, 1, 4);
-    /*pw_edit_icon->set_image(pw_edit_image);
-    pw_edit_icon->set_as_icon(true);
-    pw_edit_icon->set_size(32, pw_edit->get_height());
-    pw_edit_icon->set_position(pw_edit->get_x() - pw_edit_icon->get_width() - 5, pw_edit->get_x());*/
     // pw_edit placeholder image ******************
-    //pw_edit->set_placeholder_image(pw_edit_image);
-    // pw_label
+    Image pw_edit_image(Icon::get["padlock"]->get_data(), 64, 64, 1, 4);
+    pw_edit_image.resize(24, 24);
+    pw_edit_image.set_color(32, 32, 32, 0.6); // grayed-out
+    pw_edit_image.set_alignment("right");//("left");//pw_edit_image.set_relative_position(0, (pw_edit->get_height() - pw_edit_image.get_height_scaled()) / 2);
+    //std::cout << "pw placeholder alignment: " << pw_edit_image.get_alignment() << std::endl;
+    //std::cout << "pw placeholder size: " << pw_edit_image.get_size() << std::endl;
+    //std::cout << "pw placeholder size (scaled): " << pw_edit_image.get_size_scaled() << std::endl;
+    pw_edit->set_placeholder_image(pw_edit_image);
+    // pw_label ***********************************
     Label pw_label;
     pw_label.set_string("Password:");
     pw_label.set_position(pw_edit->get_x() - pw_label.get_width() - 5, pw_edit->get_x());
@@ -328,9 +324,10 @@ int main() {
     //save_user_toggle->set_position(save_user_label.get_x() - save_user_label.get_width() - 1/*save_user_toggle->get_width()*/); 
     //pw_edit_icon->hide();
     // get "save_user" value from config file
-    save_user_toggle->set_value((Script::get_boolean(DB::get_lua_state(), "neroshop.account.saved") != -1) ? Script::get_boolean(DB::get_lua_state(), "neroshop.account.saved") : false);
+    // use sqlite instead of lua to save this.
+    ////save_user_toggle->set_value((Script::get_boolean(DB::get_lua_state(), "neroshop.account.saved") != -1) ? Script::get_boolean(DB::get_lua_state(), "neroshop.account.saved") : false);
     // store saved "username" value in user_edit
-    if(save_user_toggle->get_value() == true) user_edit->set_text(Script::get_string(DB::get_lua_state(), "neroshop.account.username"));
+    ////if(save_user_toggle->get_value() == true) user_edit->set_text(Script::get_string(DB::get_lua_state(), "neroshop.account.username"));
     // login_button
     Button * login_button = new Button();
     login_button->set_size(500, 40);//(250, 40); // login_width + register_width = must add up to 400 //(login_button->get_width(), 40);
@@ -450,7 +447,7 @@ int main() {
     // pw_edit - registration
     Edit * pw_edit_r = new Edit();
     pw_edit_r->set_size(250 - 5, 30); // added a gap (+5) between pw_edit_r and pw_confirm_edit
-    pw_edit_r->set_character_limit(pw_edit_r->get_width() / 10);
+    pw_edit_r->set_character_limit(128);//(pw_edit_r->get_width() / 10);
     Label pw_edit_label_r; // = new Label();
     pw_edit_label_r.set_color(0, 0, 0, 1.0);
     pw_edit_r->set_label(pw_edit_label_r);
@@ -775,8 +772,9 @@ int main() {
                 }
                 if(logged) //if(Validator::login(user_edit->get_text(), pw_edit->get_text()))
                 {
+                     // use sql instead of lua for storing the save_user
                     // upon login, save the username to config.lua
-                    if(save_user_toggle->get_value() == true) { // if value at the time of login is true
+                    /*if(save_user_toggle->get_value() == true) { // if value at the time of login is true
                         // find a way to edit config.lua: "neroshop.account.username = " + user_edit->get_text()
                         std::string cfg_username = Script::get_string(DB::get_lua_state(), "neroshop.account.username");
                         DB::edit_config((!cfg_username.empty()) ? ("username = \"" + cfg_username + "\"") : "username = \"\"", 
@@ -797,7 +795,7 @@ int main() {
                         // update save_user value (in config)
                         DB::edit_config("saved = false", (save_user_toggle->get_value()) ? "saved = true" : "saved = false");                
                         DB::edit_config("saved = true", (save_user_toggle->get_value()) ? "saved = true" : "saved = false");
-                    }
+                    }*/
                     // check whether user is a buyer or seller
                     unsigned int role_id = db->get_column_integer("users", "role_id", "name = " + DB::to_sql_string(user_edit->get_text()));
                     // create user
@@ -939,20 +937,23 @@ int main() {
             /////////////////////
             // wallet_password prompt (Message)
             if(Message::get_button("ok")) {
-            Message::get_edit()->get_label()->set_color(32, 32, 32);// temporary [delete soon]            
+                //Message::get_edit()->get_label()->set_color(32, 32, 32);// temporary [delete soon]            
+                // if OK is pressed, open the wallet file
                 if(Message::get_button("ok")->is_pressed() && !wallet_opened) { // Message::restore(); // restore defaults
                     std::string wallet_name = wallet_edit->get_text(); // wallet (uploaded) from edit
                     std::string password = Message::get_edit()->get_text(); // get pw from edit //std::string password; std::cin >> password;
                     Message::get_edit()->clear_all(); // clear pw from edit
                     wallet->open(wallet_name.substr(0, wallet_name.find(".")), password); // will crash if password is incorrect // Wallet::open requires that you exclude the ".keys" ext
                     wallet_opened = true;
+                    // hide message box, once wallet is opened            
                     Message::hide(); // hide and restore defaults // deleting buttons and edits (causes seg fault for some reason)
+                    // hide children - DOES NOT WORK FOR SOME REASON
+                    // hide edit and buttons once wallet is opened
+                    Message::get_edit()->hide();
+                    Message::get_button("ok")->hide();
                 }
             }
-            if(wallet_opened) { // hide edit and buttons once wallet is opened
-                Message::get_edit()->set_visible(false); //Message::get_edit()->hide();
-                Message::get_button("ok")->set_visible(false); //Message::get_button("ok")->hide();	        
-            }
+            /////////////////////
             if(wallet_button->is_pressed() && !Message::is_visible() && !wallet_opened) {
                 Message("Enter wallet name:");
                 Message::show();
@@ -1036,7 +1037,7 @@ int main() {
             //box->draw();
             //box->set_radius(round(slider->get_value()));
             //std::cout << "slider_value_rounded: " << round(slider->get_value()) << std::endl;//slider->get_value()
-            //checkbox->set_size(round(slider->get_value()), round(slider->get_value()));
+            checkbox->set_size(round(slider->get_value()), round(slider->get_value()));
             checkbox->draw();
             //radio->draw(); // causes SEGFAULT
             //Renderer::draw_checkbox(30, 500, slider->get_value(), slider->get_value(), 0, 1, 1, 0, 51, 102, 1.0,

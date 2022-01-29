@@ -1174,22 +1174,22 @@ void GUI::on_draw() // NOTE: position can be set regardless of whether gui is vi
 		{
 			GUI * gui = static_cast<GUI*>(Factory::get_gui_factory()->get_object(i));
 			// draw all children of self
-			if(gui->parent == this/* && gui->visible*/) gui->draw(); // no need to check if child is visible since draw() calls already do that
+			if(gui->parent == this) gui->draw(); // no need to check if child is visible since draw() calls already do that
 		}
 		//////////////////////////////////////////////////////////
-		// if self is pressed, set it as the current "focused" GUI
+		/*// if self is pressed, set it as the current "focused" GUI
 		if(is_pressed()) set_focused  (true);
 		// if mouse is pressed elsewhere
 		else if(!Mouse::is_over(get_rect()) && Mouse::is_pressed(1)) set_focused(false);   
 		#ifdef DOKUN_DEBUG0
 		   if(GUI::focused) std::cout << String(String::no_digit( typeid(*this).name()) ).str() << ":" << String(GUI::focused) << " gained focus" << std::endl; // #include <typeinfo>
-		#endif		
+		#endif		*/
 	} // end of is_visible()
 }
 /////////////
 void GUI::on_draw_before() // call this before drawing self
 {
-    on_trigger(); // if self is triggered (pressed)
+    ////on_trigger(); // if self is triggered (pressed)
     // if self has no parent, exit function
 	if(!has_parent()) return;
 	// set position of child

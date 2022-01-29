@@ -1,8 +1,8 @@
 // filename: db.hpp
 //#pragma once // use #ifndef _HPP, #define _HPP, and #endif instead for portability
 
-#ifndef DATA_HPP_NEROSHOP // recommended to add unique identifier like _NEROSHOP to avoid naming collision with other libraries
-#define DATA_HPP_NEROSHOP
+#ifndef DATABASE_HPP_NEROSHOP // recommended to add unique identifier like _NEROSHOP to avoid naming collision with other libraries
+#define DATABASE_HPP_NEROSHOP
 #define SQLITE3_TAG "\033[1;36m[sqlite3]:\033[0m "
 #define SQLITE3_TAG_ERR "\033[1;36m[sqlite3]:\033[0;91m "
 #define LUA_TAG "\033[1;94m[lua]:\033[0m "
@@ -77,6 +77,9 @@ public:
 	// reference - https://www.sqlite.org/capi3ref.html // function_list - https://www.sqlite.org/c3ref/funclist.html
 	// datatypes - https://www.sqlite.org/datatype3.html
 	// foreign keys - https://sqlite.org/foreignkeys.html
+	//////////////////////////////////
+	// PostgreSQL
+	//void pq_
 	//////////////////////////////////
 	// Lua
 	static bool load_config(lua_State *L);

@@ -3,7 +3,7 @@
 
 #include "ui.hpp"
 #include "label.hpp"
-//#include "image.hpp" // for placeholder image (not necessary, but its nice to have)
+#include "image.hpp" // for placeholder image (not necessary, but its nice to have)
 #include "math.hpp" // round10
 #include "timer.hpp" // for blinking cursor effect
 
@@ -52,11 +52,12 @@ class Edit : public GUI {// can be a line edit or text edit or search field
 		void set_text_background_color(unsigned int red, unsigned int green, unsigned int blue);
 		void set_text_background_color(unsigned int red, unsigned int green, unsigned int blue, double alpha); static int set_text_background_color(lua_State *L);
 		void set_placeholder_text(const std::string& placeholder_text); // added 2021-11-04
+		void set_placeholder_text_font(const dokun::Font& font); // allows user to change placeholder_text's font
 		void set_placeholder_text_color(unsigned int red, unsigned int green, unsigned int blue);
 		void set_placeholder_text_color(unsigned int red, unsigned int green, unsigned int blue, double alpha); // added 2021-12-17
 		void set_placeholder_text_color(const Vector3& color); // added 2021-12-17
 		void set_placeholder_text_color(const Vector4& color); // added 2021-12-17
-		//void set_placeholder_image(const Image& image); // placeholder image
+		void set_placeholder_image(const Image& image); // placeholder image
 		void set_focus(bool focus); // or set_active(bool active); 
 		// getters
 		dokun::Label * get_label()const;    static int get_label(lua_State *L);
@@ -77,10 +78,12 @@ class Edit : public GUI {// can be a line edit or text edit or search field
 		//std::string get_sensative_text()const;
 		std::string get_last_n_characters(unsigned int n)const;
 		// placeholder_text
-		dokun::Label * get_placeholder_label()const; // 2021-12-17
+		// user should not need access to placeholder_label, only the placeholder_text
+		// so Edit::get_placeholder_label() will be marked as deprecated or just set to private
+		////dokun::Label * get_placeholder_label()const; // 2021-12-17
 		std::string get_placeholder_text() const; // 2021-12-17
 		// placeholder image
-		//Image * get_placeholder_image() const;
+		Image * get_placeholder_image() const;
 		// added - 2019-08-31
 		int get_capacity() const;             static int get_capacity(lua_State *L);// returns the number of characters the edit is able to hold (in total)
 		int get_horizontal_capacity() const;  static int get_horizontal_capacity(lua_State *L);// returns the number of characters the edit is able to hold (horizontal)
@@ -161,7 +164,7 @@ class Edit : public GUI {// can be a line edit or text edit or search field
 		std::string selection; // selected string to be copied, cut, cleared, etc.
 		unsigned int start_index; // position where the text starts
 		// image (icon)
-		//Image * placeholder_image;
+		Image * placeholder_image;
 		// scrolling (visible) area
 		//double scroll_x, scroll_y;
 		// outline

@@ -4,6 +4,7 @@
 #include "box.hpp"
 #include "button.hpp"
 #include "edit.hpp"
+#include "timer.hpp"
 
 namespace neroshop {
 class Message {

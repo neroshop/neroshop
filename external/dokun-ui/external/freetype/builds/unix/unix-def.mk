@@ -3,7 +3,7 @@
 #
 
 
-# Copyright (C) 1996-2019 by
+# Copyright (C) 1996-2021 by
 # David Turner, Robert Wilhelm, and Werner Lemberg.
 #
 # This file is part of the FreeType project, and may only be used, modified,
@@ -24,15 +24,14 @@ SEP    := /
 # This is used for `make refdoc' and `make refdoc-venv'
 #
 PYTHON := python3
-PIP    := missing
 BIN    := bin
 
 # this is used for `make distclean' and `make install'
-OBJ_BUILD ?= $(BUILD_DIR)
+OBJ_BUILD ?= $(PLATFORM_DIR)
 
 # don't use `:=' here since the path stuff will be included after this file
 #
-FTSYS_SRC = $(BUILD_DIR)/ftsystem.c
+FTSYS_SRC = $(PLATFORM_DIR)/ftsystem.c
 
 INSTALL         := /usr/bin/install -c
 INSTALL_DATA    := ${INSTALL} -m 644
@@ -65,16 +64,16 @@ datarootdir  := ${prefix}/share
 datadir      := ${datarootdir}
 mandir       := ${datarootdir}/man
 
-version_info := 23:1:17
+version_info := 24:0:18
 
 # Variables needed for `freetype-config' and `freetype.pc'.
 #
-PKG_CONFIG         := 
-REQUIRES_PRIVATE   := 
+PKG_CONFIG         := /usr/bin/pkg-config
+REQUIRES_PRIVATE   := zlib, libpng
 LIBS_PRIVATE       := 
-LIBSSTATIC_CONFIG  := -lfreetype
+LIBSSTATIC_CONFIG  := -lfreetype -lz -lpng16 -lm -lz -lm -lz
 build_libtool_libs := 
-ft_version         := 23.1.17
+ft_version         := 24.0.18
 
 # The directory where all library files are placed.
 #

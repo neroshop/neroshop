@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.4.1)
 
-project(neroshop) # tested on gcc (Ubuntu 9.3.0-17ubuntu1~20.04) 9.3.0
+project(neroshop) # tested on Ubuntu 20.04 LTS (focal) with gcc (Ubuntu 9.3.0-17ubuntu1~20.04) 9.3.0
 
 set(VERSION_MAJOR "0")
 set(VERSION_MINOR "1")
@@ -280,8 +280,8 @@ set_target_properties(randomx PROPERTIES IMPORTED_LOCATION
 set(monero_src wallet_merged wallet_crypto #[[wallet_api]] wallet lmdb epee unbound easylogging cryptonote_core cryptonote_basic cryptonote_format_utils_basic mnemonics ringct ringct_basic common cncrypto blockchain_db blocks checkpoints device device_trezor multisig version randomx 
 ${boost_src} ${Protobuf_LIBRARY} ${LibUSB_LIBRARIES} ${OPENSSL_LIBRARIES} ${SODIUM_LIBRARY} ${hidapi_src} ${EXTRA_LIBRARIES}) #${Boost_LIBRARIES} #${HIDAPI_LIBRARIES}
 ######################################
-# monero-cpp-0.5.5 (wrapper)(started out with monero-cpp-0.5.1) - MIT (same as Monero)
-include_directories(external/monero-cpp/src/)
+# monero-cpp (wrapper)(started out with monero-cpp-0.5.1) - MIT (same as Monero) v0.5.5 => v0.5.10
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/monero-cpp/src/)
 set(monero_cpp_src
     external/monero-cpp/src/utils/gen_utils.cpp
     external/monero-cpp/src/utils/monero_utils.cpp
@@ -293,8 +293,8 @@ set(monero_cpp_src
 )
 ######################################
 # bcrypt
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/bcrypt) # openwall-bcrypt wrapper (https://github.com/libbcrypt/ | https://www.openwall.com/crypt/) - public domain (CC0/no "license")
-set(bcrypt_src external/bcrypt/crypt_blowfish/crypt_blowfish.c external/bcrypt/crypt_blowfish/crypt_gensalt.c external/bcrypt/crypt_blowfish/wrapper.c external/bcrypt/crypt_blowfish/x86.S external/bcrypt/bcrypt.c)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/libbcrypt) # openwall-bcrypt wrapper (https://github.com/libbcrypt/ | https://www.openwall.com/crypt/) - public domain (CC0/no "license")
+set(bcrypt_src external/libbcrypt/crypt_blowfish/crypt_blowfish.c external/libbcrypt/crypt_blowfish/crypt_gensalt.c external/libbcrypt/crypt_blowfish/wrapper.c external/libbcrypt/crypt_blowfish/x86.S external/libbcrypt/bcrypt.c)
 ######################################
 # sqlite3
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/sqlite) # v3.36.0 (https://www.sqlite.org/download.html) - public domain (CC0/no "license")
@@ -308,10 +308,14 @@ set(qr_code_generator_src ${CMAKE_CURRENT_SOURCE_DIR}/external/QR-Code-generator
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/json/single_include) # v3.10.3 (https://github.com/nlohmann/json/releases/) = MIT :)
 ######################################
 # curl
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/curl/include) # v.7.74.0 = the curl license (MIT/X)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/curl/lib)
-set(curl_src ${CMAKE_CURRENT_SOURCE_DIR}/src/libcurl.a)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/curl/include ${CMAKE_CURRENT_SOURCE_DIR}/external/curl/lib) #include_directories(${CURL_INCLUDE_DIRS}) # where to find curl/curl.h, etc.
+set(curl_src ${CMAKE_CURRENT_SOURCE_DIR}/src/libcurl.a) #${CURL_LIBRARIES})
 add_definitions(-DCURL_STATICLIB)
+######################################
+# postgresql
+include_directories(${PostgreSQL_INCLUDE_DIRS}) # v14.1
+set(postgresql_src ${PostgreSQL_LIBRARIES}) # /usr/lib/x86_64-linux-gnu/libpq.a  OR  /usr/lib/x86_64-linux-gnu/libpq.so
+#add_definitions(-DPostgreSQL_TYPE_INCLUDE_DIR=/usr/include/postgresql/)
 ######################################
 # glfw (optional)(build dokun-ui with the DOKUN_GLFW definition)
 #[[
@@ -367,7 +371,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include) # includes (.hpp)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/dependencies) # dependencies (dokun, etc.)
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/src) # sources (.cpp, .a)
-set(neroshop_src src/buyer.cpp src/carrier.cpp src/cart.cpp #[[src/catalog.cpp]] src/client.cpp src/converter.cpp src/db.cpp src/icon.cpp src/item.cpp src/main.cpp src/message.cpp src/order.cpp src/qr.cpp src/seller.cpp src/server.cpp src/user.cpp src/validator.cpp src/wallet.cpp)
+set(neroshop_src src/buyer.cpp src/carrier.cpp src/cart.cpp #[[src/catalog.cpp]] src/client.cpp src/converter.cpp src/db.cpp src/db2.cpp src/icon.cpp src/item.cpp src/main.cpp src/message.cpp src/order.cpp src/qr.cpp src/seller.cpp src/server.cpp src/user.cpp src/validator.cpp src/wallet.cpp)
 add_definitions(-DNEROSHOP_DEBUG) # for more detailed debugging, use -DNEROSHOP_DEBUG0
 add_executable(neroshop ${neroshop_src} ${monero_cpp_src} ${bcrypt_src} ${sqlite_src} ${qr_code_generator_src})
 target_link_libraries(neroshop ${monero_src})
@@ -394,9 +398,15 @@ if(OPENGL_FOUND)
 	target_link_libraries(daemon ${opengl_src})
 endif()
 find_package(CURL) # works
-if(CURL_FOUND)
+if(CURL_FOUND) #message("found libcurl v" ${CURL_VERSION_STRING})
 	target_link_libraries(neroshop ${curl_src})
     target_link_libraries(daemon ${curl_src} ${OPENSSL_LIBRARIES} ${dokun_ui_src}) # curl requires both openssl(used in monero) and zlib(used in dokun-ui)
+endif()
+find_package(PostgreSQL) # -DPostgreSQL_TYPE_INCLUDE_DIR=/usr/include/postgresql/
+if(PostgreSQL_FOUND)
+    message("-- Using PostgreSQL: ${PostgreSQL_LIBRARIES} (v${PostgreSQL_VERSION_STRING})")
+    target_link_libraries(neroshop ${PostgreSQL_LIBRARIES})
+    target_link_libraries(daemon ${PostgreSQL_LIBRARIES})
 endif()
 # cmake -G"Unix Makefiles"
 # to set the current compiler manually, use the following commands:

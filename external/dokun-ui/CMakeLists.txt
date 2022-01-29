@@ -165,7 +165,12 @@ set(theora_src external/theora/lib/analyze.c external/theora/lib/apiwrapper.c ex
 # video (playback)
 #############
 # font
-set(freetype_src external/freetype/src/autofit/autofit.c external/freetype/src/base/ftbase.c external/freetype/src/base/ftbbox.c external/freetype/src/base/ftbdf.c external/freetype/src/base/ftbitmap.c external/freetype/src/base/ftcid.c external/freetype/src/base/ftfstype.c external/freetype/src/base/ftgasp.c external/freetype/src/base/ftglyph.c external/freetype/src/base/ftgxval.c external/freetype/src/base/ftinit.c external/freetype/src/base/ftmm.c external/freetype/src/base/ftotval.c external/freetype/src/base/ftpatent.c external/freetype/src/base/ftpfr.c external/freetype/src/base/ftstroke.c external/freetype/src/base/ftsynth.c external/freetype/src/base/ftsystem.c external/freetype/src/base/fttype1.c external/freetype/src/base/ftwinfnt.c external/freetype/src/bdf/bdf.c external/freetype/src/bzip2/ftbzip2.c external/freetype/src/cache/ftcache.c external/freetype/src/cff/cff.c external/freetype/src/cid/type1cid.c external/freetype/src/gzip/ftgzip.c external/freetype/src/lzw/ftlzw.c external/freetype/src/pcf/pcf.c external/freetype/src/pfr/pfr.c external/freetype/src/psaux/psaux.c external/freetype/src/pshinter/pshinter.c external/freetype/src/psnames/psnames.c external/freetype/src/raster/raster.c external/freetype/src/sfnt/sfnt.c external/freetype/src/smooth/smooth.c external/freetype/src/truetype/truetype.c external/freetype/src/type1/type1.c external/freetype/src/type42/type42.c external/freetype/src/winfonts/winfnt.c) #freetype-2.10.1 - 2019-07-01 (https://www.freetype.org/download.html) (https://download.savannah.gnu.org/releases/freetype/)
+set(freetype_src external/freetype/src/autofit/autofit.c external/freetype/src/base/ftbase.c external/freetype/src/base/ftbbox.c external/freetype/src/base/ftbdf.c external/freetype/src/base/ftbitmap.c external/freetype/src/base/ftcid.c external/freetype/src/base/ftfstype.c external/freetype/src/base/ftgasp.c external/freetype/src/base/ftglyph.c external/freetype/src/base/ftgxval.c external/freetype/src/base/ftinit.c external/freetype/src/base/ftmm.c external/freetype/src/base/ftotval.c external/freetype/src/base/ftpatent.c external/freetype/src/base/ftpfr.c external/freetype/src/base/ftstroke.c external/freetype/src/base/ftsynth.c external/freetype/src/base/ftsystem.c external/freetype/src/base/fttype1.c external/freetype/src/base/ftwinfnt.c external/freetype/src/bdf/bdf.c external/freetype/src/bzip2/ftbzip2.c external/freetype/src/cache/ftcache.c external/freetype/src/cff/cff.c external/freetype/src/cid/type1cid.c external/freetype/src/gzip/ftgzip.c external/freetype/src/lzw/ftlzw.c external/freetype/src/pcf/pcf.c external/freetype/src/pfr/pfr.c external/freetype/src/psaux/psaux.c external/freetype/src/pshinter/pshinter.c external/freetype/src/psnames/psnames.c external/freetype/src/raster/raster.c external/freetype/src/sfnt/sfnt.c external/freetype/src/smooth/smooth.c external/freetype/src/truetype/truetype.c external/freetype/src/type1/type1.c external/freetype/src/type42/type42.c external/freetype/src/winfonts/winfnt.c #) #freetype-2.10.1 on 2019-07-01 => freetype-2.11.0 on 2022-01-28 (https://www.freetype.org/download.html) (https://download.savannah.gnu.org/releases/freetype/)
+# 2.10.2
+#external/freetype/src/sfnt/sfwoff2.c external/freetype/src/sfnt/woff2tags.c
+# 2.11.0
+external/freetype/src/dlg/dlg.c external/freetype/src/dlg/dlgwrap.c external/freetype/src/sdf/ftbsdf.c external/freetype/src/sdf/ftsdf.c external/freetype/src/sdf/ftsdfcommon.c #[[external/freetype/src/sdf/ftsdfrend.c]] external/freetype/src/sdf/sdf.c
+)
 if(WIN32)
     list(APPEND freetype_src external/freetype/builds/windows/ftdebug.c external/freetype/src/base/ftver.rc) #add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS)
 endif()
@@ -173,6 +178,8 @@ if(LINUX)
     list(APPEND freetype_src external/freetype/src/base/ftdebug.c) # fixes the undefined reference to `FT_Trace_Disable' error in Ubuntu
 endif()
 add_definitions(-DFT2_BUILD_LIBRARY) # define 'DLL_EXPORT' for freetype2 sharedlib (.dll). Other defines: -DFT_WITH_ZLIB=ON, -DFT_WITH_BZIP2=ON, -DFT_WITH_PNG=ON
+# added in 2.10.2: src/sfnt/sfwoff2.c, src/sfnt/woff2tags.c,     # removed in 2.10.3: include/freetype/internal/internal.h
+# added in 2.11.0: builds/windows/ftsystem.c, src/dlg/dlg.c, src/dlg/dlgwrap.c, src/sdf/ftbsdf.c, src/sdf/ftsdf.c, src/sdf/ftsdfcommon.c, src/sdf/ftsdfrend.c, src/sdf/sdf.c, tests/issue-1063/main.c
 #############
 # audio (playback)
 if(WIN32)
