@@ -5,24 +5,24 @@ An attempt to create an online marketplace for [Monero](https://getmonero.org/) 
 [![alt text](res/neroshop-logo.png)](https://github.com/larteyoh/neroshop "neroshop logo")
 
 
-### naming: 
+### Naming: 
 The name neroshop comes from "nero", meaning black combined with the word "shop"
 
-## dependencies:
+## Dependencies:
 <!-- * [monero](https://github.com/monero-project/monero) (MIT) -->
 |      Library                                                       | Minimum Ver.    | Package                | License                |         Purpose                                                        |
 |--------------------------------------------------------------------|-----------------|------------------------|------------------------|------------------------------------------------------------------------|
-| * [monero-cpp](https://github.com/monero-ecosystem/monero-cpp)     | latest          |                        | MIT                    | monero wallet and payment system                                       |
-| * [bcrypt](https://github.com/rg3/libbcrypt.git)                          | ?               |                        | public domain          | password hashing                                                       |
-| * [sqlite3](https://sqlite.org/)                               | ?               |                        | public domain          | database management                                                    |
-| * [QR Code generator](https://github.com/nayuki/QR-Code-generator) | ?               |                        | MIT                    | qr code generation                                                     |
-| * [json](https://github.com/nlohmann/json/)                        | ?               |                        | MIT                    | json parsing (used in conjunction with libcurl)                        |
-| * [curl](https://curl.se/libcurl/)                                 | ?               | `libcurl4-openssl-dev` | curl (inspired by MIT) | multiprotocol file transfer (used to retrieve currency exchange rates) |
-| * [postgresql](https://www.postgresql.org/)                        | ?               | `postgresql`           | MIT                    | client-server database management                                      |
+| [monero-cpp](https://github.com/monero-ecosystem/monero-cpp)       | latest          |                        | MIT                    | monero wallet and payment system                                       |
+| [bcrypt](https://github.com/rg3/libbcrypt.git)                     | ?               |                        | public domain          | password hashing                                                       |
+| [sqlite3](https://sqlite.org/)                                     | ?               |                        | public domain          | database management                                                    |
+| [QR Code generator](https://github.com/nayuki/QR-Code-generator)   | ?               |                        | MIT                    | qr code generation                                                     |
+| [json](https://github.com/nlohmann/json/)                          | ?               |                        | MIT                    | json parsing (used in conjunction with libcurl)                        |
+| [curl](https://curl.se/libcurl/)                                   | ?               | `libcurl4-openssl-dev` | curl (inspired by MIT) | multiprotocol file transfer (used to retrieve currency exchange rates) |
+| [postgresql](https://www.postgresql.org/)                          | ?               | `postgresql`           | MIT                    | client-server database management                                      |
 <!-- [dokun-ui](custom library) (MIT) -->
 
 
-### features:
+### Features:
 * no registration required (for buyers)
 * no KYC or AML
 * buy and sell products with monero (and possibly other private by default crypto in the near future)
@@ -37,12 +37,14 @@ The name neroshop comes from "nero", meaning black combined with the word "shop"
 # Compiling neroshop from source
 0. Install dependencies
 ```sh
-sudo apt install build-essential cmake pkg-config
+sudo -s -- << EOF
 # neroshop, dokun-ui
+sudo apt install libx11-dev libgl1-mesa-dev libglu1-mesa-dev
 sudo apt install libcurl4-openssl-dev postgresql
 # monero, monero-cpp
 sudo apt install git libboost-all-dev cmake g++ make libssl-dev libzmq3-dev libhidapi-dev libudev-dev libusb-1.0-0-dev libfox-1.6-dev # copied from https://github.com/monero-ecosystem/monero-cpp#using-this-library-in-your-project
 sudo apt update && sudo apt install build-essential cmake pkg-config libssl-dev libzmq3-dev libunbound-dev libsodium-dev libunwind8-dev liblzma-dev libreadline6-dev libldns-dev libexpat1-dev libpgm-dev qttools5-dev-tools libhidapi-dev libusb-1.0-0-dev libprotobuf-dev protobuf-compiler libudev-dev libboost-chrono-dev libboost-date-time-dev libboost-filesystem-dev libboost-locale-dev libboost-program-options-dev libboost-regex-dev libboost-serialization-dev libboost-system-dev libboost-thread-dev ccache doxygen graphviz # copied from https://github.com/monero-project/monero#dependencies
+EOF
 ```
 
 1. Clone submodules and nested submodules
