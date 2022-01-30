@@ -18,7 +18,7 @@ curl internals
  - [FILE](#file)
  - [SMB](#smb)
  - [LDAP](#ldap)
- - [E-mail](#email)
+ - [Email](#email)
  - [General](#general)
  - [Persistent Connections](#persistent)
  - [multi interface/non-blocking](#multi)
@@ -62,7 +62,7 @@ git
 ===
 
  All changes to the sources are committed to the git repository as soon as
- they're somewhat verified to work. Changes shall be committed as independently
+ they are somewhat verified to work. Changes shall be committed as independently
  as possible so that individual changes can be easily spotted and tracked
  afterwards.
 
@@ -73,8 +73,8 @@ git
 Portability
 ===========
 
- We write curl and libcurl to compile with C89 compilers.  On 32-bit and up
- machines. Most of libcurl assumes more or less POSIX compliance but that's
+ We write curl and libcurl to compile with C89 compilers. On 32-bit and up
+ machines. Most of libcurl assumes more or less POSIX compliance but that is
  not a requirement.
 
  We write libcurl to build and work with lots of third party tools, and we
@@ -88,7 +88,7 @@ Dependencies
  - GnuTLS       3.1.10
  - zlib         1.1.4
  - libssh2      1.0
- - c-ares       1.6.0
+ - c-ares       1.16.0
  - libidn2      2.0.0
  - wolfSSL      2.0.0
  - openldap     2.0
@@ -103,7 +103,7 @@ Operating Systems
 -----------------
 
  On systems where configure runs, we aim at working on them all - if they have
- a suitable C compiler. On systems that don't run configure, we strive to keep
+ a suitable C compiler. On systems that do not run configure, we strive to keep
  curl running correctly on:
 
  - Windows      98
@@ -143,9 +143,9 @@ Windows vs Unix
 
  2. Windows requires a couple of init calls for the socket stuff.
 
-   That's taken care of by the `curl_global_init()` call, but if other libs
+   That is taken care of by the `curl_global_init()` call, but if other libs
    also do it etc there might be reasons for applications to alter that
-   behaviour.
+   behavior.
 
    We require WinSock version 2.2 and load this version during global init.
 
@@ -162,13 +162,13 @@ Windows vs Unix
 
  Inside the source code, We make an effort to avoid `#ifdef [Your OS]`. All
  conditionals that deal with features *should* instead be in the format
- `#ifdef HAVE_THAT_WEIRD_FUNCTION`. Since Windows can't run configure scripts,
+ `#ifdef HAVE_THAT_WEIRD_FUNCTION`. Since Windows cannot run configure scripts,
  we maintain a `curl_config-win32.h` file in lib directory that is supposed to
  look exactly like a `curl_config.h` file would have looked like on a Windows
- machine!
+ machine.
 
  Generally speaking: always remember that this will be compiled on dozens of
- operating systems. Don't walk on the edge!
+ operating systems. Do not walk on the edge.
 
 <a name="Library"></a>
 Library
@@ -184,14 +184,15 @@ Library
 
  `curl_global_init()` and `curl_global_cleanup()` should be called by the
  application to initialize and clean up global stuff in the library. As of
- today, it can handle the global SSL initing if SSL is enabled and it can init
- the socket layer on windows machines. libcurl itself has no "global" scope.
+ today, it can handle the global SSL initialization if SSL is enabled and it
+ can initialize the socket layer on Windows machines. libcurl itself has no
+ "global" scope.
 
  All printf()-style functions use the supplied clones in `lib/mprintf.c`. This
  makes sure we stay absolutely platform independent.
 
  [ `curl_easy_init()`][2] allocates an internal struct and makes some
- initializations.  The returned handle does not reveal internals. This is the
+ initializations. The returned handle does not reveal internals. This is the
  `Curl_easy` struct which works as an "anchor" struct for all `curl_easy`
  functions. All connections performed will get connect-specific data allocated
  that should be used for things related to particular connections/requests.
@@ -202,7 +203,7 @@ Library
  the `Curl_easy` struct.
 
  `curl_easy_perform()` is just a wrapper function that makes use of the multi
- API.  It basically calls `curl_multi_init()`, `curl_multi_add_handle()`,
+ API. It basically calls `curl_multi_init()`, `curl_multi_add_handle()`,
  `curl_multi_wait()`, and `curl_multi_perform()` until the transfer is done
  and then returns.
 
@@ -226,7 +227,7 @@ Curl_connect()
    This function makes sure there's an allocated and initiated `connectdata`
    struct that is used for this particular connection only (although there may
    be several requests performed on the same connect). A bunch of things are
-   inited/inherited from the `Curl_easy` struct.
+   initialized/inherited from the `Curl_easy` struct.
 
 <a name="multi_do"></a>
 multi_do()
@@ -236,7 +237,7 @@ multi_do()
    The functions are named after the protocols they handle.
 
    The protocol-specific functions of course deal with protocol-specific
-   negotiations and setup. When they're ready to start the actual file
+   negotiations and setup. When they are ready to start the actual file
    transfer they call the `Curl_setup_transfer()` function (in
    `lib/transfer.c`) to setup the transfer and returns.
 
@@ -275,7 +276,7 @@ Curl_disconnect()
    connections so this is not normally called when `curl_easy_perform()` is
    used. This function is only used when we are certain that no more transfers
    are going to be made on the connection. It can be also closed by force, or
-   it can be called to make sure that libcurl doesn't keep too many
+   it can be called to make sure that libcurl does not keep too many
    connections alive at the same time.
 
    This function cleans up all resources that are associated with a single
@@ -353,10 +354,10 @@ LDAP
  Everything LDAP is in `lib/ldap.c` and `lib/openldap.c`.
 
 <a name="email"></a>
-E-mail
+Email
 ======
 
- The e-mail related source code is in `lib/imap.c`, `lib/pop3.c` and
+ The email related source code is in `lib/imap.c`, `lib/pop3.c` and
  `lib/smtp.c`.
 
 <a name="general"></a>
@@ -371,14 +372,14 @@ General
  more).
 
  `lib/getenv.c` offers `curl_getenv()` which is for reading environment
- variables in a neat platform independent way. That's used in the client, but
+ variables in a neat platform independent way. That is used in the client, but
  also in `lib/url.c` when checking the proxy environment variables. Note that
  contrary to the normal unix `getenv()`, this returns an allocated buffer that
  must be `free()`ed after use.
 
  `lib/netrc.c` holds the `.netrc` parser.
 
- `lib/timeval.c` features replacement functions for systems that don't have
+ `lib/timeval.c` features replacement functions for systems that do not have
  `gettimeofday()` and a few support functions for timeval conversions.
 
  A function named `curl_version()` that returns the full curl version string
@@ -407,7 +408,7 @@ Persistent Connections
 
  - When the transfer operation is complete, the connection is left
    open. Particular options may tell libcurl not to, and protocols may signal
-   closure on connections and then they won't be kept open, of course.
+   closure on connections and then they will not be kept open, of course.
 
  - When `curl_easy_cleanup()` is called, we close all still opened connections,
    unless of course the multi interface "owns" the connections.
@@ -430,7 +431,7 @@ multi interface/non-blocking
  The FTP and the SFTP/SCP protocols are examples of how we adapt and adjust
  the code to allow non-blocking operations even on multi-stage command-
  response protocols. They are built around state machines that return when
- they would otherwise block waiting for data.  The DICT, LDAP and TELNET
+ they would otherwise block waiting for data. The DICT, LDAP and TELNET
  protocols are crappy examples and they are subject for rewrite in the future
  to better fit the libcurl protocol family.
 
@@ -453,7 +454,7 @@ SSL libraries
 Library Symbols
 ===============
 
- All symbols used internally in libcurl must use a `Curl_` prefix if they're
+ All symbols used internally in libcurl must use a `Curl_` prefix if they are
  used in more than a single file. Single-file symbols must be made static.
  Public ("exported") symbols must use a `curl_` prefix. (There are exceptions,
  but they are to be changed to follow this pattern in future versions.) Public
@@ -464,9 +465,9 @@ Library Symbols
 Return Codes and Informationals
 ===============================
 
- I've made things simple. Almost every function in libcurl returns a CURLcode,
+ I have made things simple. Almost every function in libcurl returns a CURLcode,
  that must be `CURLE_OK` if everything is OK or otherwise a suitable error
- code as the `curl/curl.h` include file defines. The very spot that detects an
+ code as the `curl/curl.h` include file defines. The place that detects an
  error must use the `Curl_failf()` function to set the human-readable error
  description.
 
@@ -474,7 +475,7 @@ Return Codes and Informationals
  must supply a fair number of informational messages by using the
  `Curl_infof()` function. Those messages are only displayed when the user
  explicitly asks for them. They are best used when revealing information that
- isn't otherwise obvious.
+ is not otherwise obvious.
 
 <a name="abi"></a>
 API/ABI
@@ -552,7 +553,7 @@ Test Suite
  `httpserver.pl` and `ftpserver.pl` before all the test cases are performed.
  The test suite currently only runs on Unix-like platforms.
 
- You'll find a description of the test suite in the `tests/README` file, and
+ you will find a description of the test suite in the `tests/README` file, and
  the test case data files in the `tests/FILEFORMAT` file.
 
  The test suite automatically detects if curl was built with the memory
@@ -590,7 +591,7 @@ Asynchronous name resolves
  Lastly, I also changed libcurl to be single-threaded rather than
  multi-threaded, again this was to prevent some duplicate symbol errors. I'm
  not sure why I needed to change everything to single-threaded, but when I
- didn't I got redefinition errors for several CRT functions (`malloc()`,
+ did not I got redefinition errors for several CRT functions (`malloc()`,
  `stricmp()`, etc.)
 
 <a name="curl_off_t"></a>
@@ -673,7 +674,7 @@ Content Encoding
 ## Supported content encodings
 
  The `deflate`, `gzip` and `br` content encodings are supported by libcurl.
- Both regular and chunked transfers work fine.  The zlib library is required
+ Both regular and chunked transfers work fine. The zlib library is required
  for the `deflate` and `gzip` encodings, while the brotli decoding library is
  for the `br` encoding.
 
@@ -691,12 +692,12 @@ Content Encoding
  that will work (besides `identity`, which does nothing) are `deflate`,
  `gzip` and `br`. If a response is encoded using the `compress` or methods,
  libcurl will return an error indicating that the response could
- not be decoded.  If `<string>` is NULL no `Accept-Encoding` header is
+ not be decoded. If `<string>` is NULL no `Accept-Encoding` header is
  generated. If `<string>` is a zero-length string, then an `Accept-Encoding`
  header containing all supported encodings will be generated.
 
  The [`CURLOPT_ACCEPT_ENCODING`][5] must be set to any non-NULL value for
- content to be automatically decoded.  If it is not set and the server still
+ content to be automatically decoded. If it is not set and the server still
  sends encoded content (despite not having been asked), the data is returned
  in its raw form and the `Content-Encoding` type is not checked.
 
@@ -715,8 +716,8 @@ Content Encoding
 ## `CURLRES_IPV6`
 
  this host has `getaddrinfo()` and family, and thus we use that. The host may
- not be able to resolve IPv6, but we don't really have to take that into
- account. Hosts that aren't IPv6-enabled have `CURLRES_IPV4` defined.
+ not be able to resolve IPv6, but we do not really have to take that into
+ account. Hosts that are not IPv6-enabled have `CURLRES_IPV4` defined.
 
 ## `CURLRES_ARES`
 
@@ -773,7 +774,9 @@ Track Down Memory Leaks
 
   Add a line in your application code:
 
-       `curl_dbg_memdebug("dump");`
+```c
+  curl_dbg_memdebug("dump");
+```
 
   This will make the malloc debug system output a full trace of all resource
   using functions to the given file name. Make sure you rebuild your program
@@ -794,9 +797,9 @@ Track Down Memory Leaks
     tests/memanalyze.pl dump
 
   This now outputs a report on what resources that were allocated but never
-  freed etc. This report is very fine for posting to the list!
+  freed etc. This report is fine for posting to the list.
 
-  If this doesn't produce any output, no leak was detected in libcurl. Then
+  If this does not produce any output, no leak was detected in libcurl. Then
   the leak is mostly likely to be in your code.
 
 <a name="multi_socket"></a>
@@ -809,8 +812,7 @@ Track Down Memory Leaks
 
  1. The application can use whatever event system it likes as it gets info
     from libcurl about what file descriptors libcurl waits for what action
-    on. (The previous API returns `fd_sets` which is very
-    `select()`-centric).
+    on. (The previous API returns `fd_sets` which is `select()`-centric).
 
  2. When the application discovers action on a single socket, it calls
     libcurl and informs that there was action on this particular socket and
@@ -835,7 +837,7 @@ Track Down Memory Leaks
 
  We created an internal "socket to easy handles" hash table that given
  a socket (file descriptor) returns the easy handle that waits for action on
- that socket.  This hash is made using the already existing hash code
+ that socket. This hash is made using the already existing hash code
  (previously only used for the DNS cache).
 
  To make libcurl able to report plain sockets in the socket callback, we had
@@ -851,7 +853,7 @@ Structs in libcurl
 ==================
 
 This section should cover 7.32.0 pretty accurately, but will make sense even
-for older and later versions as things don't change drastically that often.
+for older and later versions as things do not change drastically that often.
 
 <a name="Curl_easy"></a>
 ## Curl_easy
@@ -897,7 +899,7 @@ for older and later versions as things don't change drastically that often.
   performance boost.
 
   Each `connectdata` identifies a single physical connection to a server. If
-  the connection can't be kept alive, the connection will be closed after use
+  the connection cannot be kept alive, the connection will be closed after use
   and then this struct can be removed from the cache and freed.
 
   Thus, the same `Curl_easy` can be used multiple times and each time select
@@ -973,7 +975,9 @@ for older and later versions as things don't change drastically that often.
   from a single array which is scanned through when a URL is given to libcurl
   to work with.
 
-  `->scheme` is the URL scheme name, usually spelled out in uppercase. That's
+  The concrete function pointer prototypes can be found in `lib/urldata.h`.
+
+  `->scheme` is the URL scheme name, usually spelled out in uppercase. That is
   "HTTP" or "FTP" etc. SSL versions of the protocol need their own
   `Curl_handler` setup so HTTPS separate from HTTP.
 
@@ -1003,7 +1007,7 @@ for older and later versions as things don't change drastically that often.
 
   `->doing` keeps getting called while issuing the transfer request command(s)
 
-  `->done` gets called when the transfer is complete and DONE. That's after the
+  `->done` gets called when the transfer is complete and DONE. That is after the
   main data has been transferred.
 
   `->do_more` gets called during the `DO_MORE` state. The FTP protocol uses
@@ -1014,12 +1018,14 @@ for older and later versions as things don't change drastically that often.
   `->domore_getsock`
   `->perform_getsock`
   Functions that return socket information. Which socket(s) to wait for which
-  action(s) during the particular multi state.
+  I/O action(s) during the particular multi state.
 
   `->disconnect` is called immediately before the TCP connection is shutdown.
 
   `->readwrite` gets called during transfer to allow the protocol to do extra
   reads/writes
+
+  `->attach` attaches a transfer to the connection.
 
   `->defport` is the default report TCP or UDP port this protocol uses
 
@@ -1042,12 +1048,12 @@ for older and later versions as things don't change drastically that often.
     limit which "direction" of socket actions that the main engine will
     concern itself with.
 
-  - `PROTOPT_NONETWORK` - a protocol that doesn't use network (read `file:`)
+  - `PROTOPT_NONETWORK` - a protocol that does not use network (read `file:`)
 
   - `PROTOPT_NEEDSPWD` - this protocol needs a password and will use a default
     one unless one is provided
 
-  - `PROTOPT_NOURLQUERY` - this protocol can't handle a query part on the URL
+  - `PROTOPT_NOURLQUERY` - this protocol cannot handle a query part on the URL
     (?foo=bar)
 
 <a name="conncache"></a>
@@ -1069,7 +1075,7 @@ for older and later versions as things don't change drastically that often.
   holds.
 
   Then individual `Curl_easy` structs can be made to share specific things
-  that they otherwise wouldn't, such as cookies.
+  that they otherwise would not, such as cookies.
 
   The `Curl_share` struct can currently hold cookies, DNS cache and the SSL
   session cache.
@@ -1085,7 +1091,7 @@ for older and later versions as things don't change drastically that often.
 
 [1]: https://curl.se/libcurl/c/curl_easy_setopt.html
 [2]: https://curl.se/libcurl/c/curl_easy_init.html
-[3]: https://c-ares.haxx.se/
+[3]: https://c-ares.org/
 [4]: https://tools.ietf.org/html/rfc7230 "RFC 7230"
 [5]: https://curl.se/libcurl/c/CURLOPT_ACCEPT_ENCODING.html
 [6]: https://curl.se/docs/manpage.html#--compressed

@@ -12,6 +12,7 @@
   - OpenSSH or SunSSH (for SCP, SFTP and SOCKS4/5 tests)
   - nghttpx (for HTTP/2 tests)
   - nroff (for --manual tests)
+  - An available `en_US.UTF-8` locale
 
 ### Installation of python-impacket
 
@@ -50,17 +51,15 @@
 
 ### Test servers
 
-  The test suite runs simple FTP, POP3, IMAP, SMTP, HTTP and TFTP stand-alone
-  servers on the ports listed above to which it makes requests. For SSL tests,
-  it runs stunnel to handle encryption to the regular servers. For SSH, it
-  runs a standard OpenSSH server. For SOCKS4/5 tests SSH is used to perform
-  the SOCKS functionality and requires a SSH client and server.
+  The test suite runs stand-alone servers on random ports to which it makes
+  requests. For SSL tests, it runs stunnel to handle encryption to the regular
+  servers. For SSH, it runs a standard OpenSSH server. For SOCKS4/5 tests SSH
+  is used to perform the SOCKS functionality and requires a SSH client and
+  server.
 
-  The base port number (8990), which all the individual port numbers are
-  indexed from, can be set explicitly using runtests.pl' -b option to allow
-  running more than one instance of the test suite simultaneously on one
-  machine, or just move the servers in case you have local services on any of
-  those ports.
+  The listen port numbers for the test servers are picked randomly to allow
+  users to run multiple test cases concurrently and to not collide with other
+  existing services that might listen to ports on the machine.
 
   The HTTP server supports listening on a Unix domain socket, the default
   location is 'http.sock'.
@@ -86,6 +85,8 @@
   line). The latter is meant for local temporary disables and will be ignored
   by git.
 
+  Test cases mentioned in `DISABLED` can still be run if `-f` is provided.
+
   When `-s` is not present, each successful test will display on one line the
   test number and description and on the next line a set of flags, the test
   result, current test sequence, total number of tests to be run and an
@@ -109,7 +110,7 @@
   output text messages or escape sequences on user login.  When these shell
   startup messages or escape sequences are output they might corrupt the
   expected stream of data which flows to the sftp-server or from the ssh
-  client which can result in bad test behaviour or even prevent the test
+  client which can result in bad test behavior or even prevent the test
   server from running.
 
   If the test suite ssh or sftp server fails to start up and logs the message
@@ -160,7 +161,7 @@
 
   gcc provides a tool that can determine the code coverage figures for the
   test suite.  To use it, configure curl with `CFLAGS='-fprofile-arcs
-  -ftest-coverage -g -O0`.  Make sure you run the normal and torture tests to
+  -ftest-coverage -g -O0'`.  Make sure you run the normal and torture tests to
   get more full coverage, i.e. do:
 
     make test

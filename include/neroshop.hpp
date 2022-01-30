@@ -16,6 +16,7 @@
 #include "debug.hpp"
 #include "wallet.hpp" // causes error depending on where you place this header
 #include "db.hpp"
+#include "db2.hpp"
 #include "qr.hpp"
 #include "icon.hpp"
 #include "validator.hpp"

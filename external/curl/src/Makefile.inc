@@ -5,7 +5,7 @@
 #                            | (__| |_| |  _ <| |___
 #                             \___|\___/|_| \_\_____|
 #
-# Copyright (C) 1998 - 2020, Daniel Stenberg, <daniel@haxx.se>, et al.
+# Copyright (C) 1998 - 2021, Daniel Stenberg, <daniel@haxx.se>, et al.
 #
 # This software is licensed as described in the file COPYING, which
 # you should have received as part of this distribution. The terms
@@ -65,16 +65,16 @@ CURL_CFILES = \
   tool_doswin.c \
   tool_easysrc.c \
   tool_filetime.c \
+  tool_findfile.c \
   tool_formparse.c \
   tool_getparam.c \
   tool_getpass.c \
   tool_help.c \
   tool_helpers.c \
-  tool_homedir.c \
   tool_hugehelp.c \
   tool_libinfo.c \
+  tool_listhelp.c \
   tool_main.c \
-  tool_metalink.c \
   tool_msgs.c \
   tool_operate.c \
   tool_operhlp.c \
@@ -108,16 +108,15 @@ CURL_HFILES = \
   tool_doswin.h \
   tool_easysrc.h \
   tool_filetime.h \
+  tool_findfile.h \
   tool_formparse.h \
   tool_getparam.h \
   tool_getpass.h \
   tool_help.h \
   tool_helpers.h \
-  tool_homedir.h \
   tool_hugehelp.h \
   tool_libinfo.h \
   tool_main.h \
-  tool_metalink.h \
   tool_msgs.h \
   tool_operate.h \
   tool_operhlp.h \

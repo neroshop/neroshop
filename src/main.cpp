@@ -113,6 +113,18 @@ int main() {
     //std::cout << "number of items in table (Item): " << items_count << std::endl;
     //db->execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='Users';");
     ////////////////////////////////////////////////
+    
+    
+    DB2 db2;
+    db2.connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");// dbname=mydb");//("host=localhost port=1234 dbname=mydb connect_timeout=10");//("");//("user=sid dbname=neroshoptest");
+    
+    
+    
+    
+    
+    
+    db2.finish();
+    ////////////////////////////////////////////////
     User * user = nullptr;
     ////////////////////////////////////////////////
     std::string pw = "Password!23";

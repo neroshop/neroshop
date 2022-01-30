@@ -10,15 +10,15 @@ The name neroshop comes from "nero", meaning black combined with the word "shop"
 
 ## Dependencies:
 <!-- * [monero](https://github.com/monero-project/monero) (MIT) -->
-|      Library                                                       | Minimum Ver.    | Package                | License                |         Purpose                                                        |
-|--------------------------------------------------------------------|-----------------|------------------------|------------------------|------------------------------------------------------------------------|
-| [monero-cpp](https://github.com/monero-ecosystem/monero-cpp)       | latest          |                        | MIT                    | monero wallet and payment system                                       |
-| [bcrypt](https://github.com/rg3/libbcrypt.git)                     | ?               |                        | public domain          | password hashing                                                       |
-| [sqlite3](https://sqlite.org/)                                     | ?               |                        | public domain          | database management                                                    |
-| [QR Code generator](https://github.com/nayuki/QR-Code-generator)   | ?               |                        | MIT                    | qr code generation                                                     |
-| [json](https://github.com/nlohmann/json/)                          | ?               |                        | MIT                    | json parsing (used in conjunction with libcurl)                        |
-| [curl](https://curl.se/libcurl/)                                   | ?               | `libcurl4-openssl-dev` | curl (inspired by MIT) | multiprotocol file transfer (used to retrieve currency exchange rates) |
-| [postgresql](https://www.postgresql.org/)                          | ?               | `postgresql`           | MIT                    | client-server database management                                      |
+|      Library                                                       | Minimum Ver.    | Package                | License                            |         Purpose                                                        |
+|--------------------------------------------------------------------|-----------------|------------------------|------------------------------------|------------------------------------------------------------------------|
+| [monero-cpp](https://github.com/monero-ecosystem/monero-cpp)       | latest          |                        | MIT                                | monero wallet and payment system                                       |
+| [bcrypt](https://github.com/rg3/libbcrypt.git)                     | ?               |                        | public domain                      | password hashing                                                       |
+| [sqlite3](https://sqlite.org/)                                     | ?               |                        | public domain                      | database management                                                    |
+| [QR Code generator](https://github.com/nayuki/QR-Code-generator)   | ?               |                        | MIT                                | qr code generation                                                     |
+| [json](https://github.com/nlohmann/json/)                          | ?               |                        | MIT                                | json parsing (used in conjunction with libcurl)                        |
+| [curl](https://curl.se/libcurl/)                                   | ?               | `libcurl4-openssl-dev` | curl (inspired by MIT)             | multiprotocol file transfer (used to retrieve currency exchange rates) |
+| [postgresql](https://www.postgresql.org/)                          | ?               | `postgresql`           | PostgreSQL (similar to BSD or MIT) | client-server database management                                      |
 <!-- [dokun-ui](custom library) (MIT) -->
 
 
@@ -29,18 +29,20 @@ The name neroshop comes from "nero", meaning black combined with the word "shop"
 * automatic subaddress generator (a unique monero address is generated from seller's account each time a buyer orders an item)
 * address watcher that tracks incoming txs and notifies both the user and seller
 ("awaiting payment ..."[red], "payment incoming"[yellow], "payment received!"[green])
-* seller reputation system (score from 0-1)
-* product rating system (stars from 1-5)
+* seller reputation system (score rating ranging from 0-1)
+* product rating system (star rating ranging from 1-5)
 * and much more ...
 
 
 # Compiling neroshop from source
+You can either choose to build neroshop by running `./build.sh` or by following the steps below.
+
 0. Install dependencies
 ```sh
 sudo -s -- << EOF
 # neroshop, dokun-ui
 sudo apt install libx11-dev libgl1-mesa-dev libglu1-mesa-dev
-sudo apt install libcurl4-openssl-dev postgresql
+sudo apt install postgresql
 # monero, monero-cpp
 sudo apt install git libboost-all-dev cmake g++ make libssl-dev libzmq3-dev libhidapi-dev libudev-dev libusb-1.0-0-dev libfox-1.6-dev # copied from https://github.com/monero-ecosystem/monero-cpp#using-this-library-in-your-project
 sudo apt update && sudo apt install build-essential cmake pkg-config libssl-dev libzmq3-dev libunbound-dev libsodium-dev libunwind8-dev liblzma-dev libreadline6-dev libldns-dev libexpat1-dev libpgm-dev qttools5-dev-tools libhidapi-dev libusb-1.0-0-dev libprotobuf-dev protobuf-compiler libudev-dev libboost-chrono-dev libboost-date-time-dev libboost-filesystem-dev libboost-locale-dev libboost-program-options-dev libboost-regex-dev libboost-serialization-dev libboost-system-dev libboost-thread-dev ccache doxygen graphviz # copied from https://github.com/monero-project/monero#dependencies
@@ -66,7 +68,22 @@ cd external/monero-cpp/external/monero-project && make release-static -j8 && mak
 cd ../../../../
 ```
 
-4. Build neroshop (along with dokun-ui)
+4. Build libcurl
+```sh
+sudo -s -- << EOF
+cd external/curl
+# build with cmake (libcurl.so will be installed in: neroshop/external/curl/lib/)
+#cmake -G"Unix Makefiles"
+#make
+# build with ./configure (libcurl.a will be installed in both: neroshop/external/curl/lib/.libs/ and /usr/local/lib/)
+./configure --with-openssl
+make
+sudo make install
+cd ../../
+EOF
+```
+
+5. Build neroshop (along with dokun-ui)
 ```sh
 sudo -s -- << EOF
 # Build dokun-ui
@@ -76,7 +93,7 @@ cmake -G"Unix Makefiles"
 make
 cd ../../
 # Build neroshop
-cmake -G"Unix Makefiles"
+cmake -G"Unix Makefiles" -DPostgreSQL_TYPE_INCLUDE_DIR=/usr/include/postgresql/
 make
 EOF
 ```
@@ -86,6 +103,6 @@ I am an awful programmer and still consider myself a noob at it since I don't kn
 my project to life, I'd highly appreciate it :3 ! 
 I am also willing to compensate any contributors with Monero when I become financially stable >.< .
 
-[//]: # (git add CMakeLists.txt external/ include/ readme.md res/neroshop-logo.png res/wallets src/ todo.txt)
+[//]: # (git add build.sh CMakeLists.txt external/ include/ readme.md res/neroshop-logo.png res/wallets src/ todo.txt)
 [//]: # (git commit -m"empty commit")
 [//]: # (git push -u origin main)

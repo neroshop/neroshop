@@ -309,7 +309,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/json/single_include) # 
 ######################################
 # curl
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/curl/include ${CMAKE_CURRENT_SOURCE_DIR}/external/curl/lib) #include_directories(${CURL_INCLUDE_DIRS}) # where to find curl/curl.h, etc.
-set(curl_src ${CMAKE_CURRENT_SOURCE_DIR}/src/libcurl.a) #${CURL_LIBRARIES})
+set(curl_src ${CMAKE_CURRENT_SOURCE_DIR}/external/curl/lib/.libs/libcurl.a)# or #/usr/local/lib/libcurl.a) #${CMAKE_CURRENT_SOURCE_DIR}/src/libcurl.a) #${CURL_LIBRARIES})
 add_definitions(-DCURL_STATICLIB)
 ######################################
 # postgresql
@@ -373,13 +373,15 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/dependencies) # dependencies (do
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/src) # sources (.cpp, .a)
 set(neroshop_src src/buyer.cpp src/carrier.cpp src/cart.cpp #[[src/catalog.cpp]] src/client.cpp src/converter.cpp src/db.cpp src/db2.cpp src/icon.cpp src/item.cpp src/main.cpp src/message.cpp src/order.cpp src/qr.cpp src/seller.cpp src/server.cpp src/user.cpp src/validator.cpp src/wallet.cpp)
 add_definitions(-DNEROSHOP_DEBUG) # for more detailed debugging, use -DNEROSHOP_DEBUG0
-add_executable(neroshop ${neroshop_src} ${monero_cpp_src} ${bcrypt_src} ${sqlite_src} ${qr_code_generator_src})
+add_executable(neroshop ${neroshop_src} ${monero_cpp_src} ${bcrypt_src} ${sqlite_src} ${qr_code_generator_src} ${curl_src})
+target_link_libraries(neroshop ${curl_src})
 target_link_libraries(neroshop ${monero_src})
 target_link_libraries(neroshop ${dokun_ui_src})
 # daemon (change name to neromon = nero+daemon :D)
 add_executable(daemon src/daemon.cpp src/server.cpp) # server-daemon
 target_link_libraries(daemon ${dokun_ui_src})
-set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -ldl") # fixes undefined reference to symbol 'dlsym@@GLIBC_2.2.5' error
+#target_link_libraries(daemon ${curl_src} ${OPENSSL_LIBRARIES} ${dokun_ui_src}) # curl requires both openssl(used in monero) and zlib(used in dokun-ui)
+#set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -ldl") # fixes undefined reference to symbol 'dlsym@@GLIBC_2.2.5' error
 set_target_properties(daemon PROPERTIES OUTPUT_NAME "neromon")
 ######################################
 # linking
@@ -396,11 +398,6 @@ find_package(OpenGL REQUIRED)
 if(OPENGL_FOUND)
 	target_link_libraries(neroshop ${opengl_src})
 	target_link_libraries(daemon ${opengl_src})
-endif()
-find_package(CURL) # works
-if(CURL_FOUND) #message("found libcurl v" ${CURL_VERSION_STRING})
-	target_link_libraries(neroshop ${curl_src})
-    target_link_libraries(daemon ${curl_src} ${OPENSSL_LIBRARIES} ${dokun_ui_src}) # curl requires both openssl(used in monero) and zlib(used in dokun-ui)
 endif()
 find_package(PostgreSQL) # -DPostgreSQL_TYPE_INCLUDE_DIR=/usr/include/postgresql/
 if(PostgreSQL_FOUND)

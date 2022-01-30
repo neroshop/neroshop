@@ -1,7 +1,7 @@
 Version Numbers and Releases
 ============================
 
- Curl is not only curl. Curl is also libcurl. They're actually individually
+ Curl is not only curl. Curl is also libcurl. they are actually individually
  versioned, but they usually follow each other closely.
 
  The version numbering is always built up using the same system:
@@ -41,7 +41,9 @@ Version Numbers and Releases
  numbering scheme that can be used for comparison. The version number is
  defined as:
 
-        #define LIBCURL_VERSION_NUM 0xXXYYZZ
+```c
+#define LIBCURL_VERSION_NUM 0xXXYYZZ
+```
 
  Where XX, YY and ZZ are the main version, release and patch numbers in
  hexadecimal. All three number fields are always represented using two digits

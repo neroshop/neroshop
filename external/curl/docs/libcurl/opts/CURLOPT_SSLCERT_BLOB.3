@@ -5,7 +5,7 @@
 .\" *                            | (__| |_| |  _ <| |___
 .\" *                             \___|\___/|_| \_\_____|
 .\" *
-.\" * Copyright (C) 1998 - 2020, Daniel Stenberg, <daniel@haxx.se>, et al.
+.\" * Copyright (C) 1998 - 2021, Daniel Stenberg, <daniel@haxx.se>, et al.
 .\" *
 .\" * This software is licensed as described in the file COPYING, which
 .\" * you should have received as part of this distribution. The terms
@@ -20,14 +20,17 @@
 .\" *
 .\" **************************************************************************
 .\"
-.TH CURLOPT_SSLCERT_BLOB 3 "November 04, 2020" "libcurl 7.74.0" "curl_easy_setopt options"
+.TH CURLOPT_SSLCERT_BLOB 3 "November 26, 2021" "libcurl 7.81.0" "curl_easy_setopt options"
 
 .SH NAME
 CURLOPT_SSLCERT_BLOB \- SSL client certificate from memory blob
 .SH SYNOPSIS
+.nf
 #include <curl/curl.h>
 
-CURLcode curl_easy_setopt(CURL *handle, CURLOPT_SSLCERT_BLOB, struct curl_blob *stblob);
+CURLcode curl_easy_setopt(CURL *handle, CURLOPT_SSLCERT_BLOB,
+                          struct curl_blob *stblob);
+.fi
 .SH DESCRIPTION
 Pass a pointer to a curl_blob structure, which contains (pointer and size) a
 client certificate. The format must be "P12" on Secure Transport or
@@ -61,8 +64,8 @@ if(curl) {
 }
 .fi
 .SH AVAILABILITY
-Added in libcurl 7.71.0. This option is supported by the OpenSSL, Secure
-Transport and Schannel backends.
+Added in 7.71.0. This option is supported by the OpenSSL, Secure Transport and
+Schannel backends.
 .SH RETURN VALUE
 Returns CURLE_OK if TLS enabled, CURLE_UNKNOWN_OPTION if not, or
 CURLE_OUT_OF_MEMORY if there was insufficient heap space.

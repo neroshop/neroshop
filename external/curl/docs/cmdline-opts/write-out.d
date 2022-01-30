@@ -3,6 +3,9 @@ Short: w
 Arg: <format>
 Help: Use output FORMAT after completion
 Category: verbose
+Example: -w '%{http_code}\\n' $URL
+Added: 6.5
+See-also: verbose head
 ---
 Make curl display information on stdout after a completed transfer. The format
 is a string that may contain plain text mixed with any number of
@@ -29,6 +32,12 @@ The variables available are:
 .B content_type
 The Content-Type of the requested document, if there was any.
 .TP
+.B errormsg
+The error message. (Added in 7.75.0)
+.TP
+.B exitcode
+The numerical exitcode of the transfer. (Added in 7.75.0)
+.TP
 .B filename_effective
 The ultimate filename that curl writes out to. This is only meaningful if curl
 is told to write to a file with the --remote-name or --output
@@ -41,8 +50,7 @@ server. (Added in 7.15.4)
 .TP
 .B http_code
 The numerical response code that was found in the last retrieved HTTP(S) or
-FTP(s) transfer. In 7.18.2 the alias \fBresponse_code\fP was added to show the
-same info.
+FTP(s) transfer.
 .TP
 .B http_connect
 The numerical code that was found in the last response (from a proxy) to a
@@ -56,13 +64,13 @@ A JSON object with all available keys.
 .TP
 .B local_ip
 The IP address of the local end of the most recently done connection - can be
-either IPv4 or IPv6 (Added in 7.29.0)
+either IPv4 or IPv6. (Added in 7.29.0)
 .TP
 .B local_port
-The local port number of the most recently done connection (Added in 7.29.0)
+The local port number of the most recently done connection. (Added in 7.29.0)
 .TP
 .B method
-The http method used in the most recent HTTP request (Added in 7.72.0)
+The http method used in the most recent HTTP request. (Added in 7.72.0)
 .TP
 .B num_connects
 Number of new connects made in the recent transfer. (Added in 7.12.3)
@@ -74,31 +82,39 @@ The number of response headers in the most recent request (restarted at each
 .B num_redirects
 Number of redirects that were followed in the request. (Added in 7.12.3)
 .TP
+.B onerror
+The rest of the output is only shown if the transfer returned a non-zero error
+(Added in 7.75.0)
+.TP
 .B proxy_ssl_verify_result
 The result of the HTTPS proxy's SSL peer certificate verification that was
 requested. 0 means the verification was successful. (Added in 7.52.0)
 .TP
 .B redirect_url
 When an HTTP request was made without --location to follow redirects (or when
---max-redir is met), this variable will show the actual URL a redirect
-\fIwould\fP have gone to. (Added in 7.18.2)
+--max-redirs is met), this variable will show the actual URL a redirect
+*would* have gone to. (Added in 7.18.2)
+.TP
+.B referer
+The Referer: header, if there was any. (Added in 7.76.0)
 .TP
 .B remote_ip
 The remote IP address of the most recently done connection - can be either
-IPv4 or IPv6 (Added in 7.29.0)
+IPv4 or IPv6. (Added in 7.29.0)
 .TP
 .B remote_port
-The remote port number of the most recently done connection (Added in 7.29.0)
+The remote port number of the most recently done connection. (Added in 7.29.0)
 .TP
 .B response_code
 The numerical response code that was found in the last transfer (formerly
 known as "http_code"). (Added in 7.18.2)
 .TP
 .B scheme
-The URL scheme (sometimes called protocol) that was effectively used (Added in 7.52.0)
+The URL scheme (sometimes called protocol) that was effectively used. (Added in 7.52.0)
 .TP
 .B size_download
-The total amount of bytes that were downloaded.
+The total amount of bytes that were downloaded. This is the size of the
+body/data that was transferred, excluding headers.
 .TP
 .B size_header
 The total amount of bytes of the downloaded headers.
@@ -107,7 +123,8 @@ The total amount of bytes of the downloaded headers.
 The total amount of bytes that were sent in the HTTP request.
 .TP
 .B size_upload
-The total amount of bytes that were uploaded.
+The total amount of bytes that were uploaded. This is the size of the
+body/data that was transferred, excluding headers.
 .TP
 .B speed_download
 The average download speed that curl measured for the complete download. Bytes
@@ -161,8 +178,15 @@ server needed to calculate the result.
 .B time_total
 The total time, in seconds, that the full operation lasted.
 .TP
+.B url
+The URL that was fetched. (Added in 7.75.0)
+.TP
+.B urlnum
+The URL index number of this transfer, 0-indexed. De-globbed URLs share the
+same index number as the origin globbed URL. (Added in 7.75.0)
+.TP
 .B url_effective
-The URL that was fetched last. This is most meaningful if you've told curl
+The URL that was fetched last. This is most meaningful if you have told curl
 to follow location: headers.
 .RE
 .IP

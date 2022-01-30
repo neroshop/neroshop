@@ -68,6 +68,36 @@ For example, to insert the word hello a 100 times:
 
     %repeat[100 x hello]%
 
+## Conditional lines
+
+Lines in the test file can be made to appear conditionally on a specific
+feature (see the "features" section below) being set or not set. If the
+specific feature is present, the following lines will be output, otherwise it
+outputs nothing, until a following else or endif clause. Like this:
+
+    %if brotli
+    Accept-Encoding
+    %endif
+
+It can also check for the inversed condition, so if the feature us *not* set by
+the use of an exclamation mark:
+
+    %if !brotli
+    Accept-Encoding: not-brotli
+    %endif
+
+You can also make an "else" clause to get output for the opposite condition,
+like:
+
+    %if brotli
+    Accept-Encoding: brotli
+    %else
+    Accept-Encoding: nothing
+    %endif
+
+**Note** that there can be no nested conditions. You can only do one
+conditional at a time and you can only check for a single feature in it.
+
 # Variables
 
 When the test is preprocessed, a range of "variables" in the test file will be
@@ -87,6 +117,7 @@ Available substitute variables include:
 - `%FTPTIME3` - Even longer than %FTPTIME2
 - `%GOPHER6PORT` - IPv6 port number of the Gopher server
 - `%GOPHERPORT` - Port number of the Gopher server
+- `%GOPHERSPORT` - Port number of the Gophers server
 - `%HOST6IP` - IPv6 address of the host running this test
 - `%HOSTIP` - IPv4 address of the host running this test
 - `%HTTP6PORT` - IPv6 port number of the HTTP server
@@ -117,7 +148,9 @@ Available substitute variables include:
 - `%SRCDIR` - Full path to the source dir
 - `%SSHPORT` - Port number of the SCP/SFTP server
 - `%SSHSRVMD5` - MD5 of SSH server's public key
+- `%SSHSRVSHA256` - SHA256 of SSH server's public key
 - `%SSH_PWD` - Current directory friendly for the SSH server
+- `%TESTNUMBER` - Number of the test case
 - `%TFTP6PORT` - IPv6 port number of the TFTP server
 - `%TFTPPORT` - Port number of the TFTP server
 - `%USER` - Login ID of the user running the test
@@ -145,12 +178,14 @@ that will be checked/used if specified.
 
 ### `<keywords>`
 A newline-separated list of keywords describing what this test case uses and
-tests. Try to use an already used keyword.  These keywords will be used for
-statistical/informational purposes and for choosing or skipping classes
-of tests.  "Keywords" must begin with an alphabetic character, "-", "["
-or "{" and may actually consist of multiple words separated by spaces
-which are treated together as a single identifier.
+tests. Try to use already used keywords.  These keywords will be used for
+statistical/informational purposes and for choosing or skipping classes of
+tests.  "Keywords" must begin with an alphabetic character, "-", "[" or "{"
+and may actually consist of multiple words separated by spaces which are
+treated together as a single identifier.
 
+When using curl built with Hyper, the keywords must include HTTP or HTTPS for
+'hyper mode' to kick in and make line ending checks work for tests.
 ## `<reply>`
 
 ### `<data [nocheck="yes"] [sendzero="yes"] [base64="yes"] [hex="yes"]>`
@@ -169,7 +204,7 @@ part number and will then increase the part number with one. This is useful
 for auth tests and similar.
 
 `sendzero=yes` means that the (FTP) server will "send" the data even if the
-size is zero bytes. Used to verify curl's behaviour on zero bytes transfers.
+size is zero bytes. Used to verify curl's behavior on zero bytes transfers.
 
 `base64=yes` means that the data provided in the test-file is a chunk of data
 encoded with base64. It is the only way a test case can contain binary
@@ -207,6 +242,9 @@ a datacheck section.
 The connect section is used instead of the 'data' for all CONNECT
 requests. The remainder of the rules for the data section then apply but with
 a connect prefix.
+
+### `<socks>`
+Address type and address details as logged by the SOCKS proxy.
 
 ### `<datacheck [mode="text"] [nonewline="yes"]>`
 if the data is sent but this is what should be checked afterwards. If
@@ -299,6 +337,8 @@ What server(s) this test case requires/uses. Available servers:
 - `ftp-ipv6`
 - `ftp`
 - `ftps`
+- `gopher`
+- `gophers`
 - `http-ipv6`
 - `http-proxy`
 - `http-unix`
@@ -344,14 +384,16 @@ Features testable here are:
 - `HSTS`
 - `HTTP-auth`
 - `http/2`
+- `hyper`
 - `idn`
 - `ipv6`
 - `Kerberos`
 - `large_file`
 - `ld_preload`
+- `libssh2`
+- `libssh`
 - `libz`
 - `manual`
-- `Metalink`
 - `Mime`
 - `netrc`
 - `NSS`
@@ -361,6 +403,7 @@ Features testable here are:
 - `proxy`
 - `PSL`
 - `Schannel`
+- `sectransp`
 - `shuffle-dns`
 - `socks`
 - `SPNEGO`
@@ -371,10 +414,13 @@ Features testable here are:
 - `TLS-SRP`
 - `TrackMemory`
 - `typecheck`
+- `Unicode`
 - `unittest`
 - `unix-sockets`
 - `verbose-strings`
+- `wakeup`
 - `win32`
+- `wolfssh`
 
 as well as each protocol that curl supports.  A protocol only needs to be
 specified if it is different from the server (useful when the server

@@ -8,7 +8,6 @@
  - multiple file upload on a single command line
  - custom maximum transfer rate
  - redirectable stderr
- - metalink support (13)
  - parallel transfers
 
 ## libcurl
@@ -79,7 +78,7 @@
 
  - download
  - authentication
- - Kerberos 5 (14)
+ - Kerberos 5 (13)
  - active/passive using PORT, EPRT, PASV or EPSV
  - single file size information (compare to HTTP HEAD)
  - 'type=' URL support
@@ -148,7 +147,7 @@
 
  - authentication: Plain, Login, CRAM-MD5, Digest-MD5, NTLM (9), Kerberos 5
    (4) and External.
- - send e-mails
+ - send emails
  - mail from support
  - mail size support
  - mail auth support for trusted server-to-server relaying
@@ -166,8 +165,8 @@
  - authentication: Clear Text, APOP and SASL
  - SASL based authentication: Plain, Login, CRAM-MD5, Digest-MD5, NTLM (9),
    Kerberos 5 (4) and External.
- - list e-mails
- - retrieve e-mails
+ - list emails
+ - retrieve emails
  - enhanced command support for: CAPA, DELE, TOP, STAT, UIDL and NOOP via
    custom requests
  - via http-proxy
@@ -185,8 +184,8 @@
    Kerberos 5 (4) and External.
  - list the folders of a mailbox
  - select a mailbox with support for verifying the UIDVALIDITY
- - fetch e-mails with support for specifying the UID and SECTION
- - upload e-mails via the append command
+ - fetch emails with support for specifying the UID and SECTION
+ - upload emails via the append command
  - enhanced command support for: EXAMINE, CREATE, DELETE, RENAME, STATUS,
    STORE, COPY and UID via custom requests
  - via http-proxy
@@ -218,6 +217,4 @@
   10. -
   11. requires libidn2 or Windows
   12. requires libz, brotli and/or zstd
-  13. requires libmetalink, and either an Apple or Microsoft operating
-      system, or OpenSSL, or GnuTLS, or NSS
-  14. requires a GSS-API implementation (such as Heimdal or MIT Kerberos)
+  13. requires a GSS-API implementation (such as Heimdal or MIT Kerberos)
