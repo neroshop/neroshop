@@ -5,8 +5,8 @@ An attempt to create an online marketplace for [Monero](https://getmonero.org/) 
 [![alt text](res/neroshop-logo.png)](https://github.com/larteyoh/neroshop "neroshop logo")
 
 ## Table of contents
-[Why I chose the name neroshop](#naming)
-[Upcoming features](#features) <!--[Coming soon]-->
+* [Why I chose the name neroshop](#naming)
+* [Upcoming features](#features) <!--[Coming soon]-->
 <!--* [Documentation](#documentation)-->
 * [Major dependencies](#dependencies)
 * [Building neroshop from source](#compiling-neroshop-from-source)
