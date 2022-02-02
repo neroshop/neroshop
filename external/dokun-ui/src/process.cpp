@@ -2,6 +2,9 @@
 
 Process::Process()
 {
+#ifdef DOKUN_LINUX
+    handle = -1; // default
+#endif
     Factory::get_process_factory()->store(this);
 }
 ////////////////////
@@ -15,8 +18,16 @@ Process::Process(const std::string& program, const std::string& arg) : Process()
 ////////////////////
 Process::~Process()
 {
-	terminate();
+#ifdef DOKUN_LINUX
+#ifdef DOKUN_DEBUG
+    std::cout << DOKUN_UI_TAG "process (" << name << ") has been deallocated" << std::endl;
+#endif	
+#endif
+	terminate(); // kill pid
+	Factory::get_process_factory()->release(this);
 }
+////////////////////
+std::vector<std::tuple<std::string, int, bool>> Process::process_list({});
 ////////////////////	
 void * Process::open()
 {
@@ -24,7 +35,7 @@ void * Process::open()
 	this->handle = static_cast<void *>(OpenProcess(PROCESS_ALL_ACCESS, FALSE, GetCurrentProcessId()));
 	return this->handle;
 #endif	
-#ifdef __gnu_linux__
+#ifdef DOKUN_LINUX
 #endif
     return nullptr;
 }
@@ -62,11 +73,14 @@ bool Process::create(const std::string& program, const std::string& argument)
     CloseHandle (pi.hProcess);
     CloseHandle (pi.hThread );
 #endif	
-#ifdef __gnu_linux__
-    pid_t child_pid; 
-    child_pid = fork (); 
+#ifdef DOKUN_LINUX
+    pid_t child_pid = fork (); // holds the process id (pid)
     if (child_pid != 0) {
+        // the handle is basically the process id (pid)
 		this->handle = static_cast<pid_t>(child_pid);
+		this->name = program.substr(program.find_last_of("\\/") + 1);//program;
+		// store process information in "process_list"
+		process_list.push_back(std::make_tuple(program, child_pid, (child_pid != -1)));
 	}		
     else {
 	  std::vector<std::string> arg_split = String::split(argument, " ");
@@ -92,21 +106,46 @@ bool Process::terminate()
 #ifdef DOKUN_WIN32
 	return (TerminateProcess(static_cast<HANDLE>(this->handle), 0) != 0);
 #endif	
-#ifdef __gnu_linux__
-    kill(static_cast<pid_t>(handle), SIGTERM); // #include <signal.h>
+#ifdef DOKUN_LINUX
+    if(handle == -1) return true; // if pid has already been killed then no need to kill it again, so exit function
+    if(kill(static_cast<pid_t>(handle), SIGTERM) != 0) {// 0=success, -1=failure // #include <signal.h>
+        std::cout << "FAILED to kill process: " << handle << std::endl;
+        return false;
+    }
+    handle = -1;// set handle to default value so we know its been properly deleted
+    std::cout << DOKUN_UI_TAG "process (" << name << ") terminated\n";
+    return true;
 #endif	
     return false;
 }
 ////////////////////
-bool Process::terminate(Process * process)
+bool Process::terminate(const Process& process)
 {
 #ifdef DOKUN_WIN32
-	return (TerminateProcess(static_cast<HANDLE>(process->get_handle()), 0) != 0);
+	return (TerminateProcess(static_cast<HANDLE>(process.get_handle()), 0) != 0);
 #endif
-#ifdef __gnu_linux__
-    kill(static_cast<pid_t>(process->get_handle()), SIGTERM); // #include <signal.h>
+#ifdef DOKUN_LINUX
+    return (kill(static_cast<pid_t>(process.get_handle()), SIGTERM) != -1); //0=success, -1=failure// #include <signal.h>
 #endif	
     return false;
+}
+////////////////////
+void Process::terminate_by_process_id(int process_id) {
+#ifdef DOKUN_LINUX
+    while(process_id != -1) {
+        if(kill(static_cast<pid_t>(process_id), SIGTERM) < 0) // kill all instances of this process    
+            std::cout << "FAILED to kill process " << process_id << std::endl;        
+    }
+#endif    
+}
+////////////////////
+void Process::terminate_by_process_name(const std::string& process_name) {
+#ifdef DOKUN_LINUX    
+    while(Process::get_process_by_name(process_name) != -1) {// while this process is still running
+        if(kill(static_cast<pid_t>(Process::get_process_by_name(process_name)), SIGTERM) < 0) // kill all instances of this process    
+            std::cout << "FAILED to kill process " << process_name << std::endl;
+    }
+#endif
 }
 ////////////////////
 void Process::exit(int code)
@@ -114,9 +153,27 @@ void Process::exit(int code)
 #ifdef DOKUN_WIN32
 	ExitProcess(code);
 #endif	
-#ifdef __gnu_linux__
+#ifdef DOKUN_LINUX
 #endif	
 }
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+void Process::show_processes(void) { // displays all processes from current session
+    for(int i = 0; i < process_list.size(); i++) {
+        std::cout 
+        << "\033[1;35;49mprocess[" << i << "] ("
+        << "name: " << std::get<0>(process_list[i]) << ", "
+        << "id: " << std::get<1>(process_list[i]) << ", "
+        << "status: " << std::get<2>(process_list[i])
+        << ")\033[0m"
+        << std::endl;
+    }
+}
+////////////////////
+////////////////////
+////////////////////
 ////////////////////
 #ifdef DOKUN_WIN32
 void * Process::get_handle() const
@@ -125,10 +182,14 @@ void * Process::get_handle() const
 }
 #endif
 ////////////////////
-#ifdef __gnu_linux__
+#ifdef DOKUN_LINUX
 int Process::get_handle() const
 {
-	return this->handle;
+	return handle;
+}
+////////////////////
+std::string Process::get_name() const {
+    return name;
 }
 ////////////////////
 int Process::get_process_by_name(const std::string& process_name) {
@@ -177,7 +238,7 @@ void * Process::get_active()
 #ifdef DOKUN_WIN32
 	return static_cast<void *>(GetCurrentProcess());
 #endif
-#ifdef __gnu_linux__
+#ifdef DOKUN_LINUX
 #endif	
     return nullptr;
 }

@@ -1,6 +1,6 @@
 # Install dependencies
 #```sh
-sudo apt install build-essential cmake pkg-config            # required by both monero and neroshop (min_version: 5, 3.5, any)
+#sudo apt install build-essential cmake pkg-config            # required by both monero and neroshop (min_version: 5, 3.5, any)
 # install neroshop (and dokun-ui) dependencies:
 sudo apt install libx11-dev libgl1-mesa-dev libglu1-mesa-dev # required by dokun-ui (which neroshop depends on) (min_version: ?, 3.3)
 sudo apt install postgresql                                  # required by neroshop (min_version: ?)
@@ -67,9 +67,9 @@ make
 
 #```sh
 # To install glxinfo (which is used for checking opengl version):
-sudo apt install mesa-utils
+#sudo apt install mesa-utils
 # then use the following command:
-glxinfo | grep 'version' # glxinfo | grep "OpenGL version"
+#glxinfo | grep 'version' # glxinfo | grep "OpenGL version"
 # the actual version is presented by the "core profile version" (4.x)
 # Be sure you have OpenGL version 3.3 or higher!
 #```

@@ -13,113 +13,24 @@ using namespace dokun;
 // api: https://moneroecosystem.org/monero-cpp/annotated.html
 // https://stackoverflow.com/questions/30017397/error-curl-usr-local-lib-libcurl-so-4-no-version-information-available-requ
 // icons taken from: https://www.iconsdb.com/white-icons/
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////	
-namespace neroshop {
-    bool status = false; // off (default)
-    ////////////////////
-    static bool on_open() {
-        //////////////////////////////////////////////////
-        // lua       
-        if(DB::get_lua_state() == nullptr) {
-            neroshop::print("\033[1;94m[lua]:\033[0m lua state failed to initialize");
-            return false;
-        }
-        luaL_openlibs(DB::get_lua_state()); // opens all standard Lua libraries into the given state. 
-        //////////////////////////////////////////////////
-        // dokun-ui
-        if(!Engine::open()) {
-            NEROSHOP_TAG std::cout << DOKUN_UI_TAG std::string("engine failed to initialize");
-            return false;
-        }
-        //////////////////////////////////////////////////
-        // config.lua
-        if(!DB::create_config()) { // if it fails to create a config file
-            if(!DB::load_config(DB::get_lua_state())) {
-                return false;
-            } // try loading the config file instead
-        }
-        //////////////////////////////////////////////////
-        // cart.db
-        if(!Cart::get_singleton()->open()) {
-            return false;
-        }
-        //////////////////////////////////////////////////
-        // icons
-        Icon::load_all(); // must load all icons before using them
-        // message box
-        Message::init(); // initialize message (causes seg fault)       
-        //////////////////////////////////////////////////
-        // success!
-        status = true; // turned on
-        return true; // default return value
+////////////////////
+// neromon (daemon-server) functions
+Process * server_process;
+void start_neromon_server() {
+    // on launching neroshop, start the neromon process, if it has not yet been started    
+    int neromon = Process::get_process_by_name("neromon");
+    if(neromon != -1) {
+        neroshop::print("neromon is already running in the background", 4);
+        return;
     }
-    ////////////////////
-    static bool open() { // init neroshop
-        return neroshop::on_open();
-    }
-    ////////////////////
-    static void on_close() {
-        if(status == 0) return; // neroshop is off (already)
-        // close lua
-        lua_close(DB::get_lua_state());
-        // dokun
-        /*dokun::*/Engine::close();
-        // kill a monerod processes
-        //while(Process::get_process_by_name("monerod") != -1) // kill all monerod processes
-        //    kill(static_cast<pid_t>(Process::get_process_by_name("monerod")), SIGTERM); // kill daemon 
-        neroshop::print("neroshop closed");
-    }
-    ////////////////////
-    static void close() {
-        on_close();
-    }
-    ////////////////////
+    server_process = new Process(); // don't forget to delete this!
+    server_process->create("./neromon", "");
+    // show all processes
+    Process::show_processes();
 }
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-int main() {
-///////////////////////////////////////////////////////////////////////
-    #ifdef DOKUN_WIN32
-    #ifndef DOKUN_GLFW // using raw win32 api alone, without glfw
-    neroshop::print("YOU ARE CURRENTLY USING WIN32", 3);
-    #endif
-    #endif
-    #ifdef DOKUN_X11
-    neroshop::print("YOU ARE CURRENTLY USING X WINDOW SYSTEM", 3);
-    #endif
-    #ifdef DOKUN_GLFW
-    neroshop::print("YOU ARE CURRENTLY USING GLFW3", 3);
-    #endif
-    // start neroshop
-    if(!neroshop::open()) {
-        std::cout << "\033[1;91m" << "neroshop: failed to start" << "\033[0m" << std::endl;
-        exit(0);
-    }
-    std::atexit(neroshop::close); // call neroshop::close when program is exited
-    // /home/layter/.config/neroshop    <- where config files, cart files (temp) will be stored for guests (sellers' cart data will be stored in the db)
-    ///////////////////////////////
-    // SQLite3 datatypes: https://www.sqlite.org/datatype3.html
-    // https://sqlite.org/c3ref/open.html#urifilenamesinsqlite3open
-    // https://stackoverflow.com/questions/15072383/ios-open-sqlite-from-an-url
-    DB * db = new DB("neroshop.db"); //("https://inloop.github.io/sqlite-viewer/examples/Chinook_Sqlite.sqlite");
-    db->execute("PRAGMA journal_mode = WAL;"); // this may reduce the incidence of SQLITE_BUSY errors (such as database being locked)
-    db->execute("PRAGMA auto_vacuum = FULL;"); // https://www.sqlite.org/lang_vacuum.html
-    //sqlite3_busy_timeout(db->get_handle(), 5000); // deal with db being locked
-    //db->execute("SELECT price, count(*) FROM Item GROUP BY price;");
-    // get number of users in table User
-    //std::cout << "number of rows: "
-    // https://www.zentut.com/sql-tutorial/sql-count/
-    //db->execute("SELECT COUNT(*) FROM Item;") // number of rows in item
-    //int items_count = db->get_column_integer("Item", "COUNT(*)");
-    //std::cout << "number of items in table (Item): " << items_count << std::endl;
-    //db->execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='Users';");
-    ////////////////////////////////////////////////
-    curl_version_info_data * curl_version = curl_version_info(CURLVERSION_NOW);
-    std::cout << "libcurl version: " 
-    << std::to_string((curl_version->version_num >> 16) & 0xff)
-    << "." << std::to_string((curl_version->version_num >> 8) & 0xff)
-    << "." << std::to_string(curl_version->version_num & 0xff) << std::endl;
-    ////////////////////////////////////////////////
-    DB2 db2;
+////////////////////
+DB2 db2;
+void connect_database() {
     db2.connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");// dbname=mydb");//("host=localhost port=1234 dbname=mydb connect_timeout=10");//("");//("user=sid dbname=neroshoptest");
     // psql -h localhost -p 5432 -U postgres -d neroshoptest       // or psql neroshoptest
     // Password for user postgres: postgres
@@ -173,55 +84,98 @@ int main() {
     //PQclear(res); // Should PQclear PGresult whenever it is no longer needed to avoid memory leaks
     db2.finish(); // close the connection to the database and cleanup
     //if(!db2.get_handle()) std::cout << "conn set to nullptr (means connection closed)";
+}
+////////////////////////////////////////////////
+std::string get_libcurl_version() {
+    curl_version_info_data * curl_version = curl_version_info(CURLVERSION_NOW);
+    std::string curl_version_str = std::to_string((curl_version->version_num >> 16) & 0xff) + 
+        "." + std::to_string((curl_version->version_num >> 8) & 0xff) + 
+        "." + std::to_string(curl_version->version_num & 0xff);
+    //std::cout << "libcurl version: " << curl_version_str << std::endl;
+    return curl_version_str;
+}
+////////////////////
+////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+namespace neroshop {
+    bool status = false; // off (default)
+    ////////////////////
+    static bool on_open() {
+        //////////////////////////////////////////////////
+        // neromon
+        start_neromon_server();
+        //////////////////////////////////////////////////
+        // lua       
+        if(DB::get_lua_state() == nullptr) {
+            neroshop::print("\033[1;94m[lua]:\033[0m lua state failed to initialize");
+            return false;
+        }
+        luaL_openlibs(DB::get_lua_state()); // opens all standard Lua libraries into the given state. 
+        //////////////////////////////////////////////////
+        // dokun-ui
+        if(!Engine::open()) {
+            NEROSHOP_TAG std::cout << DOKUN_UI_TAG std::string("engine failed to initialize");
+            return false;
+        }
+        //////////////////////////////////////////////////
+        // config.lua
+        if(!DB::create_config()) { // if it fails to create a config file
+            if(!DB::load_config(DB::get_lua_state())) {
+                return false;
+            } // try loading the config file instead
+        }
+        //////////////////////////////////////////////////
+        // cart.db
+        if(!Cart::get_singleton()->open()) {
+            return false;
+        }
+        //////////////////////////////////////////////////
+        // icons
+        Icon::load_all(); // must load all icons before using them
+        // message box
+        Message::init(); // initialize message (causes seg fault)       
+        //////////////////////////////////////////////////
+        // success!
+        status = true; // turned on
+        return true; // default return value
+    }
+    ////////////////////
+    static bool open() { // init neroshop
+        return neroshop::on_open();
+    }
+    ////////////////////
+    static void on_close() {
+        if(status == 0) return; // neroshop is off (already)
+        // close lua
+        lua_close(DB::get_lua_state());        
+        // close dokun
+        Engine::close();//dokun::Engine::close();
+        // kill monerod process ??
+        // kill neromon process
+        delete server_process;
+        neroshop::print("neroshop closed");
+    }
+    ////////////////////
+    static void close() {
+        on_close();
+    }
+    ////////////////////
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+int main() {
+///////////////////////////////////////////////////////////////////////
+    // start neroshop
+    if(!neroshop::open()) {
+        std::cout << "\033[1;91m" << "neroshop: failed to start" << "\033[0m" << std::endl;
+        exit(0);
+    }
+    std::atexit(neroshop::close); // call neroshop::close when program is exited
+    // /home/dude/.config/neroshop    <- where config files, cart files (temp) will be stored for guests (sellers' cart data will be stored in the db)
+    ////////////////////////////////////////////////
+    connect_database();
     ////////////////////////////////////////////////
     User * user = nullptr;
     ////////////////////////////////////////////////
-    std::string pw = "Password!23";
-    Validator::register_user("layter", pw, pw);//Validator::register_user("laytera", pw+"a", pw+"a", "laytera@pm.me");
-    //Validator::register_user("laytero", pw+"o", pw+"o", "laytero@pm.me");
-    // ...   ///////////////////////////////
-    Cart * cart = Cart::get_singleton();
-    // register items: ball and ring
-    // currency has to be stable so we will use usd or eur then it will be converted to xmr
-    // we cannot set the price in xmr directly since its highly volatile and the price is always changing
-    Item ball(1);//("Ball", "A ball", 8.00, 0.5, std::make_tuple(1, 2, 3), "new", "000000000001");
-    Item ring(2);//("Ring", "A ring", 99.00, 0.2, std::make_tuple(3, 2, 1), "new","000000000002");
-    Item game(3);//("Game", "A nintendo game card", 60.00, 0.0, std::make_tuple(0, 0, 0), "new", "000000000003");//Item cake(7);
-    //seller->list_item(ball, 50, 8.50, "USD"); //adds item to inventory
-    //////////////
-    //cart->add(ball);
-    //cart->add(ring);
-    //cart->add(game);
-    //cart->remove(ball, 15);
-    //std::cout << "get_item 0: " << cart->get_item(0)->get_name() << std::endl;
-    //std::cout << "get_item 1: " << cart->get_item(1)->get_name() << std::endl;
-    //std::cout << "get_item 0 id: " << cart->get_item(0)->get_id() << std::endl;
-    //std::cout << "get_item 1 id: " << cart->get_item(1)->get_id() << std::endl;	
-    //cart->change_quantity(ball, 8);
-    //cart->remove(ball, 3);
-    //cart->change_quantity(ring, 7);
-    //cart->change_quantity(ball, 98); // max_quantity is 100, so it can only fit 93 balls
-    ///////////////////////////////
-    //db->truncate("Inventory"); // clears table Inventory, any new insertions will continue having a unique id
-    //Cart::get_singleton()->remove(ball, 3);
-    //Cart::get_singleton()->remove(ball, 7);
-    //std::cout << "number of items in cart: " << db->row_count("Cart") << std::endl;
-    //std::cout << "number of items in Items: " << db->row_count("Item") << std::endl;
-    //std::cout << "number of users in Users: " << db->row_count("users") << std::endl;
-    //std::cout << "number of items in : " << db->row_count("") << std::endl;
-    //Cart::get_singleton()->empty();
-    //std::cout << "number of unique cart_items: " << cart->get_contents_count() << std::endl;
-    ///////////////////////////////
-    Order * order = new Order();
-    //std::cout << order->get_status_string() << std::endl;
-    std::string shipping_addr = "\n\tLayter Guy\n"
-    "\t12 Robot St\n"
-    "\tBoston, MA\n"
-    "\t02115\n"
-    "\tUnited States of America\n";
-    //std::cout << "shipping_to: \n" << shipping_addr << std::endl;
-    //////////////
-    //order->create_order(shipping_addr/*, "layter@protonmail.com"*/);
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////	
     // Monero	
     // get config: network_type, ip, port, data_dir, etc.
@@ -675,6 +629,7 @@ int main() {
     //--------------------------------- USER ----------------------------------------
     //--------------------------------- CLIENT --------------------------------------
     //std::system("./daemon </dev/null &>/dev/null &"); ::sleep(2);
+    //////////////////////////////////////
     std::cout << "client commencing...\n";
     Client * client = Client::get_main_client();
 	int client_port = 1234;//std::stoi(port)//8080
@@ -858,14 +813,15 @@ int main() {
                         DB::edit_config("saved = true", (save_user_toggle->get_value()) ? "saved = true" : "saved = false");
                     }*/
                     // check whether user is a buyer or seller
-                    unsigned int role_id = db->get_column_integer("users", "role_id", "name = " + DB::to_sql_string(user_edit->get_text()));
+                    /*unsigned int role_id = db->get_column_integer("users", "role_id", "name = " + DB::to_sql_string(user_edit->get_text()));
                     // create user
                     if(role_id == 0) {
                         std::cout << "This user was not found in database";
                         neroshop::close();
                     }
                     if(role_id == 1) user = Buyer::on_login(user_edit->get_text());
-                    if(role_id == 2) user = Seller::on_login(user_edit->get_text());
+                    if(role_id == 2) user = Seller::on_login(user_edit->get_text());*/
+                    user = Seller::on_login(user_edit->get_text());
                     // broadcast messages to server
                     if(client->is_connected()) client->write(user->get_name() + " has logged in "); // temporary
                     // set wallet and check for pending orders
@@ -1033,6 +989,9 @@ int main() {
                     }
                 }
             }
+            /////////////////////
+            if(Keyboard::is_pressed(DOKUN_KEY_P)) Process::show_processes();
+            //if(Keyboard::is_pressed(DOKUN_KEY_K)) stop_neromon_server();// close neromon daemon-server
             /////////////////////
             if(Keyboard::is_pressed(DOKUN_KEY_DOWN) && !Message::is_visible()) {
                 //std::cout << "\033[0;32mcopied text to clipboard\033[0m" << std::endl;
@@ -1232,8 +1191,8 @@ int main() {
     //wallet->daemon_close(); // kill daemon
     window.destroy();
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
-    db->close();
-    delete db;    
+    /*db->close();
+    delete db;*/    
     neroshop::close(); // close neroshop when done
     return 0;
 }

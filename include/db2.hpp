@@ -55,6 +55,7 @@ public:
     int get_last_id(const std::string& table_name) const; // returns the id of the latest or most recent record pushed into a table
     // boolean
     bool table_exists(const std::string& table_name);
+    //bool column_exists(const std::string& table_name, const std::string& column_name);// get_integer("SELECT COUNT(column_name) FROM table_name;");
 private:
     PGconn * conn;
 };

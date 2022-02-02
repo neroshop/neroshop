@@ -245,6 +245,7 @@ struct : monero_wallet_listener { // listener	- listener to receive notification
             neroshop::Wallet::sync_bar->set_label(*neroshop::Wallet::sync_label);
         }
         dokun::Window * window = static_cast<dokun::Window *>(Factory::get_window_factory()->get_object(0)); // using dokun::Window::get_active() causes a seg fault when window loses focus while syncing - since it only gets the window that has focus :(
+        window->poll_events(); // check for events
         window->set_viewport(Renderer::get_display_size().x, Renderer::get_display_size().y);//(1280, 720);
         window->clear(32, 32, 32);
         double progress = percent_done * 100; //sync_bar->set_range(0, 100);

@@ -2718,7 +2718,7 @@ if test "x$NGTCP2_ENABLED" = "x1" -a "x$OPENSSL_ENABLED" = "x1"; then
     if test "x$cross_compiling" != "xyes"; then
       DIR_NGTCP2_CRYPTO_OPENSSL=`echo $LD_NGTCP2_CRYPTO_OPENSSL | $SED -e 's/^-L//'`
     fi
-    AC_CHECK_LIB(ngtcp2_crypto_openssl, ngtcp2_crypto_ctx_initial,
+    AC_CHECK_LIB(ngtcp2_crypto_openssl, ngtcp2_crypto_recv_client_initial_cb,
       [
        AC_CHECK_HEADERS(ngtcp2/ngtcp2_crypto.h,
           NGTCP2_ENABLED=1
@@ -2773,7 +2773,7 @@ if test "x$NGTCP2_ENABLED" = "x1" -a "x$GNUTLS_ENABLED" = "x1"; then
     if test "x$cross_compiling" != "xyes"; then
       DIR_NGTCP2_CRYPTO_GNUTLS=`echo $LD_NGTCP2_CRYPTO_GNUTLS | $SED -e 's/^-L//'`
     fi
-    AC_CHECK_LIB(ngtcp2_crypto_gnutls, ngtcp2_crypto_ctx_initial,
+    AC_CHECK_LIB(ngtcp2_crypto_gnutls, ngtcp2_crypto_recv_client_initial_cb,
       [
        AC_CHECK_HEADERS(ngtcp2/ngtcp2_crypto.h,
           NGTCP2_ENABLED=1
@@ -3477,14 +3477,23 @@ if test "$want_pthreads" != "no"; then
          dnl it doesn't actually work without -lpthread
          USE_THREADS_POSIX=""
          ;;
+      *-ibm-aix*)
+         dnl Check if compiler is xlC
+         COMPILER_VERSION=`"$CC" -qversion 2>/dev/null`
+         if test x"$COMPILER_VERSION" = "x"; then
+           CFLAGS="$CFLAGS -pthread"
+         else
+           CFLAGS="$CFLAGS -qthreaded"
+         fi
+         ;;
       *)
+         CFLAGS="$CFLAGS -pthread"
          ;;
       esac
 
       dnl if it wasn't found without lib, search for it in pthread lib
       if test "$USE_THREADS_POSIX" != "1"
       then
-        CFLAGS="$CFLAGS -pthread"
         # assign PTHREAD for pkg-config use
         PTHREAD=" -pthread"
         AC_CHECK_LIB(pthread, pthread_create,
