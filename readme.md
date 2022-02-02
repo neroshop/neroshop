@@ -6,8 +6,7 @@ An attempt to create an online marketplace for [Monero](https://getmonero.org/) 
 
 ## Table of contents
 * [Why I chose the name neroshop](#naming)
-* [Upcoming features](#features) <!--[Coming soon]-->
-<!--* [Documentation](#documentation)-->
+* [Upcoming features](#features) <!--[Coming soon]--><!--* [Documentation](#documentation)-->
 * [Major dependencies](#dependencies)
 * [Building neroshop from source](#compiling-neroshop-from-source)
 <!--* [Related projects](#related-projects)-->
