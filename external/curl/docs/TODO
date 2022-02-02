@@ -87,6 +87,7 @@
  6.3 feature negotiation debug data
 
  7. SMTP
+ 7.1 Passing NOTIFY option to CURLOPT_MAIL_RCPT
  7.2 Enhanced capability support
  7.3 Add CURLOPT_MAIL_CLIENT option
 
@@ -117,6 +118,7 @@
  13.4 Cache/share OpenSSL contexts
  13.5 Export session ids
  13.6 Provide callback for cert verification
+ 13.7 Less memory massaging with Schannel
  13.8 Support DANE
  13.9 TLS record padding
  13.10 Support Authority Information Access certificate extension (AIA)
@@ -411,7 +413,7 @@
 
  https://bugzilla.mozilla.org/show_bug.cgi?id=1220810
 
- https://tools.ietf.org/html/draft-ietf-dnsop-let-localhost-be-localhost-02
+ https://datatracker.ietf.org/doc/html/draft-ietf-dnsop-let-localhost-be-localhost-02
 
 1.28 FD_CLOEXEC
 
@@ -552,7 +554,7 @@
  HOST is a command for a client to tell which host name to use, to offer FTP
  servers named-based virtual hosting:
 
- https://tools.ietf.org/html/rfc7151
+ https://datatracker.ietf.org/doc/html/rfc7151
 
 4.2 Alter passive/active on failure and retry
 
@@ -674,6 +676,14 @@
 
 
 7. SMTP
+
+7.1 Passing NOTIFY option to CURLOPT_MAIL_RCPT
+
+ Is there a way to pass the NOTIFY option to the CURLOPT_MAIL_RCPT option ?  I
+ set a string that already contains a bracket. For instance something like
+ that: curl_slist_append( recipients, "<foo@bar> NOTIFY=SUCCESS,FAILURE" );
+
+ https://github.com/curl/curl/issues/8232
 
 7.2 Enhanced capability support
 
@@ -811,6 +821,13 @@
  certificate, but this does not seem to be exposed in the libcurl APIs. Could
  it be? There's so much that could be done if it were.
 
+13.7 Less memory massaging with Schannel
+
+ The Schannel backend does a lot of custom memory management we would rather
+ avoid: the repeated alloc + free in sends and the custom memory + realloc
+ system for encrypted and decrypted data. That should be avoided and reduced
+ for 1) efficiency and 2) safety.
+
 13.8 Support DANE
 
  DNS-Based Authentication of Named Entities (DANE) is a way to provide SSL
@@ -870,7 +887,7 @@
  that previously (in older TLS version) were not set. The clienthello
  extension adds padding to avoid that size range.
 
- https://tools.ietf.org/html/rfc7685
+ https://datatracker.ietf.org/doc/html/rfc7685
  https://github.com/curl/curl/issues/2299
 
 14. GnuTLS

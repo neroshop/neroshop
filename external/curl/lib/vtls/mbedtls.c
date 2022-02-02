@@ -41,9 +41,6 @@
 #include <mbedtls/net.h>
 #endif
 #include <mbedtls/ssl.h>
-#if MBEDTLS_VERSION_NUMBER < 0x03000000
-#include <mbedtls/certs.h>
-#endif
 #include <mbedtls/x509.h>
 
 #include <mbedtls/error.h>
@@ -80,7 +77,9 @@ struct ssl_backend_data {
   int server_fd;
   mbedtls_x509_crt cacert;
   mbedtls_x509_crt clicert;
+#ifdef MBEDTLS_X509_CRL_PARSE_C
   mbedtls_x509_crl crl;
+#endif
   mbedtls_pk_context pk;
   mbedtls_ssl_config config;
   const char *protocols[3];
@@ -335,7 +334,7 @@ mbed_connect_step1(struct Curl_easy *data, struct connectdata *conn,
       mbedtls_strerror(ret, errorbuf, sizeof(errorbuf));
       failf(data, "Error importing ca cert blob - mbedTLS: (-0x%04X) %s",
             -ret, errorbuf);
-      return ret;
+      return CURLE_SSL_CERTPROBLEM;
     }
   }
 
@@ -388,7 +387,7 @@ mbed_connect_step1(struct Curl_easy *data, struct connectdata *conn,
     memcpy(newblob, ssl_cert_blob->data, ssl_cert_blob->len);
     newblob[ssl_cert_blob->len] = 0; /* null terminate */
     ret = mbedtls_x509_crt_parse(&backend->clicert, newblob,
-                                 ssl_cert_blob->len);
+                                 ssl_cert_blob->len + 1);
     free(newblob);
 
     if(ret) {
@@ -452,6 +451,7 @@ mbed_connect_step1(struct Curl_easy *data, struct connectdata *conn,
   }
 
   /* Load the CRL */
+#ifdef MBEDTLS_X509_CRL_PARSE_C
   mbedtls_x509_crl_init(&backend->crl);
 
   if(ssl_crlfile) {
@@ -465,22 +465,28 @@ mbed_connect_step1(struct Curl_easy *data, struct connectdata *conn,
       return CURLE_SSL_CRL_BADFILE;
     }
   }
+#else
+  if(ssl_crlfile) {
+    failf(data, "mbedtls: crl support not built in");
+    return CURLE_NOT_BUILT_IN;
+  }
+#endif
 
   infof(data, "mbedTLS: Connecting to %s:%ld", hostname, port);
 
   mbedtls_ssl_config_init(&backend->config);
-
-  mbedtls_ssl_init(&backend->ssl);
-  if(mbedtls_ssl_setup(&backend->ssl, &backend->config)) {
-    failf(data, "mbedTLS: ssl_init failed");
-    return CURLE_SSL_CONNECT_ERROR;
-  }
   ret = mbedtls_ssl_config_defaults(&backend->config,
                                     MBEDTLS_SSL_IS_CLIENT,
                                     MBEDTLS_SSL_TRANSPORT_STREAM,
                                     MBEDTLS_SSL_PRESET_DEFAULT);
   if(ret) {
     failf(data, "mbedTLS: ssl_config failed");
+    return CURLE_SSL_CONNECT_ERROR;
+  }
+
+  mbedtls_ssl_init(&backend->ssl);
+  if(mbedtls_ssl_setup(&backend->ssl, &backend->config)) {
+    failf(data, "mbedTLS: ssl_init failed");
     return CURLE_SSL_CONNECT_ERROR;
   }
 
@@ -555,18 +561,25 @@ mbed_connect_step1(struct Curl_easy *data, struct connectdata *conn,
 
   mbedtls_ssl_conf_ca_chain(&backend->config,
                             &backend->cacert,
+#ifdef MBEDTLS_X509_CRL_PARSE_C
                             &backend->crl);
+#else
+                            NULL);
+#endif
 
   if(SSL_SET_OPTION(key) || SSL_SET_OPTION(key_blob)) {
     mbedtls_ssl_conf_own_cert(&backend->config,
                               &backend->clicert, &backend->pk);
   }
-  if(mbedtls_ssl_set_hostname(&backend->ssl, hostname)) {
-    /* mbedtls_ssl_set_hostname() sets the name to use in CN/SAN checks *and*
-       the name to set in the SNI extension. So even if curl connects to a
-       host specified as an IP address, this function must be used. */
-    failf(data, "couldn't set hostname in mbedTLS");
-    return CURLE_SSL_CONNECT_ERROR;
+  {
+    char *snihost = Curl_ssl_snihost(data, hostname, NULL);
+    if(!snihost || mbedtls_ssl_set_hostname(&backend->ssl, snihost)) {
+      /* mbedtls_ssl_set_hostname() sets the name to use in CN/SAN checks and
+         the name to set in the SNI extension. So even if curl connects to a
+         host specified as an IP address, this function must be used. */
+      failf(data, "Failed to set SNI");
+      return CURLE_SSL_CONNECT_ERROR;
+    }
   }
 
 #ifdef HAS_ALPN
@@ -893,7 +906,9 @@ static void mbedtls_close(struct Curl_easy *data,
   mbedtls_pk_free(&backend->pk);
   mbedtls_x509_crt_free(&backend->clicert);
   mbedtls_x509_crt_free(&backend->cacert);
+#ifdef MBEDTLS_X509_CRL_PARSE_C
   mbedtls_x509_crl_free(&backend->crl);
+#endif
   mbedtls_ssl_config_free(&backend->config);
   mbedtls_ssl_free(&backend->ssl);
   mbedtls_ctr_drbg_free(&backend->ctr_drbg);

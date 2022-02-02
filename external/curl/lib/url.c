@@ -830,8 +830,8 @@ static void conn_free(struct connectdata *conn)
  *
  */
 
-CURLcode Curl_disconnect(struct Curl_easy *data,
-                         struct connectdata *conn, bool dead_connection)
+void Curl_disconnect(struct Curl_easy *data,
+                     struct connectdata *conn, bool dead_connection)
 {
   /* there must be a connection to close */
   DEBUGASSERT(conn);
@@ -851,7 +851,7 @@ CURLcode Curl_disconnect(struct Curl_easy *data,
    */
   if(CONN_INUSE(conn) && !dead_connection) {
     DEBUGF(infof(data, "Curl_disconnect when inuse: %zu", CONN_INUSE(conn)));
-    return CURLE_OK;
+    return;
   }
 
   if(conn->dns_entry) {
@@ -883,7 +883,6 @@ CURLcode Curl_disconnect(struct Curl_easy *data,
   Curl_detach_connnection(data);
 
   conn_free(conn);
-  return CURLE_OK;
 }
 
 /*
@@ -949,7 +948,7 @@ socks_proxy_info_matches(const struct proxy_info *data,
 
   /* the user information is case-sensitive
      or at least it is not defined as case-insensitive
-     see https://tools.ietf.org/html/rfc3986#section-3.2.1 */
+     see https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1 */
   if(!data->user != !needle->user)
     return FALSE;
   /* curl_strequal does a case insentive comparison, so do not use it here! */
@@ -1105,7 +1104,7 @@ static void prune_dead_connections(struct Curl_easy *data)
       Curl_conncache_remove_conn(data, prune.extracted, TRUE);
 
       /* disconnect it */
-      (void)Curl_disconnect(data, prune.extracted, TRUE);
+      Curl_disconnect(data, prune.extracted, TRUE);
     }
     CONNCACHE_LOCK(data);
     data->state.conn_cache->last_cleanup = now;
@@ -1209,7 +1208,7 @@ ConnectionExists(struct Curl_easy *data,
 
       if(extract_if_dead(check, data)) {
         /* disconnect it */
-        (void)Curl_disconnect(data, check, TRUE);
+        Curl_disconnect(data, check, TRUE);
         continue;
       }
 
@@ -1572,20 +1571,6 @@ bool Curl_is_ASCII_name(const char *hostname)
       return FALSE;
   }
   return TRUE;
-}
-
-/*
- * Strip single trailing dot in the hostname,
- * primarily for SNI and http host header.
- */
-static void strip_trailing_dot(struct hostname *host)
-{
-  size_t len;
-  if(!host || !host->name)
-    return;
-  len = strlen(host->name);
-  if(len && (host->name[len-1] == '.'))
-    host->name[len-1] = 0;
 }
 
 /*
@@ -2942,6 +2927,13 @@ static CURLcode override_login(struct Curl_easy *data,
     bool netrc_user_changed = FALSE;
     bool netrc_passwd_changed = FALSE;
     int ret;
+    bool url_provided = FALSE;
+
+    if(data->state.up.user) {
+      /* there was a user name in the URL */
+      userp = &data->state.up.user;
+      url_provided = TRUE;
+    }
 
     ret = Curl_parsenetrc(conn->host.name,
                           userp, passwdp,
@@ -2961,27 +2953,36 @@ static CURLcode override_login(struct Curl_easy *data,
       conn->bits.netrc = TRUE;
       conn->bits.user_passwd = TRUE; /* enable user+password */
     }
+    if(url_provided) {
+      Curl_safefree(conn->user);
+      conn->user = strdup(*userp);
+      if(!conn->user)
+        return CURLE_OUT_OF_MEMORY;
+      /* don't update the user name below */
+      userp = NULL;
+    }
   }
 #endif
 
   /* for updated strings, we update them in the URL */
-  if(*userp) {
-    CURLcode result = Curl_setstropt(&data->state.aptr.user, *userp);
-    if(result)
-      return result;
-  }
-  if(data->state.aptr.user) {
-    uc = curl_url_set(data->state.uh, CURLUPART_USER, data->state.aptr.user,
-                      CURLU_URLENCODE);
-    if(uc)
-      return Curl_uc_to_curlcode(uc);
-    if(!*userp) {
-      *userp = strdup(data->state.aptr.user);
-      if(!*userp)
-        return CURLE_OUT_OF_MEMORY;
+  if(userp) {
+    if(*userp) {
+      CURLcode result = Curl_setstropt(&data->state.aptr.user, *userp);
+      if(result)
+        return result;
+    }
+    if(data->state.aptr.user) {
+      uc = curl_url_set(data->state.uh, CURLUPART_USER, data->state.aptr.user,
+                        CURLU_URLENCODE);
+      if(uc)
+        return Curl_uc_to_curlcode(uc);
+      if(!*userp) {
+        *userp = strdup(data->state.aptr.user);
+        if(!*userp)
+          return CURLE_OUT_OF_MEMORY;
+      }
     }
   }
-
   if(*passwdp) {
     CURLcode result = Curl_setstropt(&data->state.aptr.passwd, *passwdp);
     if(result)
@@ -3389,7 +3390,7 @@ static CURLcode resolve_server(struct Curl_easy *data,
     else
 #endif
 
-    if(!conn->bits.proxy) {
+    if(!CONN_IS_PROXIED(conn)) {
       struct hostname *connhost;
       if(conn->bits.conn_to_host)
         connhost = &conn->conn_to_host;
@@ -3947,7 +3948,7 @@ static CURLcode create_conn(struct Curl_easy *data,
         CONNCACHE_UNLOCK(data);
 
         if(conn_candidate)
-          (void)Curl_disconnect(data, conn_candidate, FALSE);
+          Curl_disconnect(data, conn_candidate, FALSE);
         else {
           infof(data, "No more connections allowed to host %s: %zu",
                 bundlehost, max_host_connections);
@@ -3967,7 +3968,7 @@ static CURLcode create_conn(struct Curl_easy *data,
       /* The cache is full. Let's see if we can kill a connection. */
       conn_candidate = Curl_conncache_extract_oldest(data);
       if(conn_candidate)
-        (void)Curl_disconnect(data, conn_candidate, FALSE);
+        Curl_disconnect(data, conn_candidate, FALSE);
       else {
         infof(data, "No connections available in cache");
         connections_available = FALSE;
@@ -4037,17 +4038,6 @@ static CURLcode create_conn(struct Curl_easy *data,
    * Resolve the address of the server or proxy
    *************************************************************/
   result = resolve_server(data, conn, async);
-
-  /* Strip trailing dots. resolve_server copied the name. */
-  strip_trailing_dot(&conn->host);
-#ifndef CURL_DISABLE_PROXY
-  if(conn->bits.httpproxy)
-    strip_trailing_dot(&conn->http_proxy.host);
-  if(conn->bits.socksproxy)
-    strip_trailing_dot(&conn->socks_proxy.host);
-#endif
-  if(conn->bits.conn_to_host)
-    strip_trailing_dot(&conn->conn_to_host);
 
 out:
   return result;

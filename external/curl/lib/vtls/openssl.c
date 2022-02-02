@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2021, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2022, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -266,7 +266,7 @@ struct ssl_backend_data {
 #endif
 };
 
-static void ossl_associate_connection(struct Curl_easy *data,
+static bool ossl_associate_connection(struct Curl_easy *data,
                                       struct connectdata *conn,
                                       int sockindex);
 
@@ -2363,10 +2363,12 @@ set_ssl_version_min_max(SSL_CTX *ctx, struct connectdata *conn)
     case CURL_SSLVERSION_TLSv1_2:
       ossl_ssl_version_min = TLS1_2_VERSION;
       break;
-#ifdef TLS1_3_VERSION
     case CURL_SSLVERSION_TLSv1_3:
+#ifdef TLS1_3_VERSION
       ossl_ssl_version_min = TLS1_3_VERSION;
       break;
+#else
+      return CURLE_NOT_BUILT_IN;
 #endif
   }
 
@@ -2422,6 +2424,8 @@ set_ssl_version_min_max(SSL_CTX *ctx, struct connectdata *conn)
 
 #ifdef OPENSSL_IS_BORINGSSL
 typedef uint32_t ctx_option_t;
+#elif OPENSSL_VERSION_NUMBER >= 0x30000000L
+typedef uint64_t ctx_option_t;
 #else
 typedef long ctx_option_t;
 #endif
@@ -2521,13 +2525,12 @@ static int ossl_new_session_cb(SSL *ssl, SSL_SESSION *ssl_sessionid)
     return 0;
 
   conn = (struct connectdata*) SSL_get_ex_data(ssl, connectdata_idx);
-  if(!conn)
-    return 0;
-
   data = (struct Curl_easy *) SSL_get_ex_data(ssl, data_idx);
-
   /* The sockindex has been stored as a pointer to an array element */
   sockindex_ptr = (curl_socket_t*) SSL_get_ex_data(ssl, sockindex_idx);
+  if(!conn || !data || !sockindex_ptr)
+    return 0;
+
   sockindex = (int)(sockindex_ptr - conn->sock);
 
   isproxy = SSL_get_ex_data(ssl, proxy_idx) ? TRUE : FALSE;
@@ -2736,8 +2739,8 @@ static CURLcode ossl_connect_step1(struct Curl_easy *data,
      implementations is desired."
 
      The "-no_ticket" option was introduced in OpenSSL 0.9.8j. It's a flag to
-     disable "rfc4507bis session ticket support".  rfc4507bis was later turned
-     into the proper RFC5077 it seems: https://tools.ietf.org/html/rfc5077
+     disable "rfc4507bis session ticket support". rfc4507bis was later turned
+     into the proper RFC5077: https://datatracker.ietf.org/doc/html/rfc5077
 
      The enabled extension concerns the session management. I wonder how often
      libcurl stops a connection and then resumes a TLS session. Also, sending
@@ -2942,7 +2945,7 @@ static CURLcode ossl_connect_step1(struct Curl_easy *data,
   /* Import certificates from the Windows root certificate store if requested.
      https://stackoverflow.com/questions/9507184/
      https://github.com/d3x0r/SACK/blob/master/src/netlib/ssl_layer.c#L1037
-     https://tools.ietf.org/html/rfc5280 */
+     https://datatracker.ietf.org/doc/html/rfc5280 */
   if((SSL_CONN_CONFIG(verifypeer) || SSL_CONN_CONFIG(verifyhost)) &&
      (SSL_SET_OPTION(native_ca_store))) {
     X509_STORE *store = SSL_CTX_get_cert_store(backend->ctx);
@@ -3243,23 +3246,21 @@ static CURLcode ossl_connect_step1(struct Curl_easy *data,
      (0 == Curl_inet_pton(AF_INET6, hostname, &addr)) &&
 #endif
      sni) {
-    size_t nlen = strlen(hostname);
-    if((long)nlen >= data->set.buffer_size)
-      /* this is seriously messed up */
+    char *snihost = Curl_ssl_snihost(data, hostname, NULL);
+    if(!snihost || !SSL_set_tlsext_host_name(backend->handle, snihost)) {
+      failf(data, "Failed set SNI");
       return CURLE_SSL_CONNECT_ERROR;
-
-    /* RFC 6066 section 3 says the SNI field is case insensitive, but browsers
-       send the data lowercase and subsequently there are now numerous servers
-       out there that don't work unless the name is lowercased */
-    Curl_strntolower(data->state.buffer, hostname, nlen);
-    data->state.buffer[nlen] = 0;
-    if(!SSL_set_tlsext_host_name(backend->handle, data->state.buffer))
-      infof(data, "WARNING: failed to configure server name indication (SNI) "
-            "TLS extension");
+    }
   }
 #endif
 
-  ossl_associate_connection(data, conn, sockindex);
+  if(!ossl_associate_connection(data, conn, sockindex)) {
+    /* Maybe the internal errors of SSL_get_ex_new_index or SSL_set_ex_data */
+    failf(data, "SSL: ossl_associate_connection failed: %s",
+          ossl_strerror(ERR_get_error(), error_buffer,
+                        sizeof(error_buffer)));
+    return CURLE_SSL_CONNECT_ERROR;
+  }
 
   Curl_ssl_sessionid_lock(data);
   if(!Curl_ssl_getsessionid(data, conn, SSL_IS_PROXY() ? TRUE : FALSE,
@@ -3953,9 +3954,20 @@ static CURLcode servercert(struct Curl_easy *data,
 
     /* e.g. match issuer name with provided issuer certificate */
     if(SSL_CONN_CONFIG(issuercert) || SSL_CONN_CONFIG(issuercert_blob)) {
-      if(SSL_CONN_CONFIG(issuercert_blob))
+      if(SSL_CONN_CONFIG(issuercert_blob)) {
         fp = BIO_new_mem_buf(SSL_CONN_CONFIG(issuercert_blob)->data,
                              (int)SSL_CONN_CONFIG(issuercert_blob)->len);
+        if(!fp) {
+          failf(data,
+                "BIO_new_mem_buf NULL, " OSSL_PACKAGE
+                " error %s",
+                ossl_strerror(ERR_get_error(), error_buffer,
+                              sizeof(error_buffer)) );
+          X509_free(backend->server_cert);
+          backend->server_cert = NULL;
+          return CURLE_OUT_OF_MEMORY;
+        }
+      }
       else {
         fp = BIO_new(BIO_s_file());
         if(!fp) {
@@ -4535,7 +4547,7 @@ static void *ossl_get_internals(struct ssl_connect_data *connssl,
          (void *)backend->ctx : (void *)backend->handle;
 }
 
-static void ossl_associate_connection(struct Curl_easy *data,
+static bool ossl_associate_connection(struct Curl_easy *data,
                                       struct connectdata *conn,
                                       int sockindex)
 {
@@ -4544,7 +4556,7 @@ static void ossl_associate_connection(struct Curl_easy *data,
 
   /* If we don't have SSL context, do nothing. */
   if(!backend->handle)
-    return;
+    return FALSE;
 
   if(SSL_SET_OPTION(primary.sessionid)) {
     int data_idx = ossl_get_ssl_data_index();
@@ -4554,19 +4566,26 @@ static void ossl_associate_connection(struct Curl_easy *data,
 
     if(data_idx >= 0 && connectdata_idx >= 0 && sockindex_idx >= 0 &&
        proxy_idx >= 0) {
+      int data_status, conn_status, sockindex_status, proxy_status;
+
       /* Store the data needed for the "new session" callback.
        * The sockindex is stored as a pointer to an array element. */
-      SSL_set_ex_data(backend->handle, data_idx, data);
-      SSL_set_ex_data(backend->handle, connectdata_idx, conn);
-      SSL_set_ex_data(backend->handle, sockindex_idx, conn->sock + sockindex);
+      data_status = SSL_set_ex_data(backend->handle, data_idx, data);
+      conn_status = SSL_set_ex_data(backend->handle, connectdata_idx, conn);
+      sockindex_status = SSL_set_ex_data(backend->handle, sockindex_idx,
+                                         conn->sock + sockindex);
 #ifndef CURL_DISABLE_PROXY
-      SSL_set_ex_data(backend->handle, proxy_idx, SSL_IS_PROXY() ? (void *) 1:
-                      NULL);
+      proxy_status = SSL_set_ex_data(backend->handle, proxy_idx,
+                                     SSL_IS_PROXY() ? (void *) 1 : NULL);
 #else
-      SSL_set_ex_data(backend->handle, proxy_idx, NULL);
+      proxy_status = SSL_set_ex_data(backend->handle, proxy_idx, NULL);
 #endif
+      if(data_status && conn_status && sockindex_status && proxy_status)
+        return TRUE;
     }
+    return FALSE;
   }
+  return TRUE;
 }
 
 /*

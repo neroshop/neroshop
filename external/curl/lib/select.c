@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2021, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2022, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -34,17 +34,8 @@
 #error "We can't compile without select() or poll() support."
 #endif
 
-#if defined(__BEOS__) && !defined(__HAIKU__)
-/* BeOS has FD_SET defined in socket.h */
-#include <socket.h>
-#endif
-
 #ifdef MSDOS
 #include <dos.h>  /* delay() */
-#endif
-
-#ifdef __VXWORKS__
-#include <strings.h>  /* bzero() in FD_SET */
 #endif
 
 #include <curl/curl.h>
