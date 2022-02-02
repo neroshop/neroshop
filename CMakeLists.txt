@@ -315,14 +315,6 @@ add_definitions(-DCURL_STATICLIB)
 # postgresql
 include_directories(${PostgreSQL_INCLUDE_DIRS}) # v14.1
 set(postgresql_src ${PostgreSQL_LIBRARIES}) # /usr/lib/x86_64-linux-gnu/libpq.a  OR  /usr/lib/x86_64-linux-gnu/libpq.so
-#add_definitions(-DPostgreSQL_TYPE_INCLUDE_DIR=/usr/include/postgresql/)
-######################################
-# glfw (optional)(build dokun-ui with the DOKUN_GLFW definition)
-#[[
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/glfw/include)
-add_definitions(-DDOKUN_GLFW)
-]]
-# glfw depends on the following libs (on linux): libxrandr-dev libxinerama-dev libxi-dev
 ######################################
 ######################################
 # dokun-ui_dependencies
@@ -363,8 +355,7 @@ endif() # -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVid
 ######################################
 # dokun-ui
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/include) # include
-set(dokun_ui_src ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/src/libdokun-ui.a)#libdokun-ui.a) # definitions added: DOKUN_OPENGL, DOKUN_BUILD_LIBRARY
-#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui)
+set(dokun_ui_src ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/src/libdokun-ui.a)#libdokun-ui.a) # definitions added: DOKUN_OPENGL, DOKUN_BUILD_LIBRARY#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui)
 ######################################
 # neroshop
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external)
@@ -373,14 +364,14 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/dependencies) # dependencies (do
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/src) # sources (.cpp, .a)
 set(neroshop_src src/buyer.cpp src/carrier.cpp src/cart.cpp #[[src/catalog.cpp]] src/client.cpp src/converter.cpp src/db.cpp src/db2.cpp src/icon.cpp src/item.cpp src/main.cpp src/message.cpp src/order.cpp src/qr.cpp src/seller.cpp src/server.cpp src/user.cpp src/validator.cpp src/wallet.cpp)
 add_definitions(-DNEROSHOP_DEBUG) # for more detailed debugging, use -DNEROSHOP_DEBUG0
-add_executable(neroshop ${neroshop_src} ${monero_cpp_src} ${bcrypt_src} ${sqlite_src} ${qr_code_generator_src} ${curl_src})
+add_executable(neroshop ${neroshop_src} ${monero_cpp_src} ${bcrypt_src} ${sqlite_src} ${qr_code_generator_src})
 target_link_libraries(neroshop ${curl_src})
 target_link_libraries(neroshop ${monero_src})
 target_link_libraries(neroshop ${dokun_ui_src})
 # daemon (change name to neromon = nero+daemon :D)
 add_executable(daemon src/daemon.cpp src/server.cpp) # server-daemon
+#target_link_libraries(daemon ${curl_src} ${OPENSSL_LIBRARIES}) # curl requires both openssl(used in monero) and zlib(used in dokun-ui)
 target_link_libraries(daemon ${dokun_ui_src})
-#target_link_libraries(daemon ${curl_src} ${OPENSSL_LIBRARIES} ${dokun_ui_src}) # curl requires both openssl(used in monero) and zlib(used in dokun-ui)
 #set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -ldl") # fixes undefined reference to symbol 'dlsym@@GLIBC_2.2.5' error
 set_target_properties(daemon PROPERTIES OUTPUT_NAME "neromon")
 ######################################
@@ -400,8 +391,7 @@ if(OPENGL_FOUND)
 	target_link_libraries(daemon ${opengl_src})
 endif()
 find_package(PostgreSQL) # -DPostgreSQL_TYPE_INCLUDE_DIR=/usr/include/postgresql/
-if(PostgreSQL_FOUND)
-    message("-- Using PostgreSQL: ${PostgreSQL_LIBRARIES} (v${PostgreSQL_VERSION_STRING})")
+if(PostgreSQL_FOUND) #message("-- Using PostgreSQL: ${PostgreSQL_LIBRARIES} (v${PostgreSQL_VERSION_STRING})")
     target_link_libraries(neroshop ${PostgreSQL_LIBRARIES})
     target_link_libraries(daemon ${PostgreSQL_LIBRARIES})
 endif()

@@ -4,34 +4,46 @@ An attempt to create an online marketplace for [Monero](https://getmonero.org/) 
 
 [![alt text](res/neroshop-logo.png)](https://github.com/larteyoh/neroshop "neroshop logo")
 
+## Table of contents
+[Why I chose the name neroshop](#naming)
+[Upcoming features](#features) <!--[Coming soon]-->
+<!--* [Documentation](#documentation)-->
+* [Major dependencies](#dependencies)
+* [Building neroshop from source](#compiling-neroshop-from-source)
+<!--* [Related projects](#related-projects)-->
+<!--* [License](#license)-->
 
 ### Naming: 
 The name neroshop comes from "nero", meaning black combined with the word "shop"
 
-## Dependencies:
-<!-- * [monero](https://github.com/monero-project/monero) (MIT) -->
-|      Library                                                       | Minimum Ver.    | Package                | License                            |         Purpose                                                        |
-|--------------------------------------------------------------------|-----------------|------------------------|------------------------------------|------------------------------------------------------------------------|
-| [monero-cpp](https://github.com/monero-ecosystem/monero-cpp)       | latest          |                        | MIT                                | monero wallet and payment system                                       |
-| [bcrypt](https://github.com/rg3/libbcrypt.git)                     | ?               |                        | public domain                      | password hashing                                                       |
-| [sqlite3](https://sqlite.org/)                                     | ?               |                        | public domain                      | database management                                                    |
-| [QR Code generator](https://github.com/nayuki/QR-Code-generator)   | ?               |                        | MIT                                | qr code generation                                                     |
-| [json](https://github.com/nlohmann/json/)                          | ?               |                        | MIT                                | json parsing (used in conjunction with libcurl)                        |
-| [curl](https://curl.se/libcurl/)                                   | ?               | `libcurl4-openssl-dev` | curl (inspired by MIT)             | multiprotocol file transfer (used to retrieve currency exchange rates) |
-| [postgresql](https://www.postgresql.org/)                          | ?               | `postgresql`           | PostgreSQL (similar to BSD or MIT) | client-server database management                                      |
-<!-- [dokun-ui](custom library) (MIT) -->
-
 
 ### Features:
-* no registration required (for buyers)
+* pseudonymous economy (sellers are only identified by their usernames and trusted based on their reputation)
+* no registration required (for buyers only)
 * no KYC or AML
+* no listing fees (except for transaction or miner fees and shipping costs)
 * buy and sell products with monero (and possibly other private by default crypto in the near future)
 * automatic subaddress generator (a unique monero address is generated from seller's account each time a buyer orders an item)
 * address watcher that tracks incoming txs and notifies both the user and seller
 ("awaiting payment ..."[red], "payment incoming"[yellow], "payment received!"[green])
 * seller reputation system (score rating ranging from 0-1)
 * product rating system (star rating ranging from 1-5)
+* centralized database (for now, since I don't know how to implement a decentralized database)
 * and much more ...
+
+
+## Dependencies:
+<!-- * [monero](https://github.com/monero-project/monero) (MIT) -->
+|      Library                                                       | Minimum Ver.    | Package                | License                            |         Purpose                                                        |
+|--------------------------------------------------------------------|-----------------|------------------------|------------------------------------|------------------------------------------------------------------------|
+| [monero-cpp](https://github.com/monero-ecosystem/monero-cpp)       | latest          |                        | MIT                                | monero wallet and payment system                                       |
+| [bcrypt](https://github.com/rg3/libbcrypt)                         | ?               |                        | public domain                      | password hashing                                                       |
+| [sqlite3](https://sqlite.org/)                                     | ?               |                        | public domain                      | database management                                                    |
+| [QR Code generator](https://github.com/nayuki/QR-Code-generator)   | ?               |                        | MIT                                | qr code generation                                                     |
+| [json](https://github.com/nlohmann/json/)                          | ?               |                        | MIT                                | json parsing (used in conjunction with libcurl)                        |
+| [curl](https://github.com/curl/curl)                                   | ?               | `libcurl4-openssl-dev` | curl (inspired by MIT)             | multiprotocol file transfer (used to retrieve currency exchange rates) |
+| [postgresql](https://www.postgresql.org/)                          | ?               | `postgresql`           | PostgreSQL (similar to BSD or MIT) | client-server database management                                      |
+<!-- [dokun-ui](custom library) (MIT) -->
 
 
 # Compiling neroshop from source
@@ -55,6 +67,7 @@ cd external
 git clone --recurse-submodules https://github.com/monero-ecosystem/monero-cpp.git
 git clone --recurse-submodules https://github.com/rg3/libbcrypt.git
 git clone --recurse-submodules https://github.com/nayuki/QR-Code-generator.git
+git clone --recurse-submodules https://github.com/curl/curl.git
 cd ../
 ```
 
@@ -76,6 +89,7 @@ cd external/curl
 #cmake -G"Unix Makefiles"
 #make
 # build with ./configure (libcurl.a will be installed in both: neroshop/external/curl/lib/.libs/ and /usr/local/lib/)
+autoreconf -fi
 ./configure --with-openssl
 make
 sudo make install

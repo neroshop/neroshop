@@ -11,8 +11,9 @@ neroshop::DB::DB(const std::string& file_name) : DB() // delegating constructor
     }
 }
 ////////////////////
-neroshop::DB::~DB()
-{}
+neroshop::DB::~DB() {
+    close();
+}
 ////////////////////
 lua_State * neroshop::DB::lua_state (luaL_newstate()); // static lua_state
 ////////////////////
@@ -26,12 +27,15 @@ bool neroshop::DB::open(const std::string& file_name) // create a data base; wor
 }
 ////////////////////
 void neroshop::DB::close() {
+    if(!db) return;
 	sqlite3_close(db);
+	db = nullptr; // set to null after deletion (to confirm that it has been properly deleted)
 }
 ////////////////////
 ////////////////////
 void neroshop::DB::execute(const std::string& sql) // execute an sql statement; works !
 {
+    if(!db) throw std::runtime_error("database is not connected");
 	char * errmsg = 0;
 	int error = sqlite3_exec(db, sql.c_str(), neroshop::DB::callback, 0, &errmsg);
 	if (error != SQLITE_OK)
@@ -146,7 +150,7 @@ void neroshop::DB::drop(const std::string& table, std::string condition) // work
 	}
 	if(!condition.empty())
 	{
-		// delete column
+		// delete column or whatever
 		sql = "DELETE FROM table_name "
 		"WHERE condition;";
 		sql = String::swap_first_of(sql, "table_name", table);
@@ -283,6 +287,7 @@ std::string neroshop::DB::get_select(const std::string& table, std::string varia
 ////////////////////
 std::string neroshop::DB::get_column_name(const std::string& table) const 
 {
+    if(!db) throw std::runtime_error("database is not connected");
     sqlite3_stmt * stmt;
     std::string sql = get_select(table);
     sql = String::swap_first_of(sql, "table_name", table);
@@ -305,6 +310,7 @@ void * neroshop::DB::get_column_null(const std::string& table, std::string varia
 }
 ////////////////////
 int neroshop::DB::get_column_integer(const std::string& table, std::string variable, std::string condition) const {
+    if(!db) throw std::runtime_error("database is not connected");
     sqlite3_stmt * stmt;
     std::string sql = get_select(table, variable, condition);
     //NEROSHOP_TAG std::cout << sql << std::endl; // debug
@@ -326,6 +332,7 @@ int neroshop::DB::get_column_integer(const std::string& table, std::string varia
 }
 ////////////////////
 double neroshop::DB::get_column_real(const std::string& table, std::string variable, std::string condition) const {
+    if(!db) throw std::runtime_error("database is not connected");
     sqlite3_stmt * stmt;
     std::string sql = get_select(table, variable, condition);
     //NEROSHOP_TAG std::cout << sql << std::endl; // debug

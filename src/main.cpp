@@ -113,17 +113,66 @@ int main() {
     //std::cout << "number of items in table (Item): " << items_count << std::endl;
     //db->execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='Users';");
     ////////////////////////////////////////////////
-    
-    
+    curl_version_info_data * curl_version = curl_version_info(CURLVERSION_NOW);
+    std::cout << "libcurl version: " 
+    << std::to_string((curl_version->version_num >> 16) & 0xff)
+    << "." << std::to_string((curl_version->version_num >> 8) & 0xff)
+    << "." << std::to_string(curl_version->version_num & 0xff) << std::endl;
+    ////////////////////////////////////////////////
     DB2 db2;
     db2.connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");// dbname=mydb");//("host=localhost port=1234 dbname=mydb connect_timeout=10");//("");//("user=sid dbname=neroshoptest");
+    // psql -h localhost -p 5432 -U postgres -d neroshoptest       // or psql neroshoptest
+    // Password for user postgres: postgres
+    // ctrl + z to exit
+    /*std::cout << ": " << << std::endl;
+    std::cout << ": " << << std::endl;*/
+    db2.print_database_info();   
+    ////////////
+    // testing
+    if(!db2.table_exists("users")) {
+        db2.create_table("users");
+        db2.add_column("users", "name", "text");
+        db2.alter_table("users", "ADD", "pw_hash", "text");
+        db2.add_column("users", "opt_email"); // will be NULL since datatype is not specified
+        // make all "name" unique
+        db2.create_index("idx_users_name", "users", "name");
+        db2.create_index("idx_users_email", "users", "opt_email");
+    }
     
-    
-    
-    
-    
-    
-    db2.finish();
+    db2.insert_into("users", "name, pw_hash, opt_email", "'dude', '$2a$05$bvIG6Nmid91Mu9RcmmWZfO5HJIMCT8riNW0hEp8f6/FuA2/mHZFpe', 'null'"); // libpq does not allow double quotes :(
+    //db2.insert_into("users", "name, pw_hash", "'mike', 'blank'");
+    //db2.insert_into("users", "name, pw_hash", DB2::to_psql_string("sid's bish") + "," + DB2::to_psql_string("nothing to see here"));
+    //db2.update("users", "name", DB2::to_psql_string("nameless"), "id = 1");
+    //////////////
+    std::cout << db2.get_row_count("users") << " (row count)" << std::endl;
+    // get last record from table users (most recent, even if rowids are not in the correct numerical order from smallest to largest)
+    ////std::cout << db2.get_last_id("users") << " (lastest row)" << std::endl;
+    //////////////
+    ////std::cout << db2.get_text("SELECT VERSION()") << std::endl; // PostgreSQL 14.1 (Ubuntu 14.1-2.pgdg20.04+1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 9.3.0-17ubuntu1~20.04) 9.3.0, 64-bit
+    /////////////
+    std::cout << db2.get_text("SELECT sum(numbackends) FROM pg_stat_database;") << " (?)" << std::endl;
+    //delete_from("users", "id=1");
+    ////std::cout << db2.get_integer("WITH deleted AS (DELETE FROM users WHERE id=1 IS TRUE RETURNING *) SELECT count(*) FROM deleted;") << " (deleted_records_count)" << std::endl;
+    ////std::cout << db2.get_text("SELECT name FROM users WHERE id=4;") << std::endl;
+    /*db2.truncate("users");
+    db2.vacuum("FULL VERBOSE users");*/
+    //std::cout << db2.table_exists("users") << " (table_exists)" << std::endl;
+    /////////////
+    // executing select does not show any output in PostgreSQL like it does with SQLite
+    //std::cout << "please select do something: \n";
+    //db2.execute_return("SELECT * FROM users;");
+    //$ psql neroshoptest -c"SELECT * FROM users;"
+    ////////////
+    //db2.x();
+    ////////////
+    ////////////
+    ////////////
+    ////////////
+    ////////////
+    ////////////
+    //PQclear(res); // Should PQclear PGresult whenever it is no longer needed to avoid memory leaks
+    db2.finish(); // close the connection to the database and cleanup
+    //if(!db2.get_handle()) std::cout << "conn set to nullptr (means connection closed)";
     ////////////////////////////////////////////////
     User * user = nullptr;
     ////////////////////////////////////////////////

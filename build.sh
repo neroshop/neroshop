@@ -15,8 +15,8 @@ cd external
 git clone --recurse-submodules https://github.com/monero-ecosystem/monero-cpp.git
 git clone --recurse-submodules https://github.com/rg3/libbcrypt.git
 git clone --recurse-submodules https://github.com/nayuki/QR-Code-generator.git
+git clone --recurse-submodules https://github.com/curl/curl.git
 #git clone --recurse-submodules https://github.com/nlohmann/json.git
-#git clone --recurse-submodules https://github.com/curl/curl.git
 #git clone --recurse-submodules https://github.com/sqlite/sqlite.git
 #git clone --recurse-submodules https://github.com/postgres/postgres
 #git clone --recurse-submodules https://github.com/?/dokun-ui.git
@@ -37,6 +37,9 @@ cd external/curl
 #make
 # libcurl.so will be installed in: neroshop/external/curl/lib/
 # website version
+# configure can be created using "autoreconf -fi" or "autoreconf --install"
+# sudo apt install dh-autoreconf
+autoreconf -fi
 ./configure --with-openssl
 make
 sudo make install
