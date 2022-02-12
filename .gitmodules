@@ -3,4 +3,4 @@
 	url = https://github.com/rg3/libbcrypt.git
 [submodule "external/curl"]
 	path = external/curl
-	url = https://github.com/curl/curl.git
+	url = https://github.com/curl/curl
