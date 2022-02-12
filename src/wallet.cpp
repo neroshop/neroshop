@@ -219,6 +219,8 @@ Progressbar * neroshop::Wallet::sync_bar (nullptr);
 ////////////////////
 dokun::Label * neroshop::Wallet::sync_label (nullptr);
 ////////////////////
+neroshop::Message * neroshop::Wallet::wallet_message (nullptr);
+////////////////////
 ////////////////////
 // create wallet_listener to synchronize the wallet and receive progress notifications
 struct : monero_wallet_listener { // listener	- listener to receive notifications during synchronization 
@@ -244,6 +246,11 @@ struct : monero_wallet_listener { // listener	- listener to receive notification
             neroshop::Wallet::sync_label->set_alignment("center");
             neroshop::Wallet::sync_bar->set_label(*neroshop::Wallet::sync_label);
         }
+        if(!neroshop::Wallet::wallet_message) {
+            neroshop::Wallet::wallet_message = new neroshop::Message();
+            neroshop::Wallet::wallet_message->hide(); // hidden until sync is done
+            std::cout << "wallet message box created\n";
+        }
         dokun::Window * window = static_cast<dokun::Window *>(Factory::get_window_factory()->get_object(0)); // using dokun::Window::get_active() causes a seg fault when window loses focus while syncing - since it only gets the window that has focus :(
         window->poll_events(); // check for events
         window->set_viewport(Renderer::get_display_size().x, Renderer::get_display_size().y);//(1280, 720);
@@ -255,12 +262,17 @@ struct : monero_wallet_listener { // listener	- listener to receive notification
             dokun::Keyboard::fake_event(window->get_display(), window->get_handle());
         #endif
         }
-        //////////        
+        //////////
         neroshop::Wallet::sync_bar->get_label()->set_string(std::to_string(progress) + "%");
         neroshop::Wallet::sync_bar->set_value(progress);
         neroshop::Wallet::sync_bar->set_position((window->get_client_width() / 2) - (neroshop::Wallet::sync_bar->get_width() / 2), (window->get_client_height() / 2) - (neroshop::Wallet::sync_bar->get_height() / 2));// center progressbar
         neroshop::Wallet::sync_bar->draw();
-        if(progress == 100) {neroshop::Message("SYNCHRONIZATION DONE", 107,142,35); neroshop::Message::show(); neroshop::Message::draw();}
+        if(progress >= 100) {
+            neroshop::Wallet::wallet_message->set_text("SYNCHRONIZATION DONE", 107,142,35); 
+            neroshop::Wallet::wallet_message->center(window->get_client_width(), window->get_client_height());
+            neroshop::Wallet::wallet_message->show();
+        }
+        neroshop::Wallet::wallet_message->draw();
         window->update();
     }
 } sync_listener;
@@ -283,10 +295,10 @@ struct : monero_wallet_listener {
             //std::cout << "\033[1;32;49m" << "txid <" << tx_hash << ">, " << std::fixed << std::setprecision(12) << (amount * piconero) << std::fixed << std::setprecision(2) << ", idx (" << account_index << ", " << subaddress_index << ")" << "\033[0m" << std::endl;
             std::setiosflags(std::ios::fixed); // set flag
             std::setprecision(12); // monero has 12 decimal places
-            neroshop::Message(std::string("output received: " + std::to_string(balance) + " xmr"), 34, 139, 34);
+            neroshop::Message::get_first()->set_text(std::string("output received: " + std::to_string(balance) + " xmr"), 34, 139, 34);//neroshop::Message message(std::string("output received: " + std::to_string(balance) + " xmr"), 34, 139, 34);
             std::setprecision(std::cout.precision()); // restore default precision
             std::resetiosflags(std::ios::fixed); // reset flag
-            neroshop::Message::show();
+            neroshop::Message::get_first()->show();//message.show();
         }
     }
     void on_balances_changed (uint64_t new_balance, uint64_t new_unlocked_balance) {

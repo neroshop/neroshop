@@ -1,5 +1,8 @@
 #include "../include/list.hpp"
-
+// I want list to be a single quad that can have different labels, colors, only on part of / a section of the quad. A line separator can also be added, but its optional
+// each section or part of the list (quad) will all share the same width of course
+// but each part of the quad can have their own height, say a height of 10 
+// so each of their contents will be separated by a unit of 10 - we will call this variable, separator_unit(10)
 List::List() : color(106, 106, 106, 1.0), selection(nullptr), image(nullptr),
 // outline
 outline(true),
@@ -51,8 +54,8 @@ List::~List()
 		
 void List::draw()
 {
-	if(is_visible())
-	{
+    //on_draw(); // sets position relative to parent, regardless of visibility
+	if(!is_visible()) return;
 	    for(int i = 0; i < item_list.size(); i++)
 	    {
 			Box * item = item_list[i];
@@ -94,8 +97,6 @@ void List::draw()
                 label->draw(); // draw label manually since we are drawing from List::draw and NOT Box::draw  
 			}			
 	    }
-	    on_draw(); // callback for all gui
-	}
 }
 /////////////
 void List::draw(double x, double y)

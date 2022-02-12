@@ -18,8 +18,10 @@ public:
 	Seller(const std::string& name);
 	~Seller();
 	void list_item(unsigned int item_id, unsigned int stock_qty, double sales_price = 0.00, std::string currency = "usd");
-	void list_item(const neroshop::Item& item, unsigned int stock_qty, double sales_price = 0.00, std::string currency = "usd", double discount = 0.00, unsigned int discounted_items = 0, std::string condition = "new"); // adds an item to the inventory
-	             // images, price, search_terms
+	void list_item(const neroshop::Item& item, unsigned int stock_qty, double sales_price = 0.00, std::string currency = "usd", double discount = 0.00, unsigned int discounted_items = 1, unsigned int discount_times = 1, std::string discount_expiry = ""/*"0000-00-00 00:00:00"*/, std::string condition = "new"); // adds an item to the inventory
+	void delist(unsigned int item_id); // delete from inventory where id= item_id
+	// images, price, search_terms
+	// coupons should have a uuid hmm ...
 	// setters	
 	void set_stock_quantity(const neroshop::Item& item, unsigned int stock_qty);
 	void set_stock_quantity(unsigned int item_id, unsigned int stock_qty);
@@ -43,8 +45,10 @@ public:
 	// callbacks
 	static neroshop::User * on_login(const std::string& username);
 	void on_order_received();
+	/////////////////////////
+	void update_customer_orders(); // called multiple times	// listens to and update customer orders
 protected:
-    void load_customer_orders();	
+    void load_customer_orders(); // called one-time when seller logs in
 private:
 	std::string username;
 	neroshop::Wallet * wallet;

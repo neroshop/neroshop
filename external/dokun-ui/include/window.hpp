@@ -5,6 +5,7 @@
 #include "types.hpp"
 #include "vector.hpp"
 #include "string.hpp" // for unicode support (window title)
+#include "timer.hpp" // for slowing down nextevent?
 //#include "shader.hpp"
 #include "factory.hpp" // to store multiple windows
 #include "renderer.hpp"
@@ -140,6 +141,7 @@ private:
 		//Event * event;
 		Vector4 color;
 		static std::string name;
+		Timer * event_timer;
         #ifdef DOKUN_WIN32
 		    int cursor;
 		#endif

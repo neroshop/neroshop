@@ -43,6 +43,7 @@ dokun::Font::~Font(void)
 {
 	destroy(); // destroy texture_buffer
 	Factory::get_font_factory()->release(this);
+    std::cout << "font deleted\n";	
 }
 /////////////
 FT_Library dokun::Font::library (nullptr);

@@ -14,8 +14,7 @@
 // neroshop
 #include "server.hpp" // server // https://www.linuxhowtos.org/C_C++/socket.htm
 #include "debug.hpp"
-// dokun
-#include "script.hpp"
+//#include "db2.hpp" // daemon should handle database server requests from the client ??
 
 using namespace neroshop;
 
@@ -57,8 +56,8 @@ int main(void)
     // Since the child process is a daemon, the umask needs to be set so files and logs can be written
     umask(0);
     // Open system logs for the child process
-    openlog("neroshop-daemon", LOG_NOWAIT | LOG_PID, LOG_USER);
-    syslog(LOG_NOTICE, "Successfully started neroshop-daemon");
+    openlog("neromon", LOG_NOWAIT | LOG_PID, LOG_USER);
+    syslog(LOG_NOTICE, "Successfully started neromon");
     // Generate a session ID for the child process
     sid = setsid();
     // Ensure a valid SID for the child process
@@ -83,23 +82,6 @@ int main(void)
     close(STDERR_FILENO);*/
     // Daemon-specific intialization should go here
     const int SLEEP_INTERVAL = 5;
-   ///////////////////////////////////////////////////
-    /*// start lua     
-    lua_State * lua_state = luaL_newstate();  
-    if(lua_state == nullptr) {
-        neroshop::print("\033[1;94m[lua]:\033[0m lua state failed to initialize");
-        return false;
-    }
-    luaL_openlibs(lua_state); // opens all standard Lua libraries into the given state.   
-    // get port from config file
-    std::string config_file = "/home/" + System::get_user() + "/.config/neroshop" + "/config.lua";
-    Script script;
-    if(!script.load(lua_state, config_file)) {lua_error(lua_state);return false;}
-    std::string port = Script::get_string(lua_state, "neroshop.daemon.port");
-    if (port.empty()) {
-        std::cout << "failed to get port\nsetting default port: 38081" << std::endl;
-        port = "38081";
-    }*/    
     //////////////////////////////////////////////////
     // server
     std::atexit(close_server);

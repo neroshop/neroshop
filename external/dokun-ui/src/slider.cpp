@@ -43,10 +43,17 @@ Slider::Slider(int x, int y, int width, int height) : value(0), range(0, 100), r
 }
 /////////////
 Slider::~Slider()
-{}
+{
+    // delete label
+    if(label) {
+        delete label;
+        label = nullptr;
+    }
+}
 /////////////		
 void Slider::draw()
 {
+    on_draw(); // sets position relative to parent, regardless of visibility
 	if(!is_visible()) return;  // is it visible? //if(!is_active())
 	    double min_val = get_range().x;
 	    double max_val = get_range().y;
@@ -70,15 +77,17 @@ void Slider::draw()
 			    min_val, max_val, value, background_color, ball_height, ball_color);
 		}	
 	// Label	
-	if(!label) return;// as long as label is not nullptr. Does not matter if text is empty, still need to set proper x and y positions
+	if(label) {//if(!label) return;// as long as label is not nullptr. Does not matter if text is empty, still need to set proper x and y positions
     // set label_position relative to progressbar_position
     if(label->get_alignment() == "left"  ) label->set_relative_position(0, (get_height() / 2) - (10 / 2)); // left will remain 0, y will be centered
 	if(label->get_alignment() == "center") label->set_relative_position((get_width() / 2) - ((10 * label->get_string().length()) / 2), (get_height() / 2) - (10 / 2)); // both x and y will be centered; adjusted based on label string's length
 	if(label->get_alignment() == "right" ) label->set_relative_position(get_width() - (10 * label->get_string().length()), (get_height() / 2) - (10 / 2)); // right will be move to the far right (width), y will be centered; adjusted based on label string's length
 	if(label->get_alignment() == "none"  ) label->set_relative_position(label->get_relative_x(), label->get_relative_y()); // nothing is changed here
 	label->set_position(get_x() + label->get_relative_x(), get_y() + label->get_relative_y());
+    // draw label manually since there can only be one label for slider
+    label->draw();
+    }
     // NO need to draw label since child GUI are automatically drawn //label->draw();//Renderer::draw_label(get_text(), x, y, angle, 0.5, 0.5, get_label()->get_font()->get_data(), get_label()->get_color().x, get_label()->get_color().y, get_label()->get_color().z, get_label()->get_color().w);
-    on_draw(); // callback for all gui	
 }    
 /////////////
 void Slider::draw(double x, double y)
@@ -372,7 +381,7 @@ int Slider::is_moved(lua_State *L)
 /////////////
 /////////////
 void Slider::on_keyboard_test() {
-    if(!is_focused()) return;
+    if(!has_focus()) return;
     if(dokun::Keyboard::is_pressed(DOKUN_KEY_LEFT)) 
         set_value(value - 1);
     if(dokun::Keyboard::is_pressed(DOKUN_KEY_RIGHT)) 
@@ -384,6 +393,7 @@ void Slider::on_keyboard_test() {
 /////////////
 /////////////
 void Slider::on_mouse_move_ball() { // horz slider
+    if(!has_focus()) return;
     dokun::Window * window = static_cast<dokun::Window *>(Factory::get_window_factory()->get_object(0));
     ///////////////////
     // is ball/handle is pressed

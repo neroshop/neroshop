@@ -27,6 +27,8 @@ public:
 	std::string read();
 	void close(); // closes socket
 	void shutdown(); // shuts down entire connection, ending receiving and sending
+	//void check_for_internet(); // server needs to make sure there is internet so that it can access database
+	//InternetGetConnectedState();//win32
 	// getters
 	//std::string get_address() const;
 	//unsigned int get_port() const;

@@ -43,6 +43,8 @@ class GUI: public Entity
 		void hide();                                    static int hide(lua_State *L); // hides child ui as well (child ui is always on top of the parent ui)
 		static void show_all();                         static int show_all(lua_State *L);
 		static void hide_all();                         static int hide_all(lua_State *L);
+		void focus();
+		static void clear_all(); // clears the current focused GUI by setting it to nullptr
 		// test function
 		static void connect(const GUI& a, int signal, const GUI& b, std::function<void(void)> slot);
 		// setters
@@ -59,7 +61,7 @@ class GUI: public Entity
 		// state
 		void set_visible(bool visible);                 static int set_visible(lua_State *L); // visible = true, invisible = false
 		void set_active(bool active);                   static int set_active(lua_State *L); // active = true, disabled = false
-		void set_focused(bool focused);                 static int set_focused(lua_State *L);
+		virtual void set_focus(bool focused);                 static int set_focus(lua_State *L);
 		// interaction
 		void set_draggable (bool draggable);            static int set_draggable(lua_State *L);
 		void set_droppable (bool droppable);            static int set_droppable(lua_State *L);
@@ -98,16 +100,16 @@ class GUI: public Entity
 		double get_angle()const;                        static int get_angle(lua_State *L);
 	    // callbacks
 		virtual void on_create();
-		virtual void on_trigger(); // ??
 		virtual void on_draw();
-		virtual void on_draw_before();
-		//virtual void on_draw_after();
+		void on_draw_edit(); // specifically for edit
+        virtual void on_focus();
+        virtual void on_parent();
 		// interaction checks
 	    bool is_hovered(); static int is_hovered(lua_State * L);// mouse over
 	    bool is_pressed(); static int is_pressed(lua_State * L); // executes many times in loop
 		bool is_selected(); //static int (lua_State * L); // executes once in loop
 		bool is_released(); //static int (lua_State * L);
-	    bool is_focused(); //static int (lua_State * L); // has focus
+	    virtual bool has_focus(); //static int (lua_State * L); // has focus
 		bool is_dragged(); //static int (lua_State * L);
 		bool is_dropped(); //static int (lua_State * L);
 		bool is_resized(); //static int (lua_State * L);

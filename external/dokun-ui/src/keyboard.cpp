@@ -80,6 +80,7 @@ int dokun::Keyboard::is_pressed(lua_State *L)
 bool dokun::Keyboard::is_released(int key)
 {
 #ifdef __gnu_linux__ 
+    return (dokun::Keyboard::key == key && dokun::Keyboard::up);
 #endif
 	return false;	
 }

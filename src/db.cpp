@@ -6,7 +6,7 @@ neroshop::DB::DB()
 neroshop::DB::DB(const std::string& file_name) : DB() // delegating constructor
 {
 	if(!open(file_name)) {
-		NEROSHOP_TAG std::cout << SQLITE3_TAG_ERR << "Could not open db - " + String::to_string(sqlite3_errmsg(db)) + " (" + file_name + ")" << std::endl;
+		NEROSHOP_TAG_OUT std::cout << SQLITE3_TAG_ERR << "Could not open db - " + String::to_string(sqlite3_errmsg(db)) + " (" + file_name + ")" << std::endl;
         std::exit(1);
     }
 }
@@ -40,10 +40,10 @@ void neroshop::DB::execute(const std::string& sql) // execute an sql statement; 
 	int error = sqlite3_exec(db, sql.c_str(), neroshop::DB::callback, 0, &errmsg);
 	if (error != SQLITE_OK)
 	{
-		NEROSHOP_TAG std::cout << SQLITE3_TAG_ERR + String::to_string(errmsg) << "\033[0m" << std::endl;
+		NEROSHOP_TAG_OUT std::cout << SQLITE3_TAG_ERR + String::to_string(errmsg) << "\033[0m" << std::endl;
 		sqlite3_free(errmsg);
 	}
-	if(error == SQLITE_LOCKED) {NEROSHOP_TAG std::cout << "dammit, this database is locked wtf!!!" << std::endl;} // remove this LOL
+	if(error == SQLITE_LOCKED) {NEROSHOP_TAG_OUT std::cout << "dammit, this database is locked wtf!!!" << std::endl;} // remove this LOL
 }
 ////////////////////
 void neroshop::DB::table(const std::string& table, bool auto_inc) // creates a new table; works !
@@ -260,7 +260,7 @@ sqlite3 * neroshop::DB::get_handle() const {
 ////////////////////
 std::string neroshop::DB::get_sqlite_version() {
     return sqlite3_libversion();
-} // NEROSHOP_TAG std::cout << SQLITE3_TAG << "sqlite3 v" << neroshop::DB::get_sqlite_version() << std::endl;
+} // NEROSHOP_TAG_OUT std::cout << SQLITE3_TAG << "sqlite3 v" << neroshop::DB::get_sqlite_version() << std::endl;
 ////////////////////
 ////////////////////
 std::string neroshop::DB::get_select(const std::string& table, std::string variable, std::string condition) const 
@@ -294,7 +294,7 @@ std::string neroshop::DB::get_column_name(const std::string& table) const
     // ...
     int result = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr); // db, const char *zSql, sql.length()/int nByte, sqlite3_stmt **ppStmt, const char **pzTail // https://www.sqlite.org/c3ref/prepare.html
     if(result != SQLITE_OK) {
-        NEROSHOP_TAG std::cout << SQLITE3_TAG_ERR + String::to_string(sqlite3_errmsg(db)) << "\033[0m" << std::endl;
+        NEROSHOP_TAG_OUT std::cout << SQLITE3_TAG_ERR + String::to_string(sqlite3_errmsg(db)) << "\033[0m" << std::endl;
     }
     // step
     result = sqlite3_step(stmt);
@@ -313,17 +313,17 @@ int neroshop::DB::get_column_integer(const std::string& table, std::string varia
     if(!db) throw std::runtime_error("database is not connected");
     sqlite3_stmt * stmt;
     std::string sql = get_select(table, variable, condition);
-    //NEROSHOP_TAG std::cout << sql << std::endl; // debug
+    //NEROSHOP_TAG_OUT std::cout << sql << std::endl; // debug
     int result = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr); // prepare // db, const char *zSql, sql.length()/int nByte, sqlite3_stmt **ppStmt, const char **pzTail // https://www.sqlite.org/c3ref/prepare.html
     if(result != SQLITE_OK) {
-        NEROSHOP_TAG std::cout << SQLITE3_TAG_ERR + String::to_string(sqlite3_errmsg(db)) << "\033[0m" << std::endl;
+        NEROSHOP_TAG_OUT std::cout << SQLITE3_TAG_ERR + String::to_string(sqlite3_errmsg(db)) << "\033[0m" << std::endl;
         //close();
     }
     result = sqlite3_step(stmt);// step
     // return column text
     if (result == SQLITE_ROW) {
         int column_type = sqlite3_column_type(stmt, 0);
-        if(column_type != SQLITE_INTEGER) {NEROSHOP_TAG std::cout << SQLITE3_TAG_ERR << "column type is not an INTEGER" << "\033[0m" << std::endl;}
+        if(column_type != SQLITE_INTEGER) {NEROSHOP_TAG_OUT std::cout << SQLITE3_TAG_ERR << "column type is not an INTEGER" << "\033[0m" << std::endl;}
         return (int)sqlite3_column_int(stmt, 0);/*sqlite3_stmt*, int iCol*/
     }
     // destroy
@@ -335,17 +335,17 @@ double neroshop::DB::get_column_real(const std::string& table, std::string varia
     if(!db) throw std::runtime_error("database is not connected");
     sqlite3_stmt * stmt;
     std::string sql = get_select(table, variable, condition);
-    //NEROSHOP_TAG std::cout << sql << std::endl; // debug
+    //NEROSHOP_TAG_OUT std::cout << sql << std::endl; // debug
     int result = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr); // prepare // db, const char *zSql, sql.length()/int nByte, sqlite3_stmt **ppStmt, const char **pzTail // https://www.sqlite.org/c3ref/prepare.html
     if(result != SQLITE_OK) {
-        NEROSHOP_TAG std::cout << SQLITE3_TAG_ERR + String::to_string(sqlite3_errmsg(db)) << "\033[0m" << std::endl;
+        NEROSHOP_TAG_OUT std::cout << SQLITE3_TAG_ERR + String::to_string(sqlite3_errmsg(db)) << "\033[0m" << std::endl;
         //close();
     }
     result = sqlite3_step(stmt);// step
     // return column text
     if (result == SQLITE_ROW) {
         int column_type = sqlite3_column_type(stmt, 0);
-        if(column_type != SQLITE_FLOAT) {NEROSHOP_TAG std::cout << SQLITE3_TAG_ERR << "column type is neither a FLOAT OR DOUBLE" << "\033[0m" << std::endl;}
+        if(column_type != SQLITE_FLOAT) {NEROSHOP_TAG_OUT std::cout << SQLITE3_TAG_ERR << "column type is neither a FLOAT OR DOUBLE" << "\033[0m" << std::endl;}
         return (double)sqlite3_column_double(stmt, 0);/*sqlite3_stmt*, int iCol*/
     }
     // destroy
@@ -359,17 +359,17 @@ std::string neroshop::DB::get_column_text(const std::string& table, std::string 
 {
     sqlite3_stmt * stmt;
     std::string sql = get_select(table, variable, condition);
-    //NEROSHOP_TAG std::cout << sql << std::endl; // debug
+    //NEROSHOP_TAG_OUT std::cout << sql << std::endl; // debug
     int result = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr); // prepare // db, const char *zSql, sql.length()/int nByte, sqlite3_stmt **ppStmt, const char **pzTail // https://www.sqlite.org/c3ref/prepare.html
     if(result != SQLITE_OK) {
-        NEROSHOP_TAG std::cout << SQLITE3_TAG_ERR + String::to_string(sqlite3_errmsg(db)) << "\033[0m" << std::endl;
+        NEROSHOP_TAG_OUT std::cout << SQLITE3_TAG_ERR + String::to_string(sqlite3_errmsg(db)) << "\033[0m" << std::endl;
         //close();
     }
     result = sqlite3_step(stmt);// step
     // return column text
     if (result == SQLITE_ROW) {
         int column_type = sqlite3_column_type(stmt, 0);
-        if(column_type != SQLITE_TEXT) {NEROSHOP_TAG std::cout << SQLITE3_TAG_ERR << "column type is not a TEXT" << "\033[0m" << std::endl;}
+        if(column_type != SQLITE_TEXT) {NEROSHOP_TAG_OUT std::cout << SQLITE3_TAG_ERR << "column type is not a TEXT" << "\033[0m" << std::endl;}
         return (const char *)sqlite3_column_text(stmt, 0);/*sqlite3_stmt*, int iCol*/
     }
     // destroy
@@ -381,17 +381,17 @@ void * neroshop::DB::get_column_blob(const std::string& table, std::string varia
 {
     sqlite3_stmt * stmt;
     std::string sql = get_select(table, variable, condition);
-    //NEROSHOP_TAG std::cout << sql << std::endl; // debug
+    //NEROSHOP_TAG_OUT std::cout << sql << std::endl; // debug
     int result = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr); // prepare // db, const char *zSql, sql.length()/int nByte, sqlite3_stmt **ppStmt, const char **pzTail // https://www.sqlite.org/c3ref/prepare.html
     if(result != SQLITE_OK) {
-        NEROSHOP_TAG std::cout << SQLITE3_TAG_ERR + String::to_string(sqlite3_errmsg(db)) << "\033[0m" << std::endl;
+        NEROSHOP_TAG_OUT std::cout << SQLITE3_TAG_ERR + String::to_string(sqlite3_errmsg(db)) << "\033[0m" << std::endl;
         //close();
     }
     result = sqlite3_step(stmt);// step
     // return column text
     if (result == SQLITE_ROW) {
         int column_type = sqlite3_column_type(stmt, 0);
-        if(column_type != SQLITE_BLOB) {NEROSHOP_TAG std::cout << SQLITE3_TAG_ERR << "column type is not a BLOB" << "\033[0m" << std::endl;}
+        if(column_type != SQLITE_BLOB) {NEROSHOP_TAG_OUT std::cout << SQLITE3_TAG_ERR << "column type is not a BLOB" << "\033[0m" << std::endl;}
         return (void *)sqlite3_column_blob(stmt, 0);/*sqlite3_stmt*, int iCol*/
     }
     // destroy
@@ -510,16 +510,16 @@ bool neroshop::DB::create_config() { // good!
     if(File::exists(neroshop_config_name)) return false; // false because it will not be created
     // check if script works before saving
     if(luaL_dostring(lua_state, text.c_str()) != 0) {
-		NEROSHOP_TAG std::cout << LUA_TAG << "\033[0;31m" << "invalid Lua code" << "\033[0m" << std::endl;
+		NEROSHOP_TAG_OUT std::cout << LUA_TAG << "\033[0;31m" << "invalid Lua code" << "\033[0m" << std::endl;
 		lua_error(lua_state);
 		return false; // exit function so it does not save text
 	}
     // if path does not exist
     if(!File::is_directory(neroshop_config_path)) 
     {   // create the path
-        NEROSHOP_TAG std::cout << "\033[0;33m" << "path \"" << neroshop_config_path << "\" does not exist, but we'll create it for you :)" << "\033[0m" << std::endl;
-        if(!File::make_dir(neroshop_config_path)) {NEROSHOP_TAG std::cout << "\033[0;31m" << "failed to make the path :(" << "\033[0m" << std::endl; return false;}
-        NEROSHOP_TAG std::cout << "\033[1;97;49m" << "created path \"" << neroshop_config_path << "\"" << "\033[0m" << std::endl;
+        NEROSHOP_TAG_OUT std::cout << "\033[0;33m" << "path \"" << neroshop_config_path << "\" does not exist, but we'll create it for you :)" << "\033[0m" << std::endl;
+        if(!File::make_dir(neroshop_config_path)) {NEROSHOP_TAG_OUT std::cout << "\033[0;31m" << "failed to make the path :(" << "\033[0m" << std::endl; return false;}
+        NEROSHOP_TAG_OUT std::cout << "\033[1;97;49m" << "created path \"" << neroshop_config_path << "\"" << "\033[0m" << std::endl;
     }
     // if path exists, but the file is missing or deleted
     if(!File::exists(neroshop_config_name)) {
@@ -528,7 +528,7 @@ bool neroshop::DB::create_config() { // good!
         cfg.open (neroshop_config_name, std::ios::out | std::ios::trunc);
         cfg << text << "\n"; // write to file
         cfg.close();
-        NEROSHOP_TAG std::cout << "\033[1;97;49m" << "created file \"" << neroshop_config_name << "\"" << "\033[0m" << std::endl;  
+        NEROSHOP_TAG_OUT std::cout << "\033[1;97;49m" << "created file \"" << neroshop_config_name << "\"" << "\033[0m" << std::endl;  
     }
     return true;
 }
@@ -542,7 +542,7 @@ bool neroshop::DB::load_config(lua_State *L)
     std::string neroshop_config_name = neroshop_config_path + "/config.lua";
     Script script;
     if(!script.load(lua_state, neroshop_config_name)) {return false;}
-    NEROSHOP_TAG std::cout << "\033[1;94;49m" << "loaded script \"" << script.get_file() << "\"" << "\033[0m" << std::endl;
+    NEROSHOP_TAG_OUT std::cout << "\033[1;94;49m" << "loaded script \"" << script.get_file() << "\"" << "\033[0m" << std::endl;
     return true; // default return-value
 }
 ////////////////////
@@ -570,7 +570,7 @@ void neroshop::DB::edit_config(const std::string& old_str, const std::string& ne
         cfg.open (neroshop_config_name, std::ios::out | std::ios::trunc);
         cfg << contents << "\n"; // write to file
         cfg.close();
-        NEROSHOP_TAG std::cout << "\033[1;97;49m" << "rewrote file \"" << neroshop_config_name << "\"" << "\033[0m" << std::endl;      
+        NEROSHOP_TAG_OUT std::cout << "\033[1;97;49m" << "rewrote file \"" << neroshop_config_name << "\"" << "\033[0m" << std::endl;      
     }
     /////////////////////////////////
 }

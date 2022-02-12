@@ -18,10 +18,17 @@ Toggle::Toggle() : value (false), foreground_color(255, 255, 255, 1.0), backgrou
 }
 /////////////
 Toggle::~Toggle()
-{}
+{
+    /*// delete label
+    if(label) {
+        delete label;
+        label = nullptr;
+    }*/
+}
 /////////////		
 void Toggle::draw()
 {
+    on_draw(); // sets position relative to parent, regardless of visibility
 	if(!is_visible()) return; // if not visible, exit function
 	if(is_active()) {}// is it disabled?
 	// mouse is over toggle and pressed, change the value
@@ -48,7 +55,6 @@ void Toggle::draw()
 	            value, foreground_color, // value, mark_color (white)
 		        outline, outline_width, outline_color, outline_antialiased); // outline
 	}
-    on_draw(); // callback for all gui	
 }
 /////////////
 void Toggle::draw(double x, double y)

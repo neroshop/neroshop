@@ -128,8 +128,19 @@ Box::Box(int x, int y, int width, int height)
 /////////////
 Box::~Box(void)
 {
+    // delete titlebar image
+    if(title_bar_image) {
+        delete title_bar_image;
+        title_bar_image = nullptr;
+    }
+    // delete titlebar label
+    if(title_bar_label) {
+        delete title_bar_label;
+        title_bar_label = nullptr;
+    }
 	//if(label) delete label; // call label destructor
 	//if(image) delete image; // call image destructor
+	std::cout << "box deleted\n";
 }
 /////////////
 int Box::widget_new(lua_State *L)
@@ -191,18 +202,47 @@ void Box::remove(const GUI& gui) // for box widgets only
 /////////////
 void Box::draw(void) 
 {
-	if(is_box()) // draw box
+    on_draw(); // set position relative to its parent (if it has one), regardless of whether visible or not
+    draw_box();
+    draw_icon();
+	draw_tooltip();
+}
+/////////////
+void Box::draw(double x, double y)
+{
+    set_position(x, y);
+    draw();
+}
+/////////////
+void Box::draw(const Vector2& position)
+{
+    set_position(position.x, position.y);
+    draw();
+}
+/////////////
+int Box::draw(lua_State *L)  
+{
+    luaL_checktype(L, 1, LUA_TTABLE);
+	lua_getfield(L, 1, "udata");
+	if(lua_isuserdata(L, -1))
 	{
-		if(!is_active()) {} // add shade to color
-		if(is_active())  {} // add tint to color
-        if(is_visible())  // is it visible? 
-        {
-			on_titlebar();
-            on_drag();
-			on_resize();
-            /////////////////////////////////////////////////////////////////////////
-            // Draw box	- at (0, 0) the titlebar will not show as it is the main widget at 0, 0 so the title bar would be hidden by the window's titlebar		
-			Renderer::draw_box(get_position().x, get_position().y, get_width(), get_height(), get_angle(), 
+	    Box * widget = *static_cast<Box **>(lua_touserdata(L, -1));
+		widget->draw();
+	}
+	return 0;
+}
+/////////////
+void Box::draw_box() {
+    if(!is_box()) return; 
+    if(!is_visible()) return;
+	if(!is_active()) {} // add shade to color
+	if(is_active()) {} // add tint to color
+	on_titlebar();
+    on_drag();
+	on_resize();
+    /////////////////////////////////////////////////////////////////////////
+    // Draw box	- at (0, 0) the titlebar will not show as it is the main widget at 0, 0 so the title bar would be hidden by the window's titlebar		
+	Renderer::draw_box(get_position().x, get_position().y, get_width(), get_height(), get_angle(), 
 			get_scale().x, get_scale().y, color.x, color.y, color.z, color.w,
 			    radius, is_iconified(),
 				// title_bar
@@ -218,8 +258,8 @@ void Box::draw(void)
 				gradient, gradient_color, gradient_value,
 				// shadow
 				shadow
-			);
-            /////////////////////////////////////////////////////////////////////////
+	);
+    /////////////////////////////////////////////////////////////////////////
 			// Draw titlebar image and text (goes on top of titlebar) *****************************
 			if(has_title_bar()) // if GUI has a titlebar
 			{   // title_bar image or icon (goes on the titlebar)
@@ -249,7 +289,7 @@ void Box::draw(void)
                     if(!title_bar_label->get_string().empty()) title_bar_label->draw(); // NOTE: title_bar_label's parent is not the Box but the Box's titlebar // will crash engine if not assigned to nullptr or any value
                 }
 			} // end of titlebar image *********************************************
-            /////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
 			// Draw label (goes inside box) **********************************************************
             if(label) // make sure Box has an "initialized" label beforehand (or else engine will crash)
             {   // set label's alignment and position relative to the Box
@@ -269,7 +309,7 @@ void Box::draw(void)
                 if(l != 0) { dokun::Label * prev = label_list[l-1];    label_list[l]->set_position(prev->get_x(), (prev->get_y() + prev->get_height())); }// set the sub labels position based on label0's position. Don't worry about alignments and whatnot       
                 // NO need to draw label since child GUI are automatically drawn (via GUI::on_draw()). So DO NOT call draw function!!!
             }
-            /////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
 			// Draw image (goes inside box) *******************************************
             if(image != nullptr)
 			{
@@ -303,46 +343,33 @@ void Box::draw(void)
 			}
 			/////////////////////////////////////////////////////////////////////////
 			// on draw callback (if visible)
-	        on_draw();	// will automatically set child(label)'s position relative to parent(box)	
-		}
-	}
-	//-------------------------------
-	if(is_icon()) //If this widget is an icon, draw image (only) // Boxs can be both a box or an icon
-	{
-		if(!is_active()) // add shade to color
-		{}
-		if(is_active())  // add tint to color
-		{}
-		if(is_visible())
-		{
-			if(image != nullptr)
-			{
-				image->set_position(get_x() + image->get_relative_x(), get_y() + image->get_relative_y());
-                image->resize(get_size());
-				image->draw();				
-			}
-			// on draw callback (if visible)
-	        on_draw();	
-		}
-	}
-	//-------------------------------
-	if(is_tooltip()) // if this box is a tooltip, draw tooltip
-	{
-	    if(is_visible())
-	    {
-	        Renderer::draw_tooltip("Hello", get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y, get_color().x, get_color().y, get_color().z, get_color().w, tooltip_arrow_direction, tooltip_arrow_width, tooltip_arrow_height, tooltip_arrow_position/*, tooltip_arrow_color*/);
-            // Draw label (goes inside box) **********************************************************
-            if(label) // make sure Box has an "initialized" label beforehand (or else engine will crash)
-            {   // set label's alignment and position relative to the Tooltip (Box)                     // 10 is the space between the text and the Box's edge
+	        for(int i = 0; i < Factory::get_gui_factory()->get_size(); i++) { // for(int i = 0; i < child_list.size(); i++) {
+			    GUI * gui = static_cast<GUI*>(Factory::get_gui_factory()->get_object(i));//static_cast<GUI*>(child_list[i]);
+			    if(gui == nullptr) continue; // skip null objs
+			    if(!gui->is_visible()) continue; // skip hidden objs
+			    if(gui->get_parent() == this) gui->draw(); // draw all children // no need to check if child is visible since draw() calls already do that
+		    }
+}
+/////////////
+void Box::draw_tooltip() {
+    if(!is_tooltip()) return; // if this box is a tooltip, draw tooltip
+    if(!is_visible()) return;
+	if(!is_active()) {}// add shade to color
+	if(is_active()) {}  // add tint to color    
+    // Draw tooltip
+	Renderer::draw_tooltip("Hello", get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y, get_color().x, get_color().y, get_color().z, get_color().w, tooltip_arrow_direction, tooltip_arrow_width, tooltip_arrow_height, tooltip_arrow_position/*, tooltip_arrow_color*/);
+    // Draw label (goes inside box) **********************************************************
+    if(label) // make sure Box has an "initialized" label beforehand (or else engine will crash)
+    {   // set label's alignment and position relative to the Tooltip (Box)                     // 10 is the space between the text and the Box's edge
 		        if(label->get_alignment() == "left"  ) { label->set_relative_position(0 + 10                                , 0 + 10); }
 				if(label->get_alignment() == "center") { label->set_relative_position((get_width() - label->get_width()) / 2, (get_height() - label->get_height()) / 2); }
 				if(label->get_alignment() == "right" ) { label->set_relative_position((get_width() - label->get_width())    , 0 + 10); }
                 if(label->get_alignment() == "none"  ) {} // default - with this you are free to set the label's relative position to whatever you want // relative_position will always be (0, 0) unless you change it
-				// NO need to draw label since child GUI are automatically drawn  // child objects are drawn automatically. So DO NOT call draw function!!!
-            }
-            // Draw image (goes inside box) *******************************************
-            if(image) // make sure Box has an "initialized" image beforehand (or else engine will crash)
-			{   // get image size whether its original or resized or scaled
+        label->draw();
+    }
+    // Draw image (goes inside box) *******************************************
+    if(image) // make sure Box has an "initialized" image beforehand (or else engine will crash)
+	{   // get image size whether its original or resized or scaled
 				int image_width  = (image->is_resized() == false) ? image->get_width () : image->get_width_scaled ();
 			    int image_height = (image->is_resized() == false) ? image->get_height() : image->get_height_scaled();
                 // set image alignment and position relative to GUI	
@@ -354,37 +381,22 @@ void Box::draw(void)
 				// if image is larger than box, scale to fit
 				if(image_width > get_width () || image_height > get_height()) image->scale_to_fit(get_width(), get_height());// if image is wider than widget, make width equal or if image is taller than widget, make height equal
 				// and finally, draw the image ...	
-				image->draw(); // Image is not a GUI so you cannot set its parent which means it must be drawn manually
-			}
-            // on draw callback (if visible)
-	        on_draw();	// will automatically set child(label)'s position relative to parent(tooltip_box)            
-	    }
-	}
+		image->draw(); // Image is not a GUI so you cannot set its parent which means it must be drawn manually
+	}                 
 }
 /////////////
-void Box::draw(double x, double y)
-{
-    set_position(x, y);
-    draw();
+void Box::draw_icon() {
+    if(!is_icon()) return; // If this widget is an icon, draw image (only) // Boxs can be both a box or an icon
+    if(!is_visible()) return;
+	if(!is_active()) {}// add shade to color
+	if(is_active()) {}  // add tint to color
+	if(!image) return;
+	image->set_position(get_x(), get_y());//(get_x() + image->get_relative_x(), get_y() + image->get_relative_y());
+    image->resize(get_size());
+	image->draw();
 }
 /////////////
-void Box::draw(const Vector2& position)
-{
-    set_position(position.x, position.y);
-    draw();
-}
 /////////////
-int Box::draw(lua_State *L)  
-{
-    luaL_checktype(L, 1, LUA_TTABLE);
-	lua_getfield(L, 1, "udata");
-	if(lua_isuserdata(L, -1))
-	{
-	    Box * widget = *static_cast<Box **>(lua_touserdata(L, -1));
-		widget->draw();
-	}
-	return 0;
-}
 ///////////// // create a set_size_preserved() function
 void Box::maximize(void)
 {
@@ -1584,13 +1596,16 @@ void Box::on_titlebar_button_iconify(void) {
 /////////////
 void Box::on_drag(void)
 {
-	if(!is_draggable())
-        return;
+	if(!is_draggable()) return;
 	dokun::Window * window = dokun::Window::get_active();
-	if(window == nullptr)
-		return;
+	if(!window) return;
 	if(has_title_bar()) // has title_bar (drag by title_bar)
 	{
+	    double mouse_x_relative_to_title_bar = fabs(get_title_bar_position().x - Mouse::get_position(*window).x);
+	    double mouse_y_relative_to_title_bar = fabs(get_title_bar_position().y - Mouse::get_position(*window).y);
+	    //std::cout << "mouse_x_titlebar: " << mouse_x_relative_to_title_bar << std::endl;
+	    //std::cout << "mouse_y_titlebar: " << mouse_y_relative_to_title_bar << std::endl;
+	    bool captured = false; // captured pos
 		if(Mouse::is_over(get_title_bar_position(), get_title_bar_size()))
 		{
 			dragged = true; // can drag
@@ -1610,10 +1625,13 @@ void Box::on_drag(void)
 			        dragged = false;
 		    }
 		}
-		if(Mouse::is_pressed(1) && dragged)
+		if(Mouse::is_pressed(1) && dragged && !captured)
 		{
 		    // capture position where mouse was pressed at
 		    //const int mouse_press_position_x_const = Mouse::get_position(*window).x;
+		    //const int mouse_press_position_y_const = Mouse::get_position(*window).y;
+		    //std::cout << "mouse_position_pressed: " <<  Vector2(mouse_press_position_x_const, mouse_press_position_y_const) << std::endl;
+		    captured = true;
 		    //const int old_title_bar_x = get_title_bar_position().x;
 		    // mouse_position - position_that_was_pressed   -    Mouse::get_position(*window).x - (get_title_bar_size().x - mouse_press_position_x_const)
 			set_position(Mouse::get_position(*window).x - get_title_bar_size().x / 2, Mouse::get_position(*window).y + (get_title_bar_size().y / 2)); // y stays the same, x changes
@@ -1621,13 +1639,16 @@ void Box::on_drag(void)
 		if(Mouse::is_released(1)) // on release
 		{
 			dragged = false;
-			set_position(get_position());
+			captured = false;
+			////set_position(get_position());
 		}		
 	}
 	if(!has_title_bar()) // no title_bar
 	{
-		if(Mouse::is_over(get_x(), get_y(), 
-		    get_width() - forbidden_area.z, get_height() - forbidden_area.w))
+	    double mouse_x_relative_to_box = fabs(get_x() - Mouse::get_position(*window).x);
+	    double mouse_y_relative_to_box = fabs(get_y() - Mouse::get_position(*window).y);
+	    
+		if(Mouse::is_over(get_x(), get_y(), get_width(), 10))//get_width() - forbidden_area.z, get_height() - forbidden_area.w))
 		{
 			dragged = true;
 		}/*

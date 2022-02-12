@@ -47,10 +47,17 @@ int spinner_new(lua_State *L)
 }
 /////////////
 Spinner::~Spinner()
-{}
+{
+    // delete label
+    if(label) {
+        delete label;
+        label = nullptr;
+    }
+}
 /////////////		
 void Spinner::draw()
 {
+    on_draw(); // sets position relative to parent, regardless of visibility
     if(!is_visible()) return;
     // callback
 	on_button_press();

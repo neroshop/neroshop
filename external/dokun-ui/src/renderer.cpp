@@ -894,6 +894,21 @@ void Renderer::draw_box(int x, int y, int width, int height, double angle, doubl
 #endif
 }
 ////////////////////////////
+void Renderer::draw_quad_instanced(int x, int y, int width, int height) {
+#ifdef DOKUN_OPENGL	// OpenGL is defined
+/*	context_check();
+    // Draw
+    //shader.set_float("color", (255 / 255.0), (108 / 255.0), (50 / 255.0), 1.0);//glEnable(GL_LINE_SMOOTH);
+	glBindVertexArray(box_vertex_array_obj); // use same vao data as box but this time in a line loop
+        //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0,
+	        100);//GLsizei primcount);        
+	glBindVertexArray(0);*/
+#endif // endif DOKUN_OPENGL	
+}
+
+
+////////////////////////////
 ////////////
 void Renderer::draw_text (const std::string& text, double x, double y, int width, int height, double angle, double scale_x, double scale_y, const dokun::Font& font, unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {

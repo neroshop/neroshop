@@ -23,7 +23,10 @@ neroshop::Item::Item(const std::string& name, const std::string& desc, double pr
 neroshop::Item::~Item() {}
 ////////////////////
 void neroshop::Item::register_item(const std::string& name, const std::string& description, double price, double weight, double length, double width, double height, const std::string& condition, const std::string& product_code) {
-    DB db("neroshop.db");
+    ////////////////////////////////
+    // sqlite
+    ////////////////////////////////
+    /*DB db("neroshop.db");
     //db.execute("PRAGMA journal_mode = WAL;"); // this may reduce the incidence of SQLITE_BUSY errors (such as database being locked) // https://www.sqlite.org/pragma.html#pragma_journal_mode
     ///////////
     // if item is already registered, then exit function
@@ -32,6 +35,7 @@ void neroshop::Item::register_item(const std::string& name, const std::string& d
         if(registered_item != 0) {
             neroshop::print("An item with the same product code has already been registered (id will be set regardless)", 2);
             set_id(registered_item);
+            db.close(); // DON'T forget to close db right before you return!!
             return; // exit function
         }
     }
@@ -54,9 +58,50 @@ void neroshop::Item::register_item(const std::string& name, const std::string& d
 	// save the item id
 	unsigned int item_id = db.get_column_integer("item ORDER BY id DESC LIMIT 1", "*");
 	set_id(item_id);
-    NEROSHOP_TAG std::cout << "\033[1;36m" << name << " (id: " << get_id() << ") has been registered" << "\033[0m" << std::endl;
-    ///////////
-    db.close();        
+    NEROSHOP_TAG_OUT std::cout << "\033[1;36m" << name << " (id: " << get_id() << ") has been registered" << "\033[0m" << std::endl;
+    db.close();*/  
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    // if an item in registry is branded then a seller cannot sell under that listing unless they sell the same brand
+    // to-do: table "brand" and add a "brand_id" column to table item
+    // in order for multiple sellers to share the same product detail page, each seller must be selling the exact same product from the exact same manufacturer with the exact same UPC (or whatever product ID code the product uses)
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+
+    // if item is already registered, then exit function
+    if(DB2::get_singleton()->table_exists("item")) {
+        int registered_item = DB2::get_singleton()->get_integer_params("SELECT id FROM item WHERE product_code = $1", { product_code });
+        if(registered_item > 0) {
+            neroshop::print("An item with the same product code has already been registered (id will be set regardless)", 2);
+            set_id(registered_item);
+            DB2::get_singleton()->finish(); // DON'T forget to close db right before you return!!
+            return; // exit function
+        }
+    }
+    // table item
+    if(!DB2::get_singleton()->table_exists("item")) {
+	    DB2::get_singleton()->create_table("item"); // item_id is primary key which will be auto generated
+	    DB2::get_singleton()->add_column("item", "name", "text");
+	    DB2::get_singleton()->add_column("item", "description", "text"); //db.column("item", "ADD", "quantity", "INTEGER"); // item quantity is managed by cart
+	    DB2::get_singleton()->add_column("item", "price", "numeric(20, 12)"); // numeric is just another word for decimal
+        DB2::get_singleton()->add_column("item", "weight", "real");
+	    DB2::get_singleton()->add_column("item", "size", "text");//"REAL");//db.column("item", "ADD", "discount", "REAL"); // seller determines the discount//db.column("item", "ADD", "condition", "TEXT"); // seller is able to change the item's condition
+	    DB2::get_singleton()->add_column("item", "product_code", "text");
+	    //DB2::get_singleton()->add_column("item", "category_id", "integer REFERENCES categories(id)");
+	    // all product codes MUST be unique! I think :O ...
+	    DB2::get_singleton()->create_index("idx_item_product_codes", "item", "product_code"); // item product codes must be unique
+	}
+	std::string item_size = std::to_string(length) + "x" + std::to_string(width) + "x" + std::to_string(height);//std::to_string(std::get<0>(item.size)) +"x"+ std::to_string(std::get<1>(item.size)) +"x"+ std::to_string(std::get<2>(item.size));
+    // add item to records
+	DB2::get_singleton()->execute_params("INSERT INTO item (name, description, price, weight, size, product_code) "
+	    "VALUES ($1, $2, $3, $4, $5, $6)"/*, $7)"*/, { name, description, std::to_string(price), std::to_string(weight), item_size, product_code });
+	// save the item id (for later use)
+	unsigned int item_id = DB2::get_singleton()->get_last_id("item");
+	set_id(item_id);
+    NEROSHOP_TAG_OUT std::cout << "\033[1;36m" << name << " (id: " << get_id() << ") has been registered" << "\033[0m" << std::endl;    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////          
 }
 ////////////////////
 void neroshop::Item::register_item(const neroshop::Item& item) { 
@@ -69,7 +114,7 @@ void neroshop::Item::register_item(const neroshop::Item& item) {
     if(reg_item != 0) {
         neroshop::print("Item with the same product code is registered", 1);
         const_cast<neroshop::Item&>(item).set_id(reg_item);
-        NEROSHOP_TAG std::cout << "item id set to: " << reg_item << std::endl;
+        NEROSHOP_TAG_OUT std::cout << "item id set to: " << reg_item << std::endl;
         return; // exit function
     }*/
     ///////////
@@ -335,7 +380,7 @@ void neroshop::Item::register_item(const neroshop::Item& item) {
 	const_cast<neroshop::Item&>(item).set_id(item_id);
     ///////////
     //const_cast<neroshop::Item&>(item).show_info();
-    NEROSHOP_TAG std::cout << "\033[1;36m" << item.name << " (id: " << item.id << ") has been registered" << "\033[0m" << std::endl;
+    NEROSHOP_TAG_OUT std::cout << "\033[1;36m" << item.name << " (id: " << item.id << ") has been registered" << "\033[0m" << std::endl;
     ///////////
     db.close();*/
 }
@@ -353,6 +398,13 @@ void neroshop::Item::set_quantity(unsigned int quantity) {
     if(!db.table_exists("Cart")) {db.close(); return;}
     db.update("Cart", "item_qty", std::to_string(quantity), "item_id = " + std::to_string(this->id));
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    /*DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();*/
+    ////////////////////////////////    
 }
 ////////////////////
 void neroshop::Item::set_quantity(unsigned int item_id, unsigned int quantity) {
@@ -361,6 +413,13 @@ void neroshop::Item::set_quantity(unsigned int item_id, unsigned int quantity) {
     if(!db.table_exists("Cart")) {db.close(); return;}
     db.update("Cart", "item_qty", std::to_string(quantity), "item_id = " + std::to_string(item_id));
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    /*DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();*/
+    ////////////////////////////////    
 }
 ////////////////////
 void neroshop::Item::set_name(const std::string& name) {
@@ -368,6 +427,13 @@ void neroshop::Item::set_name(const std::string& name) {
     if(!db.table_exists("item")) {db.close(); return;}
     db.update("item", "name", DB::to_sql_string(name), "id = " + std::to_string(this->id));
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
 }
 ////////////////////
 void neroshop::Item::set_name(unsigned int item_id, const std::string& name) {
@@ -375,6 +441,13 @@ void neroshop::Item::set_name(unsigned int item_id, const std::string& name) {
     if(!db.table_exists("item")) {db.close(); return;}
     db.update("item", "name", DB::to_sql_string(name), "id = " + std::to_string(item_id));
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
 }
 ////////////////////
 void neroshop::Item::set_description(const std::string& description) {
@@ -382,6 +455,13 @@ void neroshop::Item::set_description(const std::string& description) {
     if(!db.table_exists("item")) {db.close(); return;}
     db.update("item", "description", DB::to_sql_string(description), "id = " + std::to_string(this->id));
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
 }
 ////////////////////
 void neroshop::Item::set_description(unsigned int item_id, const std::string& description) {
@@ -389,6 +469,13 @@ void neroshop::Item::set_description(unsigned int item_id, const std::string& de
     if(!db.table_exists("item")) {db.close(); return;}
     db.update("item", "description", DB::to_sql_string(description), "id = " + std::to_string(item_id));
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
 }
 ////////////////////
 void neroshop::Item::set_price(double price) {
@@ -396,6 +483,13 @@ void neroshop::Item::set_price(double price) {
     if(!db.table_exists("item")) {db.close(); return;}
     db.update("item", "price", std::to_string(price), "id = " + std::to_string(this->id));
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
 }
 ////////////////////
 void neroshop::Item::set_price(unsigned int item_id, double price) {
@@ -403,6 +497,13 @@ void neroshop::Item::set_price(unsigned int item_id, double price) {
     if(!db.table_exists("item")) {db.close(); return;}
     db.update("item", "price", std::to_string(price), "id = " + std::to_string(item_id));
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
 }
 ////////////////////
 ////////////////////
@@ -411,6 +512,13 @@ void neroshop::Item::set_weight(double weight) {
     if(!db.table_exists("item")) {db.close(); return;}
     db.update("item", "weight", std::to_string(weight), "id = " + std::to_string(this->id));
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
 }
 ////////////////////
 void neroshop::Item::set_weight(unsigned int item_id, double weight) {
@@ -418,6 +526,13 @@ void neroshop::Item::set_weight(unsigned int item_id, double weight) {
     if(!db.table_exists("item")) {db.close(); return;}
     db.update("item", "weight", std::to_string(weight), "id = " + std::to_string(item_id));
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
 }
 ////////////////////
 void neroshop::Item::set_size(double l, double w, double h) {
@@ -427,6 +542,13 @@ void neroshop::Item::set_size(double l, double w, double h) {
     //std::cout << "item_size set: " << size << std::endl;
     db.update("item", "size", DB::to_sql_string(size) , "id = " + std::to_string(this->id));
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
 }
 ////////////////////
 void neroshop::Item::set_size(unsigned int item_id, double l, double w, double h) {
@@ -436,6 +558,13 @@ void neroshop::Item::set_size(unsigned int item_id, double l, double w, double h
     //std::cout << "item_size set: " << size << std::endl;
     db.update("item", "size", DB::to_sql_string(size) , "id = " + std::to_string(item_id));
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
 }
 ////////////////////
 ////////////////////
@@ -446,6 +575,13 @@ void neroshop::Item::set_size(const std::tuple<double, double, double>& size) {
     //std::cout << "item_size set: " << item_size << std::endl;
     db.update("item", "size", DB::to_sql_string(item_size) , "id = " + std::to_string(this->id));
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
 }
 ////////////////////
 void neroshop::Item::set_size(unsigned int item_id, const std::tuple<double, double, double>& size) {
@@ -455,6 +591,13 @@ void neroshop::Item::set_size(unsigned int item_id, const std::tuple<double, dou
     //std::cout << "item_size set: " << item_size << std::endl;
     db.update("item", "size", DB::to_sql_string(item_size) , "id = " + std::to_string(item_id));
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
 }
 ////////////////////
 void neroshop::Item::set_discount(double discount) {
@@ -462,6 +605,13 @@ void neroshop::Item::set_discount(double discount) {
     if(!db.table_exists("item")) {db.close(); return;}
     db.update("item", "discount", std::to_string(discount), "id = " + std::to_string(this->id));
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
 }
 ////////////////////
 void neroshop::Item::set_discount(unsigned int item_id, double discount) {
@@ -469,6 +619,13 @@ void neroshop::Item::set_discount(unsigned int item_id, double discount) {
     if(!db.table_exists("item")) {db.close(); return;}
     db.update("item", "discount", std::to_string(discount), "id = " + std::to_string(item_id));
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
 }
 ////////////////////
 void neroshop::Item::set_discount_by_percentage(double percent) { // converts a percentage to a price then sets the price as the discount
@@ -480,11 +637,20 @@ void neroshop::Item::set_discount_by_percentage(double percent) { // converts a 
     std::cout << "discount: $" << discount/* << " = " << percent << "% of " << original_price*/ << std::endl;
     //double sale_price = original_price - discount;
     //std::cout << "*new* sales_price: $" << sale_price << std::endl;
-    /////////////////////
+    ////////////////////////////////
+    // sqlite
+    ////////////////////////////////
     DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return;}
     db.update("item", "discount", std::to_string(discount), "id = " + std::to_string(this->id));
     db.close();    
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////
 }
 ////////////////////
 void neroshop::Item::set_discount_by_percentage(unsigned int item_id, double percent) {
@@ -496,11 +662,20 @@ void neroshop::Item::set_discount_by_percentage(unsigned int item_id, double per
     std::cout << "discount: $" << discount/* << " = " << percent << "% of " << original_price*/ << std::endl;
     //double sale_price = original_price - discount;
     //std::cout << "*new* sales_price: $" << sale_price << std::endl;
-    /////////////////////
+    ////////////////////////////////
+    // sqlite
+    ////////////////////////////////
     DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return;}
     db.update("item", "discount", std::to_string(discount), "id = " + std::to_string(item_id));
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
 }
 ////////////////////
 void neroshop::Item::set_condition(const std::string& condition) {
@@ -508,6 +683,13 @@ void neroshop::Item::set_condition(const std::string& condition) {
     if(!db.table_exists("item")) {db.close(); return;}
     db.update("item", "condition", DB::to_sql_string(condition), "id = " + std::to_string(this->id));
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
 }
 ////////////////////
 void neroshop::Item::set_condition(unsigned int item_id, const std::string& condition) {
@@ -515,6 +697,13 @@ void neroshop::Item::set_condition(unsigned int item_id, const std::string& cond
     if(!db.table_exists("item")) {db.close(); return;}
     db.update("item", "condition", DB::to_sql_string(condition), "id = " + std::to_string(item_id));
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
 }
 ////////////////////
 void neroshop::Item::set_product_code(const std::string& product_code) {
@@ -522,6 +711,13 @@ void neroshop::Item::set_product_code(const std::string& product_code) {
     if(!db.table_exists("item")) {db.close(); return;}
     db.update("item", "product_code", DB::to_sql_string(product_code), "id = " + std::to_string(this->id));
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
 }
 ////////////////////
 void neroshop::Item::set_product_code(unsigned int item_id, const std::string& product_code) {
@@ -529,6 +725,13 @@ void neroshop::Item::set_product_code(unsigned int item_id, const std::string& p
     if(!db.table_exists("item")) {db.close(); return;}
     db.update("item", "product_code", DB::to_sql_string(product_code), "id = " + std::to_string(item_id));
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
 }
 ////////////////////
 ////////////////////
@@ -540,19 +743,33 @@ unsigned int neroshop::Item::get_id() const {
 }
 ////////////////////
 std::string neroshop::Item::get_name() const {
-    DB db("neroshop.db");
+    /*DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return "";}
     std::string item_name = db.get_column_text("item", "name", "id = " + std::to_string(this->id));
-    db.close();
+    db.close();*/
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    std::string item_name = DB2::get_singleton()->get_text_params("SELECT name FROM item WHERE id = $1", { std::to_string(this->id) });
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
     return item_name;
 }
 ////////////////////
 std::string neroshop::Item::get_name(unsigned int item_id) {
-    DB db("neroshop.db");
+    /*DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return "";}
     std::string item_name = db.get_column_text("item", "name", "id = " + std::to_string(item_id));
-    db.close();
-    return item_name;
+    db.close();*/
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    std::string item_name = DB2::get_singleton()->get_text_params("SELECT name FROM item WHERE id = $1", { std::to_string(item_id) });
+    DB2::get_singleton()->finish();
+    ////////////////////////////////
+    return item_name;     
 }
 ////////////////////
 std::string neroshop::Item::get_description() const {
@@ -560,6 +777,13 @@ std::string neroshop::Item::get_description() const {
     if(!db.table_exists("item")) {db.close(); return "";}
     std::string item_description = db.get_column_text("item", "description", "id = " + std::to_string(this->id));
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
     return item_description;
 }
 ////////////////////
@@ -568,22 +792,43 @@ std::string neroshop::Item::get_description(unsigned int item_id) {
     if(!db.table_exists("item")) {db.close(); return "";}
     std::string item_description = db.get_column_text("item", "description", "id = " + std::to_string(item_id));
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
     return item_description;
 }
 ////////////////////
 double neroshop::Item::get_price() const {
-    DB db("neroshop.db");
+    /*DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return 0.0;}
     double item_price = db.get_column_real("item", "price", "id = " + std::to_string(this->id));
-    db.close();
+    db.close();*/
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    double item_price = DB2::get_singleton()->get_real_params("SELECT price FROM item WHERE id = $1", { std::to_string(this->id) });
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
     return item_price;
 }
 ////////////////////
 double neroshop::Item::get_price(unsigned int item_id) { // original price (list price)
-    DB db("neroshop.db");
+    /*DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return 0.0;}
     double item_price = db.get_column_real("item", "price", "id = " + std::to_string(item_id));
-    db.close();
+    db.close();*/
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    double item_price = DB2::get_singleton()->get_real_params("SELECT price FROM item WHERE id = $1", { std::to_string(item_id) });
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
     return item_price;
 }
 ////////////////////
@@ -591,8 +836,15 @@ unsigned int neroshop::Item::get_quantity() const {
     std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cart.db";
     DB db(cart_file);
     if(!db.table_exists("Cart")) {db.close(); return 0;}
-    unsigned int item_qty = db.get_column_integer("Cart", "item_qty", "item_id = " + std::to_string(this->id));//std::cout << "item_id: " << item_id << " has a quantity of " << item_qty << std::endl;
+    unsigned int item_qty = db.get_column_integer("Cart", "item_qty", "item_id = " + std::to_string(this->id));//std::cout << "item_id: " << item_id << " has a quantity of " << item_qty << std::endl;   
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    /*DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();*/
+    ////////////////////////////////    
     return item_qty;
 }
 ////////////////////
@@ -602,24 +854,45 @@ unsigned int neroshop::Item::get_quantity(unsigned int item_id) {
     if(!db.table_exists("Cart")) {db.close(); return 0;}
     unsigned int item_qty = db.get_column_integer("Cart", "item_qty", "item_id = " + std::to_string(item_id));//std::cout << "item_id: " << item_id << " has a quantity of " << item_qty << std::endl;
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    /*DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();*/
+    ////////////////////////////////    
     return item_qty;
 }
 ////////////////////
 ////////////////////
 ////////////////////
 double neroshop::Item::get_weight() const {
-    DB db("neroshop.db");
+    /*DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return 0.0;}
     double item_weight = db.get_column_real("item", "weight", "id = " + std::to_string(this->id));
-    db.close();
+    db.close();*/
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    double item_weight = DB2::get_singleton()->get_real_params("SELECT weight FROM item WHERE id = $1", { std::to_string(this->id) });
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
     return item_weight;
 }
 ////////////////////
 double neroshop::Item::get_weight(unsigned int item_id) {
-    DB db("neroshop.db");
+    /*DB db("neroshop.db");
     if(!db.table_exists("item")) {db.close(); return 0.0;}
     double item_weight = db.get_column_real("item", "weight", "id = " + std::to_string(item_id));
-    db.close();
+    db.close();*/
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    double item_weight = DB2::get_singleton()->get_real_params("SELECT weight FROM item WHERE id = $1", { std::to_string(item_id) });
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
     return item_weight;
 }
 ////////////////////
@@ -628,6 +901,13 @@ std::tuple<double, double, double> neroshop::Item::get_size() const {
     if(!db.table_exists("item")) {db.close(); return std::make_tuple(0, 0, 0);}
     std::vector<std::string> item_size = String::split(db.get_column_text("item", "size", "id = " + std::to_string(this->id)), "x");
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
     return std::make_tuple(std::stod(item_size[0]), std::stod(item_size[1]), std::stod(item_size[2]));
 }
 ////////////////////
@@ -636,6 +916,13 @@ std::tuple<double, double, double> neroshop::Item::get_size(unsigned int item_id
     if(!db.table_exists("item")) {db.close(); return std::make_tuple(0, 0, 0);}
     std::vector<std::string> item_size = String::split(db.get_column_text("item", "size", "id = " + std::to_string(item_id)), "x");
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
     return std::make_tuple(std::stod(item_size[0]), std::stod(item_size[1]), std::stod(item_size[2]));
 }
 ////////////////////
@@ -652,6 +939,13 @@ std::string neroshop::Item::get_condition() const {
     if(!db.table_exists("item")) {db.close(); return "";}
     std::string item_condition = db.get_column_text("item", "condition", "id = " + std::to_string(this->id));
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
     return item_condition;
 }
 ////////////////////
@@ -660,6 +954,13 @@ std::string neroshop::Item::get_condition(unsigned int item_id) {
     if(!db.table_exists("item")) {db.close(); return "";}
     std::string item_condition = db.get_column_text("item", "condition", "id = " + std::to_string(item_id));
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
     return item_condition;
 }
 ////////////////////
@@ -670,6 +971,13 @@ std::string neroshop::Item::get_product_code() const {
     if(!db.table_exists("item")) {db.close(); return "";}
     std::string item_product_code = db.get_column_text("item", "product_code", "id = " + std::to_string(this->id));
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
     return item_product_code;
 }
 ////////////////////
@@ -678,6 +986,13 @@ std::string neroshop::Item::get_product_code(unsigned int item_id) {
     if(!db.table_exists("item")) {db.close(); return "";}
     std::string item_product_code = db.get_column_text("item", "product_code", "id = " + std::to_string(item_id));
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
     return item_product_code;
 }
 ////////////////////
@@ -694,6 +1009,13 @@ double neroshop::Item::get_seller_price(unsigned int seller_id) const {
     if(seller_id > 0) seller_price = db.get_column_real("inventory", "seller_price", "item_id = " + std::to_string(this->id) + " AND seller_id = " + std::to_string(seller_id)); // get a specific seller's price for this item
     if(seller_id <= 0) seller_price = db.get_column_real("inventory", "seller_price", "item_id = " + std::to_string(this->id)); // get a random seller's price for this item
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
     return seller_price;
 }
 ////////////////////
@@ -704,6 +1026,13 @@ double neroshop::Item::get_seller_price(unsigned int item_id, unsigned int selle
     if(seller_id > 0) seller_price = db.get_column_real("inventory", "seller_price", "item_id = " + std::to_string(item_id) + " AND seller_id = " + std::to_string(seller_id));
     if(seller_id <= 0) seller_price = db.get_column_real("inventory", "seller_price", "item_id = " + std::to_string(item_id));
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
     return seller_price;
 }
 ////////////////////
@@ -714,6 +1043,13 @@ double neroshop::Item::get_seller_discount(unsigned int seller_id) const {
     if(seller_id > 0) seller_discount = db.get_column_real("inventory", "seller_discount", "item_id = " + std::to_string(this->id) + " AND seller_id = " + std::to_string(seller_id));
     if(seller_id <= 0) seller_discount = db.get_column_real("inventory", "seller_discount", "item_id = " + std::to_string(this->id));
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
     return seller_discount;
 }
 ////////////////////
@@ -724,6 +1060,13 @@ double neroshop::Item::get_seller_discount(unsigned int item_id, unsigned int se
     if(seller_id > 0) seller_discount = db.get_column_real("inventory", "seller_discount", "item_id = " + std::to_string(item_id) + " AND seller_id = " + std::to_string(seller_id));
     if(seller_id <= 0) seller_discount = db.get_column_real("inventory", "seller_discount", "item_id = " + std::to_string(item_id));
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
     return seller_discount;
 }
 ////////////////////
@@ -732,6 +1075,13 @@ std::string neroshop::Item::get_seller_condition(unsigned int seller_id) const {
     if(!db.table_exists("inventory")) {db.close(); return "";} // make sure table exists first
     std::string seller_condition = db.get_column_text("inventory", "seller_condition", "item_id = " + std::to_string(this->id) + " AND seller_id = " + std::to_string(seller_id));
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
     return seller_condition;
 }
 ////////////////////
@@ -740,59 +1090,109 @@ std::string neroshop::Item::get_seller_condition(unsigned int item_id, unsigned 
     if(!db.table_exists("inventory")) {db.close(); return "";} // make sure table exists first
     std::string seller_condition = db.get_column_text("inventory", "seller_condition", "item_id = " + std::to_string(item_id) + " AND seller_id = " + std::to_string(seller_id));
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
     return seller_condition;
 }
 ////////////////////
 unsigned int neroshop::Item::get_stock_quantity() const {
-    DB db;if(!db.open("neroshop.db")) {std::cout << "Could not open sql database" << std::endl; return 0;}
+    /*DB db;if(!db.open("neroshop.db")) {std::cout << "Could not open sql database" << std::endl; return 0;}
     if(!db.table_exists("inventory")) {db.close(); return 0;} // make sure table exists first
     int stock_qty = db.get_column_integer("inventory", "stock_qty", "item_id=" + std::to_string(this->id)); // check stock_quantity
-    db.close();
+    db.close();*/
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    int stock_qty = DB2::get_singleton()->get_integer_params("SELECT stock_qty FROM inventory WHERE item_id = $1 AND stock_qty > 0", { std::to_string(this->id) });
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
     return stock_qty;
 }
 //////////////////// 
 unsigned int neroshop::Item::get_stock_quantity(unsigned int item_id) {
-    DB db;if(!db.open("neroshop.db")) {std::cout << "Could not open sql database" << std::endl; return 0;}
+    /*DB db;if(!db.open("neroshop.db")) {std::cout << "Could not open sql database" << std::endl; return 0;}
     if(!db.table_exists("inventory")) {db.close(); return 0;} // make sure table exists first
     int stock_qty = db.get_column_integer("inventory", "stock_qty", "item_id=" + std::to_string(item_id)); // check stock_quantity
-    db.close();
+    db.close();*/
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    int stock_qty = DB2::get_singleton()->get_integer_params("SELECT stock_qty FROM inventory WHERE item_id = $1 AND stock_qty > 0", { std::to_string(item_id) });
+    DB2::get_singleton()->finish();
+    ////////////////////////////////
     return stock_qty;
 }
 ////////////////////
 ////////////////////
 bool neroshop::Item::is_registered() const {
-    DB db;if(!db.open("neroshop.db")) {std::cout << "Could not open sql database" << std::endl; return false;}
+    /*DB db;if(!db.open("neroshop.db")) {std::cout << "Could not open sql database" << std::endl; return false;}
     if(!db.table_exists("item")) {db.close(); return false;} // make sure table exists first
     int id = db.get_column_integer("item", "id", "id=" + std::to_string(this->id));
-    db.close();
+    db.close();*/
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    int id = DB2::get_singleton()->get_integer_params("SELECT id FROM item WHERE id = $1", { std::to_string(this->id) });
+    DB2::get_singleton()->finish();
+    ////////////////////////////////
     return (id > 0);
 }
 ////////////////////
 bool neroshop::Item::is_registered(unsigned int item_id) {
-    DB db;if(!db.open("neroshop.db")) {std::cout << "Could not open sql database" << std::endl; return false;}
+    /*DB db;if(!db.open("neroshop.db")) {std::cout << "Could not open sql database" << std::endl; return false;}
     if(!db.table_exists("item")) {db.close(); return false;} // make sure table exists first
     int id = db.get_column_integer("item", "id", "id=" + std::to_string(item_id));
-    db.close();
+    db.close();*/
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    int id = DB2::get_singleton()->get_integer_params("SELECT id FROM item WHERE id = $1", { std::to_string(item_id) });
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
     return (id > 0);
 }
 ////////////////////
 ////////////////////
 bool neroshop::Item::in_stock() const {
-    DB db;if(!db.open("neroshop.db")) {std::cout << "Could not open sql database" << std::endl; return false;}
+    /*DB db;if(!db.open("neroshop.db")) {std::cout << "Could not open sql database" << std::endl; return false;}
     if(!db.table_exists("inventory")) {db.close(); return false;} // make sure table exists first
     int stock_qty = db.get_column_integer("inventory", "stock_qty", "item_id=" + std::to_string(this->id)); // check stock_quantity
-    if(stock_qty < 1) return false;
-    db.close();
-    return true;
+    if(stock_qty < 1) {db.close();return false;}
+    db.close();*/
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    int stock_qty = DB2::get_singleton()->get_integer_params("SELECT stock_qty FROM inventory WHERE item_id = $1 AND stock_qty > 0", { std::to_string(this->id) }); // check stock_qty regardless of who is selling said item
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
+    return (stock_qty != 0);
 }
 ////////////////////
 bool neroshop::Item::in_stock(unsigned int item_id) {
-    DB db;if(!db.open("neroshop.db")) {std::cout << "Could not open sql database" << std::endl; return false;}
+    /*DB db;if(!db.open("neroshop.db")) {std::cout << "Could not open sql database" << std::endl; return false;}
     if(!db.table_exists("inventory")) {db.close(); return false;} // make sure table exists first
     int stock_qty = db.get_column_integer("inventory", "stock_qty", "item_id=" + std::to_string(item_id)); // check stock_quantity
-    if(stock_qty < 1) return false;
-    db.close();
-    return true;
+    if(stock_qty < 1) {db.close();return false;}
+    db.close();*/
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
+    int stock_qty = DB2::get_singleton()->get_integer_params("SELECT stock_qty FROM inventory WHERE item_id = $1 AND stock_qty > 0", { std::to_string(item_id) }); // check stock_qty regardless of who is selling said item
+    // if item is out of stock, look for other sellers that have the same exact item (but it MUST be in stock)
+    DB2::get_singleton()->finish();
+    ////////////////////////////////
+    return (stock_qty != 0);
 }
 ////////////////////
 ////////////////////
@@ -803,10 +1203,9 @@ bool neroshop::Item::in_cart(/*unsigned int cart_id*/) const {
     if(!db.table_exists("Cart")) {db.close(); return false;} // make sure table exists first
     int id = db.get_column_integer("Cart", "item_id", "item_id = " + std::to_string(this->id));
     //    "cart_id = " + std::to_string(cart_id) + " AND item_id = " + std::to_string(this->id));
-    if(id <= 0) return false;
-    if(id == this->id) return true; // if this->id matches the item_id in table Cart, return true
+    if(id != this->id) {db.close(); return false;} // if this->id matches the item_id in table Cart, return true
     db.close();
-    return false;
+    return true;
 }
 ////////////////////
 bool neroshop::Item::in_cart(unsigned int item_id/*, unsigned int cart_id*/) {
@@ -816,10 +1215,9 @@ bool neroshop::Item::in_cart(unsigned int item_id/*, unsigned int cart_id*/) {
     if(!db.table_exists("Cart")) {db.close(); return false;} // make sure table exists first
     int id = db.get_column_integer("Cart", "item_id", "item_id = " + std::to_string(item_id));
     //    "cart_id = " + std::to_string(cart_id) + " AND item_id = " + std::to_string(item_id));
-    if(id <= 0) return false;
-    if(id == item_id) return true; // if item_id matches the item_id in table Cart, return true
+    if(id != item_id) {db.close(); return false;} // if item_id matches the item_id in table Cart, return true
     db.close();
-    return false;
+    return true;
 }
 ////////////////////
 ////////////////////

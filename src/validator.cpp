@@ -10,7 +10,7 @@ bool neroshop::Validator::register_user(const std::string& username, const std::
     if(!validate_username(username)) return false;
     // validate password
     if(!validate_password(password)) return false;
-    if(password != confirm_pw){NEROSHOP_TAG std::cout << "\033[0;31;49m" << "Both passwords do not match. Try again" << "\033[0m" << std::endl;return false;}
+    if(password != confirm_pw){NEROSHOP_TAG_OUT std::cout << "\033[0;31;49m" << "Both passwords do not match. Try again" << "\033[0m" << std::endl;return false;}
     // if email is opted, validate email
     if(!opt_email.empty() && !validate_email(opt_email)) return false;
     // generate bcrypt salt (random, with a workfactor of 12 or higher)
@@ -28,7 +28,7 @@ bool neroshop::Validator::register_user(const std::string& username, const std::
     // saving (save user information to database)
     save_user(username, pw_hash, (!opt_email.empty()) ? email_hash : "");
 #ifdef NEROSHOP_DEBUG
-    NEROSHOP_TAG std::cout << get_date() << "\033[1;32;49m" << " account registered" << "\033[0m" << std::endl;
+    NEROSHOP_TAG_OUT std::cout << get_date() << "\033[1;32;49m" << " account registered" << "\033[0m" << std::endl;
 #endif    
     neroshop::print((!username.empty()) ? std::string("Welcome to neroshop, " + username) : "Welcome to neroshop", 4);
     return true;
@@ -36,10 +36,12 @@ bool neroshop::Validator::register_user(const std::string& username, const std::
 ////////////////////
 void neroshop::Validator::save_user(const std::string& username, const char pw_hash[BCRYPT_HASHSIZE], std::string email_hash) 
 {
+    ////////////////////////////////
     // sqlite - save a copy of user's account details locally (on user's device)
-    DB db("neroshop.db");
-    // find a way to check whether database is locked so we know if user is registered or not // Register A Callback To Handle SQLITE_BUSY Errors//sqlite3_busy_handler(db.get_handle(), /*sqlite3*,int(*)(void*,int),void**/);
-    //db.execute("PRAGMA journal_mode = WAL;"); // this may reduce the incidence of SQLITE_BUSY errors (such as database being locked) //https://www.sqlite.org/pragma.html#pragma_journal_mode //https://github.com/mapbox/node-sqlite3/issues/9 //sqlite3_busy_timeout(db.get_handle(), 0/*sqlite3*, int ms*/);// arg of 0 or negative turns off all busy handlers//returns int
+    ////////////////////////////////
+    /*DB db("neroshop.db");
+    // find a way to check whether database is locked so we know if user is registered or not // Register A Callback To Handle SQLITE_BUSY Errors
+    //db.execute("PRAGMA journal_mode = WAL;"); // this may reduce the incidence of SQLITE_BUSY errors (such as database being locked) //https://www.sqlite.org/pragma.html#pragma_journal_mode //https://github.com/mapbox/node-sqlite3/issues/9 //sqlite3_busy_timeout(db.get_handle(), 0);// arg of 0 or negative turns off all busy handlers//returns int
     // create table Role if it does not yet exist
     if(!db.table_exists("role")) {
         db.table("role");
@@ -58,19 +60,59 @@ void neroshop::Validator::save_user(const std::string& username, const char pw_h
         db.execute("CREATE UNIQUE INDEX idx_users_name ON Users (name);");// enforce that the user names are unique, in case there is an attempt to insert a new "name" of the same value - https://www.sqlitetutorial.net/sqlite-index/
     }
     db.insert("users", "name, pw_hash, email, role_id", DB::to_sql_string(String::lower(username)) + ", " + DB::to_sql_string(pw_hash) + ", " + DB::to_sql_string(email_hash) + ", " + std::to_string(1)); // usernames are stored in lowercase
-    db.close(); // don't forget to close the db after you're done :)
+    db.close();*/ // don't forget to close the db after you're done :)
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");//DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+    if(!DB2::get_singleton()->table_exists("account_type")) {
+        DB2::get_singleton()->create_table("account_type");
+        DB2::get_singleton()->add_column("account_type", "account_type_name", "text");
+        // these rows are only inserted once since roles are static and do not change // 2 roles (1=buyer, 2=seller)
+        DB2::get_singleton()->insert_into("account_type", "account_type_name", "'Buyer'");
+        DB2::get_singleton()->insert_into("account_type", "account_type_name", "'Seller'");
+    }    
+    if(!DB2::get_singleton()->table_exists("users")) {
+        DB2::get_singleton()->create_table("users");
+        DB2::get_singleton()->add_column("users", "name", "text");
+        DB2::get_singleton()->add_column("users", "pw_hash", "text");
+        DB2::get_singleton()->add_column("users", "opt_email");
+        DB2::get_singleton()->add_column("users", "account_type_id", "integer REFERENCES account_type(id)"); //  foreign key is a column or a group of columns in a table that reference the primary key of another table // testing invalid foreign key: DB2::get_singleton()->execute("INSERT INTO users (name, pw_hash, opt_email, account_type_id) VALUES('jack', 'null', 'null', 3) "); // acount_type_id 3 does not exist :O, so this should trigger an error :}
+        // usernames and emails MUST be unique!
+        DB2::get_singleton()->create_index("idx_users_name", "users", "name");
+        DB2::get_singleton()->create_index("idx_users_email", "users", "opt_email");
+    }
+    // insert new data into table users
+    if(!email_hash.empty()) DB2::get_singleton()->execute_params("INSERT INTO users (name, pw_hash, opt_email, account_type_id) VALUES ($1, $2, $3, $4)", { String::lower(username),  pw_hash, email_hash, std::to_string(1) });//DB2::get_singleton()->insert_into("users", "name, pw_hash, opt_email", DB2::to_psql_string(String::lower(username)) + ", " + DB2::to_psql_string(pw_hash) + ", " + DB2::to_psql_string(email_hash) );// + ", " + std::to_string(1));
+    if(email_hash.empty()) DB2::get_singleton()->execute_params("INSERT INTO users (name, pw_hash, account_type_id) VALUES ($1, $2, $3)", { String::lower(username),  pw_hash, std::to_string(1) });
+    DB2::get_singleton()->finish();
+    ////////////////////////////////
 }
 ////////////////////
 bool neroshop::Validator::login(const std::string& username, const std::string& password)
 {
-	// sqlite - figure out how to retrieve the user's name and pw_hash from the db
-    DB db("neroshop.db");
-	if(!db.table_exists("users")) {NEROSHOP_TAG std::cout << "\033[0;33;49m" << "This account is not registered" << "\033[0m" << std::endl; return false;}
+    ////////////////////////////////
+	// sqlite 
+    ////////////////////////////////
+    /*DB db("neroshop.db");
+	if(!db.table_exists("users")) {NEROSHOP_TAG_OUT std::cout << "\033[0;33;49m" << "This account is not registered" << "\033[0m" << std::endl; return false;}
 	// SELECT pw_hash from Users WHERE name=username
 	std::string pw_hash = db.get_column_text("users", "pw_hash", "name = " + DB::to_sql_string(String::lower(username)));
 	// if no pw_hash could be found then the user does not exist (or the db is missing or corrupted)
-	if(pw_hash.empty()) { NEROSHOP_TAG std::cout << "\033[0;33;49m" << "This user does not exist" << "\033[0m" << std::endl; return false; }
-	db.close(); // don't forget to close the db after you're done :)
+	if(pw_hash.empty()) { NEROSHOP_TAG_OUT std::cout << "\033[0;33;49m" << "This user does not exist" << "\033[0m" << std::endl; return false; }
+	db.close();*/ // don't forget to close the db after you're done :)
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    if(username.empty()) return false; // exit if username is empty -.-
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+    if(!DB2::get_singleton()->table_exists("users")) {NEROSHOP_TAG_OUT std::cout << "\033[0;33;49m" << "This account is not registered" << "\033[0m" << std::endl; DB2::get_singleton()->finish(); return false;}
+    // SELECT pw_hash from users WHERE name=username
+    std::string pw_hash = DB2::get_singleton()->get_text_params("SELECT pw_hash FROM users WHERE name = $1;", { String::lower(username) });//DB2::get_singleton()->get_text("SELECT pw_hash FROM users WHERE name = " + DB2::to_psql_string(String::lower(username)) + ";");//std::cout << "pw_hash: " << pw_hash << " (retrieved from database)\n";
+	// if no pw_hash could be found then the user does not exist (or the db is missing or corrupted)
+	if(pw_hash.empty()) { NEROSHOP_TAG_OUT std::cout << "\033[0;33;49m" << "This user does not exist" << "\033[0m" << std::endl; DB2::get_singleton()->finish(); return false; }    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////
 	// validate the pre-hashed pw
     std::string pw_prehash;
     if(!generate_sha256_hash(password, pw_prehash)) {return false;}
@@ -78,25 +120,44 @@ bool neroshop::Validator::login(const std::string& username, const std::string& 
         return false;
     }
 #ifdef NEROSHOP_DEBUG
-    NEROSHOP_TAG std::cout << get_date() << "\033[1;32;49m" << " successfully logged in" << "\033[0m" << std::endl;
+    NEROSHOP_TAG_OUT std::cout << get_date() << "\033[1;32;49m" << " successfully logged in" << "\033[0m" << std::endl;
 #endif
     neroshop::print((!username.empty()) ? std::string("Welcome back, " + username) : "Welcome back", 4);
 	return true; // default value
 }
 ////////////////////
 bool neroshop::Validator::login_with_email(const std::string& email, const std::string& password) { // works! but won't be used since most users won't opt-in to use an email
-    DB db("neroshop.db");
-	if(!db.table_exists("users")) {NEROSHOP_TAG std::cout << "\033[0;33;49m" << "This account is not registered" << "\033[0m" << std::endl; return false;}
+    ////////////////////////////////
+    // sqlite
+    ////////////////////////////////
+    /*DB db("neroshop.db");
+	if(!db.table_exists("users")) {NEROSHOP_TAG_OUT std::cout << "\033[0;33;49m" << "This account is not registered" << "\033[0m" << std::endl; return false;}
 	// get email_hash (from email)
 	std::string email_hash;
 	if(!generate_sha256_hash(email, email_hash)) { neroshop::print("An error occured", 1); return false;}
 	// SELECT pw_hash from Users WHERE email_hash=email_hash
 	std::string pw_hash = db.get_column_text("users", "pw_hash", "email = " + DB::to_sql_string(email_hash));
 	// if no pw_hash could be found then the user does not exist (or the db is missing or corrupted)
-	if(pw_hash.empty()) { NEROSHOP_TAG std::cout << "\033[0;33;49m" << "This user does not exist" << "\033[0m" << std::endl; return false; }//std::cout << "pw_hash: " << pw_hash << " (retrieved from db) "/* + username + ")"*/ << std::endl;
+	if(pw_hash.empty()) { NEROSHOP_TAG_OUT std::cout << "\033[0;33;49m" << "This user does not exist" << "\033[0m" << std::endl; return false; }
 	// also, get username from db (only for display purposes)
 	std::string username = db.get_column_text("users", "name", "email = " + DB::to_sql_string(email_hash));
-	db.close(); // don't forget to close the db after you're done :)
+	db.close();*/ // don't forget to close the db after you're done :)
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+    if(!DB2::get_singleton()->table_exists("users")) {NEROSHOP_TAG_OUT std::cout << "\033[0;33;49m" << "This account is not registered" << "\033[0m" << std::endl; DB2::get_singleton()->finish(); return false;}
+	// get email_hash (from email)
+	std::string email_hash;
+	if(!generate_sha256_hash(email, email_hash)) { neroshop::print("An error occured", 1); DB2::get_singleton()->finish(); return false;}
+	// SELECT pw_hash from users WHERE email_hash = email_hash
+	std::string pw_hash = DB2::get_singleton()->get_text_params("SELECT pw_hash FROM users WHERE opt_email = $1;", { email_hash });//+ DB2::to_psql_string(email_hash));  
+    // if no pw_hash could be found then the user does not exist (or the db is missing or corrupted)
+    if(pw_hash.empty()) { NEROSHOP_TAG_OUT std::cout << "\033[0;33;49m" << "This user does not exist" << "\033[0m" << std::endl; DB2::get_singleton()->finish(); return false; }//std::cout << "pw_hash: " << pw_hash << " (retrieved from db) "/* + username + ")"*/ << std::endl;
+    // also, get username from db (only for display purposes)
+    std::string username = DB2::get_singleton()->get_text_params("SELECT name FROM users WHERE opt_email = $1", { email_hash });// + DB2::to_psql_string(email_hash));
+    DB2::get_singleton()->finish();
+    ////////////////////////////////	
 	// validate the pre-hashed pw
     std::string pw_prehash;
     if(!generate_sha256_hash(password, pw_prehash)) {return false;}
@@ -105,7 +166,7 @@ bool neroshop::Validator::login_with_email(const std::string& email, const std::
     }	
     // save the raw email within the application (for later use)
 #ifdef NEROSHOP_DEBUG
-    NEROSHOP_TAG std::cout << get_date() << "\033[1;32;49m" << " successfully logged in" << "\033[0m" << std::endl;
+    NEROSHOP_TAG_OUT std::cout << get_date() << "\033[1;32;49m" << " successfully logged in" << "\033[0m" << std::endl;
 #endif
     neroshop::print((!username.empty()) ? std::string("Welcome back, " + username) : "Welcome back", 4);
 	return true; // default value
@@ -129,20 +190,20 @@ bool neroshop::Validator::validate_username(const std::string& username)
     // make sure username is at least 2 characters short (min_user_length=2)
     unsigned int min_user_length = 2;
     if(username.length() < min_user_length) {
-        NEROSHOP_TAG std::cout << "Your username must be at least " << min_user_length << " characters in length" << std::endl;
+        NEROSHOP_TAG_OUT std::cout << "Your username must be at least " << min_user_length << " characters in length" << std::endl;
         return false; // exit function
     }
     // make sure username is at least 30 characters long (max_user_length=30)
     unsigned int max_user_length = 30; // what if a company has a long name? :o // also consider the textbox's max-length
     if(username.length() > max_user_length) {
-        NEROSHOP_TAG std::cout << "Your username must be at least " << max_user_length << " characters in length" << std::endl;
+        NEROSHOP_TAG_OUT std::cout << "Your username must be at least " << max_user_length << " characters in length" << std::endl;
         return false; // exit function
     }
     for(int i = 0; i < username.length(); i++)
     {
         // make sure username does not contain any spaces //std::cout << username[i] << " - char\n";
         if(isspace(username[i])) {
-            NEROSHOP_TAG std::cout << "Your username cannot contain any spaces" << std::endl;
+            NEROSHOP_TAG_OUT std::cout << "Your username cannot contain any spaces" << std::endl;
             return false; // exit function
         }
         // make sure username can only contain letters, numbers, and these specific symbols: a hyphen, underscore, and period (-,_,.) //https://stackoverflow.com/questions/39819830/what-are-the-allowed-character-in-snapchat-username#comment97381763_41959421
@@ -151,7 +212,7 @@ bool neroshop::Validator::validate_username(const std::string& username)
             if(username[i] != '-'){
             if(username[i] != '_'){
             if(username[i] != '.'){
-                NEROSHOP_TAG std::cout << "Your username cannot contain any symbols except (-, _, .): " << username[i] << std::endl;
+                NEROSHOP_TAG_OUT std::cout << "Your username cannot contain any symbols except (-, _, .): " << username[i] << std::endl;
                 return false; // exit function
             }}}
         }
@@ -159,13 +220,13 @@ bool neroshop::Validator::validate_username(const std::string& username)
     // make sure username begins with a letter (username cannot start with a symbol or number)
     char first_char = username.at(username.find_first_of(username));
     if(!isalpha(first_char)) {
-        NEROSHOP_TAG std::cout << "Your username must begin with a letter: " << first_char << std::endl;
+        NEROSHOP_TAG_OUT std::cout << "Your username must begin with a letter: " << first_char << std::endl;
         return false; // exit function
     }
     // make sure username does not end with a symbol (username can end with a number, but NOT with a symbol)
     char last_char = username.at(username.find_last_of(username));
     if(!isalnum(last_char)) { //if(last_char != '_') { // underscore allowed at end of username? :o
-        NEROSHOP_TAG std::cout << "Your username must end with a letter or number: " << last_char << std::endl;
+        NEROSHOP_TAG_OUT std::cout << "Your username must end with a letter or number: " << last_char << std::endl;
         return false; // exit function //}
     }
     // the name guest is reserved for guests only, so it cannot be used by any other user
@@ -173,7 +234,10 @@ bool neroshop::Validator::validate_username(const std::string& username)
         neroshop::print("The name \"Guest\" is reserved for guests ONLY");
         return false;
     }
-    // check db to see if username is not already taken (last thing to worry about)
+    ////////////////////////////////
+    // sqlite
+    ////////////////////////////////
+    /*// check db to see if username is not already taken (last thing to worry about)
     DB db("neroshop.db");
 	if(db.table_exists("users")) 
 	{   // make sure table Users exists first
@@ -187,11 +251,36 @@ bool neroshop::Validator::validate_username(const std::string& username)
 	if(db.table_exists("deleted_users")) {
 	    std::string deleted_user = db.get_column_text("deleted_users", "name", "name = " + DB::to_sql_string(username));
 	    if(deleted_user == String::lower(username)) {
-	        neroshop::print("This username cannot be used"/*re-used"*/, 2);
+	        neroshop::print("This username cannot be used", 2);
             return false;
 	    }
 	}
-	db.close(); // don't forget to close the db after you're done :)
+	db.close();*/ // don't forget to close the db after you're done :)
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    // check db to see if username is not already taken (last thing to worry about)
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+	if(DB2::get_singleton()->table_exists("users")) 
+	{   // make sure table Users exists first
+	    std::string name = DB2::get_singleton()->get_text_params("SELECT name FROM users WHERE name = $1;", { String::lower(username) });//+ DB2::to_psql_string(String::lower(username)));
+	    if(name == String::lower(username)) { // names are stored in lowercase
+	        neroshop::print("This username is already taken", 2);
+	        DB2::get_singleton()->finish();
+	        return false;
+	    }//std::cout << "name: " << name << " (retrieved from db)" << std::endl;
+	}    
+	// make sure any deleted user's name is not re-used
+	if(DB2::get_singleton()->table_exists("deleted_users")) {
+	    std::string deleted_user = DB2::get_singleton()->get_text_params("SELECT name FROM deleted_users WHERE name = $1;", { username });//+ DB2::to_psql_string(username));
+	    if(deleted_user == String::lower(username)) {
+	        neroshop::print("This username cannot be used"/*re-used"*/, 2);
+            DB2::get_singleton()->finish();
+            return false;
+	    }
+	}    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
     return true; // default return value
 }
 ////////////////////
@@ -203,19 +292,19 @@ bool neroshop::Validator::validate_password(const std::string& password)
     {
         // figure out the specific reason why password failed to follow the regex rules  //if(password.empty()) { std::cout << "Please enter a valid password" << std::endl; return false; }
         if(!std::regex_search(password.c_str(), std::regex("(?=.*?[A-Z])"))) {
-            neroshop::print("Password must have at least one upper case letter", 2);
+            neroshop::print("Password must have at least one upper case letter", 1);
         }
         if(!std::regex_search(password.c_str(), std::regex("(?=.*?[a-z])"))) {
-            neroshop::print("Password must have at least one lower case letter", 2);
+            neroshop::print("Password must have at least one lower case letter", 1);
         }
         if(!std::regex_search(password.c_str(), std::regex("(?=.*?[0-9])"))) {
-            neroshop::print("Password must have at least one digit", 2);
+            neroshop::print("Password must have at least one digit", 1);
         }              
         if(!std::regex_search(password.c_str(), std::regex("(?=.*?[#?!@$%^&*-])"))) {
-            neroshop::print("Password must have at least one special character", 2);
+            neroshop::print("Password must have at least one special character", 1);
         }         
         if(password.length() < 8) {
-            neroshop::print("Password must be at least 8 characters long", 2);
+            neroshop::print("Password must be at least 8 characters long", 1);
         } 
         //neroshop::print("Please enter a stronger password (at least 1 upper case letter, 1 lower case letter, 1 digit, and 1 special character)", 1);
         return false; // exit function
@@ -237,7 +326,10 @@ bool neroshop::Validator::validate_email(const std::string& email) {
 	    neroshop::print("An error occured", 1);
 	    return false;
 	}
-    DB db("neroshop.db");
+    ////////////////////////////////
+    // sqlite
+    ////////////////////////////////	
+    /*DB db("neroshop.db");
 	if(db.table_exists("users")) {
 	    std::string email_taken = db.get_column_text("users", "email", "email = " + DB::to_sql_string(email_hash));
 	    if(email_taken.empty()) { // cannot process an empty string, so exit
@@ -251,7 +343,24 @@ bool neroshop::Validator::validate_email(const std::string& email) {
             return false;
         }
 	}
-	db.close();
+	db.close();*/
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+	if(DB2::get_singleton()->table_exists("users")) {
+	    std::string email_taken = DB2::get_singleton()->get_text_params("SELECT opt_email FROM users WHERE opt_email = $1;", { email_hash });//+ DB2::to_psql_string(email_hash));
+	    // cannot process an empty string, so close db and exit function
+	    if(email_taken.empty()) { DB2::get_singleton()->finish(); return true;}
+        // compare the email_hash with the email_taken_hash - if its a match then the email is already in use
+        if(email_hash == email_taken) {
+            neroshop::print("This email address is already in use", 1);
+            DB2::get_singleton()->finish();
+            return false;
+        }	    
+	}    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////
     return true;
 }
 ////////////////////
@@ -259,7 +368,7 @@ bool neroshop::Validator::validate_bcrypt_hash(const std::string& password, cons
 {   // verify password
     int result = bcrypt_checkpw(password.c_str(), hash.c_str());
 #ifdef NEROSHOP_DEBUG
-	NEROSHOP_TAG std::cout << ((result != 0) ? "\033[0;31mThe password does NOT match" : "\033[0;32mThe password matches") << "\033[0m" << std::endl;
+	NEROSHOP_TAG_OUT std::cout << ((result != 0) ? "\033[0;31mThe password does NOT match" : "\033[0;32mThe password matches") << "\033[0m" << std::endl;
 #endif
     return (result == 0);
 }

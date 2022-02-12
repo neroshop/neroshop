@@ -108,10 +108,14 @@ bool Process::terminate()
 #endif	
 #ifdef DOKUN_LINUX
     if(handle == -1) return true; // if pid has already been killed then no need to kill it again, so exit function
-    if(kill(static_cast<pid_t>(handle), SIGTERM) != 0) {// 0=success, -1=failure // #include <signal.h>
+    // kill function doesn't even work -.-    
+    if(kill(static_cast<pid_t>(handle), SIGKILL) != 0) {// 0=success, -1=failure // #include <signal.h>
         std::cout << "FAILED to kill process: " << handle << std::endl;
         return false;
     }
+    // just to be sure process has been killed
+    // this doesn't work either LOL
+    //std::system(std::string("kill " + std::to_string(handle)).c_str());    
     handle = -1;// set handle to default value so we know its been properly deleted
     std::cout << DOKUN_UI_TAG "process (" << name << ") terminated\n";
     return true;
@@ -125,7 +129,8 @@ bool Process::terminate(const Process& process)
 	return (TerminateProcess(static_cast<HANDLE>(process.get_handle()), 0) != 0);
 #endif
 #ifdef DOKUN_LINUX
-    return (kill(static_cast<pid_t>(process.get_handle()), SIGTERM) != -1); //0=success, -1=failure// #include <signal.h>
+    // kill function doesn't even work -.-
+    return const_cast<Process&>(process).terminate();//return (kill(static_cast<pid_t>(process.get_handle()), SIGTERM) != -1); //0=success, -1=failure// #include <signal.h>
 #endif	
     return false;
 }
@@ -192,7 +197,7 @@ std::string Process::get_name() const {
     return name;
 }
 ////////////////////
-int Process::get_process_by_name(const std::string& process_name) {
+int Process::get_process_by_name(const std::string& process_name) { // UPDATE(2022-02-05): this doesn't work as well as I expected it to :/
     int pid = -1;
     // Open the /proc directory
     DIR *dp = opendir("/proc");

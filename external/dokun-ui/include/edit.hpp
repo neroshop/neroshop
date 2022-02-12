@@ -93,7 +93,7 @@ class Edit : public GUI {// can be a line edit or text edit or search field
 		bool is_readonly() const;
 		bool is_sensative() const; // 2022-01-03
 		bool is_empty() const;
-		bool is_focused() const; // added 2021-12-13
+		bool has_focus() const; // added 2021-12-13
 		bool is_edit() const; static int is_edit(lua_State *L);		
 		// interactions here --
 		void cut();  static int cut(lua_State *L);
@@ -111,13 +111,12 @@ class Edit : public GUI {// can be a line edit or text edit or search field
         void set_character_limit(int limit); static int set_maximum_character(lua_State *L);// 0 = unlimited(default)
 	    // hiding label =  edit->get_label()->hide() // syntax highlighting???
 		// random - syntax highlighting
-		void syntax(std::string keyword, unsigned int red, unsigned int green, unsigned int blue); // if keyword.contains(" \ " ");  if start_of_string = " 
+		////void syntax(std::string keyword, unsigned int red, unsigned int green, unsigned int blue); // if keyword.contains(" \ " ");  if start_of_string = " 
 		//void syntax(std::string keyword, const Vector3& color);
 	    // friends
 	    friend class Console; // console can now access edit's private members
-	    // temporary
-	    std::string character_array_to_string() const;
 	private:
+	    std::string characters_to_string() const; // returns all characters in the character container as a string
 		void set_cursor_position(double x, double y); static int set_cursor_position(lua_State *L);// 0, 0 by default0
 		void set_cursor_position(const Vector2& position);
 		void set_cursor_x(double x);
@@ -176,7 +175,7 @@ class Edit : public GUI {// can be a line edit or text edit or search field
 		bool gradient;
 		Vector4 gradient_color;
 		// focused edit
-		static Edit * active;
+		static Edit * focused;
 		// maybe add a list later on, with the options: cut, copy, paste, etc.
 		// character data
 		std::vector< std::tuple<char, unsigned int, int> > character_data;// make a std::tuple, character with cursor_index and string_index // accessing tuple elements: std::get<0>(character_data[0])= first value, std::get<1>(character_data[0])= second value, std::get<3>(character_data[0])=third value // string_index must be an int

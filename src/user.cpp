@@ -1,27 +1,28 @@
 #include "../include/user.hpp"
 
 ////////////////////
-neroshop::User::User() : logged(false), id(0), role(user_role::guest) // name is an empty string by default
+neroshop::User::User() : logged(false), id(0), account_type(user_account_type::guest) // name is an empty string by default
 {}
 ////////////////////
 neroshop::User::~User()
 {
     for(int i = 0; i < order_list.size(); i++) {
-        if(order_list[i]) 
+        if(order_list[i]) {
             delete order_list[i];
-        order_list[i] = nullptr;
+            order_list[i] = nullptr;
+        }
     }
 }
 ////////////////////
 ////////////////////
 // buyers can only rate seller they have purchased from!!
-void neroshop::User::rate_seller(unsigned int seller_id, unsigned int score, std::string comments) { // perfected 99.9%!!
+void neroshop::User::rate_seller(unsigned int seller_id, int score, std::string comments) { // perfected 99.9%!!
     // seller_id cannot be 0 (0 = invalid id)
     if(seller_id <= 0) return;
     // score must be between 0 and 1
     if(score >= 1) score = 1;
     if(score <= 0) score = 0;
-    DB db("neroshop.db");
+    /*DB db("neroshop.db");
     // create table seller_ratings if it does not yet exist
     if(!db.table_exists("seller_ratings")) {
         db.table("seller_ratings");
@@ -32,8 +33,8 @@ void neroshop::User::rate_seller(unsigned int seller_id, unsigned int score, std
     }
     if(db.table_exists("seller_ratings")) {
         // seller_id must be an actual seller and not just a normal user (buyer)
-        int role_id = db.get_column_integer("users", "role_id", "id = " + std::to_string(seller_id));//std::string role = db.get_column_text("users", "role", "id = " + std::to_string(seller_id));
-        if(role_id != 2) {neroshop::print("This user (id: " + std::to_string(seller_id) + ") is not a seller, so they cannot be rated", 2); return;}//if(String::lower(role) != "seller") {neroshop::print("You cannot rate a non-seller");return;}
+        int account_type_id = db.get_column_integer("users", "account_type_id", "id = " + std::to_string(seller_id));//std::string account_type = db.get_column_text("users", "account_type", "id = " + std::to_string(seller_id));
+        if(account_type_id != 2) {neroshop::print("This user (id: " + std::to_string(seller_id) + ") is not a seller, so they cannot be rated", 2); return;}//if(String::lower(account_type) != "seller") {neroshop::print("You cannot rate a non-seller");return;}
         // prevent seller from rating him/herself
         if(seller_id == get_id()) {
             neroshop::print("You cannot rate yourself", 2);
@@ -73,14 +74,69 @@ void neroshop::User::rate_seller(unsigned int seller_id, unsigned int score, std
     #endif
     }
     //////////
-    db.close();
+    db.close();*/
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+    // create table seller_ratings if it does not yet exist
+    if(!DB2::get_singleton()->table_exists("seller_ratings")) {
+        DB2::get_singleton()->create_table("seller_ratings");
+        DB2::get_singleton()->add_column("seller_ratings", "seller_id", "integer REFERENCES users(id)");
+        DB2::get_singleton()->add_column("seller_ratings", "score", "integer"); // 0=bad, 1=good
+        DB2::get_singleton()->add_column("seller_ratings", "user_id", "integer REFERENCES users(id)");
+        DB2::get_singleton()->add_column("seller_ratings", "comments", "text");
+    }
+    if(DB2::get_singleton()->table_exists("seller_ratings")) {
+        // seller_id must be an actual seller and not just a normal user (buyer)
+        int account_type_id = DB2::get_singleton()->get_integer_params("SELECT account_type_id FROM users WHERE id = $1", { std::to_string(seller_id) });//std::string account_type = db.get_column_text("users", "account_type", "id = " + std::to_string(seller_id));
+        if(account_type_id != 2) {neroshop::print("This user (id: " + std::to_string(seller_id) + ") is not a seller, so they cannot be rated", 2); DB2::get_singleton()->finish(); return;}//if(String::lower(account_type) != "seller") {neroshop::print("You cannot rate a non-seller");return;}
+        // prevent seller from rating him/herself
+        if(seller_id == get_id()) {
+            neroshop::print("You cannot rate yourself", 2);
+            DB2::get_singleton()->finish();
+            return; // exit function
+        }
+        // to prevent duplicating seller_id that is has already been rated by this user_id (a user cannot rate the same seller twice, except update his or her score rating for a specific seller_id
+        int rated_seller = DB2::get_singleton()->get_integer_params("SELECT seller_id FROM seller_ratings "
+            "WHERE seller_id = $1 AND user_id = $2", { std::to_string(seller_id), std::to_string(get_id()) });
+	    if(rated_seller == seller_id) { 
+	        neroshop::print("You have previously rated this seller (id: " + std::to_string(seller_id) + ")", 2);
+	        DB2::get_singleton()->execute_params("UPDATE seller_ratings SET score = $1 WHERE seller_id = $2 AND user_id = $3", { std::to_string(score), std::to_string(seller_id), std::to_string(get_id()) });
+	        DB2::get_singleton()->execute_params("UPDATE seller_ratings SET comments = $1 WHERE seller_id = $2 AND user_id = $3", { comments, std::to_string(seller_id), std::to_string(get_id()) });
+	        neroshop::print("Your rating for seller (id: " + std::to_string(seller_id) + ") has been updated to a score of " + ((score != 0) ? "\033[1;32m" : "\033[1;91m") + std::to_string(score) + "\033[0m");
+	        DB2::get_singleton()->finish();
+	        return; // exit function
+	    }
+        // insert initial values
+        DB2::get_singleton()->execute_params("INSERT INTO seller_ratings (seller_id, score, user_id, comments) "
+            "VALUES ($1, $2, $3, $4)", { std::to_string(seller_id),
+            std::to_string(score), std::to_string(get_id()), comments
+        });
+        neroshop::print("You have rated seller (id: " + std::to_string(seller_id) + ") with a score of " + ((score != 0) ? "\033[1;32m" : "\033[1;91m") + std::to_string(score) + "\033[0m");
+    #ifdef NEROSHOP_DEBUG        
+        // get number of seller ratings (for a specific seller_id)
+        unsigned int total_seller_ratings = DB2::get_singleton()->get_integer_params("SELECT COUNT(*) FROM seller_ratings WHERE seller_id = $1", { std::to_string(seller_id) });
+        std::cout << "total ratings for seller (id: " << seller_id << "): \033[1;93m" << total_seller_ratings << "\033[0m" << std::endl;
+        // get seller rating from user (0 = bad, 1 = good)
+        unsigned int good_ratings = DB2::get_singleton()->get_integer_params("SELECT COUNT(score) FROM seller_ratings WHERE seller_id = $1 AND score = $2", { std::to_string(seller_id), std::to_string(1) });
+        std::cout << "number of good ratings for seller (id: " << seller_id << "): \033[1;32m" << good_ratings << "\033[0m" << std::endl;
+        unsigned int bad_ratings  = DB2::get_singleton()->get_integer_params("SELECT COUNT(score) FROM seller_ratings WHERE seller_id = $1 AND score = $2", { std::to_string(seller_id), std::to_string(0) });                
+        std::cout << "number of bad ratings for seller  (id: " << seller_id << "): \033[1;91m" << bad_ratings << "\033[0m" << std::endl;
+        // calculate seller reputation
+        double reputation = (good_ratings / static_cast<double>(total_seller_ratings)) * 100;
+        std::cout << "reputation of seller (id: " << seller_id << "):\033[0;93m " << static_cast<int>(reputation) << "%\033[0m" << std::endl;
+    #endif
+    }    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
 } 
 // int seller_id = 2;
 // user->rate_seller(seller_id, 1, "This seller rocks!");
 // user->rate_seller(seller_id, 0, "This seller sucks!");
 ////////////////////
 ////////////////////
-void neroshop::User::rate_item(unsigned int item_id, unsigned int stars, std::string comments) { // perfected 99%!!!
+void neroshop::User::rate_item(unsigned int item_id, int stars, std::string comments) { // perfected 99%!!!
     // user_id (maybe allow unregistered users to review/rate items)
     // if user is a guest, generate an id for it? basically, a guest is a session
     // if item is not registered
@@ -88,7 +144,7 @@ void neroshop::User::rate_item(unsigned int item_id, unsigned int stars, std::st
     // star ratings must be between 1 and 5
     if(stars >= 5) stars = 5;
     if(stars <= 1) stars = 1;
-    DB db("neroshop.db");
+    /*DB db("neroshop.db");
     // create table item_ratings if it does not yet exist
     if(!db.table_exists("item_ratings")) {
         // create table item_ratings if it does not yet exist
@@ -162,24 +218,113 @@ void neroshop::User::rate_item(unsigned int item_id, unsigned int stars, std::st
     #endif
     }
     //////////
-    db.close();
+    db.close();*/
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+    // create table item_ratings if it does not yet exist
+    if(!DB2::get_singleton()->table_exists("item_ratings")) {
+        // create table item_ratings if it does not yet exist
+        DB2::get_singleton()->create_table("item_ratings");
+        DB2::get_singleton()->add_column("item_ratings", "item_id", "integer REFERENCES item(id)");
+        DB2::get_singleton()->add_column("item_ratings", "stars", "integer"); // number of stars that user_id has given to this item_id
+        DB2::get_singleton()->add_column("item_ratings", "user_id", "integer REFERENCES users(id)");
+        //db.column("item_ratings", "ADD", "purchased", "BOOLEAN"); // verified_purchase
+        DB2::get_singleton()->add_column("item_ratings", "comments", "text");
+    }    
+    // if table item_ratings does exist, insert data
+    if(DB2::get_singleton()->table_exists("item_ratings")) {
+        // check if user has previously ordered this item
+        bool purchased = false;
+        for(int i = 0; i < get_order_count(); i++) {
+            int ordered_item = DB2::get_singleton()->get_integer_params("SELECT item_id FROM order_item WHERE item_id = $1 AND order_id = $2", { std::to_string(item_id), std::to_string(get_order(i)->get_id()) });
+            if(ordered_item == item_id) {
+                //std::cout << "You previously ordered this item \033[0;35m(order_id: " << get_order(i)->get_id() << "\033[0m, contains \033[0;93mitem_id: " << item_id << "\033[0m)" << std::endl;
+                purchased = true; // set purchased to true since user has previously purchased this item
+                break; // break from the for-loop so we don't stay stuck in loop forever
+            }
+        }
+        if(!purchased) {neroshop::print("You must purchase this item (id: " + std::to_string(item_id) + ") before rating it"); DB2::get_singleton()->finish(); return;}
+        // to prevent duplicating item_id that is has already been rated by this user_id (a user cannot rate (insert star ratings) for the same item twice, except update his or her star rating for a specific item)
+        int rated_item = DB2::get_singleton()->get_integer_params("SELECT item_id FROM item_ratings " 
+            "WHERE item_id = $1 AND user_id = $2", { std::to_string(item_id), std::to_string(get_id()) });
+	    if(rated_item == item_id) { 
+	        neroshop::print("You have previously rated this item (id: " + std::to_string(item_id) + ")", 2);
+	        // if user has previous rated this item, update the user's rating
+	        DB2::get_singleton()->execute_params("UPDATE item_ratings SET stars = $1 WHERE item_id = $2 AND user_id = $3", { std::to_string(stars), std::to_string(item_id), std::to_string(get_id()) });
+	        DB2::get_singleton()->execute_params("UPDATE item_ratings SET comments = $1 WHERE item_id = $2 AND user_id = $3", { comments, std::to_string(item_id), std::to_string(get_id()) });
+	        neroshop::print("Your star rating on item (id: " + std::to_string(item_id) + ") has been updated to \033[1;33m" + std::to_string(stars) + "\033[1;37m stars\033[0m");
+	        DB2::get_singleton()->finish();
+	        return; // exit function
+	    }        
+        // insert initial values
+        DB2::get_singleton()->execute_params("INSERT INTO item_ratings (item_id, stars, user_id, comments) "
+            "VALUES ($1, $2, $3, $4)"/*, $5)"*/, { std::to_string(item_id), std::to_string(stars),
+            std::to_string(get_id()), /*std::to_string(purchased),*/ comments }); // guests don't have ids
+        //std::cout << "You have rated item (id: " << item_id << ") with " << ((stars >= 3) ? "\033[1;32m" : "\033[1;91m") << stars << " \033[0mstars" << std::endl;
+        neroshop::print("You have rated item (id: " + std::to_string(item_id) + ") with " + ((stars >= 3) ? "\033[1;32m" : "\033[1;91m") + std::to_string(stars) + " \033[0mstars");
+    #ifdef NEROSHOP_DEBUG        
+        // get number of star ratings (for a specific item_id)
+        unsigned int total_star_ratings = DB2::get_singleton()->get_integer_params("SELECT COUNT(*) FROM item_ratings WHERE item_id = $1", { std::to_string(item_id) });
+        std::cout << "# star ratings for item (id: " << item_id << "): \033[1;33m" << total_star_ratings << "\033[0m" << std::endl;
+        // get number of 1, 2, 3, 4, and 5 star_ratings   
+        int one_star_count = DB2::get_singleton()->get_integer_params("SELECT COUNT(stars) FROM item_ratings WHERE item_id = $1 AND stars = $2", { std::to_string(item_id), std::to_string(1) });
+        std::cout << "# of 1 star ratings for item (id: " << item_id << "):\033[0;93m " << one_star_count << "\033[0m" << std::endl;
+        int two_star_count = DB2::get_singleton()->get_integer_params("SELECT COUNT(stars) FROM item_ratings WHERE item_id = $1 AND stars = $2", { std::to_string(item_id), std::to_string(2) });
+        std::cout << "# of 2 star ratings for item (id: " << item_id << "):\033[0;93m " << two_star_count << "\033[0m" << std::endl;
+        int three_star_count = DB2::get_singleton()->get_integer_params("SELECT COUNT(stars) FROM item_ratings WHERE item_id = $1 AND stars = $2", { std::to_string(item_id), std::to_string(3) }); 
+        std::cout << "# of 3 star ratings for item (id: " << item_id << "):\033[0;93m " << three_star_count << "\033[0m" << std::endl;
+        int four_star_count = DB2::get_singleton()->get_integer_params("SELECT COUNT(stars) FROM item_ratings WHERE item_id = $1 AND stars = $2", { std::to_string(item_id), std::to_string(4) });
+        std::cout << "# of 4 star ratings for item (id: " << item_id << "):\033[0;93m " << four_star_count << "\033[0m" << std::endl;
+        int five_star_count = DB2::get_singleton()->get_integer_params("SELECT COUNT(stars) FROM item_ratings WHERE item_id = $1 AND stars = $2", { std::to_string(item_id), std::to_string(5) });        
+        std::cout << "# of 5 star ratings for item (id: " << item_id << "):\033[0;93m " << five_star_count << "\033[0m" << std::endl;        
+        // SELECT COUNT(stars) FROM item_ratings WHERE item_id = # AND stars = #
+        // now calculate average stars
+        // 3 total star ratings:(5, 3, 4) // average = (5 + 3 + 4) / 3 = 4 stars        
+        double average_stars = (
+            (1 * static_cast<double>(one_star_count)) + 
+            (2 * static_cast<double>(two_star_count)) + 
+            (3 * static_cast<double>(three_star_count)) + 
+            (4 * static_cast<double>(four_star_count)) + 
+            (5 * static_cast<double>(five_star_count))) / total_star_ratings;
+        std::cout << "calculated average stars for item (id: " << item_id << "):\033[1;33m " << average_stars << "\033[0m" << std::endl;
+        // test average at: https://calculator.academy/average-rating-calculator-star-rating/#f1p1|f2p0
+    #endif
+    }    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
 } 
 // user->rate_item(ball.get_id(), 5, "Very bouncy. I love it!");
 ////////////////////
 ////////////////////
 void neroshop::User::convert() {
     if(is_guest()) return;
-    if(is_seller()) { neroshop::print("You are already a seller", 2); return; }
-    DB db("neroshop.db");
-    db.update("users", "role_id", std::to_string(static_cast<int>(user_role::seller)), "id = " + std::to_string(get_id()));
+    if(is_seller()) { 
+        neroshop::print("You are already a seller", 2); 
+        return; 
+    }
+    /*DB db("neroshop.db");
+    db.update("users", "account_type_id", std::to_string(static_cast<int>(user_account_type::seller)), "id = " + std::to_string(get_id()));
     neroshop::print("You have converted from a buyer to a seller");
-    db.close();
+    db.close();*/
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+    DB2::get_singleton()->execute("BEGIN;");
+    DB2::get_singleton()->execute("SAVEPOINT before_account_conversion_savepoint;");//ROLLBACK TO before_account_conversion_savepoint;
+    DB2::get_singleton()->execute_params("UPDATE users SET account_type_id = $1 WHERE id = $2", { std::to_string(2), std::to_string(this->id) });
+    neroshop::print("You have converted from a buyer to a seller");    
+    DB2::get_singleton()->execute("COMMIT;");
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
 }
 // if(user->is_buyer()) user->convert(); // convert buyer to seller
 ////////////////////
 void neroshop::User::delete_account() {
     if(!is_logged()) {neroshop::print("You are not logged in", 2);return;} // must be logged in to delete your account
-    DB db("neroshop.db");
+    /*DB db("neroshop.db");
     db.drop("users", "id = " + std::to_string(get_id()) + " AND name = " + DB::to_sql_string(get_name()));
     neroshop::print("Your account has been permanently deleted", 1);
     // send account to graveyard
@@ -192,19 +337,43 @@ void neroshop::User::delete_account() {
     // reset user info and then logout user
     set_id(0);
     name.clear();
-    set_role(user_role::guest);
+    set_account_type(user_account_type::guest);
     set_logged(false); // logout here (will call on_logout callback, if logged is false)
-    db.close();
+    db.close();*/
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+    DB2::get_singleton()->execute("BEGIN;");
+    DB2::get_singleton()->execute("SAVEPOINT before_account_deletion_savepoint;");//ROLLBACK TO before_account_deletion_savepoint;
+    DB2::get_singleton()->execute_params("DELETE FROM users WHERE id = $1 AND name = $2", { std::to_string(this->id), this->name });
+    neroshop::print("Your account has been permanently deleted", 1);
+    // send account to deleted accounts table (or graveyard >:})
+    //if(!DB2::get_singleton()->table_exists("deleted_users")) {
+    //DB2::get_singleton()->create_table("deleted_users");
+    //DB2::get_singleton()->add_column("deleted_users", "name", "text REFERENCES users(name)");//"text");
+    //DB2::get_singleton()->create_index("idx_deleted_users", "deleted_users", "name");
+    //}
+    //DB2::get_singleton()->execute_params("INSERT INTO deleted_users (name) VALUES ($1)", { this->name });
+    // reset user information and logout user
+    set_id(0);
+    name.clear();
+    set_account_type(user_account_type::guest);
+    set_logged(false); // logout here (will call on_logout callback, if logged is false)    
+    // end transaction
+    DB2::get_singleton()->execute("COMMIT;");
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
 } // username of deleted accounts cannot be reused ?? :O
 ////////////////////
 ////////////////////
 ////////////////////
 ////////////////////
-void neroshop::User::add_to_cart(const neroshop::Item& item, unsigned int quantity) {
+void neroshop::User::add_to_cart(const neroshop::Item& item, int quantity) {
     neroshop::Cart::get_singleton()->add(item, quantity);
 }
 ////////////////////
-void neroshop::User::remove_from_cart(const neroshop::Item& item, unsigned int quantity) {
+void neroshop::User::remove_from_cart(const neroshop::Item& item, int quantity) {
     neroshop::Cart::get_singleton()->remove(item, quantity);
 }
 ////////////////////
@@ -228,8 +397,8 @@ neroshop::Order * neroshop::User::create_order(const std::string& shipping_addre
 // Guests orders are not saved to the main database
 // orders are never deleted, their statuses just change: rejected, failure, delivered, etc.
 void neroshop::User::load_orders() {
-    DB db("neroshop.db");
-    if(!db.table_exists("orders")) return; // user probably has no order history
+    /*DB db("neroshop.db");
+    if(!db.table_exists("orders")) {db.close(); return;} // user probably has no order history
     // create orders based on user order_ids stored in orders
     // get last inserted order
     int last_order = db.get_column_integer("orders ORDER BY id DESC LIMIT 1", "*");//int orders_count = db.row_count("orders");
@@ -245,7 +414,37 @@ void neroshop::User::load_orders() {
             neroshop::print("Order (id: " + std::to_string(order->get_id()) + ") has been loaded");
         }
     }
-    db.close();
+    db.close();*/
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+    //if(!DB2::get_singleton()->table_exists("orders")) {DB2::get_singleton()->finish(); return;} // user probably has no order history
+    // first, check if user has any orders
+    int user_order_count = DB2::get_singleton()->get_integer_params("SELECT COUNT(*) FROM orders WHERE user_id = $1", { std::to_string(get_id()) });// get number of orders this user has made so far
+    if(user_order_count < 1) {neroshop::print("No order history found on your account"); DB2::get_singleton()->finish(); return;} // for this user    
+    // THIS IS FASTER THAN THE FORMER, SINCE IT DOES NOT LOOP THROUGH ALL THE ORDERS IN THE TABLE orders
+    std::string command = "SELECT id FROM orders WHERE user_id = $1";
+    std::vector<const char *> param_values = { std::to_string(get_id()).c_str() };
+    PGresult * result = PQexecParams(DB2::get_singleton()->get_handle(), command.c_str(), 1, nullptr, param_values.data(), nullptr, nullptr, 0);
+    int rows = PQntuples(result);
+    //if(rows < 1) {PQclear(result); DB2::get_singleton()->finish(); return;}    
+    if (PQresultStatus(result) != PGRES_TUPLES_OK) {
+        neroshop::print("User::load_orders(): You have no orders in your account", 2);        
+        PQclear(result);
+        DB2::get_singleton()->finish();//exit(1);
+        return; // exit so we don't double free "result" or double close the database
+    }
+    for(int i = 0; i < rows; i++) {
+        int order_id = std::stoi(PQgetvalue(result, i, 0));
+        neroshop::Order * order = new neroshop::Order(order_id);
+        order_list.push_back(order); // store orders for later use        
+        neroshop::print("Order (id: " + std::to_string(order->get_id()) + ") has been loaded");
+    }    
+    PQclear(result);
+    ////////////////////////////////    
+    DB2::get_singleton()->finish();
+    ////////////////////////////////    
 }
 ////////////////////
 ////////////////////
@@ -265,8 +464,8 @@ void neroshop::User::set_name(const std::string& name) {
     this->name = name;
 }
 ////////////////////
-void neroshop::User::set_role(user_role role) {
-    this->role = role;
+void neroshop::User::set_account_type(user_account_type account_type) {
+    this->account_type = account_type;
 }
 ////////////////////
 void neroshop::User::set_logged(bool logged) { // protected function, so only derived classes can use this
@@ -284,15 +483,15 @@ std::string neroshop::User::get_name() const {
     return name;
 }
 ////////////////////
-user_role neroshop::User::get_role() const {
-    return role;
+user_account_type neroshop::User::get_account_type() const {
+    return account_type;
 }
 ////////////////////
-std::string neroshop::User::get_role_string() const {
-    switch(this->role) {
-        case user_role::guest: return "Guest"; break;
-        case user_role::buyer: return "Buyer"; break;
-        case user_role::seller: return "Seller"; break;
+std::string neroshop::User::get_account_type_string() const {
+    switch(this->account_type) {
+        case user_account_type::guest: return "Guest"; break;
+        case user_account_type::buyer: return "Buyer"; break;
+        case user_account_type::seller: return "Seller"; break;
         default: return ""; break;
     }
 }
@@ -322,23 +521,39 @@ bool neroshop::User::is_guest() const {
 ////////////////////
 bool neroshop::User::is_buyer() const// buyer and guests are not required to register, only sellers
 {
-    if(id <= 0) return false;
-    DB db("neroshop.db");
-    int role_id = db.get_column_integer("users", "role_id", "id = " + std::to_string(this->id));//std::string role = db.get_column_text("users", "role", "id = " + std::to_string(this->id));
-    if(role_id <= 0) return false;//if(String::lower(role) != "buyer" || role.empty()) return false;
-    if(role_id != 1) return false; // 1 = buyer
-    db.close();
+    ////if(id < 1) return false;
+    /*DB db("neroshop.db");
+    int account_type_id = db.get_column_integer("users", "account_type_id", "id = " + std::to_string(this->id));//std::string account_type = db.get_column_text("users", "account_type", "id = " + std::to_string(this->id));
+    if(account_type_id <= 0) return false;//if(String::lower(account_type) != "buyer" || account_type.empty()) return false;
+    if(account_type_id != 1) return false; // 1 = buyer
+    db.close();*/
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+    int account_type_id = DB2::get_singleton()->get_integer_params("SELECT account_type_id FROM users WHERE id = $1::int", { std::to_string(this->id) });
+    if(account_type_id != 1) {DB2::get_singleton()->finish();return false;} // 1 = buyer //neroshop::print("User " + name + " is a buyer", 4); // only print when there's an error   
+    DB2::get_singleton()->finish();
+    ////////////////////////////////
     return true;
 }
 ////////////////////
 bool neroshop::User::is_seller() const
 {
-    if(id <= 0) return false;//if(String::lower(this->name) == "guest") return false; // reserved name "Guest" for guests only
-    DB db("neroshop.db");
-    int role_id = db.get_column_integer("users", "role_id", "id = " + std::to_string(this->id));//std::string role = db.get_column_text("users", "role", "id = " + std::to_string(this->id));
-    if(role_id <= 0) return false;//if(role.empty() || String::lower(role) != "seller") return false;
-    if(role_id != 2) return false; // 2 = seller
-    db.close();
+    ////if(id < 1) return false;//if(String::lower(this->name) == "guest") return false; // reserved name "Guest" for guests only
+    /*DB db("neroshop.db");
+    int account_type_id = db.get_column_integer("users", "account_type_id", "id = " + std::to_string(this->id));//std::string account_type = db.get_column_text("users", "account_type", "id = " + std::to_string(this->id));
+    if(account_type_id <= 0) return false;//if(account_type.empty() || String::lower(account_type) != "seller") return false;
+    if(account_type_id != 2) return false; // 2 = seller
+    db.close();*/
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+    int account_type_id = DB2::get_singleton()->get_integer_params("SELECT account_type_id FROM users WHERE id = $1::int", { std::to_string(this->id) });
+    if(account_type_id != 2) {DB2::get_singleton()->finish();return false;} // 2 = seller //neroshop::print("User " + name + " is a seller", 4); // only print when there's an error
+    DB2::get_singleton()->finish();
+    ////////////////////////////////
     return true;
 }
 ////////////////////
@@ -348,27 +563,70 @@ bool neroshop::User::is_online() const // a user is not created until they are l
 }
 ////////////////////
 bool neroshop::User::is_registered() const {
-    DB db("neroshop.db");
+    /*DB db("neroshop.db");
 	// if table Users does not exist, that means no accounts are registered
 	if(!db.table_exists("users")) return false; // if table Users does not exist, no accounts are registered
 	// confirm that this user's id is in the db (to further prove that they are registered)
 	int id = db.get_column_integer("users", "id", "id = " + std::to_string(get_id()));
 	if(id <= 0) return false;
-	db.close(); // always remember to close db when done :)
+	db.close();*/ // always remember to close db when done :)
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+	// if table Users does not exist, that means no accounts are registered
+	if(!DB2::get_singleton()->table_exists("users")) {
+	    neroshop::print("Failed to retrieve data (Database is ether missing or corrupted or table users simply does not exist)", 1);
+	    DB2::get_singleton()->finish();
+	    return false; // failed to retrieve username
+	}
+	// confirm that this user's id is in the db (to further prove that they are registered)
+	int user_id = DB2::get_singleton()->get_integer_params("SELECT id FROM users WHERE id = $1", { std::to_string(get_id()) });
+	if(id < 1) {
+	    neroshop::print("You are not a registered user", 1);
+	    DB2::get_singleton()->finish();
+	    return false;    
+    }
+    //neroshop::print("You are a registered user", 3); // only print when there is an error
+    DB2::get_singleton()->finish();
+    ////////////////////////////////	
     return true;
 }
 ////////////////////
 bool neroshop::User::is_registered(const std::string& name) { // no need to login to prove user is registered, just need to check the db
     // an empty username is ALWAYS invalid
     if(name.empty()) return false;
-    DB db("neroshop.db");
+    ////////////////////////////////
+    // sqlite
+    ////////////////////////////////    
+    /*DB db("neroshop.db");
 	// if table Users does not exist, that means no accounts are registered
 	if(!db.table_exists("users")) return false;
 	// confirm that this user's name is in the db (to prove that they are registered)
 	std::string user = db.get_column_text("users", "name", "name = " + DB::to_sql_string(String::lower(name)));
 	if(user.empty()) return false;
 	if(user != String::lower(name)) return false;
-	db.close(); // always remember to close db when done :)
+	db.close();*/ // always remember to close db when done :)
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+	// confirm that this user's name is in the db (to prove that they are registered)
+	std::string user = DB2::get_singleton()->get_text_params("SELECT name FROM users WHERE name = $1", { String::lower(name) });
+	// if table users does not exist, that means no accounts are registered
+	if(!DB2::get_singleton()->table_exists("users")) {
+	    neroshop::print("Failed to retrieve data (Database is ether missing or corrupted or table users simply does not exist)", 1);
+	    DB2::get_singleton()->finish();
+	    return false; // failed to retrieve username
+	}
+	if(user.empty()) {
+	    neroshop::print("No user with such name found: \033[1;97m" + name + "\033[0m", 1); // Found no user with such name
+	    DB2::get_singleton()->finish();
+	    return false; // no user with such name
+    }
+    //neroshop::print(user + " is a registered user", 3);
+    DB2::get_singleton()->finish();
+    ////////////////////////////////	
     return true;
 }
 ////////////////////
@@ -379,10 +637,26 @@ bool neroshop::User::is_logged() const
 ////////////////////
 bool neroshop::User::has_email() const {
     if(is_guest()) return false;
-    DB db("neroshop.db");
+    ////////////////////////////////
+    // sqlite
+    ////////////////////////////////
+    /*DB db("neroshop.db");
     std::string email_hash = db.get_column_text("users", "email", "id = " + std::to_string(get_id()));
     if(email_hash.empty()) return false;
-    db.close();
+    db.close();*/
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+    std::string email = DB2::get_singleton()->get_text_params("SELECT opt_email FROM users WHERE id = $1::int", { std::to_string(get_id()) });
+    if(email.empty()) {
+        neroshop::print("no email found on account", 2);
+        DB2::get_singleton()->finish();
+        return false;
+    }
+    if(!email.empty()) neroshop::print("email found: " + email, 3);
+    DB2::get_singleton()->finish();
+    ////////////////////////////////
     return true;
 }
 ////////////////////

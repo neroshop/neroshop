@@ -102,7 +102,8 @@ public:
     monero_wallet_full * get_monero_wallet() const;
     // dokun-ui
     static Progressbar * sync_bar;
-    static dokun::Label * sync_label;    
+    static dokun::Label * sync_label;
+    static neroshop::Message * wallet_message;    
 private:
     void set_daemon(); // "set_daemon <host>[:<port>] [trusted|untrusted|this-is-probably-a-spy-node]" - connects to a daemon
     void refresh(); // "refresh" - Synchronize wallet with the Monero network.

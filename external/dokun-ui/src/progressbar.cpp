@@ -64,12 +64,19 @@ Progressbar::Progressbar(int x, int y, int width, int height) : value(0), range(
 }
 /////////////
 Progressbar::~Progressbar()
-{}
+{
+    // delete label
+    if(label) {
+        delete label;
+        label = nullptr;
+    }
+}
 /////////////
 void Progressbar::draw()
 {
 	if(is_visible())  // is it visible? can it be seen? (will not be seen if not visible)
 	{
+	    on_draw(); // callback for all gui	(for setting child position)
 		if(is_active()) {}// is it active or disabled? (would be darker in color if not active)    
 	    double min_val = get_range().x;
 	    double max_val = get_range().y;
@@ -99,10 +106,10 @@ void Progressbar::draw()
 			if(label->get_alignment() == "right" ) {label->set_relative_position( get_width() - label->get_width()     , (get_height() - 10/*label->get_height()*/) / 2);} // keep label_y positioned at center of progressbar at all times	
             if(label->get_alignment() == "none"  ) {}
 			label->set_position(get_x() + label->get_relative_x(), get_y() + label->get_relative_y());
-            // NO need to draw label since child GUI are automatically drawn //label->draw();//Renderer::draw_label(get_text(), x, y, angle, 0.5, 0.5, get_label()->get_font()->get_data(), get_label()->get_color().x, get_label()->get_color().y, get_label()->get_color().z, get_label()->get_color().w);
+            // draw label manually since there is only one
+            label->draw();//Renderer::draw_label(get_text(), x, y, angle, 0.5, 0.5, get_label()->get_font()->get_data(), get_label()->get_color().x, get_label()->get_color().y, get_label()->get_color().z, get_label()->get_color().w);
 		}
     }
-    on_draw(); // callback for all gui	
 }
 /////////////
 void Progressbar::draw(double x, double y)

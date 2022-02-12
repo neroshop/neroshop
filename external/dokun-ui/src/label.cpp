@@ -99,11 +99,21 @@ int dokun::Label::label_new(lua_State *L)
 }
 /////////////
 dokun::Label::~Label()
-{}
+{
+    // delete font (as long as its not the default font)
+    if(font) {
+        if(font != dokun::Font::system_font) {
+            delete font;
+            font = nullptr;
+        }
+    }
+    std::cout << "label deleted\n";
+}
 /////////////
 /////////////
 void dokun::Label::draw()
 {
+    on_draw(); // sets position relative to parent, regardless of visibility
 	if(!font) return; // return if no font //if(string.empty()) return; // return if empty string (BAD: It will prevent from updating label's x and y position)
     if(!is_visible()) return; // exit function if not visible
 	// STORE ALL CHARACTERS IN ARRAY BEFORE DRAWING!
@@ -112,7 +122,6 @@ void dokun::Label::draw()
 	Renderer::draw_text2(string, get_x(), get_y(), 
 		get_width(), get_height(), get_angle(), get_scale().x, get_scale().y, 
 	    *font, get_color().x, get_color().y, get_color().z, get_color().w);
-	on_draw(); // callback for all gui
 }
 /////////////
 void dokun::Label::draw(double x, double y)
@@ -179,6 +188,7 @@ void dokun::Label::set_string(const std::string& string_)
 #ifdef DOKUN_DEBUG0
     std::cout << "Label size updated: " << Vector2(width, height) << std::endl;
 #endif
+    //to-do: regex for links. Label strings containing only links can be redirected via a browser when clicked on the app 
 }
 /////////////
 int dokun::Label::set_string(lua_State *L)

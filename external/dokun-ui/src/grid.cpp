@@ -68,6 +68,7 @@ Grid::~Grid()
 /////////////
 void Grid::draw() // COMPLETE! :D
 {
+    on_draw(); // sets position relative to parent, regardless of visibility
 	if(is_visible())
 	{
 		for(int i = 0; i < block.size(); i++) // block.size() = rows
@@ -100,7 +101,6 @@ void Grid::draw() // COMPLETE! :D
 			}
 		}	
 	}
-	on_draw(); // callback for all gui
 } // nothing will be drawn if rows and columns are not set
 /////////////
 void Grid::draw(double x, double y)

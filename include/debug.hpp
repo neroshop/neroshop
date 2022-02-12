@@ -3,8 +3,10 @@
 
 #ifndef DEBUG_HPP_NEROSHOP
 #define DEBUG_HPP_NEROSHOP
-#define NEROSHOP_TAG neroshop::io_write("");
-#include <iostream>
+#define NEROSHOP_TAG_OUT neroshop::io_write("");
+#define NEROSHOP_TAG_IN std::string("\033[1;35;49m[neroshop]: \033[0m") +
+#define NEROSHOP_TAG NEROSHOP_TAG_IN
+#include <iostream> // String(
 
 namespace neroshop {
     ////////////////////

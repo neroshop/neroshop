@@ -18,19 +18,20 @@ public: // can be accessed by any class or function
     ~Cart();
     // normal
     bool open() const;
-    void add(const neroshop::Item& item, unsigned int quantity = 1); // quantity is 1 by default // Item * get_item(index);
+    void add(const neroshop::Item& item, int quantity = 1); // quantity is 1 by default // Item * get_item(index);
     //void add_new(unsigned int item_id, unsigned int quantity = 1);
-    void remove(const neroshop::Item& item, unsigned int quantity = 1);
-    void remove(unsigned int index, unsigned int quantity = 1);
+    void remove(const neroshop::Item& item, int quantity = 1); // use int and NOT unsigned int 'cause unsigned int assumes the arg will never be negative number, but when arg is negative, it converts it to some random positive number
+    void remove(unsigned int index, int quantity = 1);
     void empty(); // remove all items from cart
     void move_to_wishlist();
     void save_for_later();
-    void change_quantity(const neroshop::Item& item, unsigned int quantity); // set_quantity is private so you can only change item quantity from this function
+    void change_quantity(const neroshop::Item& item, int quantity); // set_quantity is private so you can only change item quantity from this function
     void shift_up(const neroshop::Item& item);
     void shift_down(const neroshop::Item& item);
 	void swap_positions(const neroshop::Item& item1, const neroshop::Item& item2);
 	void checkout(); // user's cart contents impact inventory availability. Only after purchase will actual inventory decrease
 	static bool create_db();
+	//static bool create_offline_db();
 	// getters
 	double get_seller_subtotal_price(unsigned int seller_id = 0) const;
 	double get_subtotal_price() const; // This is the total price for each product in the cart (combined)

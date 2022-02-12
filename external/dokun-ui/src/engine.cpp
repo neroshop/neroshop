@@ -194,7 +194,7 @@ void dokun::Engine::on_close()
     // save cache (scripts)
     //Script::save_cache();
     // save session
-    Logger::close();
+    ////Logger::close();
 	// reset status to its default (turns engine off)
 	status = 0;
     Logger("Exiting engine with code 0 ..."); // exit message

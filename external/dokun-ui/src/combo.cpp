@@ -19,10 +19,37 @@ highlight_color(0, 51, 102, 1.0)
 	set_orientation(0);
 }
 Combobox::~Combobox()
-{}
+{
+    // delete label
+    if(label) {
+        delete label;
+        label = nullptr;
+    }
+    // delete image
+    if(image) {
+        delete image;
+        image = nullptr;
+    }
+    /*// delete x
+    if(x) {
+        delete x;
+        x = nullptr;
+    }      
+    // delete x
+    if(x) {
+        delete x;
+        x = nullptr;
+    }      
+    // delete x
+    if(x) {
+        delete x;
+        x = nullptr;
+    }*/                
+}
 
 void Combobox::draw()
 {
+    on_draw(); // sets position relative to parent, regardless of visibility
 	if(is_visible())
 	{
         on_button();	
@@ -65,9 +92,8 @@ void Combobox::draw()
 		    if(label->get_alignment() == "center") label->set_relative_position((get_width()-label->get_width())/2, (get_height()-label->get_height())/2);						
 		    if(label->get_alignment() == "right" ) label->set_relative_position(get_width() - label->get_width(), 0);	       
             label->set_position(get_x() + label->get_relative_x(), get_y() + label->get_relative_y()); // update label position		
+		    label->draw();
 		}
-		// callback function
-	    on_draw();
 	} // is visible
 }     
 /////////////

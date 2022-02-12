@@ -29,6 +29,7 @@ private:
     static bool load_login();
     static bool load_console();
     static bool load_wallet();
+    static bool load_door();
     //static bool load_();
 public:    
     static std::map<std::string, Image *> get; // a map is basically a std::vector of std::pairs

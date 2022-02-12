@@ -72,12 +72,22 @@ Button::Button(const std::string& text, int x, int y, int width, int height) : c
 /////////////
 Button::~Button(void)
 {
-    //if(image) delete image;
-    //if(label) delete label;
+    // delete image
+    if(image) {
+        delete image;
+        image = nullptr; // its good practice to set all deleted objects to null regardless of what anybody says
+    }
+    // delete label
+    if(label) {
+        delete label;
+        label = nullptr;
+    }
+    std::cout << "button deleted\n";
 }
 /////////////
 void Button::draw()
 {
+    on_draw(); // sets position relative to parent, regardless of visibility
 	if(is_visible()) 
 	{
 		//on_hover();
@@ -116,9 +126,10 @@ void Button::draw()
 			if(label->get_alignment() == "right" ) { label->set_relative_position( get_width() - label->get_width()     , (get_height() - 10/*label->get_height()*/) / 2); } // keep label_y centered always	
             if(label->get_alignment() == "none"  ) {} // with this you are free to set the label's relative position to whatever you want  // default - relative_position will always be (0, 0) unless you change the alignment
             label->set_position(get_x() + label->get_relative_x(), get_y() + label->get_relative_y()); // set actual position
+		    // draw label manually since there is only one
+		    label->draw();
 		}
 	}
-	on_draw(); // callback for all gui
 }
 /////////////
 void Button::draw(double x, double y)
@@ -158,7 +169,8 @@ int Button::draw(lua_State *L)
 /////////////
 void Button::set_text(const std::string& text)
 {
-	get_label()->set_string(text);
+    if(!label) throw std::runtime_error("label is not initialized");
+	label->set_string(text);
 }
 /////////////
 int Button::set_text(lua_State *L)

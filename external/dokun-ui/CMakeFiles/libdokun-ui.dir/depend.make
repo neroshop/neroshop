@@ -3343,6 +3343,7 @@ CMakeFiles/libdokun-ui.dir/src/box.cpp.o: include/shader.hpp
 CMakeFiles/libdokun-ui.dir/src/box.cpp.o: include/string.hpp
 CMakeFiles/libdokun-ui.dir/src/box.cpp.o: include/system.hpp
 CMakeFiles/libdokun-ui.dir/src/box.cpp.o: include/texture.hpp
+CMakeFiles/libdokun-ui.dir/src/box.cpp.o: include/timer.hpp
 CMakeFiles/libdokun-ui.dir/src/box.cpp.o: include/types.hpp
 CMakeFiles/libdokun-ui.dir/src/box.cpp.o: include/ui.hpp
 CMakeFiles/libdokun-ui.dir/src/box.cpp.o: include/utility.hpp
@@ -3739,6 +3740,7 @@ CMakeFiles/libdokun-ui.dir/src/button.cpp.o: include/shader.hpp
 CMakeFiles/libdokun-ui.dir/src/button.cpp.o: include/string.hpp
 CMakeFiles/libdokun-ui.dir/src/button.cpp.o: include/system.hpp
 CMakeFiles/libdokun-ui.dir/src/button.cpp.o: include/texture.hpp
+CMakeFiles/libdokun-ui.dir/src/button.cpp.o: include/timer.hpp
 CMakeFiles/libdokun-ui.dir/src/button.cpp.o: include/types.hpp
 CMakeFiles/libdokun-ui.dir/src/button.cpp.o: include/ui.hpp
 CMakeFiles/libdokun-ui.dir/src/button.cpp.o: include/utility.hpp
@@ -4126,6 +4128,7 @@ CMakeFiles/libdokun-ui.dir/src/combo.cpp.o: include/shader.hpp
 CMakeFiles/libdokun-ui.dir/src/combo.cpp.o: include/string.hpp
 CMakeFiles/libdokun-ui.dir/src/combo.cpp.o: include/system.hpp
 CMakeFiles/libdokun-ui.dir/src/combo.cpp.o: include/texture.hpp
+CMakeFiles/libdokun-ui.dir/src/combo.cpp.o: include/timer.hpp
 CMakeFiles/libdokun-ui.dir/src/combo.cpp.o: include/types.hpp
 CMakeFiles/libdokun-ui.dir/src/combo.cpp.o: include/ui.hpp
 CMakeFiles/libdokun-ui.dir/src/combo.cpp.o: include/utility.hpp
@@ -6160,6 +6163,7 @@ CMakeFiles/libdokun-ui.dir/src/grid.cpp.o: include/shader.hpp
 CMakeFiles/libdokun-ui.dir/src/grid.cpp.o: include/string.hpp
 CMakeFiles/libdokun-ui.dir/src/grid.cpp.o: include/system.hpp
 CMakeFiles/libdokun-ui.dir/src/grid.cpp.o: include/texture.hpp
+CMakeFiles/libdokun-ui.dir/src/grid.cpp.o: include/timer.hpp
 CMakeFiles/libdokun-ui.dir/src/grid.cpp.o: include/types.hpp
 CMakeFiles/libdokun-ui.dir/src/grid.cpp.o: include/ui.hpp
 CMakeFiles/libdokun-ui.dir/src/grid.cpp.o: include/utility.hpp
@@ -6934,6 +6938,7 @@ CMakeFiles/libdokun-ui.dir/src/label.cpp.o: include/shader.hpp
 CMakeFiles/libdokun-ui.dir/src/label.cpp.o: include/string.hpp
 CMakeFiles/libdokun-ui.dir/src/label.cpp.o: include/system.hpp
 CMakeFiles/libdokun-ui.dir/src/label.cpp.o: include/texture.hpp
+CMakeFiles/libdokun-ui.dir/src/label.cpp.o: include/timer.hpp
 CMakeFiles/libdokun-ui.dir/src/label.cpp.o: include/types.hpp
 CMakeFiles/libdokun-ui.dir/src/label.cpp.o: include/ui.hpp
 CMakeFiles/libdokun-ui.dir/src/label.cpp.o: include/utility.hpp
@@ -7319,6 +7324,7 @@ CMakeFiles/libdokun-ui.dir/src/list.cpp.o: include/shader.hpp
 CMakeFiles/libdokun-ui.dir/src/list.cpp.o: include/string.hpp
 CMakeFiles/libdokun-ui.dir/src/list.cpp.o: include/system.hpp
 CMakeFiles/libdokun-ui.dir/src/list.cpp.o: include/texture.hpp
+CMakeFiles/libdokun-ui.dir/src/list.cpp.o: include/timer.hpp
 CMakeFiles/libdokun-ui.dir/src/list.cpp.o: include/types.hpp
 CMakeFiles/libdokun-ui.dir/src/list.cpp.o: include/ui.hpp
 CMakeFiles/libdokun-ui.dir/src/list.cpp.o: include/utility.hpp
@@ -7727,6 +7733,7 @@ CMakeFiles/libdokun-ui.dir/src/menubar.cpp.o: include/shader.hpp
 CMakeFiles/libdokun-ui.dir/src/menubar.cpp.o: include/string.hpp
 CMakeFiles/libdokun-ui.dir/src/menubar.cpp.o: include/system.hpp
 CMakeFiles/libdokun-ui.dir/src/menubar.cpp.o: include/texture.hpp
+CMakeFiles/libdokun-ui.dir/src/menubar.cpp.o: include/timer.hpp
 CMakeFiles/libdokun-ui.dir/src/menubar.cpp.o: include/types.hpp
 CMakeFiles/libdokun-ui.dir/src/menubar.cpp.o: include/ui.hpp
 CMakeFiles/libdokun-ui.dir/src/menubar.cpp.o: include/utility.hpp
@@ -8105,6 +8112,7 @@ CMakeFiles/libdokun-ui.dir/src/mouse.cpp.o: include/shader.hpp
 CMakeFiles/libdokun-ui.dir/src/mouse.cpp.o: include/string.hpp
 CMakeFiles/libdokun-ui.dir/src/mouse.cpp.o: include/system.hpp
 CMakeFiles/libdokun-ui.dir/src/mouse.cpp.o: include/texture.hpp
+CMakeFiles/libdokun-ui.dir/src/mouse.cpp.o: include/timer.hpp
 CMakeFiles/libdokun-ui.dir/src/mouse.cpp.o: include/types.hpp
 CMakeFiles/libdokun-ui.dir/src/mouse.cpp.o: include/utility.hpp
 CMakeFiles/libdokun-ui.dir/src/mouse.cpp.o: include/vector.hpp
@@ -8537,6 +8545,7 @@ CMakeFiles/libdokun-ui.dir/src/progressbar.cpp.o: include/shader.hpp
 CMakeFiles/libdokun-ui.dir/src/progressbar.cpp.o: include/string.hpp
 CMakeFiles/libdokun-ui.dir/src/progressbar.cpp.o: include/system.hpp
 CMakeFiles/libdokun-ui.dir/src/progressbar.cpp.o: include/texture.hpp
+CMakeFiles/libdokun-ui.dir/src/progressbar.cpp.o: include/timer.hpp
 CMakeFiles/libdokun-ui.dir/src/progressbar.cpp.o: include/types.hpp
 CMakeFiles/libdokun-ui.dir/src/progressbar.cpp.o: include/ui.hpp
 CMakeFiles/libdokun-ui.dir/src/progressbar.cpp.o: include/utility.hpp
@@ -9318,6 +9327,7 @@ CMakeFiles/libdokun-ui.dir/src/scrollbar.cpp.o: include/shader.hpp
 CMakeFiles/libdokun-ui.dir/src/scrollbar.cpp.o: include/string.hpp
 CMakeFiles/libdokun-ui.dir/src/scrollbar.cpp.o: include/system.hpp
 CMakeFiles/libdokun-ui.dir/src/scrollbar.cpp.o: include/texture.hpp
+CMakeFiles/libdokun-ui.dir/src/scrollbar.cpp.o: include/timer.hpp
 CMakeFiles/libdokun-ui.dir/src/scrollbar.cpp.o: include/types.hpp
 CMakeFiles/libdokun-ui.dir/src/scrollbar.cpp.o: include/ui.hpp
 CMakeFiles/libdokun-ui.dir/src/scrollbar.cpp.o: include/utility.hpp
@@ -9726,6 +9736,7 @@ CMakeFiles/libdokun-ui.dir/src/slider.cpp.o: include/slider.hpp
 CMakeFiles/libdokun-ui.dir/src/slider.cpp.o: include/string.hpp
 CMakeFiles/libdokun-ui.dir/src/slider.cpp.o: include/system.hpp
 CMakeFiles/libdokun-ui.dir/src/slider.cpp.o: include/texture.hpp
+CMakeFiles/libdokun-ui.dir/src/slider.cpp.o: include/timer.hpp
 CMakeFiles/libdokun-ui.dir/src/slider.cpp.o: include/types.hpp
 CMakeFiles/libdokun-ui.dir/src/slider.cpp.o: include/ui.hpp
 CMakeFiles/libdokun-ui.dir/src/slider.cpp.o: include/utility.hpp
@@ -10110,6 +10121,7 @@ CMakeFiles/libdokun-ui.dir/src/spinner.cpp.o: include/spinner.hpp
 CMakeFiles/libdokun-ui.dir/src/spinner.cpp.o: include/string.hpp
 CMakeFiles/libdokun-ui.dir/src/spinner.cpp.o: include/system.hpp
 CMakeFiles/libdokun-ui.dir/src/spinner.cpp.o: include/texture.hpp
+CMakeFiles/libdokun-ui.dir/src/spinner.cpp.o: include/timer.hpp
 CMakeFiles/libdokun-ui.dir/src/spinner.cpp.o: include/types.hpp
 CMakeFiles/libdokun-ui.dir/src/spinner.cpp.o: include/ui.hpp
 CMakeFiles/libdokun-ui.dir/src/spinner.cpp.o: include/utility.hpp
@@ -10495,6 +10507,7 @@ CMakeFiles/libdokun-ui.dir/src/tab.cpp.o: include/string.hpp
 CMakeFiles/libdokun-ui.dir/src/tab.cpp.o: include/system.hpp
 CMakeFiles/libdokun-ui.dir/src/tab.cpp.o: include/tab.hpp
 CMakeFiles/libdokun-ui.dir/src/tab.cpp.o: include/texture.hpp
+CMakeFiles/libdokun-ui.dir/src/tab.cpp.o: include/timer.hpp
 CMakeFiles/libdokun-ui.dir/src/tab.cpp.o: include/types.hpp
 CMakeFiles/libdokun-ui.dir/src/tab.cpp.o: include/ui.hpp
 CMakeFiles/libdokun-ui.dir/src/tab.cpp.o: include/utility.hpp
@@ -10938,6 +10951,7 @@ CMakeFiles/libdokun-ui.dir/src/toggle.cpp.o: include/shader.hpp
 CMakeFiles/libdokun-ui.dir/src/toggle.cpp.o: include/string.hpp
 CMakeFiles/libdokun-ui.dir/src/toggle.cpp.o: include/system.hpp
 CMakeFiles/libdokun-ui.dir/src/toggle.cpp.o: include/texture.hpp
+CMakeFiles/libdokun-ui.dir/src/toggle.cpp.o: include/timer.hpp
 CMakeFiles/libdokun-ui.dir/src/toggle.cpp.o: include/toggle.hpp
 CMakeFiles/libdokun-ui.dir/src/toggle.cpp.o: include/types.hpp
 CMakeFiles/libdokun-ui.dir/src/toggle.cpp.o: include/ui.hpp
@@ -11321,6 +11335,7 @@ CMakeFiles/libdokun-ui.dir/src/ui.cpp.o: include/shader.hpp
 CMakeFiles/libdokun-ui.dir/src/ui.cpp.o: include/string.hpp
 CMakeFiles/libdokun-ui.dir/src/ui.cpp.o: include/system.hpp
 CMakeFiles/libdokun-ui.dir/src/ui.cpp.o: include/texture.hpp
+CMakeFiles/libdokun-ui.dir/src/ui.cpp.o: include/timer.hpp
 CMakeFiles/libdokun-ui.dir/src/ui.cpp.o: include/types.hpp
 CMakeFiles/libdokun-ui.dir/src/ui.cpp.o: include/ui.hpp
 CMakeFiles/libdokun-ui.dir/src/ui.cpp.o: include/utility.hpp
@@ -11697,6 +11712,7 @@ CMakeFiles/libdokun-ui.dir/src/window.cpp.o: include/shader.hpp
 CMakeFiles/libdokun-ui.dir/src/window.cpp.o: include/string.hpp
 CMakeFiles/libdokun-ui.dir/src/window.cpp.o: include/system.hpp
 CMakeFiles/libdokun-ui.dir/src/window.cpp.o: include/texture.hpp
+CMakeFiles/libdokun-ui.dir/src/window.cpp.o: include/timer.hpp
 CMakeFiles/libdokun-ui.dir/src/window.cpp.o: include/types.hpp
 CMakeFiles/libdokun-ui.dir/src/window.cpp.o: include/utility.hpp
 CMakeFiles/libdokun-ui.dir/src/window.cpp.o: include/vector.hpp

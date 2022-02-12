@@ -21,7 +21,7 @@ bool neroshop::Cart::open() const {
     // if cart.db already exists        
     if(file.good()) {
         std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cart.db";
-        NEROSHOP_TAG std::cout << "\033[1;36m" << "cart found: \"" << cart_file << "\"\033[0m" << std::endl;
+        NEROSHOP_TAG_OUT std::cout << "\033[1;36m" << "cart found: \"" << cart_file << "\"\033[0m" << std::endl;
         // open cart db
         neroshop::DB db;
         if(!db.open(cart_file)) {neroshop::print(SQLITE3_TAG + std::string("could not open cart.db")); return false;}
@@ -58,10 +58,10 @@ void neroshop::Cart::load(const neroshop::Item& item, unsigned int quantity) { /
     // be sure item is in stock
     if(!item.in_stock()) 
     {   // remove item from cart if it is no longer in stock
-        NEROSHOP_TAG std::cout << "\033[1;91m" << item.get_name() << " is out of stock" << "\033[0m" << std::endl; // An item that was in your cart is now out of stock
+        NEROSHOP_TAG_OUT std::cout << "\033[1;91m" << item.get_name() << " is out of stock" << "\033[0m" << std::endl; // An item that was in your cart is now out of stock
         const_cast<neroshop::Item&>(item).set_quantity(0); // set quantity to 0
         remove_db(item.get_id()); // remove item_id from table Cart
-        NEROSHOP_TAG std::cout << "\033[1;91m" << item.get_name() << " (" << quantity << ") removed from cart" << "\033[0m" << std::endl;
+        NEROSHOP_TAG_OUT std::cout << "\033[1;91m" << item.get_name() << " (" << quantity << ") removed from cart" << "\033[0m" << std::endl;
         return; // exit function
     }
     unsigned int stock_qty = item.get_stock_quantity(); // get stock quantity
@@ -69,26 +69,26 @@ void neroshop::Cart::load(const neroshop::Item& item, unsigned int quantity) { /
     // load the item and quantity ...
     cart_obj->contents.push_back(&const_cast<neroshop::Item&>(item)); // store existing item
     const_cast<neroshop::Item&>(item).set_quantity(quantity); // save existing item_qty
-    NEROSHOP_TAG std::cout << "\033[1;32m" << item.get_name() << " (id: " << item.get_id() << ", qty: " << quantity << ") has been loaded into cart" << "\033[0m" << std::endl;
+    NEROSHOP_TAG_OUT std::cout << "\033[1;32m" << item.get_name() << " (id: " << item.get_id() << ", qty: " << quantity << ") has been loaded into cart" << "\033[0m" << std::endl;
 }
 ////////////////////
-void neroshop::Cart::add(const neroshop::Item& item, unsigned int quantity) { // good!
+void neroshop::Cart::add(const neroshop::Item& item, int quantity) { // good!
     // check if item is in database
-    if(!item.is_registered()) {NEROSHOP_TAG std::cout << "\033[1;91m" << item.get_name() << " is not registered in the database" << "\033[0m" << std::endl;return;}
+    if(!item.is_registered()) {NEROSHOP_TAG_OUT std::cout << "\033[1;91m" << item.get_name() << " is not registered in the database" << "\033[0m" << std::endl;return;}
     // check if the item is in stock
-    if(!item.in_stock()) {NEROSHOP_TAG std::cout << "\033[1;91m" << item.get_name() << " is out of stock" << "\033[0m" << std::endl; return;}
-    unsigned int item_qty  = item.get_quantity(); // get item_qty
-    unsigned int stock_qty = item.get_stock_quantity(); // get stock_qty
+    if(!item.in_stock()) {NEROSHOP_TAG_OUT std::cout << "\033[1;91m" << item.get_name() << " is out of stock" << "\033[0m" << std::endl; return;}
+    int item_qty  = item.get_quantity(); // get item_qty (previously in cart)
+    int stock_qty = item.get_stock_quantity(); // get stock_qty (in inventory)
     if(quantity >= stock_qty) quantity = stock_qty - item_qty; // make sure quantity is not more than the amount in stock
     // if item_qty is more than stock amount
     if(item_qty >= stock_qty) {
         const_cast<neroshop::Item&>(item).set_quantity(stock_qty);//update(item.get_id(), stock_qty); // set item_qty to stock_qty
-        NEROSHOP_TAG std::cout << "Only " << "\033[1;91m" << stock_qty << "\033[0m " << item.get_name() << "s left in stock" << std::endl;//NEROSHOP_TAG std::cout << "\033[0;33mYou have exceeded the amount in stock\033[0m" << std::endl;
+        NEROSHOP_TAG_OUT std::cout << "Only " << "\033[1;91m" << stock_qty << "\033[0m " << item.get_name() << "s left in stock" << std::endl;//NEROSHOP_TAG_OUT std::cout << "\033[0;33mYou have exceeded the amount in stock\033[0m" << std::endl;
         return; // exit function since item_qty has surpassed the amount in stock
     }
     // make sure cart is not full, else exit function
     if(is_full()) {
-        NEROSHOP_TAG std::cout << "\033[0;33m" << "Cart is full";
+        NEROSHOP_TAG_OUT std::cout << "\033[0;33m" << "Cart is full";
         std::string reason = (contents.size() >= max_items) ? "you can only add 10 items (unique) to cart" : "max_quantity (100) has been exceeded";
         std::cout << " (" <<  reason << ")" << "\033[0m" << std::endl; 
         return; // exit function if full
@@ -96,12 +96,12 @@ void neroshop::Cart::add(const neroshop::Item& item, unsigned int quantity) { //
     // quantity cannot be less than one
     if(quantity <= 0) quantity = 1;    
     // quantity cannot exceed max_quantity, so exit function (lets say that the quantity is 4294967280 - this is not acceptable)
-    if(quantity > max_quantity) {NEROSHOP_TAG std::cout << "Quantity is too high (max_quantity (" << max_quantity << ") has been exceeded)" << "\033[0m" << std::endl; return;}
+    if(quantity > max_quantity) {NEROSHOP_TAG_OUT std::cout << "Quantity is too high (max_quantity (" << max_quantity << ") has been exceeded)" << "\033[0m" << std::endl; return;}
     // if cart_qty added with the new quantity exceeds max_quantity (cart does not have to be full)
     unsigned int cart_qty = get_total_quantity();//_db();
     if((cart_qty + quantity) > max_quantity)
     {
-        NEROSHOP_TAG std::cout << "\033[0;33m" << "Cart is full (max_quantity (" << max_quantity << ") has been reached)" << "\033[0m" << std::endl;// : " << quantity << " " << const_cast<neroshop::Item&>(item).get_name() << "s ("<< get_quantity() << "+" << quantity << "=" << (get_quantity() + quantity) << ")" << std::endl; //         std::cout << "You can only have a quantity of " << max_quantity << " items in your cart" << std::endl;
+        NEROSHOP_TAG_OUT std::cout << "\033[0;33m" << "Cart is full (max_quantity (" << max_quantity << ") has been reached)" << "\033[0m" << std::endl;// : " << quantity << " " << const_cast<neroshop::Item&>(item).get_name() << "s ("<< get_quantity() << "+" << quantity << "=" << (get_quantity() + quantity) << ")" << std::endl; //         std::cout << "You can only have a quantity of " << max_quantity << " items in your cart" << std::endl;
         // adjust the quantity so it can fit
         // 100-10=90 (max_quantity-items_count=quantity)(you need at least a quantity of 90 to fit everything into the cart)
         quantity = max_quantity - cart_qty;
@@ -111,7 +111,7 @@ void neroshop::Cart::add(const neroshop::Item& item, unsigned int quantity) { //
     {
         const_cast<neroshop::Item&>(item).set_quantity(item_qty + quantity);// increase item quantity by a user-specified amount//update(item.get_id(), item_qty + quantity);
         item_qty = item.get_quantity(); // get updated quantity
-        NEROSHOP_TAG std::cout << "\033[0;32m" << "Already in cart: " << item.get_name() << " +" << quantity << " (" << item_qty << ")" << "\033[0m" << std::endl;
+        NEROSHOP_TAG_OUT std::cout << "\033[0;32m" << "Already in cart: " << item.get_name() << " +" << quantity << " (" << item_qty << ")" << "\033[0m" << std::endl;
     }
     // if item is not already in cart
     if(!in_cart(item.get_id()))//if(!in_cart(item)) 
@@ -119,14 +119,14 @@ void neroshop::Cart::add(const neroshop::Item& item, unsigned int quantity) { //
         add_db(item.get_id()); // add item to table Cart
         contents.push_back(&const_cast<neroshop::Item&>(item));// add item to cart.contents
         const_cast<neroshop::Item&>(item).set_quantity(item_qty + quantity);// increase item quantity by a user-specified amount
-        NEROSHOP_TAG std::cout << "\033[1;32m" << item.get_name() << " (" << quantity << ") added to cart" << "\033[0m" << std::endl;
+        NEROSHOP_TAG_OUT std::cout << "\033[1;32m" << item.get_name() << " (" << quantity << ") added to cart" << "\033[0m" << std::endl;
     }
 #ifdef NEROSHOP_DEBUG
-    NEROSHOP_TAG std::cout << "\033[0;97m" << "Total items in cart: " << get_items_count() << "\033[0m" << std::endl;
+    NEROSHOP_TAG_OUT std::cout << "\033[0;97m" << "Total items in cart: " << get_items_count() << "\033[0m" << std::endl;
 #endif    
 }
 //////////////////// blue: << "\033[0;34m"
-void neroshop::Cart::remove(const neroshop::Item& item, unsigned int quantity) {
+void neroshop::Cart::remove(const neroshop::Item& item, int quantity) {
     // if item is not in cart, exit function since there is nothing to remove
     if(!in_cart(item.get_id())) return;
     // make sure quantity is not more than item_quantity (cannot remove more than that which is in the cart)
@@ -138,7 +138,7 @@ void neroshop::Cart::remove(const neroshop::Item& item, unsigned int quantity) {
     {
         const_cast<neroshop::Item&>(item).set_quantity(item_qty - quantity);//(item.get_quantity() - quantity);
         item_qty = item.get_quantity(); // item_qty has been updated so get the updated item_qty
-        NEROSHOP_TAG std::cout << "\033[0;91m" << item.get_name() << " (" << quantity << ") removed from cart" << "\033[0m" << std::endl;
+        NEROSHOP_TAG_OUT std::cout << "\033[0;91m" << item.get_name() << " (" << quantity << ") removed from cart" << "\033[0m" << std::endl;
     }
     // if item_quantity is zero (0), delete item from cart
     if(item_qty <= 0) 
@@ -153,12 +153,12 @@ void neroshop::Cart::remove(const neroshop::Item& item, unsigned int quantity) {
     }
     // if cart is empty, clear the contents: if(is_empty()) empty();
 #ifdef NEROSHOP_DEBUG
-    NEROSHOP_TAG std::cout << "\033[0;97m" << "Total items in cart: " << get_items_count() << "\033[0m" << std::endl;
+    NEROSHOP_TAG_OUT std::cout << "\033[0;97m" << "Total items in cart: " << get_items_count() << "\033[0m" << std::endl;
 #endif            
     if(is_empty()) neroshop::print("Cart is empty");
 }
 ////////////////////
-void neroshop::Cart::remove(unsigned int index, unsigned int quantity) {
+void neroshop::Cart::remove(unsigned int index, int quantity) {
     if(index > (contents.size()-1)) throw std::runtime_error(std::string("\033[0;31m") + "neroshop::Cart::remove(unsigned int, unsigned int): attempting to access invalid index" + std::string("\033[0m"));
     remove(*contents[index], quantity); // remove item at an index
 }
@@ -176,17 +176,17 @@ void neroshop::Cart::empty() {
 ////////////////////
 ////////////////////
 ////////////////////
-void neroshop::Cart::change_quantity(const neroshop::Item& item, unsigned int quantity) {
+void neroshop::Cart::change_quantity(const neroshop::Item& item, int quantity) {
     if(!in_cart(item.get_id())) return; // you can only change the qty of items that are already inside of the cart    
     // check if item is in stock
-    if(!item.in_stock()) {NEROSHOP_TAG std::cout << "\033[1;91m" << item.get_name() << " is out of stock" << "\033[0m" << std::endl; return;}
+    if(!item.in_stock()) {NEROSHOP_TAG_OUT std::cout << "\033[1;91m" << item.get_name() << " is out of stock" << "\033[0m" << std::endl; return;}
     int stock_qty = item.get_stock_quantity(); // get stock quantity
-    if(quantity >= stock_qty) {quantity = stock_qty; NEROSHOP_TAG std::cout << "Only " << "\033[1;91m" << stock_qty << "\033[0m " << item.get_name() << "s left in stock" << std::endl;} // make sure quantity is not more than the amount in stock
+    if(quantity >= stock_qty) {quantity = stock_qty; NEROSHOP_TAG_OUT std::cout << "Only " << "\033[1;91m" << stock_qty << "\033[0m " << item.get_name() << "s left in stock" << std::endl;} // make sure quantity is not more than the amount in stock
     // if item quantity is the same as the specified amount, exit function
     unsigned int item_qty = item.get_quantity();
     if(quantity == item_qty) return; // there is really nothing to change here since item_qty and specified quantity are both the same value
     // if cart is full, but user still wants to increase the item_qty
-    if(is_full() && (quantity > 0)) {NEROSHOP_TAG std::cout << "\033[0;33m" << "Cart is full, and you still want to add more shit to it, bruh?" << "\033[0m" << std::endl;return;}
+    if(is_full() && (quantity > 0)) {NEROSHOP_TAG_OUT std::cout << "\033[0;33m" << "Cart is full, and you still want to add more shit to it, bruh?" << "\033[0m" << std::endl;return;}
     if(quantity < 0) quantity = 0; // quantity cannot be negative
     if(quantity > max_quantity) quantity = max_quantity; // quantity cannot exceed max_quantity
     // if cart_qty added with the new quantity exceeds max_quantity (cart does not have to be full)
@@ -197,7 +197,7 @@ void neroshop::Cart::change_quantity(const neroshop::Item& item, unsigned int qu
         // (100+1)-2=99 ((max_quantity+item_qty)-items_count=quantity)(you need at least a quantity of 99 to fit everything into the cart)
         quantity = (max_quantity + item_qty) - cart_qty;
         // cart can no longer fit any more items
-        NEROSHOP_TAG std::cout << "\033[0;33m" << "Cart is full (cannot fit any more items)" << "\033[0m" << std::endl;
+        NEROSHOP_TAG_OUT std::cout << "\033[0;33m" << "Cart is full (cannot fit any more items)" << "\033[0m" << std::endl;
         // cart is full but the cart item's previous quantity is higher than the new quantity
         //if(item.get_quantity() > quantity) {return;} // cart is already full, so no need to increase the qty. Exit the function!
         //return; // exit the function
@@ -208,12 +208,12 @@ void neroshop::Cart::change_quantity(const neroshop::Item& item, unsigned int qu
     const_cast<neroshop::Item&>(item).set_quantity(quantity); // changes quantity in database as well
 #ifdef NEROSHOP_DEBUG
     neroshop::print(item.get_name() + " quantity has changed to \033[0;36m" + std::to_string(quantity) + "\033[0m");
-    NEROSHOP_TAG for(int i = 0; i < contents.size(); i++) {
+    NEROSHOP_TAG_OUT for(int i = 0; i < contents.size(); i++) {
         item_qty = neroshop::Item::get_quantity(contents[i]->get_id());
         std::string item_name = contents[i]->get_name();
         std::cout << "Cart [" << i << "]: " << item_name << " (" << item_qty << ")" << std::endl;
     }
-    //NEROSHOP_TAG std::cout << "\033[0;97m" << "Total items in cart: " << get_items_count() << "\033[0m" << std::endl;
+    //NEROSHOP_TAG_OUT std::cout << "\033[0;97m" << "Total items in cart: " << get_items_count() << "\033[0m" << std::endl;
 #endif
 }
 ////////////////////
@@ -242,11 +242,21 @@ double neroshop::Cart::get_subtotal_price() const {
 ////////////////////
 ////////////////////
 unsigned int neroshop::Cart::get_total_quantity() const {
-    unsigned int items_count = 0; // quantity of all cart items combined
+    ///////////////////
+    // this is faster (I think, since we don't use any loops here)
+    std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cart.db";
+    neroshop::DB db(cart_file);
+    int items_count = db.get_column_integer("Cart", "sum(item_qty) AS cart_qty"); // DB2::get_singleton()->get_integer("SELECT SUM(item_qty) FROM Cart;");
+    db.close();
+    return items_count;
+    /////////////////////////////
+    // this is slower (I think, since it opens and closes the db at least 10 times)
+    /*unsigned int items_count = 0; // quantity of all cart items combined
     for(int i = 0; i < contents.size(); i++) {
         items_count += contents[i]->get_quantity();
     }
-    return items_count;
+    std::cout << "items_count: " << items_count << std::endl;   
+    return items_count;*/
 }
 ////////////////////
 unsigned int neroshop::Cart::get_total_quantity_db() { // faster than neroshop::Cart::get_total_quantity() since this does not open the db file multiple times, but only one time
@@ -266,10 +276,12 @@ unsigned int neroshop::Cart::get_total_quantity_db() { // faster than neroshop::
 }
 ////////////////////
 double neroshop::Cart::get_total_weight() const {
+    ///////////////////////////// https://stackoverflow.com/questions/30909020/postgresql-how-to-multiply-two-columns-and-display-result-in-same-query    // https://www.alphacodingskills.com/postgresql/notes/postgresql-operator-multiply.php
     double items_weight = 0.0; // weight of all cart items combined
     for(int i = 0; i < contents.size(); i++) {
         items_weight += contents[i]->get_quantity() * contents[i]->get_weight(); // weight should be determined by (items_weight * quantity)  // the more the quantity, the bigger the weight
     }
+    //std::cout << "items_weight: " << items_weight << std::endl;
     return items_weight;
 }
 ////////////////////
@@ -320,7 +332,7 @@ neroshop::Item * neroshop::Cart::get_item(unsigned int index) const {
 ////////////////////
 ////////////////////
 neroshop::Cart * neroshop::Cart::get_singleton() {
-    if(cart_obj == nullptr) cart_obj = new Cart();
+    if(!cart_obj) cart_obj = new Cart();
     return cart_obj;
 }
 ////////////////////
@@ -361,7 +373,7 @@ bool neroshop::Cart::create_db() {
     ////////////////////////////
     std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cart.db";
     neroshop::DB db(cart_file);
-    NEROSHOP_TAG std::cout << "\033[1;97m" << "created " << cart_file << "\033[0m" << std::endl;
+    NEROSHOP_TAG_OUT std::cout << "\033[1;97m" << "created " << cart_file << "\033[0m" << std::endl;
     db.execute("PRAGMA journal_mode = WAL;"); // this may reduce the incidence of SQLITE_BUSY errors (such as database being locked) // https://www.sqlite.org/pragma.html#pragma_journal_mode
     // table: Cart - one cart per user on each device
     if(!db.table_exists("Cart")) {
@@ -372,8 +384,35 @@ bool neroshop::Cart::create_db() {
         db.index("idx_item_ids", "Cart", "item_id");//db.execute("CREATE UNIQUE INDEX idx_item_ids ON Cart (item_id);");//std::string session_id = DB::to_sql_string(user + "_" + date);//bool checked = false;
     }
     db.close();
+    ////////////////////////////////
+    // postgresql
+    ////////////////////////////////
+    /*DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+    if(!DB2::get_singleton()->table_exists("cart")) {
+        DB2::get_singleton()->create_table("cart");
+        // user_id
+        DB2::get_singleton()->add_column("cart", "user_id", "integer REFERENCES users(id)");
+        // if user is logged in or recently registered ...
+        // insert user_id to cart (to represent user's ownership of a particular cart_id)
+        //DB2::get_singleton()->execute_params("INSERT INTO cart (user_id) VALUES ($1)", { user->get_id() });
+    }
+    if(!DB2::get_singleton()->table_exists("cart_item")) {
+        DB2::get_singleton()->create_table("cart_item");
+        // cart_id references cart(id)
+        DB2::get_singleton()->add_column("cart_item", "cart_id", "integer REFERENCES cart(id)");
+        // item_id references item(id)
+        DB2::get_singleton()->add_column("cart_item", "item_id", "integer REFERENCES item(id)");
+        // item_qty
+        DB2::get_singleton()->add_column("cart_item", "item_qty", "integer");
+        //DB2::get_singleton()->add_column("cart_item", "item_price", "money");
+        // each cart_item will belong to a cart_id owned by user_id
+    }    
+    DB2::get_singleton()->finish();*/
+    ////////////////////////////////    
     return true;
 }
+////////////////////
+//bool create_offline_db() {} // sqlite
 ////////////////////
 void neroshop::Cart::add_db(unsigned int item_id) {
     std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cart.db";
@@ -391,7 +430,7 @@ void neroshop::Cart::remove_db(unsigned int item_id) {
     if(!db.table_exists("Cart")) {db.close(); return;}
     db.drop("Cart", "item_id = " + std::to_string(item_id)); // deletes column where id=2
     //db.vacuum();
-    //NEROSHOP_TAG std::cout << "item " << item_id << " has been removed from Cart.db" << std::endl;
+    //NEROSHOP_TAG_OUT std::cout << "item " << item_id << " has been removed from Cart.db" << std::endl;
     db.close();
 } 
 ////////////////////

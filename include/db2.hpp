@@ -13,6 +13,7 @@
 // libpq (C interface to PostgreSQL)
 #include <postgresql/libpq-fe.h> // Linux // https://www.postgresql.org/download/linux/ubuntu/ // sudo apt install postgresql // sudo apt-get install libpq-dev // Ubuntu headers: /usr/include/postgresql
 // https://zetcode.com/db/postgresqlc/
+// http://www.jancarloviray.com/blog/postgres-quick-start-and-best-practices/
 namespace neroshop {
 class DB2 { // DB2 is intended for client-server database engine. SQLite does not use a client-server architecture, so unfortunately we cannot solely use SQLite for this as its used for embedding into applications and becomes an integral part of the program
 public:
@@ -21,8 +22,8 @@ public:
     ~DB2();
     bool connect(const std::string& conninfo); // string can be empty to use all default parameters
     void finish(); // Closes the connection to the server. Also frees memory used by the PGconn object.
-    void execute(const std::string& command); // returns no data
-    void execute_return(const std::string& command); // returns data (such as a SELECT or SHOW)
+    void execute(const std::string& command, ExecStatusType status_type = PGRES_COMMAND_OK); // PGRES_COMMAND_OK returns no data; PGRES_TUPLES_OK returns data (such as a SELECT or SHOW)
+    void execute_params(const std::string& command, const std::vector<std::string>& args, ExecStatusType status_type = PGRES_COMMAND_OK);
     void print_database_info(void);
     void create_table(const std::string& table_name); // https://www.postgresql.org/docs/14/sql-createtable.html
     void rename_table(const std::string& table_name, const std::string& new_name);    
@@ -47,19 +48,68 @@ public:
     int get_server_version() const;
     PGconn * get_handle() const;
     int get_integer(const std::string& select_stmt) const; // bool get_boolean(); // atoi("") // string to int
+    int get_integer_params(const std::string& select_stmt, const std::vector<std::string>& values) const;
     float get_real(const std::string& select_stmt) const;
+    float get_real_params(const std::string& select_stmt, const std::vector<std::string>& values) const;
     float get_float(const std::string& select_stmt) const;
+    float get_float_params(const std::string& select_stmt, const std::vector<std::string>& values) const;
     double get_double(const std::string& select_stmt) const; // atof (const char* str);
+    double get_double_params(const std::string& select_stmt, const std::vector<std::string>& values) const;
     std::string get_text(const std::string& select_stmt) const;
+    std::string get_text_params(const std::string& select_stmt, const std::vector<std::string>& values) const;
     unsigned int get_row_count(const std::string& table_name) const; // returns the number of rows in a table
     int get_last_id(const std::string& table_name) const; // returns the id of the latest or most recent record pushed into a table
+    int get_connections_count() const;// returns current number of connections in database (or number of entities connected to the database)
+    // date and time
+    std::string localtimestamp_to_utc(const std::string& localtimestamp) const; // returns both date and time (arg must be timestamptz - with a timezone)
+    std::string localtime_to_utc(const std::string& localtime) const; // returns only time (arg must be timetz or timestamptz - with a timezone)
+    // singleton
+    static DB2 * get_singleton();
     // boolean
-    bool table_exists(const std::string& table_name);
-    //bool column_exists(const std::string& table_name, const std::string& column_name);// get_integer("SELECT COUNT(column_name) FROM table_name;");
+    bool table_exists(const std::string& table_name) const;
+    bool column_exists(const std::string& table_name, const std::string& column_name) const;// get_integer("SELECT COUNT(column_name) FROM table_name;");
 private:
     PGconn * conn;
+    static DB2 * db_obj; // singleton obj (to make connection easier for all classes to access and to keep track of a single connection)
 };
 }
+// NOTES: I just learned that connections can be opened for the entirety of the client application's life
+// edit: some are also saying closing the database as soon as I'm done with it is much better for scalability
+// by keeping the connection opened for the entire duration of the client application's life, it will not scale as well because others may want to connect to the database if the max_connections has been reached
+// conclusion - so its better to close the database when its not needed until it is
+// If I ever plan on keeping the connection opened for long periods of time, then I must consider pooling!
+// sources: https://stackoverflow.com/questions/312702/is-it-safe-to-keep-database-connections-open-for-long-time
+//          https://stackoverflow.com/questions/18962852/should-a-database-connection-stay-open-all-the-time-or-only-be-opened-when-neede
+//          https://stackoverflow.com/questions/4439409/open-close-sqlconnection-or-keep-open
+//          https://stackoverflow.com/questions/11517342/when-to-open-close-connection-to-database
+
+// DROP DATABASE neroshoptest;
+// CREATE DATABASE neroshoptest;
+// ALTER USER sid PASSWORD 'postgres'
+
+// postgresql binaries:
+// installer - https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
+// binaries (zip archive) - https://www.enterprisedb.com/download-postgresql-binaries
+
+/*
+pgbouncer is a connection pooler for PostgreSQL.
+
+Usage:
+  pgbouncer [OPTION]... CONFIG_FILE
+
+Options:
+  -d, --daemon         run in background (as a daemon)
+  -q, --quiet          run quietly
+  -R, --reboot         do an online reboot
+  -u, --user=USERNAME  assume identity of USERNAME
+  -v, --verbose        increase verbosity
+  -V, --version        show version, then exit
+  -h, --help           show this help, then exit
+
+Report bugs to <https://github.com/pgbouncer/pgbouncer/issues>.
+PgBouncer home page: <https://www.pgbouncer.org/>
+*/
+// pgbouncer -u=postgres -v -d -q /etc/postgresql/14/main/pg_hba.conf
 /*
     # postgresql datatypes:
     all - https://www.postgresql.org/docs/14/datatype.html
@@ -92,12 +142,15 @@ private:
     # to change limits and other settings: 
     gedit '/etc/postgresql/14/main/postgresql.conf'
 
-
+# steps to secure database
+-- encryption
+As postgresql clients sends queries in plain-text and data is also sent unencrypted, it is vulnerable to network spoofing.
+You can enable SSL by setting the ssl parameter to on in postgresql.conf.
 
 
 $ sudo -u postgres createuser -s $USER
-$ createdb mydatabase
-$ psql -d mydatabase
+$ createdb neroshoptest
+$ psql -d neroshoptest
 
 OR
 

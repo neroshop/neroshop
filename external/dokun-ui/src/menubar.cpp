@@ -70,6 +70,7 @@ Box * Menubar::selected_menu (nullptr);
 ///////////////		
 void Menubar::draw() // because Menubar is parent to all the menus, its menu children will be automatically drawn unless "visible" is set to false
 {
+    //on_draw(); // set position relative to parent, regardless of visibility
 	if(is_visible())
 	{
 	    if(!fill) // we will not be filling any extra spaces in the bar

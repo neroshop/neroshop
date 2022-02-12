@@ -13,6 +13,7 @@
 #include <chrono>  // std::chrono
 #include <iomanip> //std::put_time, std::setfill, std::setw
 #include "db.hpp"
+#include "db2.hpp"
 extern "C" {
 #include "bcrypt.h"
 #include "crypt_blowfish/ow-crypt.h" // for hashing pw (bcrypt)

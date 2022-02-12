@@ -134,6 +134,9 @@ class Box : public GUI { // A box ui - ui element that can act as a container fo
         bool is_iconified()const;                                                           static int is_iconified(lua_State * L);
         bool is_restored()const;                                                            static int is_restored(lua_State * L);
 	private:
+	    void draw_box();
+	    void draw_tooltip(); // I did not make a tooltip class since I want to decrease source files and class names
+	    void draw_icon(); // might remove this since there's no need for it
 	    // callbacks
 	    //void on_draw(void); // not needed for now
 		// callbacks: titlebar

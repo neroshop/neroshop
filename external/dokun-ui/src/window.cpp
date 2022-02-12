@@ -626,9 +626,18 @@ void dokun::Window::poll_events() {
     //event_send.state = XK_Escape;
     //XSendEvent(display, window, true, KeyPressMask, (XEvent *)&event_send);
     // find a way to send a fake keyboard press event to keep the window updating constantly ...
-    //if(XPending(display) > 0) { //if(XEventsQueued(display, QueuedAlready)) { {//while(XPending(display)) { //  returns the number of events that have been received from the X server but have not been removed from the event queue
+    //while(XPending(display) > 0) { //if(XEventsQueued(display, QueuedAlready)) { //{//while(XPending(display)) { //  returns the number of events that have been received from the X server but have not been removed from the event queue
 	    XNextEvent(display, &event);//XPeekEvent(display, &event);//if (XEventsQueued(display, QueuedAfterFlush/*QueuedAfterReading*/)) {
-	//} 
+	    //XPutBackEvent(display, &event);// wtf!!
+	    if(XFilterEvent(&event, window)) {
+	        //continue;
+	        return;
+	    }
+	    //////////////////////////////////////////////////////
+	    if(event.type == MappingNotify) {
+	        XRefreshKeyboardMapping(&event.xmapping);
+	    }
+	    //////////////////////////////////////////////////////
         //Atom selection = XInternAtom(display, "CLIPBOARD", 0);          
 		if(event.type == SelectionRequest) {
 		    // configure atom settings (for copy clipboard)
@@ -659,6 +668,7 @@ void dokun::Window::poll_events() {
 			//case SelectionClear:
 			//return;
 		}	
+		//////////////////////////////////////////////////////
 		// paste event	
         if(event.type == SelectionNotify) {
             int format; unsigned long N, size; char * data;/*, * s = 0;*/
@@ -676,9 +686,11 @@ void dokun::Window::poll_events() {
 			    }
 			    XDeleteProperty(event.xselection.display, event.xselection.requestor, event.xselection.property);
 		    }
-	    }		
+	    }
+	//////////////////////////////////////////////////////    		
 	if(event.type == Expose) // on window show
 	{}
+	//////////////////////////////////////////////////////
 	if(event.type == ConfigureNotify) // notify if window is resized
 	{
 		//On Linux the renderable area is the entire window size (updated through viewport), on Windows it is the client size.
@@ -695,6 +707,7 @@ void dokun::Window::poll_events() {
 #endif
         }
 	}
+	//////////////////////////////////////////////////////
 	if(event.type == DestroyNotify) { // on destroying a window
 	    //XDestroyWindowEvent xdwe = event.xdestroywindow; // https://tronche.com/gui/x/xlib/events/window-state-change/destroy.html#XDestroyWindowEvent
 	    std::cout << "DestroyNotify: window has been destroyed\n";
@@ -751,23 +764,26 @@ KeySym keysym;//XK_Control_L;// = XLookupKeysym(&event.xkey, 0);*/
 		if(XLookupKeysym(&event.xkey, 0) == XK_Escape)
 			destroy();	
 #endif
-        int buffer_size = 1;//80;
-        char buffer[1];//[80];
+        int buffer_size = 20;//80;
+        char buffer[buffer_size];//[80];
         KeySym keysym;// = XLookupKeysym(&event.xkey, 0); // represents key(s) on a keyboard
         int count = XLookupString(&event.xkey, buffer, buffer_size, &keysym, nullptr);
         // store keyboard input - change keysym to buffer ?      
-        Keyboard::get_input(keysym, true/*(event.type == KeyPress)*/, false/*(event.type == KeyRelease)*/);
+        Keyboard::get_input(keysym, (event.type == KeyPress), (event.type == KeyRelease));//Keyboard::get_input(keysym, true, false);
 	    // debug
 	    //std::cout << buffer << " was pressed (length: " << strlen(buffer)/* << ")"*/ << ", count: " << count << ")" << std::endl;
 	    //std::cout << XLookupKeysym(&event.xkey, 0) << std::endl;
 	    // if one wants to find out if another client has changed the key mappings, select MappingNotify and do
 	    //XRefreshKeyboardMapping(XMappingEvent* event);
+	    ///////////////////////////////////////////////
+	    //Keyboard::fake_event(display, window);
+        //XFlush(display);
 	}
 	// Keyboard (release)
 	if(event.type == KeyRelease)
     {
-        int buffer_size = 1;//80;
-        char buffer[1];//[80];
+        int buffer_size = 20;//80;
+        char buffer[buffer_size];//[80];
         KeySym keysym;// = XLookupKeysym(&event.xkey, 0); // represents key(s) on a keyboard
         XLookupString(&event.xkey, buffer, buffer_size, &keysym, nullptr);
         // store keyboard input - change keysym to buffer ?      

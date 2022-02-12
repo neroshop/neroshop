@@ -3,7 +3,7 @@
 Edit::Edit() : color(190, 190, 190, 1.0), character_limit(20),
      zoom_factor(0), newlines_count(0), start_index(0), multilined(false), readonly(false), sensative(false), scrollable(true), label(nullptr), // cursor_height is ALWAYS the same size as edit's height, with some adjustments to padding
 // cursor
-cursor(true), cursor_x(0), cursor_y(0), cursor_width(8/*1*/), cursor_height(20), cursor_color(0, 0, 0, 0.6), cursor_space(10), cursor_blink_interval(0.90), cursor_restore_alpha(0.6),
+cursor(true), cursor_x(0), cursor_y(0), cursor_width(1/*8*/), cursor_height(20), cursor_color(0, 0, 0, 0.8), cursor_space(10), cursor_blink_interval(0.90), cursor_restore_alpha(cursor_color.w),
 boundless_cursor_x(0), boundless_cursor_y(0),
 // placeholder
 placeholder_label(nullptr),
@@ -29,9 +29,30 @@ placeholder_image(nullptr),
 }
 /////////////
 Edit::~Edit()
-{}
+{
+    // delete placeholders
+    if(placeholder_label) {
+        delete placeholder_label;
+        placeholder_label = nullptr;
+    }
+    if(placeholder_image) {
+        delete placeholder_image;
+        placeholder_image = nullptr;
+    }
+    // delete label
+    if(label) {
+        delete label;
+        label = nullptr;
+    }
+    // delete timer
+    if(cursor_blink_timer) {
+        delete cursor_blink_timer;
+        cursor_blink_timer = nullptr;
+    }
+    std::cout << "edit deleted\n";
+}
 /////////////
-Edit * Edit::active (nullptr); // temp
+Edit * Edit::focused (nullptr); // temp // focus represents the state when the element is currently selected to receive input// https://stackoverflow.com/questions/1677990/what-is-the-difference-between-focus-and-active
 /////////////
 void Edit::append(const std::string& text)
 {
@@ -47,15 +68,18 @@ void Edit::reset() {
     if(!label) throw std::runtime_error("label is not initialized");
     label->clear(); // clear string
     character_data.clear(); // clear all character information
+    secret.clear(); // clear secret too (almost forgot :O!)
     cursor_x = 0; // reset cursor_x
     cursor_y = 0; // reset cursor_y
+    // reset boundless_cursor too
+    boundless_cursor_x = 0;
+    boundless_cursor_y = 0;
 }
 /////////////
 void Edit::draw()
 {
+    on_draw_edit(); // without focus, since edit has its own focus // sets position relative to parent, regardless of visibility
 	if(!is_visible()) return;  // is it visible?
-	//////////////////////////	
-    on_draw_before(); // set position relative to parent
 	//////////////////////////
 	// this is just a test - edit still works whether it has an odd or even width
 	// if width is not an even number but an odd, round to the nearest 10 ?
@@ -67,9 +91,9 @@ void Edit::draw()
 	//}
 	//////////////////////////
 	// callbacks
-	//on_hover(); // if mouse over edit, change mouse to I-beam
+	on_hover(); // if mouse over edit, change mouse to I-beam
 	on_mouse_press();// edit is pressed, set cursor at position_pressed // set focus to edit if on_mouse_pressed() is triggered
-	cursor = (!is_focused()) ? false : true; // hide cursor if not focused	
+	cursor = (!has_focus()) ? false : true; // hide cursor if not focused	
     on_key_press();
     on_backspace();
     on_enter();
@@ -203,9 +227,13 @@ void Edit::clear_all()
     if(!label) throw std::runtime_error("label is not initialized");
 	label->clear();
 	character_data.clear();
+	secret.clear(); // clear secret too (almost forgot :O!)
 	// set cursor_pos back to 0
 	cursor_x = 0;
 	cursor_y = 0;
+    // reset boundless_cursor too
+    boundless_cursor_x = 0;
+    boundless_cursor_y = 0;	
 }
 /////////////
 int Edit::clear_all(lua_State *L)// (std::string selected_text) or all
@@ -582,7 +610,8 @@ void Edit::set_scrollable(bool scrollable) {
 }
 /////////////
 void Edit::set_focus(bool focus) {
-    Edit::active = (focus == true) ? this : nullptr;
+    std::cout << "edit set_focus(" << ((focus) ? "true" : "false") << ") called\n";
+    Edit::focused = (focus == true) ? this : nullptr;
 }
 /////////////
 /////////////
@@ -603,7 +632,7 @@ int Edit::get_label(lua_State *L)
 std::string Edit::get_text()const
 {
     if(!label) throw std::runtime_error("label is not initialized");
-	return (sensative) ? secret : label->get_string();
+	return (sensative) ? secret : characters_to_string();//label->get_string(); // label only shows visible characters on the edit, but not the whole text so we'll need to use the characters in the character_data vector instead
 }  
 /////////////
 int Edit::get_text(lua_State *L)
@@ -618,7 +647,7 @@ int Edit::get_text(lua_State *L)
 std::string Edit::get_last_n_characters(unsigned int n)const {
     if(multilined) return get_text(); // multilined texts are not limited by edit capacity
     if(!label) throw std::runtime_error("label is not initialized");
-    std::string text = character_array_to_string();//label->get_string();  
+    std::string text = characters_to_string();//label->get_string();  
 	// get last n characters from string (with n being the edit's capacity)// capacity = total number of characters that can be shown on the edit at a time// IF TEXT GOES PAST EDIT'S WIDTH, ONLY SHOW THE LAST CHARACTERS(size: get_capacity()) in character_array vector
 	n = (text.length() < n) ? text.length() : n;//(text.length() < get_capacity()) ? text.length() : get_capacity();//get_capacity();
 	std::vector<char> last_n_characters(text.end() - n/*std::min(text.size(), n)*/, text.end()); // Of course this will crash and burn if x.size() < n, which is why we use std::min
@@ -798,8 +827,8 @@ bool Edit::is_sensative() const {
     return (sensative == true);
 }
 /////////////
-bool Edit::is_focused() const {
-    return (Edit::active == this);
+bool Edit::has_focus() const {
+    return (Edit::focused == this);
 }
 /////////////
 bool Edit::is_edit() const
@@ -825,10 +854,11 @@ int Edit::is_edit(lua_State *L)
 /////////////
 void Edit::on_hover()
 {
-    //if(readonly) return;
-	dokun::Window * window = dokun::Window::get_active();
-	if(window == nullptr) return;    
-	if(Mouse::is_over(get_position(), get_size())) {
+    if(readonly) return;
+    if(!has_focus()) return;
+	dokun::Window * window = static_cast<dokun::Window *>(Factory::get_window_factory()->get_object(0));//dokun::Window * window = dokun::Window::get_active();
+	//if(window == nullptr) return;    
+	if(Mouse::is_over(get_x(), get_y(), get_width(), get_height())) {
 	#ifdef DOKUN_WIN32
 		HCURSOR ibeam = LoadCursor(nullptr, IDC_IBEAM);//SetCursor(HCURSOR hCursor);//SetClassLong(window->get_handle(), GCL_HCURSOR, (DWORD)ibeam); // DWORD = unsigned long
     #endif
@@ -839,7 +869,7 @@ void Edit::on_hover()
 	    XFreeCursor(window->get_display(), cursor);
 	#endif
 	#endif
-	    return; // exit function, so we don't revert the mouse cursor too soon
+	    //return; // exit function, so we don't revert the mouse cursor too soon
 	}
 	// revert back to original mouse cursor
 	else {//else if(!Mouse::is_over(get_position(), get_size())) {
@@ -853,7 +883,7 @@ void Edit::on_hover()
 		XFreeCursor(window->get_display(), cursor);
 	#endif	
 	#endif
-	    return;
+	    //return;
 	}	
 }
 /////////////
@@ -871,7 +901,7 @@ void Edit::on_mouse_press()
     /////////////////////////////////////////
     if(Mouse::is_over(get_x() - 1, get_y(), get_width(), get_height())) { // the + 1 makes mouse position accurate and the cursor_x can be 0 instead of 1 every time :| .
         if(Mouse::is_pressed(1)) {
-            //if(window->is_focused()) {
+            //if(window->has_focus()) {
                 // mouse position relative to window
                 //std::cout << "Mouse pressed at " << Mouse::get_position(*window) << std::endl;
                 // assuming that the mouse pointer is a child of the text edit
@@ -897,22 +927,28 @@ void Edit::on_mouse_press()
                 set_cursor_x(rounded); // set cursor_x before changing it to non-relative coordinates
                 if(splits_count > 0) rounded = ((character_data.size() * cursor_space) - (string_length * cursor_space)) + rounded;//(character_data.size() * cursor_space) - (characters_count * cursor_space) + rounded;//(start * cursor_space) + rounded; //<= using start works too
                 // CONVERT BOUNDED TO BOUNDLESS // last 50 characters
-                std::cout << "mouse pressed at (" << rounded << ")(using (character_data - string_length) + rounded)" << std::endl; // (character_data.size() * cursor_space) - rounded                
+                ////std::cout << "mouse pressed at (" << rounded << ")(using (character_data - string_length) + rounded)" << std::endl; // (character_data.size() * cursor_space) - rounded                
                 ////////////////////////////
                 boundless_cursor_x = rounded;//set_cursor_x(rounded);
                 // USE BOUNDLESS_CURSOR FOR ACCURATE CALCULATION OF STRING_INDEX AND CURSOR FOR NORMAL (DRAWN) POSITIONING                
                 // make sure the cursor does not go past the edit
                 if(cursor_x > (string_length * cursor_space)) cursor_x = string_length * cursor_space;
-                std::cout << "new cursor x (relative to edit): " << cursor_x << std::endl;
+                ////std::cout << "new cursor x (relative to edit): " << cursor_x << std::endl;
                 // make sure boundless_cursor_x does not exceed characters_x //std::cout << "CANNOT EXCEED: " << (character_data.size() * cursor_space) << std::endl;
                 // if width is an even number this works
                 if(boundless_cursor_x > (character_data.size() * cursor_space)) boundless_cursor_x = character_data.size() * cursor_space;//character_data.size() * cursor_space;//if(cursor_x >= (string_length * cursor_space)) cursor_x = string_length * cursor_space;
-                std::cout << "new cursor x (boundless): " << boundless_cursor_x << std::endl;                
+                ////std::cout << "new cursor x (boundless): " << boundless_cursor_x << std::endl;                
                 // but if width is an odd number, this boundless_cursor_x is not accurate
                 // then set focus to the edit
                 set_focus(true);
+                //////////////////////////////
+                /*// highlight part of text in direction of mouse
+                std::cout << "mouse locked to edit\n";
+                if(Mouse::is_released(1) && has_focus()) {
+                    std::cout << "mouse is unlocked from edit\n";
+                }*/
             #ifdef DOKUN_DEBUG
-	            if(Edit::active) std::cout << DOKUN_UI_TAG String(String::no_digit(typeid(*this).name())).str() << ":" << String(Edit::active) << " gained focus" << std::endl; // #include <typeinfo>
+	            if(Edit::focused) std::cout << DOKUN_UI_TAG String(String::no_digit(typeid(*this).name())).str() << ":" << String(Edit::focused) << " gained focus" << std::endl; // #include <typeinfo>
             #endif                
             //}
         }
@@ -922,7 +958,7 @@ void Edit::on_mouse_press()
 void Edit::on_key_press()
 {
     if(readonly) return;
-    if(!is_focused()) return;
+    if(!has_focus()) return;
     if(!label) throw std::runtime_error("label is not initialized");
     // if edit text length exceeds character limit, exit this function (or else program will crash) [2021-09-20]
     if(character_data.size() >= character_limit) return; // number of characters must NOT exceed the character_limit! // if character limit has been reached, exit function (so character_data does not push_back more unnecessary characters ...)
@@ -983,7 +1019,7 @@ void Edit::on_key_press()
 		            start_index = 0;//start;//start + 1; // start should equal zero (hopefully)
 		            // restore original min(text.size(), get_capacity(50)) text
 		            // show all min(text.size(), get_capacity(50)) characters
-		            std::string text = character_array_to_string();
+		            std::string text = characters_to_string();
 		            int n = (text.length() < get_capacity()) ? text.length() : get_capacity();
 		            text = text.substr(start_index, n);
 		        #ifdef DOKUN_DEBUG
@@ -999,11 +1035,6 @@ void Edit::on_key_press()
 			        return;
 			    }
 			    if(splits_count > 0) { // same as: if(character_data.size() > get_capacity()) // if text goes past edit
-			        if(character_data.size() > character_limit) {
-			            character_data.resize(character_limit); // resize string to whatever the character limit is - Character limit is user-defined
-			            std::cout << DOKUN_UI_TAG "\033[0;91mYou have exceeded the character limit (" <<  character_limit << ")\033[0m" << std::endl;
-			            return;
-			        }
 			        // move boundless_cursor_x 10 units for each character
 			        boundless_cursor_x = boundless_cursor_x + cursor_space;//set_cursor_x(boundless_cursor_x + text_x);//(text_x);
                     // make sure boundless_cursor_x does not exceed character_data.size()
@@ -1013,7 +1044,7 @@ void Edit::on_key_press()
 		            // if boundless_cursor_x exceeds (capacity*10), set cursor_x to width(500)
 		            // if you want to insert a character in the middle of text then cursor_x must stay still and NOT move at all
 		            //////////////////////////////
-		            std::cout << DOKUN_UI_TAG "\033[0;33mCapacity (" <<  get_capacity() << ") has been surpassed by text\033[0m" << std::endl;
+		            //std::cout << DOKUN_UI_TAG "\033[0;33mCapacity (" <<  get_capacity() << ") has been surpassed by text\033[0m" << std::endl;
 		            //////////////////////////////
 		            // update the label when cursor position is changed
                     // shift text right by cursor_space(10) units
@@ -1025,7 +1056,7 @@ void Edit::on_key_press()
                     //start = start_index - start;
                     //std::cout << "numbers of characters from (start_index to start): " << fabs(start) << std::endl;
                     // we want to hide the first character when we shift right
-                    std::string text = character_array_to_string();
+                    std::string text = characters_to_string();
                     int n = (text.length() < get_capacity()) ? text.length() : get_capacity();//get_capacity();
 		            text = text.substr(start_index, n);//(n < text.length()) ? text.substr(text.length() - get_capacity()) : "blank";//text.substr(start_index, n);// comment this out if using: "text.substr(start, characters_count)" below
 		        #ifdef DOKUN_DEBUG
@@ -1053,6 +1084,7 @@ void Edit::on_key_press()
 		            // print cursor_x and boundless_cursor_x
 		            std::cout << "cursor_x (current): " << cursor_x << std::endl;
 		            std::cout << "boundless_cursor_x (current): " << boundless_cursor_x << " (cursor_x(0) = starting_index * 10)" << std::endl;
+			        return; // now secret string works :D
 			    }
 			}
 		}
@@ -1062,7 +1094,7 @@ void Edit::on_key_press()
 void Edit::on_backspace() // bug: crashes everytime backspace is used when cursor position is not at the end of text
 {
     if(readonly) return;
-    if(!is_focused()) return;
+    if(!has_focus()) return;
     if(character_data.empty()) return; // if there are no characters then there is nothing to erase, so return (so it does not crash engine)
 #ifdef DOKUN_WIN32
     if(dokun::Keyboard::is_pressed(0x08))
@@ -1116,7 +1148,7 @@ void Edit::on_backspace() // bug: crashes everytime backspace is used when curso
                 start_index = 0;
                 // get string from start_index to min(end of string or 50)
                 // show all min(text.size(), get_capacity(50)) characters
-                std::string text = character_array_to_string();
+                std::string text = characters_to_string();
                 int n = (text.length() < get_capacity()) ? text.length() : get_capacity();//get_capacity();   
 		        text = text.substr(start_index, n);                
 		    #ifdef DOKUN_DEBUG
@@ -1146,7 +1178,7 @@ void Edit::on_backspace() // bug: crashes everytime backspace is used when curso
                 start_index = start_index - 1;//start - 1;//0 + 
                 // get string from start_index to min(end of string or 50)
                 // we want to show the previous character when we shift left
-                std::string text = character_array_to_string();
+                std::string text = characters_to_string();
                 int n = (text.length() < get_capacity()) ? text.length() : get_capacity();//get_capacity();   
 		        text = text.substr(start_index, n);
 		    #ifdef DOKUN_DEBUG    
@@ -1196,7 +1228,7 @@ void Edit::on_backspace() // bug: crashes everytime backspace is used when curso
 void Edit::on_enter()
 {
     if(readonly) return;
-    if(!is_focused()) return;    
+    if(!has_focus()) return;    
 #ifdef DOKUN_WIN32
     if(dokun::Keyboard::is_pressed(0x0D))
 #endif	
@@ -1223,7 +1255,7 @@ void Edit::on_enter()
 void Edit::on_arrow_keys() // will shift the text via "start_index"
 {
     if(readonly) return;
-    if(!is_focused()) return;
+    if(!has_focus()) return;
     if(dokun::Keyboard::is_pressed(DOKUN_KEY_LEFT )) {
         set_cursor_x(cursor_x - cursor_space);
         // IF USER TRIES TO MOVE CURSOR TO -1 OR LESS, IT IS SAFE TO
@@ -1234,7 +1266,7 @@ void Edit::on_arrow_keys() // will shift the text via "start_index"
         if(character_data.size() < (get_capacity() * splits_count + 1)) splits_count = splits_count - 1;
         int start = get_capacity() * splits_count;
 		int characters_count = character_data.size() - start; // number of characters being drawn at a time
-		//std::string temp(character_array_to_string());
+		//std::string temp(characters_to_string());
 		//std::string temp_split = temp.substr(start, characters_count);
         // whenever you decrease or increase cursor_x, do the same with boundless_cursor_x
         //if(cursor_x <= 0) {// && boundless_cursor_x > 0) {//cursor_x = 0;//cursor_x = string_length;//{std::cout << "on_arrow_keys(): attempt to reduce cursor_x to negative number (-1)\n";cursor_x = string_length;}
@@ -1258,6 +1290,8 @@ void Edit::on_arrow_keys() // will shift the text via "start_index"
         // 1. boundless_cursor_x > cursor_x
         // so we will need to reduce the boundless_cursor_x by cursor_space(10)
         if(splits_count > 0) { // there's still more strings left to draw
+            // DON'T MOVE THE NORMAL CURSOR_X, KEEP IT AT 0
+            // ONLY MOVE THE BORDERLESS_X
             // if(boundless_cursor_x < (start * cursor_space)) {
             // show previous string
             //label->set_string(temp_split);
@@ -1287,7 +1321,7 @@ void Edit::on_arrow_keys() // will shift the text via "start_index"
                 //if(start_index <= 0) start_index = 0;
                 // get string from start_index to min(end of string or 50)
                 // we want to show the previous character when we shift left
-                std::string text = character_array_to_string();
+                std::string text = characters_to_string();
                 int n = (text.length() < get_capacity()) ? text.length() : get_capacity();//get_capacity();   
 		        text = text.substr(start_index, n);
 		    #ifdef DOKUN_DEBUG    
@@ -1315,7 +1349,7 @@ void Edit::on_arrow_keys() // will shift the text via "start_index"
         if(character_data.size() < (get_capacity() * splits_count + 1)) splits_count = splits_count - 1;
         int start = get_capacity() * splits_count;
 		int characters_count = character_data.size() - start; // number of characters being drawn at a time
-		//std::string temp(character_array_to_string());
+		//std::string temp(characters_to_string());
 		//std::string temp_split = temp.substr(start, characters_count);
         // whenever you decrease or increase cursor_x, do the same with boundless_cursor_x
         ////////////////////////////        
@@ -1362,7 +1396,7 @@ void Edit::on_arrow_keys() // will shift the text via "start_index"
                 //if(start_index >= (character_data.size() - 1)) start_index = character_data.size() - 1;   
                 // get string from start_index to min(end of string or 50)
                 // we want to show the previous character when we shift left
-                std::string text = character_array_to_string();
+                std::string text = characters_to_string();
                 int n = (text.length() < get_capacity()) ? text.length() : get_capacity();//get_capacity();   
 		        text = text.substr(start_index, n);
 		    #ifdef DOKUN_DEBUG    
@@ -1453,11 +1487,12 @@ void Edit::on_sensative_set() { //_to_true() { // or on_sensativity_set ?
 }
 /////////////
 /////////////
-std::string Edit::character_array_to_string() const {
-    std::string full_text; // the complete string
-    for(int i = 0; i < character_data.size(); i++)
-        full_text += std::get<0>(character_data[i]); // a char
-    return full_text;
+std::string Edit::characters_to_string() const {
+    if(character_data.empty()) return ""; // exit, if empty
+    std::string text;
+    for (auto& t : character_data) // range-based loops are faster // pass by reference instead of by value (since we are not modifying it)
+        text += std::get<0>(t); //for(int i = 0; i < character_data.size(); i++) full_text += std::get<0>(character_data[i]);
+    return text;
 }
 /////////////
 /////////////
@@ -1473,6 +1508,22 @@ void Edit::move_cursor_left() {
 void Edit::move_cursor_right() {
     
 }
+/////////////
+/////////////
+/////////////   
+/////////////   
+/*void Edit::resize(const Vector2& size)
+{
+    // everytime the edit's size changes, the cursor positions gets messed up and everything is ruined
+    // maybe I should update the text and cursor positions whenever the edit is resized
+    
+    std::string original_text = get_text();
+	set_size(size.x, size.y);
+	set_text(original_text);
+}*/
+/////////////
+/////////////
+/////////////
 /////////////
 /////////////
 /////////////

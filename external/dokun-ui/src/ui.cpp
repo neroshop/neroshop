@@ -86,6 +86,20 @@ int GUI::hide_all(lua_State *L)
 	return 0;
 }
 /////////////  
+void GUI::focus() {
+    set_focus(true); // will call Edit::set_focus if Edit has its own implementation of GUI::set_focus(), a virtual function
+}
+/////////////
+void GUI::clear_all() {
+    //GUI::focused = nullptr;// some GUI (like Edit) have their own focus member, so we have to loop all gui and set their focus
+    for (int i = 0; i < Factory::get_gui_factory()->get_size(); i++) 
+	{
+	    GUI * gui = static_cast<GUI *>(Factory::get_gui_factory()->get_object(i));
+		gui->set_focus(false);
+	}
+	std::cout << DOKUN_UI_TAG "all focus cleared\n";
+}
+/////////////  
 void GUI::connect(const GUI& a, int signal, const GUI& b, std::function<void(void)> slot)
 {
 	if(signal == 0) // hover
@@ -280,10 +294,10 @@ void GUI::set_relative_position(double x, double y) // set child position relati
     // relative position cannot be less than 0 [2021-09-21]
     if(x <= 0) x = 0;
     if(y <= 0) y = 0;
-    // relative position cannot be more than size of parent, say parent has width of 200 and height of 50 [2021-09-21]
+    // relative position cannot go past parent's size
     if(parent) {
-        if(x >= parent->get_width ()) x = parent->get_width ();
-        if(y >= parent->get_height()) y = parent->get_height();
+        if(x >= parent->get_width ()) x = parent->get_width () - get_width();
+        if(y >= parent->get_height()) y = parent->get_height() - get_height();
     }
     // set the relative position
 	relative = Vector2(x, y); // does not matter whether gui has parent or not, set the relative_position
@@ -478,16 +492,16 @@ int GUI::set_visible(lua_State *L)
 	return 0;
 }
 ///////////// 
-void GUI::set_focused(bool focused)
+void GUI::set_focus(bool focused)
 {
     //dokun::Window * window = static_cast<dokun::Window *>(Factory::get_window_factory()->get_object(0)); // get the current window
     //if(!window)	return; // cannot set gui focus without a window
 	// bring window to the foreground (get window back in focus)
 	// set gui focus if window is focused
-    GUI::focused = (focused == true/* && window->is_focused()*/) ? this : nullptr; 
+    GUI::focused = (focused == true/* && window->has_focus()*/) ? this : nullptr; 
 }
 /////////////
-int GUI::set_focused(lua_State *L)
+int GUI::set_focus(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	luaL_checktype(L, 2, LUA_TBOOLEAN);	
@@ -495,7 +509,7 @@ int GUI::set_focused(lua_State *L)
 	if(lua_isuserdata(L, -1))
 	{
 		GUI * gui = *static_cast<GUI **>(lua_touserdata(L, -1));
-		gui->set_focused((lua_toboolean(L, 2) != 0));
+		gui->set_focus((lua_toboolean(L, 2) != 0));
 		// set in lua as well ...
 		lua_pushvalue(L, 2);
 		lua_setfield(L, 1, "focused");	
@@ -611,7 +625,7 @@ int GUI::get_width(lua_State *L)
 	return 1;
 }
 ///////////// 
-int GUI:: get_height() const
+int GUI::get_height() const
 {
 	return height * get_scale().y; // returns height whether scaled or not
 }
@@ -924,7 +938,7 @@ int GUI::is_visible(lua_State *L)
 /////////////
 bool GUI::is_active() // checks if active or disabled
 {
-	return active;
+	return (active == true);
 } 
 ///////////// 
 int GUI::is_active(lua_State *L)
@@ -1105,10 +1119,9 @@ int GUI::is_parent_of(lua_State *L)
 	return 1;		
 }
 /////////////
-///////////// 
-bool GUI::is_focused()
-{
-	return (this == focused);
+/////////////
+bool GUI::has_focus() {
+    return (this == focused);
 }
 /////////////
 /////////////
@@ -1117,96 +1130,60 @@ bool GUI::is_focused()
 void GUI::on_create()
 {}
 /////////////
-void GUI::on_trigger()
-{
-    // ** if window does not have focus gui cannot have focus as well **
-    if(!is_visible()) return;
-// if self is pressed, set it as the current "focused" GUI
-	if(Mouse::is_over(get_rect()) && Mouse::is_pressed(1)) {
-	    GUI::focused = this;//set_focused  (true);
-#ifdef DOKUN_DEBUG0
-	if(GUI::focused) std::cout << "GUI" << ":" << String(GUI::focused) << " gained focus" << std::endl; // #include <typeinfo>
-#endif
-	    return; // exit function so we do not set focus twice
-	}
-/*	
-// The goal is to get all the positions of every gui and check if wherever the mouse is pressed, no gui is present!
-// if mouse is pressed elsewhere - this is the problem
-// check if mouse is over any gui
-	if(!Mouse::is_over(get_rect()) && Mouse::is_pressed(1)) {
-	    GUI::focused = nullptr;//set_focused(false);
-#ifdef DOKUN_DEBUG
-	if(GUI::focused) std::cout << String(String::no_digit( typeid(*this).name()) ).str() << ":" << String(GUI::focused) << " gained focus" << std::endl; // #include <typeinfo>
-#endif
-	    return;	    
-	}
-*/		
-}
 /////////////
 void GUI::on_draw() // NOTE: position can be set regardless of whether gui is visible or not
 {
-    // NOTE: positions must ALWAYS be set before drawing
-	if(parent) // if self has a parent
-	{
-	    // set self_position to parent_position + self_relative_position
-	    // a constant (non-changing) position where child's position is set to parent's position + relative position of child
-	    // NOTE: only the child's position relative to the parent can be changed ***  
-	    // meaning the child no longer has a position of its own once the parent is set
-	    // so using "set_position" on a child GUI makes no sense
-	    set_position(parent->get_x() + get_relative_x(), parent->get_y() + get_relative_y());
-	    // make sure child does not go past parent's x bounds - success!
-	    if( get_relative_x() >= (parent->get_width() - get_width()) ) { set_position(parent->get_x() + (parent->get_width() - get_width()), get_y()); }//right
-	    if( get_x() <= parent->get_x() ) { set_position(parent->get_x(), get_y()); }//left// child_x = parent->get_x() + get_relative_x()
-	    // make sure child does not go past parent's y bounds - success!
-	    if( get_y() <= parent->get_y() ) { set_position(get_x(), parent->get_y()); }// up// child_y = parent->get_y() + get_relative_y()//std::cout << "child_height: " << get_height() << std::endl; // bug: button uses the height of whatever label its set to	    
-	    if( get_relative_y() >= (parent->get_height() - get_height()) ) {set_position(get_x(), parent->get_y() + (parent->get_height() - get_height()));}// down//{std::cout <<"child going outside parent y bounds!\n";}//{set_position(get_x(), parent->get_y());} // REMINDER: shrink size of button and retest this function again	    
-#ifdef DOKUN_DEBUG0	    
-	    std::cout << "child_x: " << get_x() << std::endl;
-	    std::cout << "child_y: " << get_y() << std::endl;
-	    std::cout << "child_rel_x: " << get_relative_x() << std::endl;
-	    std::cout << "child_rel_y: " << get_relative_y() << std::endl; // bug: relative position goes out of bound [fixed]
-#endif	    
-	}	
-	//////////////////////////////////////////////////////////////////////////////////////////
-	if(is_visible()) // ONLY if self is visible (child GUI can also have their own visibility)
-	{
-		for(int i = 0; i < Factory::get_gui_factory()->get_size(); i++)
-		{
-			GUI * gui = static_cast<GUI*>(Factory::get_gui_factory()->get_object(i));
-			// draw all children of self
-			if(gui->parent == this) gui->draw(); // no need to check if child is visible since draw() calls already do that
-		}
-		//////////////////////////////////////////////////////////
-		/*// if self is pressed, set it as the current "focused" GUI
-		if(is_pressed()) set_focused  (true);
-		// if mouse is pressed elsewhere
-		else if(!Mouse::is_over(get_rect()) && Mouse::is_pressed(1)) set_focused(false);   
-		#ifdef DOKUN_DEBUG0
-		   if(GUI::focused) std::cout << String(String::no_digit( typeid(*this).name()) ).str() << ":" << String(GUI::focused) << " gained focus" << std::endl; // #include <typeinfo>
-		#endif		*/
-	} // end of is_visible()
+    on_parent(); // set child's position relative to its parent, regardless of whether it is visible or not
+    on_focus();  // set the GUI's focus, but only if it is visible!
 }
 /////////////
-void GUI::on_draw_before() // call this before drawing self
+void GUI::on_draw_edit() {
+    on_parent(); // set child's position relative to its parent, regardless of whether it is visible or not
+}
+/////////////
+void GUI::on_parent() // call this before drawing self
 {
-    ////on_trigger(); // if self is triggered (pressed)
     // if self has no parent, exit function
-	if(!has_parent()) return;
+	if(!parent) return;
 	// set position of child
 	// only the child's position relative to the parent can be changed, meaning the child no longer has a position of its own once the parent is set
+	// so using "set_position" on a child GUI makes no sense
 	set_position(parent->get_x() + get_relative_x(), parent->get_y() + get_relative_y());
 	// make sure child does not go past parent's x bounds - success!
-	if( get_relative_x() >= (parent->get_width() - get_width()) ) { set_position(parent->get_x() + (parent->get_width() - get_width()), get_y()); }
-	if( get_x() <= parent->get_x() ) { set_position(parent->get_x(), get_y()); }// child_x = parent->get_x() + get_relative_x()
+	if(get_relative_x() >= (parent->get_width() - get_width())) { 
+	    set_position(parent->get_x() + (parent->get_width() - get_width()), get_y()); 
+	    // fix the incorrect relative x position
+	    // set the relative position to the parent_width - child_width
+	    set_relative_position(parent->get_width() - get_width(), get_relative_y());	
+	}
+	if(get_x() <= parent->get_x()) set_position(parent->get_x(), get_y());// child_x = parent->get_x() + get_relative_x()
 	// make sure child does not go past parent's y bounds - success!
-	if( get_y() <= parent->get_y() ) { set_position(get_x(), parent->get_y()); }// up// child_y = parent->get_y() + get_relative_y() 
-	if( get_relative_y() >= (parent->get_height() - get_height()) ) {set_position(get_x(), parent->get_y() + (parent->get_height() - get_height()));}// down//{std::cout <<"child going outside parent y bounds!\n";}//{set_position(get_x(), parent->get_y());} // REMINDER: shrink size of button and retest this function again	    
+	if(get_y() <= parent->get_y()) set_position(get_x(), parent->get_y());// up// child_y = parent->get_y() + get_relative_y() 
+	if(get_relative_y() >= (parent->get_height() - get_height())) {
+	    set_position(get_x(), parent->get_y() + (parent->get_height() - get_height()));
+	    // fix the incorrect relative y position
+	    // set the relative position to the parent_height - child_height
+	    set_relative_position(get_relative_x(), (parent->get_height() - get_height()));
+	}// down//{std::cout <<"child going outside parent y bounds!\n";}//{set_position(get_x(), parent->get_y());} // REMINDER: shrink size of button and retest this function again	    
 #ifdef DOKUN_DEBUG0	    
 	std::cout << "child_x: " << get_x() << std::endl;
 	std::cout << "child_y: " << get_y() << std::endl;
 	std::cout << "child_rel_x: " << get_relative_x() << std::endl;
 	std::cout << "child_rel_y: " << get_relative_y() << std::endl; // bug: relative position goes out of bound [fixed]
 #endif
+}
+/////////////
+void GUI::on_focus() {
+    // if self is not visible then exit the function
+	if(!visible) return; // ONLY if self is visible (child GUI can also have their own visibility)
+	// if self is pressed, set it as the current "focused" GUI
+	if(Mouse::is_over(get_rect()) && Mouse::is_pressed(1)) set_focus(true);////if(is_pressed()) set_focus  (true);
+	// if mouse is pressed elsewhere (does NOT work - will only work on one GUI of a certain class)
+	//else if(!Mouse::is_over(get_rect()) && Mouse::is_pressed(1)) set_focus(false);   
+	#ifdef DOKUN_DEBUG0
+	    if(GUI::focused) std::cout << String(String::no_digit( typeid(*this).name()) ).str() << ": " << String(GUI::focused) << " gained focus" << std::endl; // #include <typeinfo>
+		if(GUI::focused == nullptr) std::cout << "focus lost" << std::endl;  
+	#endif
 }
 /////////////
 // this is for drawing GUI children, but its best to draw the children manually
@@ -1258,6 +1235,7 @@ bool GUI::is_pressed() // executes multiple times
 	
 	#ifdef __gnu_linux__
 	#endif
+	//if(!active) return false; // gui must not be disabled
 	if(!visible) return false; // gui must be visible first
 	return (Mouse::is_over(get_rect()) && Mouse::is_pressed(1));
 }

@@ -65,6 +65,8 @@ public:
 		bool shadow
 	);
 	//--------------------------
+	static void draw_quad_instanced(int x, int y, int width, int height);
+	//--------------------------
 	static void draw_text (const std::string& text, double x, double y, int width, int height, double angle, double scale_x, double scale_y, const dokun::Font& font, unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0);
 	static void draw_glyph (unsigned char glyph, double x, double y, double angle, double scale_x, double scale_y, const dokun::Font& font, unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0);
 	static void draw_text2 (const std::string& text, double x, double y, int width, int height, double angle, double scale_x, double scale_y, const dokun::Font& font, unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0);

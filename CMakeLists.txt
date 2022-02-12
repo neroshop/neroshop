@@ -280,7 +280,7 @@ set_target_properties(randomx PROPERTIES IMPORTED_LOCATION
 set(monero_src wallet_merged wallet_crypto #[[wallet_api]] wallet lmdb epee unbound easylogging cryptonote_core cryptonote_basic cryptonote_format_utils_basic mnemonics ringct ringct_basic common cncrypto blockchain_db blocks checkpoints device device_trezor multisig version randomx 
 ${boost_src} ${Protobuf_LIBRARY} ${LibUSB_LIBRARIES} ${OPENSSL_LIBRARIES} ${SODIUM_LIBRARY} ${hidapi_src} ${EXTRA_LIBRARIES}) #${Boost_LIBRARIES} #${HIDAPI_LIBRARIES}
 ######################################
-# monero-cpp (wrapper)(started out with monero-cpp-0.5.1) - MIT (same as Monero) v0.5.5 => v0.5.10
+# monero-cpp (wrapper) v0.5.1 => v0.5.5 => v0.5.10 => v0.6.4
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/monero-cpp/src/)
 set(monero_cpp_src
     external/monero-cpp/src/utils/gen_utils.cpp
