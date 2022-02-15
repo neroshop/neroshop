@@ -295,7 +295,7 @@ int main() {
     }
     // --wallet-file
     std::string wallet_file = Script::get_string(DB::get_lua_state(), "neroshop.wallet.file"); //std::cout << "network-type= " << network_type << ", rpc-bind= " << ip << ":" << port << ", data-dir= " << data_dir << ", restore-height= " << restore_height << ", confirmed-external-bind= " << confirm_external_bind << ", restricted-rpc= " << restricted_rpc << ", use-remote-node= " <<  is_remote_node/* << ", " <<  */<< " <-(data retrieved from config)" << std::endl;
-    Wallet * wallet = new Wallet();
+    Wallet * wallet = Wallet::get_singleton();//new Wallet();
     // check if wallet is view only
     //if(wallet->get_monero_wallet()->is_view_only ()) {std::cout << "wallet is view-only\n";}
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////	
@@ -334,15 +334,22 @@ int main() {
     monero_icon->set_size(20, 20); // label characters are 10 units in both width and height
     monero_icon->set_position(neroshop_label->get_x() + 30, neroshop_label->get_y());// / 2);
     // ---------------------------------- message ----------------------------------------
-    Message message_box; // hidden by default
+    Message message_box; //= Message::get_singleton();// hidden by default
     message_box.set_title("message");
     // the hide function was not working because I set their parent to box with GUI::set_parent(parent)
     // which means I probably didn't own it
     // children are hidden by default and must be shown manually
     message_box.add_edit();//(92/*87 or 85*/, 140); // add edit
-    message_box.add_button("OK", 0, 0, 50, message_box.get_edit(0)->get_height()); // add button
+    message_box.get_edit(0)->set_sensative(true);
+    message_box.add_button("OK", 0, 0, 50, 30); // 0
+    message_box.add_button("Cancel", 0, 0, 100, 30); // 1
+    message_box.get_button(1)->set_color(214, 31, 31, 1.0); // Cancel button
+    message_box.add_button("Submit", 0, 0, 100, message_box.get_edit(0)->get_height()); // 2 // add button
     // temporary
-    message_box.get_edit(0)->set_text("supersecretpassword123"); //temporary
+    message_box.get_edit(0)->set_text("supersecretpassword123");
+    // create a second message box - this will display wallet notification messages
+    Message wallet_message_box; //= Message::get_doubleton();
+    // tripleton? nah XD
     // -------------------------------- login -------------------------------------------
     // user_edit ***************************************
     Edit * user_edit = new Edit();
@@ -524,7 +531,6 @@ int main() {
     user_edit_label_r.set_color(0, 0, 0, 1.0);
     //user_edit_label_r.set_relative_position(0, 4);
     user_edit_r->set_label(user_edit_label_r);
-    //user_edit_r->set_text("layter");
     user_edit_r->set_placeholder_text("Username *"); // doesn't really do anything
     //user_edit_r->hide();	
     // pw_edit - registration
@@ -607,7 +613,7 @@ int main() {
     Button * search_button = new Button();//Box();
     search_button->set_color(17,17,24);//(29,29,41);//(255, 102, 0);//255, 102, 0 = monero orange
     Image search_icon(Icon::get["search"]->get_data(), 64, 64, 1, 4);
-    search_button->set_image(search_icon);//(* new Image(Icon::get["search"]->get_data(), 64, 64, 1, 4));
+    search_button->set_image(search_icon);//(* new Image(Icon::get["search"]->get_data(), 64, 64, 1, 4));//search_button->get_image()->set_color(255,191,0);
     search_button->get_image()->resize(24, 24);
     search_button->get_image()->set_alignment("center");
     search_button->set_size(50, search_bar->get_height()); // adjust size
@@ -905,6 +911,14 @@ int main() {
                 // connected to the server, but failed to login
                 if(!logged && client->is_connected()) {
                     message_box.set_text("Incorrect login credentials. Please, try again", "red"); //neroshop::message_box.center(window.get_client_width(), window.get_client_height());
+                    // box text
+                    message_box.get_box()->get_label()->set_alignment("none");
+                    message_box.get_box()->get_label()->set_relative_position((message_box.get_box()->get_width() - message_box.get_box()->get_label()->get_string().length() * 10/*message_box.get_box()->get_label()->get_width()*/) / 2, 75);
+                    // box button
+                    message_box.get_button(1)->set_text("Close");//("OK");
+                    //message_box.get_button(1)->set_color(0, 51, 102, 1.0);                 
+                    message_box.get_button(1)->set_relative_position((message_box.get_box()->get_width() / 2) - (message_box.get_button(1)->get_width() / 2), message_box.get_box()->get_height() - message_box.get_button(1)->get_height() - 20);//50);
+                    message_box.get_button(1)->show();                    
                     message_box.show();
                 }
                 if(logged) //if(Validator::login(user_edit->get_text(), pw_edit->get_text()))
@@ -934,7 +948,7 @@ int main() {
                     // set wallet and check for pending orders
                     if(user->is_seller()) {
                         // set the wallet if it is opened, but it is not yet set
-                        if(wallet_opened && !wallet_set) {
+                        if(wallet != nullptr) {//if(wallet_opened && !wallet_set) {
                             static_cast<Seller *>(user)->set_wallet(*wallet);
                             wallet_set = true;
                             neroshop::print("wallet set for seller (id: " + std::to_string(user->get_id()) + ")", 3);
@@ -987,7 +1001,7 @@ int main() {
                     std::string shipping_addr = "Lars Mars\n"
                     "12 Earth St.\n"
                     "Boston MA 02115";
-                    Order * order = user->create_order(shipping_addr);//, "layter@protonmail.com");                    
+                    Order * order = user->create_order(shipping_addr);//, "larteyoh@protonmail.com");                    
                     // for an online cart, you can retrieve your cart id like this:
                     // cart_id = db.get_integer_params("SELECT user_id FROM cart WHERE user_id = $1", { user->get_id() });
                     // then save by attaching it to the user
@@ -1052,9 +1066,21 @@ int main() {
             if(daemon_button->is_pressed() && !message_box.is_visible()) { // && !msg_box.is_visible()
                 if(!wallet_opened  ) {//wallet->get_monero_wallet() == nullptr ) {
                     message_box.set_text("wallet has not been opened"); //msg_box.get_label()->set_string("  wallet has not been opened");//msg_box.set_width(msg_box.get_label()->get_width()); // update msg_box width based on label's width//message_box.center(window.get_client_width(), window.get_client_height());//msg_box.set_position((window.get_width() / 2) - (msg_box.get_width() / 2), (window.get_height() / 2) - (msg_box.get_height() / 2)); // update msg_box pos since width changed
+                    // box text (label)
+                    message_box.get_box()->get_label()->set_alignment("none");
+                    message_box.get_box()->get_label()->set_relative_position((message_box.get_box()->get_width() - message_box.get_box()->get_label()->get_string().length() * 10/*message_box.get_box()->get_label()->get_width()*/) / 2, 75);//55);                    
+                    // ok button - not being used at the moment
+                    // cancel button
+                    message_box.get_button(1)->set_text("Close");
+                    //message_box.get_button(1)->set_color(214, 31, 31, 1.0);                    
+                    message_box.get_button(1)->set_relative_position((message_box.get_box()->get_width() / 2) - (message_box.get_button(1)->get_width() / 2), message_box.get_box()->get_height() - message_box.get_button(1)->get_height() - 20);//200-30(height)-20(bottompadding) = 150(button_y)
+                    message_box.get_button(1)->show();
                     message_box.show();
                 }
                 if(!synced && wallet_opened) { //message_box.set_text("waiting for node to sync");message_box.show();
+                    //message_box.set_text("Please wait for daemon to fully sync"); //msg_box.get_label()->set_string("  wallet has not been opened");//msg_box.set_width(msg_box.get_label()->get_width()); // update msg_box width based on label's width//message_box.center(window.get_client_width(), window.get_client_height());//msg_box.set_position((window.get_width() / 2) - (msg_box.get_width() / 2), (window.get_height() / 2) - (msg_box.get_height() / 2)); // update msg_box pos since width changed
+                    //message_box.show();
+                    // start sync!
                     wallet->daemon_open(ip, port, confirm_external_bind, restricted_rpc, is_remote_node, data_dir, network_type, restore_height);
                     synced = wallet->daemon_connect(ip, port); //synced = true;
                     if(synced) {
@@ -1078,17 +1104,17 @@ int main() {
                     wallet_edit->set_text(wallet_file); //wallet_edit->show();
                     ////////////////////
                     // message_box
-                    message_box.set_text("Please enter your wallet password: ");
+                    message_box.set_text("Please enter your wallet password: ", 0, 0, 0, 1.0);
                     // set relative positions
                     // box_text - center the x
                     message_box.get_box()->get_label()->set_alignment("none");
-                    message_box.get_box()->get_label()->set_relative_position((message_box.get_box()->get_width() - message_box.get_box()->get_label()->get_width()) / 2, 80);//(message_box.get_box()->get_label()->get_relative_x(), message_box.get_box()->get_label()->get_relative_y());
+                    message_box.get_box()->get_label()->set_relative_position((message_box.get_box()->get_width() - message_box.get_box()->get_label()->get_string().length() * 10/*message_box.get_box()->get_label()->get_width()*/) / 2, 75);//(200−10)÷2 = 95 = (200÷2)−(10÷2) //200=box_ht, 10=label_ht, 95=label_y (centered) // 95 - 20(button_y) = 75
                     // box_edit
-                    message_box.get_edit(0)->set_relative_position((message_box.get_box()->get_width() / 2) - (message_box.get_edit(0)->get_width() / 2) - ((message_box.get_button(0)->get_width() + 10) / 2), message_box.get_box()->get_height() - message_box.get_edit(0)->get_height() - 80);
+                    message_box.get_edit(0)->set_relative_position((message_box.get_box()->get_width() / 2) - (message_box.get_edit(0)->get_width() / 2) - ((message_box.get_button(2)->get_width() + 10) / 2), message_box.get_box()->get_height() - message_box.get_edit(0)->get_height() - 20);
                     // box_button
-                    message_box.get_button(0)->set_relative_position(message_box.get_edit(0)->get_relative_x() + message_box.get_edit(0)->get_width() + 10, message_box.get_edit(0)->get_relative_y());//message_box.get_edit(0)->get_relative_y());
+                    message_box.get_button(2)->set_relative_position(message_box.get_edit(0)->get_relative_x() + message_box.get_edit(0)->get_width() + 10, message_box.get_edit(0)->get_relative_y());//message_box.get_edit(0)->get_relative_y());
                     // show edit, button (children must be shown manually), etc.
-                    message_box.get_button(0)->show();
+                    message_box.get_button(2)->show();
                     message_box.get_edit(0)->show();
                     ///////////////////
                     message_box.show(); // show message
@@ -1096,6 +1122,15 @@ int main() {
                 }
                 else if(wallet_file.empty()) {
                     message_box.set_text("wallet not found");
+                    // box text (label)
+                    message_box.get_box()->get_label()->set_alignment("none");
+                    message_box.get_box()->get_label()->set_relative_position((message_box.get_box()->get_width() - message_box.get_box()->get_label()->get_string().length() * 10/*message_box.get_box()->get_label()->get_width()*/) / 2, 75);                   
+                    // ok button - not being used at the moment
+                    // cancel button
+                    message_box.get_button(1)->set_text("Close");
+                    //message_box.get_button(1)->set_color(214, 31, 31, 1.0);                    
+                    message_box.get_button(1)->set_relative_position((message_box.get_box()->get_width() / 2) - (message_box.get_button(1)->get_width() / 2), message_box.get_box()->get_height() - message_box.get_button(1)->get_height() - 20);
+                    message_box.get_button(1)->show();                    
                     message_box.show();
                 }
             }
@@ -1103,7 +1138,7 @@ int main() {
             // wallet_password prompt (Message)(we are still in login_menu thread)
             ////if(message_box.get_button_count() > 0) {//&& !wallet_opened) {         
             // if OK is pressed, open the wallet file
-            if(message_box.get_button(0)->is_pressed() && !wallet_opened) { // message_box.restore(); // restore defaults
+            if(message_box.get_button(2)->is_pressed() && !wallet_opened) { // message_box.restore(); // restore defaults
                 std::string wallet_name = wallet_edit->get_text(); // wallet (uploaded) from edit
                 std::string password = message_box.get_edit(0)->get_text(); // get pw from edit //std::string password; std::cin >> password;
                 message_box.get_edit(0)->clear_all(); // clear pw from edit
@@ -1113,6 +1148,9 @@ int main() {
                 message_box.hide(); // hide and restore defaults
             }
             ////}  
+            /////////////////////
+            // while the wallet is not opened, clear the wallet_edit
+            if(!wallet_opened && !message_box.is_visible()) wallet_edit->clear_all();            
             /////////////////////
             if(wallet_button->is_pressed() && !message_box.is_visible() && !wallet_opened) {
                 message_box.set_text("Enter wallet name:");
@@ -1132,6 +1170,11 @@ int main() {
                     }
                 }
             }*/
+            /////////////////////
+            // on cancel button pressed
+            if(message_box.get_button(1)->is_pressed()) {
+                message_box.hide();
+            }
             /////////////////////
             if(Keyboard::is_pressed(DOKUN_KEY_P)) Process::show_processes();
             if(Keyboard::is_pressed(DOKUN_KEY_K)) {
@@ -1212,7 +1255,10 @@ int main() {
             //if(Keyboard::is_pressed(DOKUN_KEY_H)) message_box.get_button(0)->hide();
             //if(Keyboard::is_pressed(DOKUN_KEY_S)) message_box.get_button(0)->show();
             message_box.center(window.get_client_width(), window.get_client_height());
-            message_box.draw();            
+            message_box.draw();
+            // draw second message box - for wallet notifications
+            wallet_message_box.center(window.get_client_width(), window.get_client_height());
+            wallet_message_box.draw();
             // update window
             window.update();
         }
@@ -1318,6 +1364,7 @@ int main() {
             // each time an item is added or removed or qty_changed from the cart, update this string 
             // causes crash
             //cart_button->get_label()->set_string(std::to_string(Cart::get_singleton()->get_total_quantity()));
+            //cart_button->get_label()->set_color(); // (cart_qty >= 100) = red(255, 0, 0), (cart_qty >= (100 / 2)) = yellow(255,191,0), (cart_qty <= ((100 / 2) - 1)) = white);
             cart_button->get_label()->set_relative_position(20, (cart_button->get_height() - 10/*cart_label.get_height()*/) / 2);
             cart_button->get_image()->set_relative_position(cart_label.get_relative_x() + (cart_label.get_string().length() * 10) + 10, (cart_button->get_height() - cart_icon.get_height_scaled()) / 2);// "(cart_label.get_string().length() * 10)" could be replaced with the entire label's width
             cart_button->draw(window.get_client_width() - cart_button->get_width() - 20, 20);//(search_bar->get_x() + (search_bar->get_width() + search_button->get_width()/* + 1*/) + 20, 20);//std::cout << "cart_button pos: " << cart_button->get_position() << std::endl;//600 + 20

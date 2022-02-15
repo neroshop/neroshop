@@ -15,7 +15,7 @@ bool neroshop::Validator::register_user(const std::string& username, const std::
     if(!opt_email.empty() && !validate_email(opt_email)) return false;
     // generate bcrypt salt (random, with a workfactor of 12 or higher)
 	char salt[BCRYPT_HASHSIZE];//char * salt;
-    if(!generate_bcrypt_salt(12, salt)) {return false;}
+    if(!generate_bcrypt_salt(12, salt)) {return false;} // 12=1s, 14=4s, 16=16s, 18=64s
     // pre-hash password with sha256 (to circumvent bcrypt's pw length restrictions [55-72])
     std::string pw_prehash;
     if(!generate_sha256_hash_evp(password, pw_prehash)) {return false;}

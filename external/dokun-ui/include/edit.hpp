@@ -106,7 +106,8 @@ class Edit : public GUI {// can be a line edit or text edit or search field
 		void select_all(); static int select_all(lua_State *L);
 		void clear(); static int clear(lua_State *L);// (std::string selected_text) or all
 		void clear_all(); static int clear_all(lua_State *L);
-		void zoom(int value); static int zoom(lua_State *L);// -1 (zoom out), +1 (zoom in) 
+		void zoom(int value); static int zoom(lua_State *L);// -1 (zoom out), +1 (zoom in)
+	    static void lose_focus_all(); // all edits will lose focus		
 		// character count
         void set_character_limit(int limit); static int set_maximum_character(lua_State *L);// 0 = unlimited(default)
 	    // hiding label =  edit->get_label()->hide() // syntax highlighting???
@@ -132,7 +133,7 @@ class Edit : public GUI {// can be a line edit or text edit or search field
 		void on_placeholder();
 		void on_placeholder_text(); // placeholder text callback (show or hide)
 		void on_placeholder_image();
-		void on_sensative_set();
+		void on_sensative(); // on sensative set to true
 		// other functions
 		void move_cursor_up();
 		void move_cursor_down();

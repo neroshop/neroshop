@@ -8,6 +8,20 @@
 
 /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/include/android_header.hpp
 
+/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/include/button.hpp
+ui.hpp
+/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/include/ui.hpp
+label.hpp
+/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/include/label.hpp
+image.hpp
+/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/include/image.hpp
+renderer.hpp
+/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/include/renderer.hpp
+iostream
+-
+lua.hpp
+-
+
 /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/include/component.hpp
 types.hpp
 /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/include/types.hpp
@@ -137,6 +151,16 @@ lua.hpp
 /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/include/keyboard.hpp
 platform.hpp
 /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/include/platform.hpp
+iostream
+-
+lua.hpp
+-
+
+/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/include/label.hpp
+ui.hpp
+/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/include/ui.hpp
+font.hpp
+/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/include/font.hpp
 iostream
 -
 lua.hpp
@@ -560,9 +584,9 @@ iostream
 lua.hpp
 -
 
-/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/src/ui.cpp
-../include/ui.hpp
-/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/include/ui.hpp
+/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/src/button.cpp
+../include/button.hpp
+/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/include/button.hpp
 
 external/freetype/include/freetype/config/ftheader.h
 

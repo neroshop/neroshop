@@ -20,9 +20,9 @@ The name neroshop comes from "nero", meaning black combined with the word "shop"
 * pseudonymous economy (sellers are only identified by their usernames and trusted based on their reputation)
 * no registration required (for buyers only)
 * no KYC or AML
-* no listing fees (except for transaction or miner fees and shipping costs)
+* no listing fees (except for miner transaction fees and shipping costs)
 * buy and sell products with monero (and possibly other private by default crypto in the near future)
-* automatic subaddress generator (a unique monero address is generated from seller's account each time a buyer orders an item)
+* automatic subaddress generator (a unique monero address is generated from seller's account each time a buyer places an order)
 * address watcher that tracks incoming txs and notifies both the user and seller
 ("awaiting payment ..."[red], "payment incoming"[yellow], "payment received!"[green])
 * seller reputation system (score rating ranging from 0-1)

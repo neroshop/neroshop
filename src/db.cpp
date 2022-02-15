@@ -491,11 +491,6 @@ bool neroshop::DB::create_config() { // good!
     "        file = \"\", -- include '.keys' ext\n"
     "        restore_height = 0, -- block height or date (YYYY-MM-DD)\n"    
     "    },\n"
-    // remove the table below and store it in sql instead
-    //"    account = {\n"
-    //"        saved = false,\n"
-    //"        username = \"\",\n"
-    //"    },\n"
     "}\n";
     //"    \n"
     // swap data_dir with user

@@ -77,7 +77,15 @@ static std::string narrow( const std::wstring& str )
         std::ostringstream ss;
         ss << object;
         return ss.str      ();
-    }	
+    }
+    template <typename T>
+    static std::string to_string_with_precision(const T a_value, const int n)
+    {
+        std::ostringstream out;
+        out.precision(n);
+        out << std::fixed << a_value;
+        return out.str();
+    } 	
 	// wrapper
 	std::string str()    const{return this->value;}
 	const char * c_str() const{return this->value.c_str();}
@@ -260,12 +268,20 @@ static std::string narrow( const std::wstring& str )
 	    std::string first_word = str.substr(0, first_space_found); 
         return first_word;		
 	}
-	static std::string get_last_word(const std::string&  str)
+	static std::string get_last_word(const std::string& str)
 	{
         std::size_t last_space_found = str.find_last_of(" "); // last space in String	
 		std::string last_word = str.substr(last_space_found + 1); // from the start of last space + 1			
 	    return last_word;
 	}
+	static std::string get_first_n_characters(const std::string& str, int n) {
+	    std::string first_n = str.substr(0, std::min<size_t>(n, str.length()));
+	    return first_n;
+	}
+	static std::string get_last_n_characters(const std::string& str, int n) {
+	    std::string last_n = str.substr(str.length() - 4);
+	    return last_n;
+	}	
 	static std::vector<unsigned int> get_index(const std::string& str, char what) // finds a character at multiple locations in a string - added 2019-07-31
 	{
 	    std::vector<unsigned int> what_index;

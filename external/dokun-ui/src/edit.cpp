@@ -65,15 +65,7 @@ int Edit::append(lua_State *L)
 }
 /////////////
 void Edit::reset() {
-    if(!label) throw std::runtime_error("label is not initialized");
-    label->clear(); // clear string
-    character_data.clear(); // clear all character information
-    secret.clear(); // clear secret too (almost forgot :O!)
-    cursor_x = 0; // reset cursor_x
-    cursor_y = 0; // reset cursor_y
-    // reset boundless_cursor too
-    boundless_cursor_x = 0;
-    boundless_cursor_y = 0;
+    clear_all();
 }
 /////////////
 void Edit::draw()
@@ -225,8 +217,8 @@ int Edit::clear(lua_State *L)// (std::string selected_text) or all
 void Edit::clear_all() 
 {
     if(!label) throw std::runtime_error("label is not initialized");
-	label->clear();
-	character_data.clear();
+	label->clear(); // clear label string
+	character_data.clear(); // clear all character information
 	secret.clear(); // clear secret too (almost forgot :O!)
 	// set cursor_pos back to 0
 	cursor_x = 0;
@@ -248,6 +240,11 @@ int Edit::zoom(lua_State *L)// -1 (zoom out), +1 (zoom in)
 {
 	return 0;
 }
+/////////////
+void Edit::lose_focus_all() {
+    Edit::focused = nullptr;
+}
+/////////////
 /////////////
 // SETTERS
 /////////////
@@ -347,7 +344,7 @@ void Edit::set_label(const dokun::Label& label)
 	this->label = &const_cast<dokun::Label&>(label);
 	this->label->set_parent(* this);
 	// properly set the text to pre-set label text (which will update the character_data vector and correct the boundless_cursor and cursor positions)
-	set_text(this->label->get_string());
+	if(!this->label->is_empty()) set_text(this->label->get_string());
 	// adjust label relative position (center the y, space the x by 1) [2021-10-17]
 	this->label->set_relative_position(this->label->get_relative_x() + 1, (get_height() / 2) - (cursor_space / 2));
 }
@@ -594,11 +591,8 @@ void Edit::set_readonly(bool readonly)
 }
 /////////////
 void Edit::set_sensative(bool sensative) {
-    // make sure this function is not called with the same arg, more than once in a row
-    if(this->sensative == sensative) return;//{std::cout << "\033[0;33msensative already set to " << ((sensative) ? "true\033[0m" : "false\033[0m") << std::endl;return;} 
-    // set sensative value
     this->sensative = sensative;
-    on_sensative_set(); // callback
+    on_sensative(); // callback (sets the secret if sensative with secret not set yet with Edit::set_text())
 }
 /////////////
 void Edit::set_scrollable(bool scrollable) {
@@ -1252,6 +1246,7 @@ void Edit::on_enter()
 	}	
 }
 /////////////
+// mouse stays within edit's bounds, but keyboard can go past edit's bounds
 void Edit::on_arrow_keys() // will shift the text via "start_index"
 {
     if(readonly) return;
@@ -1471,27 +1466,42 @@ void Edit::on_placeholder_image() {///*
 	//placeholder_image->draw(); // draw in Edit::draw() function instead //*/
 }
 /////////////
-void Edit::on_sensative_set() { //_to_true() { // or on_sensativity_set ?
-    // if label is not empty (sensative ONLY), meaning that set_text() was called before set_sensative()
-    if(!sensative) return;
-    if(label->is_empty()) return;
-    // save (store) secret string
-    secret = get_text();//label->get_string();//std::cout << "secret saved: " << secret << std::endl;
-    // replace all characters with an asterisk
-    std::string temp(secret); 
-    std::fill_n(temp.begin() + 0, temp.length(), '*');
-    // update string
-	label->set_string(temp); // set the text manually rather than calling set_text, to prevent secret from being saved twice // no need to check the character_limit or set cursor_position since set_text() already did that for us
-	// update character information as well
-	for(int i = 0; i < character_data.size();/*temp.length();*/ i++) std::get<0>(character_data[i]) = '*';
+// on sensative set to true
+void Edit::on_sensative() { 
+    // If not sensative, restore original text and clear secret then exit function
+    if(!sensative) {
+        if(secret.empty()) return; // was not previously sensative but set_sensative(false) was called :|  (edit set_sensative(false) is called when it is already false)
+        // at this point, secret is still normal text
+        // sensative is false so get_text will return character_data vector
+        // BUT character_data has already changed to asterisks *****
+        // replace all asterisks with characters first
+        for(int i = 0; i < secret.size(); i++) std::get<0>(character_data[i]) = secret[i];
+        label->set_string(secret);// update the label too
+        // finally, clear the secret
+        secret.clear(); //std::cout << "edit set_sensative(false) called - edit on_sensative(): secret cleared" << std::endl;
+        return;
+    }
+    // If sensative, set the secret and save (store) it only once
+    if(sensative) { 
+        if(character_data.empty()) return; // If label is empty. No secret to be set, so exit function (a non-empty label means that set_text() was called before set_sensative())
+        if(!secret.empty()) return; // secret is not empty, so set_text() might have been called to set the secret instead
+        secret = characters_to_string();//get_text();//std::cout << "edit set_sensative(true) called - edit on_sensative(): secret saved: " << secret << std::endl;
+        // replace all characters with an asterisk
+        std::string temp(secret);
+        std::fill_n(temp.begin() + 0, temp.length(), '*');
+        // update character information and label
+        for(auto& characters : character_data) std::get<0>(characters) = '*';
+	    label->set_string(temp); // set the text manually rather than calling set_text, to prevent secret from being saved twice // no need to check the character_limit or set cursor_position since set_text() already did that for us
+	    return;
+	}
 }
 /////////////
 /////////////
 std::string Edit::characters_to_string() const {
     if(character_data.empty()) return ""; // exit, if empty
     std::string text;
-    for (auto& t : character_data) // range-based loops are faster // pass by reference instead of by value (since we are not modifying it)
-        text += std::get<0>(t); //for(int i = 0; i < character_data.size(); i++) full_text += std::get<0>(character_data[i]);
+    for (auto& characters : character_data) // range-based loops are faster // pass by reference instead of by value (since we are not modifying it)
+        text += std::get<0>(characters); //for(int i = 0; i < character_data.size(); i++) full_text += std::get<0>(character_data[i]);
     return text;
 }
 /////////////

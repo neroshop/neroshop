@@ -50,7 +50,7 @@ public:
     void restore(const std::string& mnemonic, std::string password = "", monero_network_type network_type = monero_network_type::STAGENET); // restore from mnemonic //void restore(const std::string& keyfile); // restore from keyfile
     void restore(const std::string& address, const std::string& view_key, const std::string& spend_key, std::string password = "", monero_network_type network_type = monero_network_type::STAGENET); // restore from keys (address, view_key, spend_key)
     void close(bool save=false);
-    void transfer(const std::string& address, double amount); // "transfer"
+    void transfer(const std::string& address, double amount); // "transfer" will be used for sending refunds
     void sweep_all(const std::string& address); // sends entire balance, including dust to an address // "sweep_all <address>"
     std::string address_new() const; // generates a new subaddress from main account // "address new" // monero addresses start with 4 or 8
     void address_book_add(const std::string& address, std::string description = ""); // "address_book add <address> <description>"
@@ -98,12 +98,14 @@ public:
     std::string get_network_type() const; // "wallet_info":  Mainnet, Testnet, Stagenet
     std::string get_status() const; // "status" - Check current status of wallet.
     std::string get_version() const; // "version" - Check software version.
+    // singleton obj
+    static Wallet * get_singleton();
     // get wallet handles
     monero_wallet_full * get_monero_wallet() const;
     // dokun-ui
     static Progressbar * sync_bar;
     static dokun::Label * sync_label;
-    static neroshop::Message * wallet_message;    
+    //static neroshop::Message * wallet_message; // REMOVE THIS   
 private:
     void set_daemon(); // "set_daemon <host>[:<port>] [trusted|untrusted|this-is-probably-a-spy-node]" - connects to a daemon
     void refresh(); // "refresh" - Synchronize wallet with the Monero network.
@@ -111,7 +113,8 @@ private:
     // callbacks
     void load_from_config(std::string/*const std::string&*/ password = "supersecretpassword123");
 private:
-    monero_wallet_full * wallet_obj; // wallet
+    static Wallet * wallet_obj; // singleton obj
+    monero_wallet_full * monero_wallet_obj; // monero wallet
     std::string file; // wallet file
     //monero_wallet_listener * wallet_listener; // listens to wallet for incoming txs // void monero::monero_wallet_full::add_listener	(	monero_wallet_listener & 	listener	)
     monero_network_type network_type; // default will be Mainnet when this app launches

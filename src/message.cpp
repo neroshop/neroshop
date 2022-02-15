@@ -3,9 +3,10 @@
 neroshop::Message::Message() : box(nullptr), button_list({}), edit_list({}) {//, button0(nullptr), button1(nullptr), button2(nullptr), edit0(nullptr), edit1(nullptr) {
     initialize();
     // reserve space in vector
-    //button_list.reserve(3);
-    //edit_list.reserve(2);
+    button_list.reserve(4);
+    edit_list.reserve(2);
     if(!first) {first = this; std::cout << "message_box singleton created\n";}
+    if((first != this) && !second) {second = this; std::cout << "message_box doubleton created\n";}
 }
 ////////////////////
 neroshop::Message::Message(const std::string& text) : neroshop::Message() {
@@ -33,22 +34,21 @@ neroshop::Message::~Message() {
 ////////////////////
 neroshop::Message * neroshop::Message::first(nullptr);
 ////////////////////
+neroshop::Message * neroshop::Message::second(nullptr);
+////////////////////
 ////////////////////
 void neroshop::Message::initialize() 
 {
     if(box) return; // box must be uninitialized before it can be initialized
     std::cout << "message_box initialized\n";
-    // create a message_box    
+    // create a message_box - box size set in Message::restore()
     box = new Box();
     //box->set_outline(true);
     box->set_draggable(true);
-    box->set_size(1000, 250);//(200, 50);
-    ////box->set_color(72, 88, 111, 1.0);
-    // message_box label
+    box->set_color(167,173,186);//(101,115,126);//(54,69,79);//(112,128,144);//(17,17,24);//(72, 88, 111, 1.0);
+    // message_box label - label defaults set in Message::restore()
     dokun::Label * box_label = new dokun::Label();
     box->set_label(*box_label);
-    box->get_label()->set_color(127, 127, 127, 1.0);
-    box->get_label()->set_alignment("center");
     // message_box title bar
     box->set_title_bar(true);
     box->set_title_bar_color(21, 34, 56, 1.0);//(15, 46, 83, 1.0);
@@ -94,9 +94,9 @@ void neroshop::Message::restore()
 {
     if(!box) throw std::runtime_error("message box is not initialized");
     box->get_label()->clear();
-    box->get_label()->set_color(64, 64, 64, 1.0);//(255, 255, 255, 1.0);// restore original color (on hide)
+    box->get_label()->set_color(0, 0, 0, 1.0);//(255, 255, 255, 1.0);//(64, 64, 64, 1.0);//(255, 255, 255, 1.0);// restore original color (on hide)
     box->get_label()->set_alignment("center"); // restore alignment
-    box->set_size(1000, 250); ////box->set_size(200, 50); // restore original size
+    box->set_size(1000, 200); // restore original size
     // destroy all buttons, edits, etc. (causes seg fault for some reason :/)
     ////destroy_children();
     // actually, hide them instead (only works now cuz I didn't set_parent to box)
@@ -107,8 +107,8 @@ void neroshop::Message::restore()
 void neroshop::Message::add_button(const std::string& text, int relative_x, int relative_y, int width, int height) {
     if(!box) throw std::runtime_error("message box is not initialized");
     std::shared_ptr<Button> button = std::shared_ptr<Button>(new Button());//Button * button = new Button();
-	std::cout << "button.get() = "<< button.get() << std::endl;
-	std::cout << "button.use_count() = " << button.use_count() << std::endl;    
+	//std::cout << "button.get() = "<< button.get() << std::endl;
+	//std::cout << "button.use_count() = " << button.use_count() << std::endl;    
     //////////////////////////////
     button->set_size(width, height);
     //////////////////////////////
@@ -126,8 +126,8 @@ void neroshop::Message::add_button(const std::string& text, int relative_x, int 
 void neroshop::Message::add_edit(int relative_x, int relative_y, int width, int height) {
     if(!box) throw std::runtime_error("message box is not initialized");
     std::shared_ptr<Edit> edit = std::shared_ptr<Edit>(new Edit());//Edit * edit = new Edit();
-	std::cout << "edit.get() = "<< edit.get() << std::endl;
-	std::cout << "edit.use_count() = " << edit.use_count() << std::endl;
+	//std::cout << "edit.get() = "<< edit.get() << std::endl;
+	//std::cout << "edit.use_count() = " << edit.use_count() << std::endl;
 	//////////////////////////////
 	edit->set_character_limit(256);
 	edit->set_size(width, height);    
@@ -141,8 +141,8 @@ void neroshop::Message::add_edit(int relative_x, int relative_y, int width, int 
     edit->set_relative_position(relative_x, relative_y);// center the x-axis position
     //////////////////////////////
     // scale to fit
-    if(edit->get_width() > box->get_width()) edit->set_width(box->get_width() - 10);
-    if(edit->get_height() > box->get_height()) edit->set_height(box->get_height() - 10);
+    //if(edit->get_width() > box->get_width()) edit->set_width(box->get_width() - 10);
+    //if(edit->get_height() > box->get_height()) edit->set_height(box->get_height() - 10);
     //////////////////////////////
     edit_list.push_back(edit);
 }
@@ -189,7 +189,7 @@ void neroshop::Message::draw_children() {
         //if(buttons == nullptr) continue;
         // set position relative to box
         buttons->set_position(box->get_x() + buttons->get_relative_x(), box->get_y() + buttons->get_relative_y());
-        // make sure that children cannot go past box bounds
+        // make sure that child cannot go past box bounds
 	    if(buttons->get_relative_x() >= (box->get_width() - buttons->get_width())) { 
 	        buttons->set_position(box->get_x() + (box->get_width() - buttons->get_width()), buttons->get_y()); 
 	        buttons->set_relative_position(box->get_width() - buttons->get_width(), buttons->get_relative_y());
@@ -207,7 +207,7 @@ void neroshop::Message::draw_children() {
         //if(edits == nullptr) continue;
         // set position relative to box
         edits->set_position(box->get_x() + edits->get_relative_x(), box->get_y() + edits->get_relative_y());
-        // make sure that children cannot go past box bounds
+        // make sure that child cannot go past box bounds
 	    if(edits->get_relative_x() >= (box->get_width() - edits->get_width())) { 
 	        edits->set_position(box->get_x() + (box->get_width() - edits->get_width()), edits->get_y());
 	        edits->set_relative_position(box->get_width() - edits->get_width(), edits->get_relative_y());
@@ -265,7 +265,7 @@ void neroshop::Message::set_text(const std::string& text)
         //return; // exit function
     }
     //if(text_width <= box->get_width())
-    box->set_width(box->get_label()->get_width() * 1.5);//((box->get_label()->get_string().length() / 2) * (10 * 2));//
+    box->set_width(box->get_label()->get_width() + 100);// * 1.5);//((box->get_label()->get_string().length() / 2) * (10 * 2));//
 }
 ////////////////////
 void neroshop::Message::set_text(const std::string& text, int red, int green, int blue, double alpha) 
@@ -283,7 +283,7 @@ void neroshop::Message::set_text(const std::string& text, int red, int green, in
         ////box->set_width(box_width + (text_width - box_width) * 2); // add double the space
         //return; // exit function
     }    
-    box->set_width(box->get_label()->get_width() * 1.5);
+    box->set_width(box->get_label()->get_width() + 100);//* 1.5);
 }
 ////////////////////
 void neroshop::Message::set_text(const std::string& text, std::string color) 
@@ -311,7 +311,7 @@ void neroshop::Message::set_text(const std::string& text, std::string color)
     if(String::lower(color) == "royal blue") box->get_label()->set_color(65, 105, 225, 1.0);
     //if(String::lower(color) == "") box->get_label()->set_color(255, 255, 255, 1.0);        
     // adjust box width based on label width
-    box->set_width(box->get_label()->get_width() * 1.5);
+    box->set_width(box->get_label()->get_width() + 100);// * 1.5);
 }
 ////////////////////
 void neroshop::Message::set_title(const std::string& title) 
@@ -330,6 +330,10 @@ void neroshop::Message::set_title(const std::string& title)
 ////////////////////
 neroshop::Message * neroshop::Message::get_first() {
     return first;
+}
+////////////////////
+neroshop::Message * neroshop::Message::get_second() {
+    return second;
 }
 ////////////////////
 //Box * neroshop::Message::box() const {

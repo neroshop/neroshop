@@ -293,9 +293,9 @@ void Box::draw_box() {
 			// Draw label (goes inside box) **********************************************************
             if(label) // make sure Box has an "initialized" label beforehand (or else engine will crash)
             {   // set label's alignment and position relative to the Box
-		        if(label->get_alignment() == "left"  ) { label->set_relative_position(0                                     , 0); }
-				if(label->get_alignment() == "center") { label->set_relative_position((get_width() - label->get_width()) / 2, (get_height() - 10/*label->get_height()*/) / 2); }						
-				if(label->get_alignment() == "right" ) { label->set_relative_position((get_width() - label->get_width())    , 0); }	
+		        if(label->get_alignment() == "left"  ) { label->set_relative_position(0, 0); }
+				if(label->get_alignment() == "center") { label->set_relative_position((get_width() - label->get_string().length() * 10/*label->get_width()*/) / 2, (get_height() - 10/*label->get_height()*/) / 2); }						
+				if(label->get_alignment() == "right" ) { label->set_relative_position((get_width() - label->get_string().length() * 10/*label->get_width()*/), 0); }	
                 if(label->get_alignment() == "none"  ) {} // default - with this you are free to set the label's relative position to whatever you want // relative_position will always be (0, 0) unless you change it    
                 label->set_position(get_x() + label->get_relative_x(), get_y() + label->get_relative_y()); // set actual position (No need to call since GUI::on_draw auto fixes child position to parent's)
 				// NO need to draw label since child GUI are automatically drawn  // child objects are drawn automatically (via GUI::on_draw()). So DO NOT call draw function!!!

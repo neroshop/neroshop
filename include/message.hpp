@@ -30,6 +30,7 @@ public:
     void set_title(const std::string& title);
     // getters
     static Message * get_first(); // returns the first and original message box
+    static Message * get_second();
     //Box * box() const;
     Box * get_box() const;
     std::shared_ptr<Button>/*Button **/ get_button(int index) const;//Button * get_button_by_text(const std::string& text);
@@ -38,8 +39,9 @@ public:
     int get_edit_count() const;
     // boolean
     bool is_visible();
-private: // I still don't understand smart pointers :( // https://codereview.stackexchange.com/questions/160053/c-erasing-an-object-from-vector-of-pointers/160058#160058
+private: // I kinda understand smart pointers a little :| // https://codereview.stackexchange.com/questions/160053/c-erasing-an-object-from-vector-of-pointers/160058#160058
     static Message * first;
+    static Message * second;
     Box * box; // unique_ptr cannot be copied so I switched to smart pointers
     std::vector<std::shared_ptr<Button>> button_list;//std::vector<Button*> button_list;   
     std::vector<std::shared_ptr<Edit>> edit_list;//std::vector<Edit*> edit_list;

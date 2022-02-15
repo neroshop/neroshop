@@ -244,15 +244,44 @@ void neroshop::Seller::update_customer_orders() { // this function is faster (I 
             // check if order is a pending order
             bool is_pending = DB2::get_singleton()->get_integer_params("SELECT id FROM orders WHERE id = $1 AND status = $2", { std::to_string(customer_order_id), "Pending" });
             if(is_pending) {
+                std::cout << "You have received a new customer order (status: PENDING)" << std::endl; // for terminal
                 neroshop::Message::get_first()->set_text("You have received a new customer order (status: PENDING)");//\n                                  Do you wish to proceed with this order?");
                 // maybe send the seller an email as well? :O
                 // Do you wish to process this order?
                 // [accept] [decline]
+                // box text
+                //int vertical_padding = 80; // top and bottom padding
+                neroshop::Message::get_first()->get_box()->get_label()->set_alignment("none");
+                neroshop::Message::get_first()->get_box()->get_label()->set_relative_position((neroshop::Message::get_first()->get_box()->get_width() / 2) - (neroshop::Message::get_first()->get_box()->get_label()->get_string().length() * 10/*neroshop::Message::get_first()->get_box()->get_label()->get_width()*/ / 2), 75);//75 = top_padding
+                // box buttons
+                std::shared_ptr<Button> button0 = neroshop::Message::get_first()->get_button(0);//->
+                std::shared_ptr<Button> button1 = neroshop::Message::get_first()->get_button(1);//->
+                button0->set_text("Accept");//Accept//Respond//View//Reply//Answer//Return
+                button1->set_text("Decline");//Decline//Refuse//Ignore//Reject//Forget//Mark as read
+                button0->set_width(100);
+                button1->set_width(100);
+                // the height of the msgbox almost NEVER changes, only its width
+                int button_gap = 10; // the space between button0 and button1
+                button0->set_relative_position((neroshop::Message::get_first()->get_box()->get_width() / 2) - (button0->get_width() / 2) - ((button1->get_width() + button_gap) / 2), neroshop::Message::get_first()->get_box()->get_height() - button0->get_height() - 20);//20 = bottom_padding
+                button1->set_relative_position(button0->get_relative_x() + button0->get_width() + button_gap, button0->get_relative_y());
+                button0->set_color(99, 151, 84, 1.0);//(0, 107, 61, 1.0);
+                button1->set_color(224, 60, 50, 1.0);//(214, 31, 31, 1.0);
+                button0->show();
+                button1->show();
                 // Supply a subaddress or generate a unique subaddress from your wallet (for receiving funds from the customer)
-                // if yes then a unique subaddress will be generated from your wallet for receiving funds from the customer
+                // BUT if a seller supplies an address, then he/she will not receive the notification that they've received a deposit of x amount of xmr into their wallet
                 //[supply address] [generate]
+                // if no, then seller must supply a unique subaddress
+                ////if(!monero_utils::is_valid_address(random_subaddress, monero_network_type::STAGENET)) {
+                //    neroshop::print(random_subaddress + " is not a valid address", 1);
+                //}             
+                // if yes then a unique subaddress will be generated from your wallet for receiving funds from the customer
                 // if user chooses to generate a unique subaddress:
-                ////on_order_received();
+                if(has_wallet_synced()) {
+                    std::string subaddress;
+                    on_order_received(subaddress);
+                    neroshop::print("generated unique subaddress: " + subaddress);
+                }
                 // if not connected to daemon or remote node, print "You cannot generate unless you connect to a node"
                 // if no then you can retrieve your stock back
                 neroshop::Message::get_first()->show();
@@ -532,6 +561,18 @@ bool neroshop::Seller::has_listed(unsigned int item_id) const {
 }
 ////////////////////
 ////////////////////
+bool neroshop::Seller::has_wallet() const {
+    if(!wallet) return false; // wallet is nullptr
+    if(!wallet->get_monero_wallet()) return false; // wallet not opened
+    return true;
+}
+////////////////////
+bool neroshop::Seller::has_wallet_synced() const {
+    if(!wallet) return false; // wallet is nullptr
+    if(!wallet->get_monero_wallet()) return false; // wallet not opened
+    if(!wallet->get_monero_wallet()->is_synced()) return false; // wallet not synced to daemon
+    return true;
+}
 ////////////////////
 ////////////////////
 ////////////////////
@@ -580,7 +621,7 @@ neroshop::User * neroshop::Seller::on_login(const std::string& username) { // as
     return user;          
 }
 ////////////////////
-void neroshop::Seller::on_order_received() {
+void neroshop::Seller::on_order_received(std::string& subaddress) {
     if(wallet == nullptr) throw std::runtime_error("wallet has not been initialized");
     if(!wallet->get_monero_wallet()) throw std::runtime_error("monero_wallet_full is not opened");
     // if wallet is not properly synced with the daemon, you can only generate used addresses
@@ -595,9 +636,12 @@ void neroshop::Seller::on_order_received() {
     std::mt19937 mt(rd()); // This is an engine based on the Mersenne Twister 19937 (64 bits):
     std::uniform_real_distribution<double> dist(0, unused_subaddresses.size() - 1);
     std::string random_subaddress = unused_subaddresses[static_cast<int>(dist(mt))];
+    // copy random subaddress
+    // USED SUBADDRESS IS NOT REMOVED UNTIL THE SECOND CONFIRMATION (OUTPUT RECEIVED ...) 
+    subaddress = random_subaddress;
 #ifdef NEROSHOP_DEBUG    
     std::cout << std::endl << "random_subaddress: " << random_subaddress << "\n";
-#endif    
+#endif
     // also, generate a qrcode too
 }
 ////////////////////

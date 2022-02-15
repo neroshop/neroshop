@@ -2,12 +2,14 @@
 - rewrite renderer.cpp from scratch (if I can't find an experienced graphics programmer) or just use imgui
 - fix GUI focus thingy [x]
 - figure out how to turn qrcode data into png and jpeg
-- host database on decentralized file hosting networking like sia, filecoin/ipfs, etc.
-- tor integration
+- host database on self-hosted dedicated server or decentralized file hosting networking like sia, filecoin/ipfs, etc.
 - change network type to mainnet
-
+- learn to encrypt and decrypt database
+- learn to backup database
+- tor integration
 
 [LOW PRIORITY]
+- use const for function parameters (https://stackoverflow.com/a/117557) in case I end up working on neroshop with other people
 - create neroshop domain name (.org preffered)
 - create neroshop onion address
 - neroshop matrix server

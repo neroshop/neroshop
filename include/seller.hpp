@@ -42,9 +42,11 @@ public:
 	// boolean
 	bool is_verified() const; // returns true if seller is verified brand owner
 	bool has_listed(unsigned int item_id) const; // returns true if this seller has listed an item
+	bool has_wallet() const; // returns true if seller's wallet is opened
+	bool has_wallet_synced() const; // returns true if seller's wallet is synced to a node
 	// callbacks
 	static neroshop::User * on_login(const std::string& username);
-	void on_order_received();
+	void on_order_received(std::string& subaddress);
 	/////////////////////////
 	void update_customer_orders(); // called multiple times	// listens to and update customer orders
 protected:
