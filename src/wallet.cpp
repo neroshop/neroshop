@@ -186,8 +186,11 @@ std::vector<std::string> neroshop::Wallet::address_unused()
         std::vector<monero_subaddress> subaddresses = monero_wallet_obj->get_subaddresses(0, subaddress_indices); // retrieve subaddress from account_0
         if(!subaddresses[i].m_is_used.get()) {
 #ifdef NEROSHOP_DEBUG
-            std::cout << subaddresses[i].m_index.get() << " " << subaddresses[i].m_address.get() << std::endl;
-#endif            
+            std::cout << ((std::find(recent_address_list.begin(), recent_address_list.end(), subaddresses[i].m_address.get()) != recent_address_list.end()) ? "\033[91m" : "\033[0m") << subaddresses[i].m_index.get() << " " << subaddresses[i].m_address.get() << "\033[0m" << std::endl;// if subaddress is found in recent_address_list, mark it red
+#endif
+            // skip any recently used subaddress
+            if(std::find(recent_address_list.begin(), recent_address_list.end(), subaddresses[i].m_address.get()) != recent_address_list.end()) 
+                continue;    
             address_list.push_back(subaddresses[i].m_address.get()); // store unused addresses in vector
         }
     }
@@ -226,7 +229,6 @@ Progressbar * neroshop::Wallet::sync_bar (nullptr);
 ////////////////////
 dokun::Label * neroshop::Wallet::sync_label (nullptr);
 ////////////////////
-//neroshop::Message * neroshop::Wallet::wallet_message (nullptr);
 ////////////////////
 ////////////////////
 // create wallet_listener to synchronize the wallet and receive progress notifications
@@ -250,14 +252,10 @@ struct : monero_wallet_listener { // listener	- listener to receive notification
             neroshop::Wallet::sync_bar = new Progressbar();//sync_bar->set_range(0.0, 100.0); // 0-100%//sync_bar->set_outline(true);
             neroshop::Wallet::sync_bar->set_size(300, 30);
             neroshop::Wallet::sync_label = new dokun::Label();
+            neroshop::Wallet::sync_label->set_font(*dokun::Font::get_system_font());
             neroshop::Wallet::sync_label->set_alignment("center");
             neroshop::Wallet::sync_bar->set_label(*neroshop::Wallet::sync_label);
         }
-        //if(!neroshop::Wallet::wallet_message) {
-        //    neroshop::Wallet::wallet_message = new neroshop::Message();
-        //    neroshop::Wallet::wallet_message->hide(); // hidden until sync is done
-        //    std::cout << "wallet message box created\n";
-        //}
         dokun::Window * window = static_cast<dokun::Window *>(Factory::get_window_factory()->get_object(0)); // using dokun::Window::get_active() causes a seg fault when window loses focus while syncing - since it only gets the window that has focus :(
         window->poll_events(); // check for events
         window->set_viewport(Renderer::get_display_size().x, Renderer::get_display_size().y);//(1280, 720);
@@ -272,14 +270,28 @@ struct : monero_wallet_listener { // listener	- listener to receive notification
         //////////
         neroshop::Wallet::sync_bar->get_label()->set_string(std::to_string(progress) + "%");
         neroshop::Wallet::sync_bar->set_value(progress);
-        neroshop::Wallet::sync_bar->set_position((window->get_client_width() / 2) - (neroshop::Wallet::sync_bar->get_width() / 2), (window->get_client_height() / 2) - (neroshop::Wallet::sync_bar->get_height() / 2));// center progressbar
-        neroshop::Wallet::sync_bar->draw();
-        if(progress >= 100) {
-            neroshop::Message::get_first()/*neroshop::Wallet::wallet_message*/->set_text("SYNCHRONIZATION DONE", 107,142,35); 
-            neroshop::Message::get_first()/*neroshop::Wallet::wallet_message*/->center(window->get_client_width(), window->get_client_height());
-            neroshop::Message::get_first()/*neroshop::Wallet::wallet_message*/->show();
+        //////////
+        if(progress >= 100 && !neroshop::Message::get_second()->is_visible()) { // only show this msg once
+            // box text (label)        
+            neroshop::Message::get_second()->set_text("SYNCHRONIZATION DONE", 107,142,35);
+            neroshop::Message::get_second()->get_label(0)->set_alignment("none");
+            neroshop::Message::get_second()->get_label(0)->set_relative_position((neroshop::Message::get_second()->get_width() / 2) - (neroshop::Message::get_second()->get_label(0)->get_string().length() * 10/*neroshop::Message::get_second()->get_label(0)->get_width()*/ / 2), ((neroshop::Message::get_second()->get_height() - 10/*neroshop::Message::get_second()->get_label(0)->get_height()*/) / 2) - 20);            
+            // close button
+            neroshop::Message::get_second()->get_button(0)->set_text("Close");
+            neroshop::Message::get_second()->get_button(0)->set_color(214, 31, 31, 1.0);                    
+            neroshop::Message::get_second()->get_button(0)->set_relative_position((neroshop::Message::get_second()->get_width() / 2) - (neroshop::Message::get_second()->get_button(0)->get_width() / 2), neroshop::Message::get_second()->get_height() - neroshop::Message::get_second()->get_button(0)->get_height() - 20);            
+            // show message box and button
+            neroshop::Message::get_second()->get_button(0)->show();
+            neroshop::Message::get_second()->show();
+            // when sync is complete, we return to the main thread with no time to draw the msgbox, so its best to draw msgbox in main thread at all times
         }
-        //neroshop::Wallet::wallet_message->draw();
+        // on close button pressed
+        if(neroshop::Message::get_second()->get_button(0)->is_pressed()) {
+            neroshop::Message::get_second()->hide();
+        }
+        neroshop::Wallet::sync_bar->set_position((window->get_client_width() / 2) - (neroshop::Wallet::sync_bar->get_width() / 2), (window->get_client_height() / 2) - (neroshop::Wallet::sync_bar->get_height() / 2));// center progressbar
+        neroshop::Wallet::sync_bar->draw();        
+        ////////////////
         window->update();
     }
 } sync_listener;
@@ -296,19 +308,38 @@ struct : monero_wallet_listener {
         // get balance (actual)
         double piconero = 0.000000000001;
         double balance = (amount * piconero);
+        // get the subaddress
+        std::string subaddress = neroshop::Wallet::get_singleton()->get_address(subaddress_index);
         // you've received some xmr but it may be unspendable for the meantime
         if(is_locked) {
             std::cout << "\033[1;92;49m" << "TX incoming (amount: " << std::fixed << std::setprecision(12) << balance << std::fixed << std::setprecision(2) << " xmr, txid: " << tx_hash << ", account_idx: " << account_index << ", subaddress_idx: " << subaddress_index << ")" << "\033[0m" << std::endl;
+            // store subaddress in recent_address_list (if not yet added)
+            if(std::find(neroshop::Wallet::get_singleton()->recent_address_list.begin(), neroshop::Wallet::get_singleton()->recent_address_list.end(), subaddress) == neroshop::Wallet::get_singleton()->recent_address_list.end())
+                neroshop::Wallet::get_singleton()->recent_address_list.push_back(subaddress);//std::cout << "recently used addresses (count): " << neroshop::Wallet::get_singleton()->recent_address_list.size() << std::endl;
         }
         // your xmr can now be spent freely :)
         // at this point, any recently used subaddress will be removed from vector returned by Wallet::addresses_unused() (this is the final confirmation) - sometimes this message shows twice
         if(is_confirmed) { 
-            std::cout << "\033[1;32;49m" << "You have received " << std::fixed << std::setprecision(12) << balance << std::fixed << std::setprecision(2) << " xmr "/* << subaddress.m_address.get()*/ << "(txid: " << tx_hash << ", account_idx: " << account_index << ", subaddress_idx: " << subaddress_index << ")" << "\033[0m" << std::endl;//std::cout << "\033[1;94mTX has been confirmed. Is this the final confirmation? It is :)\033[0m" <<std::endl;
-            // get the subaddress
-            std::string subaddress = neroshop::Wallet::get_singleton()->get_address(subaddress_index);
+            std::cout << "\033[1;32;49m" << "You have received " << std::fixed << std::setprecision(12) << balance << std::fixed << std::setprecision(2) << " xmr " << "(txid: " << tx_hash << ", account_idx: " << account_index << ", subaddress_idx: " << subaddress_index << ")" << "\033[0m" << std::endl;
             // set message box text then show message box
-            neroshop::Message::get_first()->set_text(String::to_string_with_precision(balance, 12) + " xmr was deposited into your account (address: " + String::get_first_n_characters(subaddress, 4) + ".." + String::get_last_n_characters(subaddress, 4) + ")", 0, 107, 61);//56, 117, 11);//if(neroshop::Wallet::get_singleton()->get_monero_wallet() != nullptr) //neroshop::Message::get_first()->set_text(std::string("You have received " + String::to_string_with_precision(balance, 12) + " xmr"), 56, 117, 11);//34, 139, 34);//neroshop::Message message(std::string("output received: " + std::to_string(balance) + " xmr"), 34, 139, 34);
-            neroshop::Message::get_first()->show();
+            // box text0 (label)
+            neroshop::Message::get_second()->set_text(String::to_string_with_precision(balance, 12) + " xmr was deposited into your account "/*(address: " + String::get_first_n_characters(subaddress, 4) + ".." + String::get_last_n_characters(subaddress, 4) + ")"*/, 0, 107, 61);//56, 117, 11);//if(neroshop::Wallet::get_singleton()->get_monero_wallet() != nullptr) //neroshop::Message::get_second()->set_text(std::string("You have received " + String::to_string_with_precision(balance, 12) + " xmr"), 56, 117, 11);//34, 139, 34);//neroshop::Message message(std::string("output received: " + std::to_string(balance) + " xmr"), 34, 139, 34);
+            neroshop::Message::get_second()->get_label(0)->set_alignment("none");
+            neroshop::Message::get_second()->get_label(0)->set_relative_position((neroshop::Message::get_second()->get_width() / 2) - (neroshop::Message::get_second()->get_label(0)->get_string().length() * 10/*neroshop::Message::get_second()->get_label(0)->get_width()*/ / 2), ((neroshop::Message::get_second()->get_height() - 10/*neroshop::Message::get_second()->get_label(0)->get_height()*/) / 2) - 20);
+            std::cout << neroshop::Message::get_second()->get_label(0)->get_string() << " (width: " << (neroshop::Message::get_second()->get_label(0)->get_string().length() * 10) << ")" << std::endl;
+            // box text1
+            int text_gap = 10;//5; // space between text0 and text1 (vertically)
+            neroshop::Message::get_second()->set_text(String::get_first_n_characters(subaddress, 15) + ".." + String::get_last_n_characters(subaddress, 15) + " (idx: " + std::to_string(subaddress_index) + ")", 1);
+            neroshop::Message::get_second()->get_label(1)->set_alignment("none");//neroshop::Message::get_second()->get_label(0)->get_relative_x()
+            neroshop::Message::get_second()->get_label(1)->set_relative_position(((neroshop::Message::get_second()->get_width() / 2) - (neroshop::Message::get_second()->get_label(1)->get_string().length()*10 / 2)) - (10 * std::to_string(subaddress_index).length()), neroshop::Message::get_second()->get_label(0)->get_relative_y() + 10/*neroshop::Message::get_second()->get_label(0)->get_height()*/ + text_gap); // 1          
+            // cancel button
+            neroshop::Message::get_second()->get_button(0)->set_text("Close");
+            neroshop::Message::get_second()->get_button(0)->set_color(214, 31, 31, 1.0);                    
+            neroshop::Message::get_second()->get_button(0)->set_relative_position((neroshop::Message::get_second()->get_width() / 2) - (neroshop::Message::get_second()->get_button(0)->get_width() / 2), neroshop::Message::get_second()->get_height() - neroshop::Message::get_second()->get_button(0)->get_height() - 20);//200-30(height)-20(bottompadding) = 150(button_y)
+            // show message box, labels and buttons
+            neroshop::Message::get_second()->get_label(1)->show();
+            neroshop::Message::get_second()->get_button(0)->show();
+            neroshop::Message::get_second()->show();
         }
     }
     void on_balances_changed (uint64_t new_balance, uint64_t new_unlocked_balance) {

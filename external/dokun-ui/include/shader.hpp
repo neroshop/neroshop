@@ -52,15 +52,15 @@ public:
 	unsigned int get_program() const;
 	unsigned int get_shader(int index) const; // index is also represents the type of shader
 	unsigned int get_shader_count() const;
-	std::string get_source(int index)const;                 //static int get_source(lua_State *L);
+	std::string get_source(int shader_index)const;                 //static int get_source(lua_State *L);
     // location
 	unsigned int get_attribute(const std::string& attribute)const;    //static int get_attribute(lua_State *L); // return attrib location
 	unsigned int get_uniform(const std::string& uniform)const;               //static int get_uniform(lua_State *L); // return uniform location
     // boolean
 	bool has_program()const;
+    bool is_compiled(unsigned int shader) const;
+	bool is_linked(void) const;
 private:
-    void compile_check(unsigned int shader);
-	void link_check(void);
 	void context_check(void);
 	unsigned int program;
 	unsigned int vertex_shader;

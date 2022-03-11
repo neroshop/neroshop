@@ -47,6 +47,7 @@ public:
 		void set_outline_antialiased(bool antialised); static int set_outline_antialiased(lua_State *L);
 		// border - coming soon
 		void set_border(bool border);
+		void set_radius(double radius);
 		// getters
 		std::string get_text()const;    static int get_text(lua_State *L);
 		dokun::Label * get_label()const;    static int get_label(lua_State *L);
@@ -59,6 +60,7 @@ public:
 		double get_value()const;       static int get_value(lua_State *L);
 		int get_direction()const;       static int get_direction(lua_State *L); // fill_direction : 0 = right(default), 1 = left
 		int get_text_direction()const;       static int get_text_direction(lua_State *L); // 0 = center(default), left = 1, right = 2
+	    double get_radius() const;
 	private:
 	    double value; 
         Vector2 range;
@@ -73,11 +75,13 @@ public:
 		double outline_width;
 		bool outline_antialiased; // removes staircase effect from line and straightens the line (can lower performance)
 		Vector4 outline_color;
-		// gradient
-		bool gradient;
-		Vector4 gradient_color;		
 		// border
 		bool border;
+		// radius
+		double radius;		
+		// gradient
+		bool gradient;
+		Vector4 gradient_color;
 };
 #endif
 #endif

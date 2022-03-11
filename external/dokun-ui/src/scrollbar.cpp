@@ -29,18 +29,15 @@ border(false)
 	set_orientation(0);
 }
 //////////////
-Scrollbar::Scrollbar(int x, int y)
+Scrollbar::Scrollbar(int x, int y) : Scrollbar()
 {
 	set_position(x, y);
-	set_size(15, 200); // 20, 150
-	set_orientation(0);	
 }
 //////////////
-Scrollbar::Scrollbar(int x, int y, int width, int height)
+Scrollbar::Scrollbar(int x, int y, int width, int height) : Scrollbar()
 {
 	set_position(x, y);
-	set_size(width, height); // 20, 150
-	set_orientation(0);	
+	set_size(width, height);
 }
 //////////////
 int Scrollbar::new_(lua_State *L)
@@ -53,8 +50,8 @@ Scrollbar::~Scrollbar()
 //////////////	
 void Scrollbar::draw()
 {
-	if(is_visible())
-	{
+	on_draw(); // callback for all gui
+	if(!is_visible()) return;
 	    //double min_val = get_range().x;
 	    //double max_val = get_range().y;
 		double value = get_value();
@@ -69,7 +66,7 @@ void Scrollbar::draw()
         int green  = get_color().y;
         int blue   = get_color().z;		
 		int alpha  = get_color().w;		
-		Renderer::draw_scrollbar(x, y, width, height, angle, scale_x, scale_y, red, green, blue, alpha,
+		Renderer::draw_scrollbar(x, y, width, height, angle, scale_x, scale_y, red, green, blue, alpha, GUI::gui_shader,
             value, range.x, range.y,
 			// handle
 			handle_offset, handle_size, handle_color,
@@ -82,8 +79,6 @@ void Scrollbar::draw()
             // border
 			border
 		);
-	}
-	on_draw(); // callback for all gui
 }
 /////////////
 void Scrollbar::draw(double x, double y)

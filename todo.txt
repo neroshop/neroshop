@@ -1,28 +1,35 @@
 [HIGH PRIORITY]
-- rewrite renderer.cpp from scratch (if I can't find an experienced graphics programmer) or just use imgui
-- fix GUI focus thingy [x]
+- rewrite renderer.cpp from scratch (if I can't find an experienced graphics programmer)
 - figure out how to turn qrcode data into png and jpeg
-- host database on self-hosted dedicated server or decentralized file hosting networking like sia, filecoin/ipfs, etc.
-- change network type to mainnet
+- change font
+- create cart table with a user_id column [x]
+-- create cart_items table
+- create product category table, simplify category list and create subcategories
+- create catalog with sorting by price, category, etc.
+- work on search engine
+- change network type to mainnet (when ready for release)
+- host database on self-hosted dedicated server or mutable decentralized database hosting network like sia (SkyDB), filecoin/ipfs, etc.
 - learn to encrypt and decrypt database
 - learn to backup database
-- tor integration
+- add auction system
+- remove login as guest option (for now, since I don't know how guest data will be stored in main database)
 
 [LOW PRIORITY]
-- use const for function parameters (https://stackoverflow.com/a/117557) in case I end up working on neroshop with other people
 - create neroshop domain name (.org preffered)
 - create neroshop onion address
-- neroshop matrix server
-
+- neroshop matrix server [-]
+- tor integration
+- use const for function parameters, in case I end up working on neroshop with other people (https://stackoverflow.com/a/117557)
 
 [UI]
 // to-do:
-- fix on_hover [text edit]                               []
+- prevent mouse press from affecting overlapped GUIs     []
+- fix on_hover [text edit]                               [x] 2022
 - make cursor follow mouse pointer on click              [x] 2021-12-14
 - blinking cursor [text edit]                            [x] 2021-12-15
 - copy to clipboard                                      [x] 2021-12-16
 - placeholder text [text edit]                           [x] 2021-12-17
-- add rounded corners [all]                              []
+- add rounded corners [all]                              [x] 2022-03-07
 - get key combination input (e.g. shift + A) [text edit] [x] 2022-01-02
 - hide sensative text [text edit]                        [x] 2022-01-03
 - remove length restrictions and add scrolling text      [x] 2022-01-25
@@ -33,6 +40,8 @@
 - fix scrollbar-mouse move                               []
 - created a new version of spinner                       [x] 2021-12-18
 - add functional tab widget                              []
+- fix edit text and cursor when resized                  []
+- replace innapropriate doubles with floats              []
 
 [Spinner][Progress:98%]
 [Edit][Progress:79%]
@@ -42,13 +51,14 @@
 [DATABASE DESIGN]
 neroshop - for storing application data and transactions
 neroshop_user - for storing user data (accounts, settings, etc.)
-
 * guests' cart database will be stored locally and registered users' cart data will be stored on server.
+* table "users" would stored in database "neroshop_user"
+edit: actually, I will keep everything in a single database since I'm not sure how the two databases will be able to communicate with one another
 
-tables:
-users [stored in neroshop_user]
-
-
+[LONG-TERM GOALS]
+2. User-friendly UI/UX
+2. Privacy (limited data storing)
+3. Scalibility
 
 [HIRING]
 - hire graphics programmer to fix and optimize rendering code in "renderer.cpp"
@@ -80,4 +90,13 @@ postgreSQL (BSD or MIT): https://www.postgresql.org/download/    =>    https://w
 Converting from SQLite to PostgreSQL:
 pgloader: https://pgloader.io/about/
           docs - https://pgloader.readthedocs.io/en/latest/
+
+For big data and scalability, I might need to use a NoSQL database like:
+MongoDB: https://docs.mongodb.com/drivers/cxx/
+          
+SkyDB:
+https://blog.sia.tech/skydb-a-mutable-database-for-the-decentralized-web-7170beeaa985
+
+Considerations:
+In the future, I may consider supporting other private-by-default coins such as wownero and piratechain
 

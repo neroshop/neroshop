@@ -12,6 +12,8 @@ Progressbar::Progressbar() : value(0), range(0, 100), direction(0),
 	outline_width(1.0), 
 	outline_antialiased(false),
 	outline_color(0, 0, 0, 1.0),
+// radius
+    radius(0.0), 
 // gradient
     gradient(false),
 	gradient_color(background_color), // gradient.color1 = backgound_color, gradient.color0 = foreground_color
@@ -23,44 +25,15 @@ Progressbar::Progressbar() : value(0), range(0, 100), direction(0),
 	set_orientation(0);
 }
 /////////////
-Progressbar::Progressbar(int x, int y) : value(0), range(0, 100), direction(0), 
-// color
-   foreground_color(0, 51, 102, 1.0), 
-   background_color(160, 160, 160, 1.0),
-// text   
-   label(nullptr),
-   text_direction(0),
-// outline
-    outline(false), 
-	outline_width(1.0), 
-	outline_antialiased(false),
-	outline_color(0, 0, 0, 1.0),
-// border
-    border(false)
+Progressbar::Progressbar(int x, int y) : Progressbar()
 {
 	set_position(x, y);
-	set_size(200, 10);
-	set_orientation(0);	
 }
 /////////////
-Progressbar::Progressbar(int x, int y, int width, int height) : value(0), range(0, 100), direction(0), 
-// color
-   foreground_color(0, 51, 102, 1.0), 
-   background_color(160, 160, 160, 1.0),
-// text   
-   label(nullptr),
-   text_direction(0),
-// outline
-    outline(false), 
-	outline_width(1.0), 
-	outline_antialiased(false),
-	outline_color(0, 0, 0, 1.0),
-// border
-    border(false)
+Progressbar::Progressbar(int x, int y, int width, int height) : Progressbar()
 {
 	set_position(x, y);
 	set_size(width, height);
-	set_orientation(0);
 }
 /////////////
 Progressbar::~Progressbar()
@@ -70,6 +43,7 @@ Progressbar::~Progressbar()
         delete label;
         label = nullptr;
     }
+    std::cout << "progress_bar deleted\n";
 }
 /////////////
 void Progressbar::draw()
@@ -95,8 +69,10 @@ void Progressbar::draw()
 	
 		Renderer::draw_progressbar(x, y, width, height, angle, scale_x, scale_y,
 		    red, green, blue, alpha,
+		    GUI::gui_shader,
 			min_val, max_val, value, background_color,
-			outline, outline_width, outline_color, outline_antialiased
+			outline, outline_width, outline_color, outline_antialiased,
+			radius
 			);
 		if(label) // as long as label is not nullptr. Does not matter if text is empty, still need to set proper x and y positions
 		{
@@ -342,7 +318,10 @@ int Progressbar::set_value(lua_State *L)
 /////////////
 void Progressbar::set_direction(int direction) // bar fill goes ?  0 = right(default), 1 = left
 {
-	(this)->direction = direction;
+	this->direction = direction;
+	// this works, but it is not the appropriate way to set the bar direction, instead do it in the renderer
+	//if(direction == 0) set_angle(static_cast<float>(0.0)); // left to right
+	//if(direction == 1) set_angle(static_cast<float>(180.0)); // right to left
 }  
 /////////////
 int Progressbar::set_direction(lua_State *L)
@@ -486,6 +465,9 @@ int Progressbar::set_outline_antialiased(lua_State *L)
 	return 0;
 }
 /////////////
+void Progressbar::set_radius(double radius) {
+    this->radius = radius;
+}
 /////////////
 /////////////
 /////////////
@@ -712,6 +694,11 @@ int Progressbar::get_text_direction(lua_State *L)
 	}		
     lua_pushnil(L);	
 	return 1;
+}
+/////////////
+/////////////
+double Progressbar::get_radius() const {
+    return radius;
 }
 /////////////
 /////////////

@@ -73,13 +73,12 @@ class Entity // or GameObject; base abtract class that acts as parent for Sprite
 		// getters
 		Component * get_component(int index)const;          static int get_component(lua_State *L);// get a component at a index
 		Component * get_component(const std::string& name)const;   // get a component by name 
-		Shader * get_shader(int index)const;                static int get_shader(lua_State *L); // once set, shaders will be attached to the main program; pure entity clasess(excluding Sprites and Models) must have their own shaders. There are no default entity shaders
+		Shader * get_shader()const;                         static int get_shader(lua_State *L); // once set, shaders will be attached to the main program; pure entity clasess(excluding Sprites and Models) must have their own shaders. There are no default entity shaders
 		Script * get_script() const;                        static int get_script(lua_State *L);   		
 		int get_polygon_mode()const;                        static int get_polygon_mode(lua_State *L);
 		int get_count(const std::string& what)const;        static int get_count(lua_State *L);
 		// array
-		std::vector<Component *> get_component_array() const;
-		std::vector<Shader *> get_shader_array()       const;
+		std::vector<Component *> get_component_container() const;
 		// other getters
 		virtual std::string get_name();
 		virtual int get_id();
@@ -92,8 +91,8 @@ class Entity // or GameObject; base abtract class that acts as parent for Sprite
 	    //double x, y;		
 		// component list
 		std::vector<Component *> component_list; // component - additional data members that can be attached to entities
-		// shader list
-		std::vector<Shader *> shader_list; // shaders - for custom rendering of entities
+		// shader
+		Shader * shader; // shaders - for custom rendering of entities
 		// script (each entity needs no more than 1 script)
 		Script * script;
 		bool visible;

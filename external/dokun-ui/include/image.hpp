@@ -136,6 +136,9 @@ private:
 	bool  load_svg(const std::string& file_name);
 	// conversion
 	void bmp_to_png();
+	// shader
+	static void generate_shader(void);
+	static Shader * image_shader;
 private:
 	unsigned int  width;
 	unsigned int height;

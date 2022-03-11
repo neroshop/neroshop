@@ -5,17 +5,17 @@ dokun::Font::Font() : width(0), height(16), face(nullptr), data(nullptr)
 	Factory::get_font_factory()->store(this);
 }
 /////////////
-dokun::Font::Font(const dokun::Font& font) : width(0), height(16) // copies data from another font
+dokun::Font::Font(const dokun::Font& font) : dokun::Font() // copies data from another font
 {
     copy(font);
-	Factory::get_font_factory()->store(this);
 }
 /////////////
-dokun::Font::Font(const std::string& file_name) : width(0), height(16)
+dokun::Font::Font(const std::string& file_name) : dokun::Font()
 {
     if(!load(file_name)) {
-	    std::cerr << dokun::Logger("Could not open font from " + file_name);}
-	Factory::get_font_factory()->store(this);
+	    std::cerr << dokun::Logger("Could not open font from " + file_name);
+	    exit(0);
+	}
 }
 /////////////
 int dokun::Font::font_new(lua_State *L)
@@ -43,7 +43,7 @@ dokun::Font::~Font(void)
 {
 	destroy(); // destroy texture_buffer
 	Factory::get_font_factory()->release(this);
-    std::cout << "font deleted\n";	
+    std::cout << (this != dokun::Font::system_font) ? "font deleted\n" : "system font deleted\n";	
 }
 /////////////
 FT_Library dokun::Font::library (nullptr);
@@ -82,6 +82,7 @@ bool dokun::Font::load(const std::string& file_name) // load a font as a whole
 	if(error) { dokun::Logger("Could not load font from " + file_name); return false; }
 	this->file = file_name; // save filename once FT_New_Face is succeeds.
 	error = FT_Set_Pixel_Sizes(face, width, height); // ppem (pixel per em)  // at 8, "Sid" would be 13 x 5 | at 16, "Sid" would be 24 x 11 |at 32, "Sid" would be 47 x 22  | at 48, "Sid" would be 74 x 32 //FT_Error error = FT_Set_Char_Size( face, height * 64, 0, 72, 0 );   // DPI: 72 or 96 
+    if(error) { dokun::Logger("Could not set pixel size " + file_name); return false; }
     return true;
 }
 /////////////

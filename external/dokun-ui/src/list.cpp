@@ -16,42 +16,30 @@ gradient_color(color)
 	set_position(0, 0);
 	set_size(80, 20);
 	set_orientation(0);
-	
-	label = new dokun::Label();
+	//label = new dokun::Label();
 }
-List::List(int x, int y) : color(106, 106, 106, 1.0), selection(nullptr), image(nullptr),
-// outline (default)
-outline(true),
-outline_width(1.0),
-outline_color(0, 0, 0, 1.0),
-outline_antialiased(false)
+////////////////////
+List::List(int x, int y) : List()
 {
 	set_position(x, y);
-	set_size(80, 20);
-	set_orientation(0);
-	
-	label = new dokun::Label();
+	//label = new dokun::Label();
 }
-List::List(int x, int y, int width, int height) : color(106, 106, 106, 1.0), selection(nullptr), image(nullptr),
-// outline
-outline(true),
-outline_width(1.0),
-outline_color(0, 0, 0, 1.0),
-outline_antialiased(false)
+////////////////////
+List::List(int x, int y, int width, int height) : List()
 {
 	set_position(x, y);
 	set_size(width, height);
-	set_orientation(0);
-	
-	label = new dokun::Label();	
+	//label = new dokun::Label();	
 }
+////////////////////
 int List::new_(lua_State *L)
 {
     return 1;
 }
+////////////////////
 List::~List()
 {}
-		
+////////////////////		
 void List::draw()
 {
     //on_draw(); // sets position relative to parent, regardless of visibility
@@ -66,6 +54,7 @@ void List::draw()
 		    Renderer::draw_box(item->get_x(), item->get_y(), item->get_width(), item->get_height(), 
 			    get_angle(), get_scale().x, get_scale().y, 
 			    item->get_color().x, item->get_color().y, item->get_color().z, item->get_color().w,
+			    GUI::gui_shader,
 			    item->get_radius(), false, false, 0, color, false, false, false, item->get_title_bar_button_close_color(),
 			    item->has_outline(), item->outline_width, item->outline_color, item->outline_antialiased,
 			    item->has_border(), 0, color,

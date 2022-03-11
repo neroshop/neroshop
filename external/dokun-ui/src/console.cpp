@@ -87,20 +87,19 @@ std::string Console::on_enter()
 	//////////////////////////////////////////
 	std::string output = ""; // command output
     // if text (in edit) is empty, exit function (cannot submit empty text)_
-    if(console_ptr->edit->get_label()->get_string().empty()) return "";
+    if(console_ptr->edit->is_empty()) return "";
     // if the "Enter" key is pressed
     if(dokun::Keyboard::is_pressed(DOKUN_KEY_RETURN)) {
          // add / append new label to chat_box (with a copy of edit_label's string)
         if(console_ptr->label_list.size() < console_ptr->label_list.capacity())  // if capacity has not yet been reached
         {
-            console_ptr->label_list.push_back(new dokun::Label(console_ptr->edit->get_label()->get_string()));
+            console_ptr->label_list.push_back(new dokun::Label(console_ptr->edit->get_text()));
             // execute the command
-            output = execute(console_ptr->edit->get_label()->get_string());
+            output = execute(console_ptr->edit->get_text());//console_ptr->edit->get_label()->get_string());
             // save last string in text edit
-            console_ptr->cache = console_ptr->edit->get_label()->get_string();
+            console_ptr->cache = console_ptr->edit->get_text();//console_ptr->edit->get_label()->get_string();
             // clear edit_label, and reset cursor_x
-            console_ptr->edit->get_label()->set_string("");
-            console_ptr->edit->set_cursor_x(0); // reset cursor_x
+            console_ptr->edit->reset();
             // no need to change scrollbar if label has not yet reached its capacity
         } // label_less
         else if(console_ptr->label_list.size() >= console_ptr->label_list.capacity()) {// capacity has been reached
@@ -113,14 +112,13 @@ std::string Console::on_enter()
             console_ptr->label_list[2]->set_string( console_ptr->label_list[3]->get_string() );
             console_ptr->label_list[3]->set_string( console_ptr->label_list[4]->get_string() );
              // last element becomes/copies the edit_label's string
-            console_ptr->label_list[4]->set_string( console_ptr->edit->get_label()->get_string() );
+            console_ptr->label_list[4]->set_string( console_ptr->edit->get_text() );
             // execute the command
-            output = execute(console_ptr->edit->get_label()->get_string());
+            output = execute(console_ptr->edit->get_text());//console_ptr->edit->get_label()->get_string());
             // save last string in text edit
-            console_ptr->cache = console_ptr->edit->get_label()->get_string();                        
+            console_ptr->cache = console_ptr->edit->get_text();//console_ptr->edit->get_label()->get_string();                        
             // clear edit_label, and reset cursor_x
-            console_ptr->edit->get_label()->set_string("");
-            console_ptr->edit->set_cursor_x(0); // reset cursor_x
+            console_ptr->edit->reset();
             // scrollbar_handle goes the opposite way of the text (text goes up, scrollbar_handle goes down)
             // TIP: scrollbars always start from the top
             if(console_ptr->discarded_string_list.size() > 0)//if(label_list.size() > label_list.capacity()) // if label capacity is surpassed // lets say the chatbox's height increases
@@ -139,20 +137,19 @@ std::string Console::on_enter_code(lua_State *L)
 	//////////////////////////////////////////
 	std::string output = ""; // command output
     // if text (in edit) is empty, exit function (cannot submit empty text)_
-    if(console_ptr->edit->get_label()->get_string().empty()) return "";
+    if(console_ptr->edit->is_empty()) return "";
     // if the "Enter" key is pressed
     if(dokun::Keyboard::is_pressed(DOKUN_KEY_RETURN)) {
          // add / append new label to chat_box (with a copy of edit_label's string)
         if(console_ptr->label_list.size() < console_ptr->label_list.capacity())  // if capacity has not yet been reached
         {
-            console_ptr->label_list.push_back(new dokun::Label(console_ptr->edit->get_label()->get_string()));
+            console_ptr->label_list.push_back(new dokun::Label(console_ptr->edit->get_text()));
             // execute the lua code
-            output = code(L, console_ptr->edit->get_label()->get_string());
+            output = code(L, console_ptr->edit->get_text());
             // save last string in text edit
-            console_ptr->cache = console_ptr->edit->get_label()->get_string();
+            console_ptr->cache = console_ptr->edit->get_text();//console_ptr->edit->get_label()->get_string();
             // clear edit_label, and reset cursor_x
-            console_ptr->edit->get_label()->set_string("");
-            console_ptr->edit->set_cursor_x(0); // reset cursor_x
+            console_ptr->edit->reset();
             // no need to change scrollbar if label has not yet reached its capacity
         } // label_less
         else if(console_ptr->label_list.size() >= console_ptr->label_list.capacity()) {// capacity has been reached
@@ -165,14 +162,13 @@ std::string Console::on_enter_code(lua_State *L)
             console_ptr->label_list[2]->set_string( console_ptr->label_list[3]->get_string() );
             console_ptr->label_list[3]->set_string( console_ptr->label_list[4]->get_string() );
              // last element becomes/copies the edit_label's string
-            console_ptr->label_list[4]->set_string( console_ptr->edit->get_label()->get_string() );
+            console_ptr->label_list[4]->set_string(console_ptr->edit->get_text());//console_ptr->edit->get_label()->get_string() );
             // execute the command
-            output = execute(console_ptr->edit->get_label()->get_string());
+            output = execute(console_ptr->edit->get_text());//console_ptr->edit->get_label()->get_string());
             // save last string in text edit
-            console_ptr->cache = console_ptr->edit->get_label()->get_string();                        
+            console_ptr->cache = console_ptr->edit->get_text();//console_ptr->edit->get_label()->get_string();                        
             // clear edit_label, and reset cursor_x
-            console_ptr->edit->get_label()->set_string("");
-            console_ptr->edit->set_cursor_x(0); // reset cursor_x
+            console_ptr->edit->reset();
             // scrollbar_handle goes the opposite way of the text (text goes up, scrollbar_handle goes down)
             // TIP: scrollbars always start from the top
             if(console_ptr->discarded_string_list.size() > 0)//if(label_list.size() > label_list.capacity()) // if label capacity is surpassed // lets say the chatbox's height increases
@@ -316,9 +312,13 @@ void Console::init()
  	    console_ptr->edit->set_size(console_ptr->box->get_width(), 20);
 	    //edit->set_position(700, 600);
 	    dokun::Label * edit_label = new dokun::Label();
+	    edit_label->set_font(*dokun::Font::get_system_font());
 	    edit_label->set_color(49, 39, 19, 255);
 	    edit_label->set_relative_position(0, 4);
-	    console_ptr->edit->set_label(* edit_label);      
+	    console_ptr->edit->set_label(* edit_label); 
+	    // push_back label[0]
+	    //console_ptr->label_list.push_back(edit_label);
+	    //std::cout << "CONSOLE LABEL_LIST SIZE: " << console_ptr->label_list.size() << std::endl;
         // label_list
         console_ptr->label_list.reserve(console_ptr->box->get_height() / round(console_ptr->edit->get_label()->get_height())); // can only hold (chat_height / height_of_each_label)
         //std::cout << "Labels reserved for chat_box: " << label_list.capacity() << std::endl;
@@ -362,6 +362,7 @@ void Console::draw()
     {
         if(i == 0) console_ptr->label_list[0]->set_position( console_ptr->box->get_x() + 1, console_ptr->box->get_y() + (console_ptr->box->get_height() - (console_ptr->label_list[0]->get_height() * console_ptr->label_list.size()) ) ); // first label in list will determine the position of the rest
         if(i != 0) { console_ptr->label_list[i]->set_position( console_ptr->label_list[i - 1]->get_x(), console_ptr->label_list[i - 1]->get_y() + console_ptr->label_list[i - 1]->get_height() ); } // set label position to the position of its previous - height    
+        //console_ptr->label_list[i]->set_color(32, 32, 32);
         console_ptr->label_list[i]->set_visible( (console_ptr->box->is_iconified() == false) && (console_ptr->box->is_visible() == true) ); // hide labels (if box is iconified)
         console_ptr->label_list[i]->draw();
     }

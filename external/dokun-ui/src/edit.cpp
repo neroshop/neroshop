@@ -1,7 +1,7 @@
 #include "../include/edit.hpp"
 
 Edit::Edit() : color(190, 190, 190, 1.0), character_limit(20),
-     zoom_factor(0), newlines_count(0), start_index(0), multilined(false), readonly(false), sensative(false), scrollable(true), label(nullptr), // cursor_height is ALWAYS the same size as edit's height, with some adjustments to padding
+zoom_factor(0), newlines_count(0), start_index(0), multilined(false), readonly(false), sensative(false), scrollable(true), label(nullptr), // cursor_height is ALWAYS the same size as edit's height, with some adjustments to padding
 // cursor
 cursor(true), cursor_x(0), cursor_y(0), cursor_width(1/*8*/), cursor_height(20), cursor_color(0, 0, 0, 0.8), cursor_space(10), cursor_blink_interval(0.90), cursor_restore_alpha(cursor_color.w),
 boundless_cursor_x(0), boundless_cursor_y(0),
@@ -9,13 +9,15 @@ boundless_cursor_x(0), boundless_cursor_y(0),
 placeholder_label(nullptr),
 placeholder_image(nullptr),
 // outline
-    outline(false),
-	outline_width(1.0),
-	outline_color(0, 0, 0, 255),
-	outline_antialiased(false),
+outline(false),
+outline_width(1.0),
+outline_color(0, 0, 0, 255),
+outline_antialiased(false),
 // gradient
-    gradient(false),
-	gradient_color(color)	    
+gradient(false),
+gradient_color(color)	 
+// temporary
+//,vao(0), vbo(0), tbo(0), ebo(0)	   
 {
 	set_position(0, 0);
 	set_size(200, 20); // 150, 20 // width MUST always be a factor of cursor_space(10), so we don't run into problems later!
@@ -26,6 +28,12 @@ placeholder_image(nullptr),
     ///////////////////
     // reserve size to character_limit. The vector will retain its original size (will remain empty)
     character_data.reserve(character_limit);//std::cout << "character_array size: " << character_data.size() << std::endl; std::cout << "character array reserved_size: " << character_data.capacity() << std::endl;
+    ///////////////////
+    ///////////////////
+    // generate vertex array object once
+    /*Renderer::generate_vertex_array_edit(vao, vbo, tbo, ebo,
+        get_x(), get_y(), get_width(), get_height());*/
+    ///////////////////
 }
 /////////////
 Edit::~Edit()
@@ -70,21 +78,108 @@ void Edit::reset() {
 /////////////
 void Edit::draw()
 {
-    on_draw_edit(); // without focus, since edit has its own focus // sets position relative to parent, regardless of visibility
+    on_draw_no_focus(); // without checking or setting focus, since edit has its own focus // sets position relative to parent, regardless of visibility
 	if(!is_visible()) return;  // is it visible?
 	//////////////////////////
 	// this is just a test - edit still works whether it has an odd or even width
 	// if width is not an even number but an odd, round to the nearest 10 ?
 	// % = returns a remainder, but if there's no remainder, then its a factor of cursor_space(10)
 	// width MUST be a factor of cursor_space(10) // reminder: width determines capacity
-	//if (get_width() % static_cast<int>(cursor_space) != 0) { // if width is NOT divisible by cursor_space(10), round it to the nearest 10th
-	//    std::cout << "width(" << get_width() << ") rounded to nearest tenth: " << Math::round10(get_width()) << std::endl;
-	//    set_width( Math::round10(get_width()) );
-	//}
+	/*if (get_width() % static_cast<int>(cursor_space) != 0) { // if width is NOT divisible by cursor_space(10), round it to the nearest 10th
+	    std::cout << "width(" << get_width() << ") rounded to nearest tenth: " << Math::round10(get_width()) << std::endl;
+	    set_width( Math::round10(get_width()) );
+	}*/
+	//////////////////////////
+	// if edit has resized (smaller), and now the visible text (label) has gone past the capacity
+	//int text_width = (label->get_string().length() * cursor_space);
+	// edit capacity changes everytime edit is resized
+	/*if(label->get_string().length() > get_capacity()) {
+	    //std::cout << "label width: " << text_width << std::endl;
+	    std::cout << "label length: " << label->get_string().length() << std::endl;
+	    std::cout << "characters count: " << character_data.size() << std::endl;
+	    std::cout << "edit capacity: " << get_capacity() << std::endl;	    
+	    ////std::cout << DOKUN_UI_TAG "\033[0;91m" << "LABEL STRING HAS EXCEEDED EDIT CAPACITY!!" << "\033[0m" << std::endl;
+	    // re-adjust the label from its starting_index to cursor_position
+	    // FROM WHERE BOUNDLESS_CURSOR IS POSITIONED TO END OF STRING
+	    // show only n (min(get_capacity(), text_len)) characters
+		int start = get_capacity() * get_string_parts(); // increase by capacity(50) every n parts
+		int characters_count = character_data.size() - start; // number of characters being drawn at a time          
+        // update cursor positions?
+        // update starting index
+        //if(get_string_parts() < 1) start_index = 0;
+        ////if(get_string_parts() > 0) start_index = character_data.size() - (get_capacity() * splits_count);// - 1;//character_data.size() >= get_capacity()        
+        std::cout << "string parts (splits): " << get_string_parts() << std::endl;
+        std::cout << "starting index: " << start_index << std::endl;
+        std::cout << "cursor_x: " << cursor_x << std::endl;
+        std::cout << "boundless cursor x: " << boundless_cursor_x << std::endl; 
+        // converting boundless cursor_x to bounded cursor_x
+        ////if(cursor_x <= 0)  cursor_x = boundless_cursor_x - (get_width() * splits_count);        
+        // get current string index where boundless_cursor is at
+        int string_index = (boundless_cursor_x) / cursor_space - 1;
+        std::cout << "string index: " << string_index << std::endl;        
+        // make it the starting index ??
+        // the part that is cut off should become the starting_index ?
+        ////int cut_off_text = label->get_string().length() - get_capacity();
+        ////std::cout << "cut off from edit: " << cut_off_text << std::endl;
+        // NEW STARTING INDEX AT CHARACTER_COUNT - CUTOFF_PART
+        ////int new_start_index = character_data.size() - cut_off_text;
+        ////std::cout << "starting index (new): " << new_start_index << std::endl;
+        // BOUNDLESS CURSOR POSITION?
+        // SUBTRACT LABEL_STRING UNTIL IT IS EQUAL TO CAPACITY!!!!!
+        // ACTUALLY, REMOVE FIRST n (CUT_OFF) CHARACTERS
+        // converting boundless cursor_x to bounded cursor_x
+        // so it does not go past edit
+        //
+        // push cursor to end of edit        
+        //boundless_cursor_x = character_data.size() * 10;
+        //cursor_x = get_width();
+        //cursor_x = fabs((get_width() * splits_count) - boundless_cursor_x);
+        //std::cout << "boundless_cursor_x: " << boundless_cursor_x << std::endl;
+        //std::cout << "cursor_x: " << cursor_x << std::endl;
+        //boundless_cursor_x = (start_index * cursor_space);//(character_data.size() * 10) - (label->get_string().length() * 10);
+        //std::cout << "boundless_cursor_x (changed): " << boundless_cursor_x << std::endl;
+        ////string_index = (boundless_cursor_x / cursor_space);// - 
+        ////std::cout << "string index (changed): " << start_index << std::endl;
+        // THE START POSITION DOES NOT CHANGE
+        // INSTEAD WE USE IT TO FIX THE TEXT
+        ////cursor_x = 
+        // fix boundless cursor position
+        int boundless_cursor_x_fix = boundless_cursor_x - (start_index * cursor_space);
+        std::cout << "should_be boundless_cursor_x: " << boundless_cursor_x_fix << std::endl;
+        //-----------------
+        std::string text = characters_to_string();//label->get_string();
+        int n = get_capacity();//(text.length() < get_capacity()) ? text.length() : get_capacity();//get_capacity();//std::min<size_t>(get_capacity(), character_data.size());
+		// GET LAST n characters up to where the boundless_cursor is at
+		// FROM END OF CHARACTER_DATA_STRING TO STRING_INDEX WHERE CURSOR IS AT
+		size_t cursor_index = string_index;//character_data.size() - string_index;// cursor index
+		size_t end_cursor = character_data.size() - 1;//string_index;
+		std::string end_to_cursor = text.substr(character_data.size() - cursor_index);
+		std::cout << "from end of character_data to  where boundless_cursor is: "
+		<< end_to_cursor << " (" << end_to_cursor.size() << ")" << std::endl;
+		// AND THEN GET TEXT FROM START_INDEX TO STRING_INDEX WHERE CURSOR IS AT
+		std::string start_to_cursor = text.substr(start_index, cursor_index - start_index);
+		std::cout << "from start_index to  where boundless_cursor is: "
+		<< start_to_cursor << " (" << start_to_cursor.size() << ")" << std::endl;		
+		// SET TEXT
+		std::string new_text = String::get_first_n_characters(start_to_cursor, n / 2) + String::get_last_n_characters(end_to_cursor, n / 2);
+		//text = get_last_n_characters(n);
+		// ACTUALLY, REMOVE FIRST n (CUT_OFF) CHARACTERS
+		////text.substr(0, std::min<size_t>(n, label->get_string.length()));
+		// GET LAST (CAPACITY) CHARACTERS
+		// GOAL: GET TEXT FROM START_INDEX TO CAPACITY (whatever the capacity may be)
+		//text = text.substr(start_index - string_index, n);//text.substr(start_index, n);//text.substr(string_index - n, n);//text.substr(label->get_string().length() - n);//text.substr(string_index, n);
+		#ifdef DOKUN_DEBUG
+		    std::cout << "\033[36mtext shifted (fixed): " << text << " (" << text.size() << ")\033[0m" << std::endl; 
+		    //std::cout << "\033[36mstarting index: " << start_index << "\033[0m" << std::endl;
+		    std::cout << "\033[36mn = " << n << "\033[0m" << std::endl;
+		#endif  	    
+		// update label
+		label->set_string(new_text);//(end_to_cursor);//(start_to_cursor);//(text);
+	}*/
 	//////////////////////////
 	// callbacks
 	on_hover(); // if mouse over edit, change mouse to I-beam
-	on_mouse_press();// edit is pressed, set cursor at position_pressed // set focus to edit if on_mouse_pressed() is triggered
+	on_mouse_press();// edit is pressed, set cursor at position pressed // set focus to edit if mouse is pressed
 	cursor = (!has_focus()) ? false : true; // hide cursor if not focused	
     on_key_press();
     on_backspace();
@@ -93,7 +188,7 @@ void Edit::draw()
 	if(readonly) cursor = false; // no cursor necessary for readonly edits!
 	// Draw edit (without cursor)    // text is not really used in Renderer::draw_edit() :/
 	Renderer::draw_edit("", get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y,
-	    get_color().x, get_color().y, get_color().z, get_color().w, multilined, false, cursor_x, cursor_y, cursor_width, cursor_height, cursor_color);// Draw text//if(label) label->set_position(get_x() + label->get_relative_x(), get_y() + label->get_relative_y()); // label position stays the same - on the edit, but the cursor is the only thing that moves
+	    get_color().x, get_color().y, get_color().z, get_color().w, GUI::gui_shader, multilined, false, cursor_x, cursor_y, cursor_width, cursor_height, cursor_color);//if(label) label->set_position(get_x() + label->get_relative_x(), get_y() + label->get_relative_y()); // label position stays the same - on the edit, but the cursor is the only thing that moves
     // ::on_placeholder() was causing a segfault [fixed: placeholder_label was not pre-initialized]
     // Draw children (label, placeholder label, etc.)
     on_placeholder(); // hide or show placeholder (on setting a placeholder text or image)
@@ -102,7 +197,7 @@ void Edit::draw()
     if(label) label->draw(); // will be drawn over placeholder
     // Draw cursor (over the placeholder - by drawing cursor after placeholder)
     on_cursor(); // cursor blinking effect (on cursor being true)
-    if(cursor) Renderer::draw_cursor(cursor_x, cursor_y, cursor_width, cursor_height, cursor_color, get_x(), get_y(), get_width(), get_height());
+    if(cursor) Renderer::draw_cursor(cursor_x, cursor_y, cursor_width, cursor_height, cursor_color, GUI::gui_shader, get_x(), get_y(), get_width(), get_height());
 }
 /////////////
 void Edit::draw(double x, double y) 
@@ -790,6 +885,14 @@ int Edit::get_vertical_capacity(lua_State *L)
     return 1;
 }
 /////////////
+int Edit::get_string_parts() const {
+	// get number of parts of the string that have exceeded capacity(?) (or number of times the string length exceeded the capacity(?) or number of times we must split the string)
+	int splits_count = character_data.size() / get_capacity();
+    if(character_data.size() < (get_capacity() * splits_count + 1)) splits_count = splits_count - 1; // do not split until characters reach (capacity + 1)
+	std::cout << std::endl << "edit->get_string_parts(): string parts (splits_count): " << splits_count << std::endl;
+	return splits_count;
+}
+/////////////
 /////////////
 //dokun::Label * Edit::get_placeholder_label()const {
 //    return placeholder_label;
@@ -931,7 +1034,7 @@ void Edit::on_mouse_press()
                 // make sure boundless_cursor_x does not exceed characters_x //std::cout << "CANNOT EXCEED: " << (character_data.size() * cursor_space) << std::endl;
                 // if width is an even number this works
                 if(boundless_cursor_x > (character_data.size() * cursor_space)) boundless_cursor_x = character_data.size() * cursor_space;//character_data.size() * cursor_space;//if(cursor_x >= (string_length * cursor_space)) cursor_x = string_length * cursor_space;
-                ////std::cout << "new cursor x (boundless): " << boundless_cursor_x << std::endl;                
+                std::cout << "edit on_mouse_press(): cursor_x (boundless): " << boundless_cursor_x << std::endl;                
                 // but if width is an odd number, this boundless_cursor_x is not accurate
                 // then set focus to the edit
                 set_focus(true);
@@ -979,15 +1082,15 @@ void Edit::on_key_press()
 			    // add character to vector (at a specific index, where the cursor is positioned)// to-do: find difference b/t insert vs emplace (emplace_back vs push_back is basically the same situation) // emplace operation avoids unnecessary copy of object and does the insertion more efficiently than insert operation. Insert operation takes a reference to an object
 			    // no need to save the string_index now that the characters are inserted into vector in the correct order, but lets save it anyways I guess :?			    
 			    character_data.insert(character_data.begin() + string_index, std::make_tuple(static_cast<char>(key), cursor_index, string_index));
-			#ifdef DOKUN_DEBUG // print some cool stuff here ...
+			#ifdef DOKUN_DEBUG0 // print some cool stuff here ...
 			    std::cout << "\033[0;33;49m" << "Edit::on_keypress() called" << "\033[0m" << std::endl;
                 std::cout << "\"" << std::get<0>(character_data[character_data.size() - 1]) << "\" (cursor_x: " << std::get<1>(character_data[character_data.size() - 1]) << ", string_index: " << std::get<2>(character_data[character_data.size() - 1]) << ", characters: " << ((character_data.empty()) ? 0 : character_data.size()) << ")" << std::endl; // for debug + testing purposes//std::cout << std::endl << "\033[0;32mkey (" << (char)key << ") inserted at string_index: " << string_index << " = string_len(" << character_data.size() << ") - 1" << "\033[0m" << std::endl;
 			#endif
 				/////////////////////////////////
 	            // get number of parts of the string (length) that have exceeded capacity(50) (or number of times we must split the string)
-	            int splits_count = character_data.size() / get_capacity(); // (temp.length() % n) != 0 <= to check if not divisible by n beforehand (n = capacity)
+	            /*int splits_count = character_data.size() / get_capacity(); // (temp.length() % n) != 0 <= to check if not divisible by n beforehand (n = capacity)
                 // do not split until characters reach (capacity + 1)
-                if(character_data.size() < (get_capacity() * splits_count + 1)) splits_count = splits_count - 1;
+                if(character_data.size() < (get_capacity() * splits_count + 1)) splits_count = splits_count - 1;*/
 		        //////////////////////////////////
 			    // string position (relative to edit)
                 ////int text_x = (characters_count * cursor_space);// = x(140) = characters(14)
@@ -997,7 +1100,7 @@ void Edit::on_key_press()
 			    // if character limit has been reached, resize to whatever the character_limit is
 	            ////if(character_data.size() > character_limit) character_data.resize(character_limit); // resize string to whatever the character limit is - Character limit is user-defined
 			    // if string has not gone past edit's bounds (width) then draw it as we normally would
-			    if(splits_count < 1) { // same as: if(character_data.size() <= get_capacity()) // if text goes past edit
+			    if(character_data.size() <= get_capacity()) {//if(splits_count < 1) { // same as: if(character_data.size() <= get_capacity()) // if text goes past edit
 			        /*// if no splits left, boundless_cursor_x will follow cursor_x
 			        boundless_cursor_x = (character_data.size() * cursor_space) - (characters_count * cursor_space) + cursor_x;//boundless_cursor_x = boundless_cursor_x + cursor_space;//(start * cursor_space) + cursor_x;
                     // make sure boundless_cursor_x does not exceed character_data.size()
@@ -1016,7 +1119,7 @@ void Edit::on_key_press()
 		            std::string text = characters_to_string();
 		            int n = (text.length() < get_capacity()) ? text.length() : get_capacity();
 		            text = text.substr(start_index, n);
-		        #ifdef DOKUN_DEBUG
+		        #ifdef DOKUN_DEBUG0
 		            std::cout << "\033[36mtext shifted (right): " << text << " (" << text.size() << ")\033[0m" << std::endl;		            
 		            std::cout << "\033[36mstarting index: " << start_index << "\033[0m" << std::endl;		        
 		        #endif    
@@ -1028,7 +1131,7 @@ void Edit::on_key_press()
 		            std::cout << "boundless_cursor_x (current): " << boundless_cursor_x << std::endl;			        
 			        return;
 			    }
-			    if(splits_count > 0) { // same as: if(character_data.size() > get_capacity()) // if text goes past edit
+			    if(character_data.size() > get_capacity()) {//if(splits_count > 0) { // same as: if(character_data.size() > get_capacity()) // if text goes past edit
 			        // move boundless_cursor_x 10 units for each character
 			        boundless_cursor_x = boundless_cursor_x + cursor_space;//set_cursor_x(boundless_cursor_x + text_x);//(text_x);
                     // make sure boundless_cursor_x does not exceed character_data.size()
@@ -1102,7 +1205,7 @@ void Edit::on_backspace() // bug: crashes everytime backspace is used when curso
 	    // try to get last character behind cursor
 	    char last_char = std::get<0>(character_data[string_index]);//label->get_string()[string_index];//String::get_last_character(label->get_string()); // get last character in text (before erasing it) // make sure text is not empty so you can operate on it (to prevent crash) if(get_text().empty()) return;
 		// erase last character in string (at a specific index, where the cursor is positioned)
-		#ifdef DOKUN_DEBUG
+		#ifdef DOKUN_DEBUG0
 		    std::cout << "\033[0;91;49mstring_index of deleted character at cursor_x: \033[0m" << last_char << " (" << string_index << ")\033[0m" << std::endl;
 		#endif
 	        // remove character from label
@@ -1145,7 +1248,7 @@ void Edit::on_backspace() // bug: crashes everytime backspace is used when curso
                 std::string text = characters_to_string();
                 int n = (text.length() < get_capacity()) ? text.length() : get_capacity();//get_capacity();   
 		        text = text.substr(start_index, n);                
-		    #ifdef DOKUN_DEBUG
+		    #ifdef DOKUN_DEBUG0
 		        std::cout << "\033[36mtext shifted (left): " << text << " (" << text.size() << ")\033[0m" << std::endl; 
 		        std::cout << "\033[36mstarting index: " << start_index << "\033[0m" << std::endl;                
             #endif    
@@ -1175,7 +1278,7 @@ void Edit::on_backspace() // bug: crashes everytime backspace is used when curso
                 std::string text = characters_to_string();
                 int n = (text.length() < get_capacity()) ? text.length() : get_capacity();//get_capacity();   
 		        text = text.substr(start_index, n);
-		    #ifdef DOKUN_DEBUG    
+		    #ifdef DOKUN_DEBUG0
 		        std::cout << "\033[36mtext shifted (left): " << text << " (" << text.size() << ")\033[0m" << std::endl; 
 		        std::cout << "\033[36mstarting index: " << start_index << "\033[0m" << std::endl;		                          
             #endif    
@@ -1294,7 +1397,7 @@ void Edit::on_arrow_keys() // will shift the text via "start_index"
             // make sure boundless_cursor_x is NEVER negative, can NEVER be negative anyways
             ////if(boundless_cursor_x <= 0) boundless_cursor_x = 0;                
             // make sure boundless_cursor_x is NEVER less than starting_index
-            if(boundless_cursor_x <= (start_index * 10)) boundless_cursor_x = start_index * 10;
+            if(boundless_cursor_x <= (start_index * cursor_space)) boundless_cursor_x = start_index * cursor_space;
             // reset cursor_x (relative to edit) to 500
             // if boundless_cursor_x is less than start(50)
             // assume that the cursor_x has reached 0 or its starting_pos
@@ -1466,7 +1569,6 @@ void Edit::on_placeholder_image() {///*
 	//placeholder_image->draw(); // draw in Edit::draw() function instead //*/
 }
 /////////////
-// on sensative set to true
 void Edit::on_sensative() { 
     // If not sensative, restore original text and clear secret then exit function
     if(!sensative) {
@@ -1526,6 +1628,7 @@ void Edit::move_cursor_right() {
 {
     // everytime the edit's size changes, the cursor positions gets messed up and everything is ruined
     // maybe I should update the text and cursor positions whenever the edit is resized
+    int last_width = get_width();
     
     std::string original_text = get_text();
 	set_size(size.x, size.y);

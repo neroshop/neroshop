@@ -39,6 +39,7 @@ public:
 	void set_outline_color(unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0);
 	void set_outline_color(const Vector3& color);
 	void set_outline_color(const Vector4& color);	
+	void set_radius(double radius);
 	void set_fill(bool fill); static int set_fill(lua_State *L);
 	void set_shadow(bool shadow); static int set_shadow(lua_State *L);
 	void set_gradient(bool gradient); static int set_gradient(lua_State *L);                             //  static int set_(lua_State *L);
@@ -61,7 +62,7 @@ public:
 	Vector4 get_press_color()const; static int get_press_color(lua_State *L);
 	Vector4 get_disabled_color()const; static int get_disabled_color(lua_State *L);
 	Vector4 get_active_color()const; static int get_active_color(lua_State *L);
-	
+	double get_radius() const;
 	// Boolean
 	bool has_border();
 	bool has_image();
@@ -88,6 +89,7 @@ private:
 	double shade_factor; // 0.25, 0.5, 0.75, 1.0 (100% shade = black)
 	int depth ; // press depth
 	std::string type;
+	double radius;
 	// boolean (haves and don't-haves)
 	bool fill; // is filled(with color)?
 	bool shadow; // has shadow?

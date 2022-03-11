@@ -1,6 +1,7 @@
 #include "../include/button.hpp"
 
 Button::Button() : color(0, 51, 102, 1.0), tint_factor(0.05), shade_factor(0.25), depth(1), label(nullptr), image(nullptr), fill(true), shadow(false), border(false), type("polygon"),
+    radius(0.0),
     old_color(color),//(0, 51, 102, 1.0), 
 	// outline (is the same as a border)
     outline(false),
@@ -22,52 +23,37 @@ Button::Button() : color(0, 51, 102, 1.0), tint_factor(0.05), shade_factor(0.25)
 	set_width(100);
 	set_height(50);	
 	set_orientation(0);
-    label = new dokun::Label();
 }
 /////////////
-Button::Button(const std::string& text) : color(0, 51, 102, 1.0), tint_factor(0.05), shade_factor(0.25), depth(1), label(nullptr), image(nullptr), fill(true), shadow(false), border(false), type("polygon")
+Button::Button(const std::string& text) : Button()
 {
-	set_position(0, 0);
-	set_width(100);
-	set_height(50);	
-	set_orientation(0);
-	label = new dokun::Label();
+	label = new dokun::Label(text); // since we are creating a new button with a text, it will need an initialized label
 }
 /////////////
-Button::Button(int x, int y) : color(0, 51, 102, 1.0), tint_factor(0.05), shade_factor(0.25), depth(1), label(nullptr), image(nullptr), fill(true), shadow(false), border(false), type("polygon")
+Button::Button(int x, int y) : Button()
 {
     set_position(x, y);
-	set_width(100);
-	set_height(50);
-	set_orientation(0);
-	label = new dokun::Label();
 }
 /////////////
-Button::Button(int x, int y, int width, int height) : color(0, 51, 102, 1.0), tint_factor(0.05), shade_factor(0.25), depth(1), label(nullptr), image(nullptr), fill(true), shadow(false), border(false), type("polygon")
+Button::Button(int x, int y, int width, int height) : Button()
 {
 	set_position(x, y);
 	set_width(width);
 	set_height(height);
-	set_orientation(0);
-	label = new dokun::Label();
 }  
 /////////////
-Button::Button(const std::string& text, int x, int y) : color(0, 51, 102, 1.0), tint_factor(0.05), shade_factor(0.25), depth(1), label(nullptr), image(nullptr), fill(true), shadow(false), border(false), type("polygon")
+Button::Button(const std::string& text, int x, int y) : Button()
 {
 	set_position(x, y);
-	set_width(100);
-	set_height(50);
-	set_orientation(0);
-	label = new dokun::Label();
+	label = new dokun::Label(text);
 }
 /////////////
-Button::Button(const std::string& text, int x, int y, int width, int height) : color(0, 51, 102, 1.0), tint_factor(0.05), shade_factor(0.25), depth(1), label(nullptr), image(nullptr), fill(true), shadow(false), border(false), type("polygon")
+Button::Button(const std::string& text, int x, int y, int width, int height) : Button()
 {
 	set_position(x, y);
 	set_width(width);
-	set_height(height);	
-	set_orientation(0);
-	label = new dokun::Label();
+	set_height(height);
+	label = new dokun::Label(text);
 }
 /////////////
 Button::~Button(void)
@@ -75,7 +61,7 @@ Button::~Button(void)
     // delete image
     if(image) {
         delete image;
-        image = nullptr; // its good practice to set all deleted objects to null regardless of what anybody says
+        image = nullptr; // its good practice to set all deleted objects created with "new" to null regardless of what anybody says
     }
     // delete label
     if(label) {
@@ -88,18 +74,20 @@ Button::~Button(void)
 void Button::draw()
 {
     on_draw(); // sets position relative to parent, regardless of visibility
-	if(is_visible()) 
-	{
+	if(!is_visible()) return;
 		//on_hover();
 		//on_press();
 		on_mouse_interact();
-	    std::string text = get_text();
         // Draw button
 	    Renderer::draw_button(get_x(), get_y(), get_width(), get_height(), 
 		    get_angle(), get_scale().x, get_scale().y, 
 			get_color().x, get_color().y, get_color().z, get_color().w,
+            // shader
+            GUI::gui_shader,
             // outline
             outline, outline_width, outline_color, outline_antialiased,
+            // radius
+            radius,
             // gradient
             gradient,
 		    gradient_color
@@ -129,7 +117,6 @@ void Button::draw()
 		    // draw label manually since there is only one
 		    label->draw();
 		}
-	}
 }
 /////////////
 void Button::draw(double x, double y)
@@ -169,7 +156,7 @@ int Button::draw(lua_State *L)
 /////////////
 void Button::set_text(const std::string& text)
 {
-    if(!label) throw std::runtime_error("label is not initialized");
+    if(!label) throw std::runtime_error("button label is not initialized");
 	label->set_string(text);
 }
 /////////////
@@ -344,6 +331,10 @@ void Button::set_outline_color(const Vector4& color)
     set_outline_color(color.x, color.y, color.z, color.w);
 }
 /////////////
+void Button::set_radius(double radius) {
+    this->radius = radius;
+}
+/////////////
 void Button::set_fill(bool fill)
 {
 	this->fill = fill;
@@ -469,7 +460,8 @@ int Button::get_image(lua_State *L)
 /////////////
 std::string Button::get_text()const
 {
-	return get_label()->get_string();
+    if(!label) throw std::runtime_error("button label is not initialized");
+	return label->get_string();
 }
 /////////////
 int Button::get_text(lua_State *L)
@@ -526,6 +518,9 @@ int Button::get_press_color(lua_State *L)
 	return 4;
 }
 /////////////
+double Button::get_radius() const {
+    return radius;
+}
 /////////////
 /////////////
 /////////////

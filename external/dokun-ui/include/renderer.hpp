@@ -31,15 +31,15 @@ public:
 	static void start   (void); // initializes renderer
 	static void destroy (void); // destroy renderer and all objects
 	// entity -------------------
-	static void draw_sprite(const Texture& texture, double x, double y, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,// = 1.0,
-	    const std::vector<float>& vertex_array, const Shader& shader, const std::vector<Texture *>& map); // fast (uses 2-7% CPU)
-	static void draw_atlas(const Texture& texture, int width, int height, double x, double y, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, int frame, const Shader& shader);
-	static void draw_model (const std::vector<Vector3>& vertex_array, const std::vector<unsigned int>& element_array, const std::vector<Vector2>& uv_array, const std::vector<Vector3>& normal_array, double x, double y, double z, double rx, double ry, double rz, double sx, double sy, double sz, 
+	/*static void draw_sprite(const Texture& texture, double x, double y, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,// = 1.0,
+	    const std::vector<float>& vertex_array, const Shader& shader, const std::vector<Texture *>& map);*/ // fast (uses 2-7% CPU)
+	//static void draw_atlas(const Texture& texture, int width, int height, double x, double y, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, int frame, const Shader& shader);
+	/*static void draw_model (const std::vector<Vector3>& vertex_array, const std::vector<unsigned int>& element_array, const std::vector<Vector2>& uv_array, const std::vector<Vector3>& normal_array, double x, double y, double z, double rx, double ry, double rz, double sx, double sy, double sz, 
 		double ox, double oy, double oz, 
-		const std::vector<Texture *>& texture_array, const Vector4& ambient, const Vector4& diffuse, const Vector4& specular, const Vector4& emission, double shininess, const Shader& shader);	
-	static void draw_image(const unsigned int buffer/*Texture& texture*/, int width, int height, int depth, double x, double y, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0, int channel=4); // complete!
+		const std::vector<Texture *>& texture_array, const Vector4& ambient, const Vector4& diffuse, const Vector4& specular, const Vector4& emission, double shininess, const Shader& shader);*/
+	static void draw_image(const unsigned int buffer/*Texture& texture*/, int width, int height, int depth, double x, double y, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, int channel, Shader* shader); // complete!
     // ui -----------------------
-	static void draw_box(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, 
+	static void draw_box(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, Shader* shader, 
 		double radius, bool iconified,
 		// title bar
 		bool title_bar,
@@ -67,11 +67,11 @@ public:
 	//--------------------------
 	static void draw_quad_instanced(int x, int y, int width, int height);
 	//--------------------------
-	static void draw_text (const std::string& text, double x, double y, int width, int height, double angle, double scale_x, double scale_y, const dokun::Font& font, unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0);
-	static void draw_glyph (unsigned char glyph, double x, double y, double angle, double scale_x, double scale_y, const dokun::Font& font, unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0);
-	static void draw_text2 (const std::string& text, double x, double y, int width, int height, double angle, double scale_x, double scale_y, const dokun::Font& font, unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0);
+	static void draw_text_old (const std::string& text, double x, double y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, const dokun::Font& font, Shader* shader);
+	static void draw_glyph (unsigned char glyph, double x, double y, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, const dokun::Font& font, Shader* shader);
+	static void draw_text (const std::string& text, double x, double y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, const dokun::Font& font, Shader* shader);
 	//--------------------------
-	static void draw_button(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, 
+	static void draw_button(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, Shader* shader, 
 		// outline
 		bool outline, 
 		double outline_width, 
@@ -80,75 +80,88 @@ public:
 		// border
 		//bool border,
 		//const Vector4& border_color,
+		// radius
+		double radius,
 		// gradient
         bool gradient,
-		const Vector4& gradient_color//,
+		const Vector4& gradient_color	
 	);
 	//--------------------------
-	static void draw_progressbar(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, 
+	static void draw_progressbar(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, Shader* shader, 
 		double min_value, double max_value, double value, const Vector4& background_color,
 		// outline
 		bool outline, 
 		double outline_width, 
 		const Vector4& outline_color,
-		bool outline_antialiased
+		bool outline_antialiased,
 		// border
 		//bool border,
 		//const Vector4& border_color,
+		// radius
+		double radius		
 		);
 	//--------------------------
-	static void draw_edit(const std::string& text, int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,
+	static void draw_edit(const std::string& text, int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, Shader* shader,
 	    bool multilined,
 		// cursor
 		bool cursor, double cursor_x, double cursor_y, int cursor_width, int cursor_height, const Vector4& cursor_color
 	);
-	static void draw_cursor(double cursor_x, double cursor_y, int cursor_width, int cursor_height, const Vector4& cursor_color,
+	static void draw_cursor(double cursor_x, double cursor_y, int cursor_width, int cursor_height, const Vector4& cursor_color, Shader* shader,
 	    int parent_x, int parent_y, int parent_width, int parent_height);
 	//--------------------------
-	static void draw_slider(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,  // good!
+	static void draw_slider(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, Shader* shader,  // good!
         // beam
 		double min_value, double max_value, double value, const Vector4& background_color, 
 		// ball
 		int ball_width, const Vector4& ball_color
 	);
-    static void draw_slider_vertical(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,
+    static void draw_slider_vertical(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, Shader* shader,
     // beam
 	double min_value, double max_value, double value, const Vector4& background_color,
 	// ball
 	int ball_height, const Vector4& ball_color);
 	//--------------------------
-	static void draw_switch(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, // good!
+	static void draw_switch(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, Shader* shader, // good!
 		int value,
 		const Vector4& background_color,
 		// border
 		bool outline,
 		double outline_width,
 		const Vector4& outline_color,
-		bool outline_antialiased
+		bool outline_antialiased,
+		// radius
+		double radius		
 	);
 	//--------------------------
-	static void draw_radio(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,
+	static void draw_radio(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, Shader* shader,
 	    int value, const Vector4& inner_color,
 		// outline
 		bool outline,
 		double outline_width,
 		const Vector4& outline_color,
-		bool outline_antialiased
+		bool outline_antialiased,
+		// radius
+		double radius
 	);
 	//--------------------------
-	static void draw_checkbox(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,
+	static void draw_checkbox(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, Shader* shader,
 	    bool value, const Vector4& checkmark_color,
 		// outline
 		bool outline,
 		double outline_width,
 		const Vector4& outline_color,
-		bool outline_antialiased	    );
+		bool outline_antialiased,
+		// radius
+		double radius
+	);
 	//--------------------------
 	static void draw_tooltip(const std::string& text, int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,
+	    // shader
+	    Shader* shader,
 	    // arrow - placement("up", "down"=default, "left", "right")
 	    std::string placement = "down", int arrow_width = 10, int arrow_height = 5, double arrow_offset = -1.0);
 	//--------------------------
-	static void draw_scrollbar(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,
+	static void draw_scrollbar(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, Shader* shader,
 	    double value, double min_value, double max_value,
 		// handle
 		double handle_y, int handle_height, const Vector4& handle_color,
@@ -165,18 +178,19 @@ public:
 		bool border
 	);
 	//--------------------------
-	static void draw_spinner_old(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,
+	static void draw_spinner0(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, Shader* shader,
 	    double value,
 		// button
         int button_width, const Vector4& button_color, 		
+        // shape (arrows)
+        const Vector2& arrow_size, const Vector4& arrow_color,
 		// border
 		bool outline,
 		double outline_width,
 		const Vector4& outline_color,
-		bool outline_antialiased	
-	);
+		bool outline_antialiased);
 	//--------------------------
-    static void draw_spinner(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,
+    static void draw_spinner(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, Shader* shader,
 	    // button
         int button_width, const Vector4& button_color,
         // shape (+, -)
@@ -184,10 +198,10 @@ public:
 	    // separator (gap)
 	    bool separator, int separator_size); // added 2021-12-17		
 	//--------------------------
-	static void draw_combobox(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,
+	static void draw_combobox(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, Shader* shader,
 	    const Vector4& button_color, int button_width, bool button_on);
 	//--------------------------
-	static void draw_tab(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha,
+	static void draw_tab(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, Shader* shader,
 	    // tab
 	    int tab_count = 1, 
 	    // tab body

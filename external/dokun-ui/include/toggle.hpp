@@ -2,6 +2,7 @@
 #define TOGGLE_HPP_DOKUN
 
 #include "ui.hpp"
+////#include "label.hpp"
 
 #ifdef __cplusplus // if c++
 #include <iostream>
@@ -44,12 +45,15 @@ class Toggle : public GUI { // includes check_box, radio, and switch
 		void set_outline_color(const Vector3& color);
 		void set_outline_color(const Vector4& color);
 		void set_outline_antialiased(bool antialiased);
+		// radius
+		void set_radius(double radius);
 		// getters
 		bool get_value()const;                                  static int get_value(lua_State *L);
 	    std::string get_type()const;                            static int get_type(lua_State *L);
 		Vector4 get_foreground_color()const;
 		Vector4 get_on_color()const;
 		Vector4 get_off_color()const;
+		double get_radius() const;
 		// handle
 		double get_handle_x()const;
 		double get_handle_y()const;
@@ -72,6 +76,8 @@ class Toggle : public GUI { // includes check_box, radio, and switch
 		Vector4 background_color;
 		Vector4 on_color;
 		Vector4 off_color;
+		// label
+		////dokun::Label * label;
 		// handle
 		// outline
 		bool outline;
@@ -79,6 +85,8 @@ class Toggle : public GUI { // includes check_box, radio, and switch
 		double outline_width;
 		bool outline_antialiased;
 		Vector4 restore_outline_color;
+		// radius
+		double radius;
 		// gradient
 		bool gradient;
 		Vector4 gradient_color;		

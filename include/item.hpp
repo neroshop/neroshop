@@ -8,7 +8,8 @@
 #include <vector>
 #include <tuple>        // std::tuple, std::get, std::tie, std::ignore
 #include "db.hpp"
-#include "db2.hpp"
+// temporary
+#include "image.hpp"
 
 namespace neroshop {
 class Item { // or Product or whatever you want to call it
@@ -23,6 +24,7 @@ public:
         const std::string& condition, const std::string& product_code); // quantity is set by cart; discount is 0 by default      
     ~Item();
     void show_info();
+    void upload();
     // getters
  	unsigned int get_quantity() const;
 	static unsigned int get_quantity(unsigned int item_id);
@@ -51,7 +53,14 @@ public:
 	std::string get_seller_condition(unsigned int seller_id) const; // condition: new, used, used - good, used - like new, renewed
     static std::string get_seller_condition(unsigned int item_id, unsigned int seller_id);     
     unsigned int get_stock_quantity() const;
-    static unsigned int get_stock_quantity(unsigned int item_id);    
+    static unsigned int get_stock_quantity(unsigned int item_id);
+    // ratings / reviews - added 2022-02-15
+    int get_ratings_count() const; // or get_reviews_count(); // returns total ratings   
+    static int get_ratings_count(unsigned int item_id);
+    int get_star_count(int star_number); // returns number of n stars
+    static int get_star_count(unsigned int item_id, int star_number);
+    float get_average_stars() const; // returns average stars
+    static float get_average_stars(unsigned int item_id);
     ////////////////////////////////////
     // undefined getter functions
     std::string get_category() const;
@@ -131,6 +140,9 @@ private:
     //void set_images(std::vector<char *>& images);
     //static void set_images(unsigned int item_id, std::vector<char *>& images);       
     //static void set_(unsigned int item_id, );
+    static void create_categories_and_subcategories_table(void);
+    static void create_item_table(void);
+    static void create_table(void); // calls both create_categories_and_subcategories_table() and create_item_table()
 };
 }
 #endif

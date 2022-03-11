@@ -20,7 +20,9 @@ The name neroshop comes from "nero", meaning black combined with the word "shop"
 * pseudonymous economy (sellers are only identified by their usernames and trusted based on their reputation)
 * no registration required (for buyers only)
 * no KYC or AML
-* no listing fees (except for miner transaction fees and shipping costs)
+* no listing fees
+* no sales tax (transaction fees will be paid to miners in place of sales tax. I mean, this is crypto LOL)
+* no other fees (except for miner transaction fees and shipping costs)
 * buy and sell products with monero (and possibly other private by default crypto in the near future)
 * automatic subaddress generator (a unique monero address is generated from seller's account each time a buyer places an order)
 * address watcher that tracks incoming txs and notifies both the user and seller
@@ -36,7 +38,7 @@ The name neroshop comes from "nero", meaning black combined with the word "shop"
 |      Library                                                       | Minimum Ver.    | Package                | License                            |         Purpose                                                        |
 |--------------------------------------------------------------------|-----------------|------------------------|------------------------------------|------------------------------------------------------------------------|
 | [monero-cpp](https://github.com/monero-ecosystem/monero-cpp)       | latest          |                        | MIT                                | monero wallet and payment system                                       |
-| [bcrypt](https://github.com/rg3/libbcrypt)                         | ?               |                        | public domain                      | password hashing                                                       |
+| [libbcrypt](https://github.com/rg3/libbcrypt)                         | ?               |                        | public domain                      | password hashing                                                       |
 | [sqlite3](https://sqlite.org/)                                     | ?               |                        | public domain                      | database management                                                    |
 | [QR Code generator](https://github.com/nayuki/QR-Code-generator)   | ?               |                        | MIT                                | qr code generation                                                     |
 | [json](https://github.com/nlohmann/json/)                          | ?               |                        | MIT                                | json parsing (used in conjunction with libcurl)                        |

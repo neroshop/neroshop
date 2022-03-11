@@ -63,6 +63,7 @@ class Box : public GUI { // A box ui - ui element that can act as a container fo
 		void set_gradient_color(const Vector4& color);
 		void set_gradient_color(const Vector3& color0, const Vector3& color1);
 		void set_gradient_color(const Vector4& color0, const Vector4& color1);
+		void set_gradient_value(double gradient_value);
 		// title_bar - does it have a title_bar
 		void set_title_bar(bool has_title_bar);                                        static int set_title_bar(lua_State * L);
 		void set_title_bar_size(int height);                                           static int set_title_bar_size(lua_State * L);

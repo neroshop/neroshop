@@ -5,7 +5,7 @@ Script::Script(void)
 	Factory::get_script_factory()->store(this);
 }
 //////////
-Script::Script(lua_State *L, const std::string& file_name) : Script() // Factory::get_script_factory()->store(this);
+Script::Script(lua_State *L, const std::string& file_name) : Script()
 {
 	if(load(L, file_name) == 0) {
 		dokun::Logger("Could not load from file: " + file_name);

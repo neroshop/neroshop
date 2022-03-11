@@ -15,8 +15,8 @@
 // the neroshop team are in no way affiliated with the monero team
 #include "debug.hpp"
 #include "wallet.hpp" // causes error depending on where you place this header
+#include "config.hpp"
 #include "db.hpp"
-#include "db2.hpp"
 #include "qr.hpp"
 #include "icon.hpp"
 #include "validator.hpp"
@@ -28,6 +28,7 @@
 #include "cart.hpp"
 #include "order.hpp" //#include ".hpp"
 #include "message.hpp"
+#include "catalog.hpp"
 //#include "server.hpp" // for daemon to use
 #include "client.hpp"
 

@@ -16,30 +16,15 @@ Slider::Slider() : value(0), range(0, 100), radius(50), foreground_color(0, 51, 
 	set_orientation(0);
 }
 /////////////            
-Slider::Slider(int x, int y) : value(0), range(0, 100), radius(50), foreground_color(0, 51, 102, 1.0), background_color(160, 160, 160, 1.0),
-    ball_size(10), ball_color(64, 64, 64, 0.9), ball_radius(50), label(nullptr),
-	// outline
-	outline (false),
-    outline_color(0, 0, 0, 1.0),
-    outline_width(1.0),
-    outline_antialiased(false)
+Slider::Slider(int x, int y) : Slider()
 {
 	set_position(x, y);
-	set_size(200, 20);
-	set_orientation(0);
 }
 /////////////
-Slider::Slider(int x, int y, int width, int height) : value(0), range(0, 100), radius(50), foreground_color(0, 51, 102, 1.0), background_color(160, 160, 160, 1.0),
-    ball_size(10), ball_color(64, 64, 64, 0.9), ball_radius(50), label(nullptr),
-	// outline
-	outline (false),
-    outline_color(0, 0, 0, 1.0),
-    outline_width(1.0),
-    outline_antialiased(false)
+Slider::Slider(int x, int y, int width, int height) : Slider()
 {
 	set_position(x, y);
 	set_size(width, height);
-	set_orientation(0);
 }
 /////////////
 Slider::~Slider()
@@ -64,6 +49,8 @@ void Slider::draw()
 		if(get_orientation() == 0) { // horizontal
 		    int ball_width = ball_size;
 		    Renderer::draw_slider(get_x(), get_y(), get_width(), get_height(), 0, get_scale().x, get_scale().y, foreground_color.x, foreground_color.y, foreground_color.z, foreground_color.w,
+			// shader    
+			    GUI::gui_shader,
 			// beam properties
 			    min_val, max_val, value, background_color,
 			// ball properties
@@ -74,6 +61,7 @@ void Slider::draw()
 		if(get_orientation() != 0) { // vertical 
 		    int ball_height = ball_size;
 		    Renderer::draw_slider_vertical(get_x(), get_y(), get_width(), get_height(), 0, get_scale().x, get_scale().y, foreground_color.x, foreground_color.y, foreground_color.z, foreground_color.w,
+			    GUI::gui_shader,
 			    min_val, max_val, value, background_color, ball_height, ball_color);
 		}	
 	// Label	

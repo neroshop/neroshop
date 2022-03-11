@@ -13,13 +13,12 @@
 #include <chrono>  // std::chrono
 #include <iomanip> //std::put_time, std::setfill, std::setw
 #include "db.hpp"
-#include "db2.hpp"
 extern "C" {
 #include "bcrypt.h"
 #include "crypt_blowfish/ow-crypt.h" // for hashing pw (bcrypt)
 }
 #include <openssl/sha.h> // for hashing email (sha256) // -lssl -lcrypto
-#include <openssl/evp.h> // recommeded for sha256, sha512, etc. // https://stackoverflow.com/questions/2262386/generate-sha256-with-openssl-and-c#comment67577990_10632725
+#include <openssl/evp.h> // recommended for sha256, sha512, etc. // https://stackoverflow.com/questions/2262386/generate-sha256-with-openssl-and-c#comment67577990_10632725
 
 namespace neroshop {
 class Validator {
@@ -41,13 +40,12 @@ public:
     static bool generate_sha256_hash(const std::string& email, std::string& hashed); // legacy
     static bool generate_sha256_hash_evp(const std::string& email, std::string& hashed);
 private:
-    //static Data * db;
 };
 }
 #endif
 /*
 testing speeds:
-openssl speed sha256 sha512
+$ openssl speed sha256 sha512
 
 usernames:
 // 2-30 characters in length

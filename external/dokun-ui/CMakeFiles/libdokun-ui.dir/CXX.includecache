@@ -8,20 +8,6 @@
 
 /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/include/android_header.hpp
 
-/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/include/button.hpp
-ui.hpp
-/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/include/ui.hpp
-label.hpp
-/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/include/label.hpp
-image.hpp
-/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/include/image.hpp
-renderer.hpp
-/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/include/renderer.hpp
-iostream
--
-lua.hpp
--
-
 /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/include/component.hpp
 types.hpp
 /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/include/types.hpp
@@ -306,6 +292,16 @@ OpenGL/glu.h
 Cocoa/Cocoa.h
 -
 
+/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/include/progressbar.hpp
+ui.hpp
+/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/include/ui.hpp
+label.hpp
+/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/include/label.hpp
+iostream
+-
+lua.hpp
+-
+
 /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/include/renderer.hpp
 platform.hpp
 /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/include/platform.hpp
@@ -584,9 +580,9 @@ iostream
 lua.hpp
 -
 
-/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/src/button.cpp
-../include/button.hpp
-/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/include/button.hpp
+/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/src/progressbar.cpp
+../include/progressbar.hpp
+/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/include/progressbar.hpp
 
 external/freetype/include/freetype/config/ftheader.h
 

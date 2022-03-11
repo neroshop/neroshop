@@ -58,6 +58,7 @@ void Combobox::draw()
 		// Draw combo_box
 		Renderer::draw_combobox(get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y,
 		    get_color().x, get_color().y, get_color().z, get_color().w,
+		    GUI::gui_shader,
 			button_color, button_width, button_activated);	
 		// Draw arrow		
 		if(list != nullptr)

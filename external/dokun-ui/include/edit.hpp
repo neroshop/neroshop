@@ -77,6 +77,7 @@ class Edit : public GUI {// can be a line edit or text edit or search field
 		int get_character_limit()const;
 		//std::string get_sensative_text()const;
 		std::string get_last_n_characters(unsigned int n)const;
+		int get_string_parts() const;
 		// placeholder_text
 		// user should not need access to placeholder_label, only the placeholder_text
 		// so Edit::get_placeholder_label() will be marked as deprecated or just set to private
@@ -183,6 +184,7 @@ class Edit : public GUI {// can be a line edit or text edit or search field
 		std::vector<char> character_data_in_correct_order;
 		// other
 		//std::map<std::string, Vector3& color> syntax_list;
+		//unsigned int vao, vbo, tbo, ebo;
 };
 /*
 line edit example(single line):

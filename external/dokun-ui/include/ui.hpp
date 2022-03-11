@@ -93,6 +93,8 @@ class GUI: public Entity
 		bool has_parent();                              static int has_parent(lua_State * L); // returns true if current ui is child
 	    bool is_child_of(const GUI& gui);               static int is_child_of(lua_State *L);
 	    bool is_parent_of(const GUI& gui);              static int is_parent_of(lua_State *L);
+	    static bool is_shader_generated();
+	    static bool has_shader();
 	//protected:
 	    void set_scale(double sx, double sy);           static int set_scale(lua_State *L);
 		Vector2 get_scale()const;                       static int get_scale(lua_State *L);
@@ -101,9 +103,9 @@ class GUI: public Entity
 	    // callbacks
 		virtual void on_create();
 		virtual void on_draw();
-		void on_draw_edit(); // specifically for edit
+		virtual void on_draw_no_focus(); // specifically for edit
         virtual void on_focus();
-        virtual void on_parent();
+        virtual void on_parent(); // label has its own implementation of on_parent() so this function must be virtual
 		// interaction checks
 	    bool is_hovered(); static int is_hovered(lua_State * L);// mouse over
 	    bool is_pressed(); static int is_pressed(lua_State * L); // executes many times in loop
@@ -115,7 +117,7 @@ class GUI: public Entity
 		bool is_resized(); //static int (lua_State * L);
 		bool is_sorted(); //static int (lua_State * L);
     private:
-	    void generate(void);
+	    virtual void generate_shader(void); // label has its own implementation of generate_shader() so this function must be virtual
 	    // friend
 		friend class Widget;
 		friend class Edit;
@@ -140,7 +142,8 @@ class GUI: public Entity
 		bool resizeable; // can gui be resized?
 		bool sortable; // Reorder elements in a list or grid
 		// shader
-		static Shader * shader;
+	protected:	
+		static Shader * gui_shader; // all derived GUIs can access this member
 }; // widget=0, label=1, button=2, edit=3, progress_bar=4
 /*
     Button * button = GUI::create<Button>(); // return new Button()

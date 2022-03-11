@@ -1,6 +1,8 @@
 #include "../include/toggle.hpp"
 
 Toggle::Toggle() : value (false), foreground_color(255, 255, 255, 1.0), background_color(160, 160, 160, 1.0), on_color(0, 51, 102, 1.0), off_color(background_color/*64, 64, 64, 1.0*/), type("switch"),
+    // label
+    ////label(nullptr),
     // handle
 	// outline (or border)
     outline(false),
@@ -8,6 +10,8 @@ Toggle::Toggle() : value (false), foreground_color(255, 255, 255, 1.0), backgrou
 	outline_color(0, 0, 0, 1.0),
 	outline_antialiased(false),
 	restore_outline_color(outline_color),
+	// radius
+	radius(0.0),//(80.0), // an ideal radius for a switch toggle would be 80 %
     // gradient
     gradient(false),
 	gradient_color(background_color) // gradient.color1 = backgound_color, gradient.color0 = foreground_color	
@@ -37,23 +41,29 @@ void Toggle::draw()
             background_color = (value == 0) ? off_color : on_color;//Vector4(64, 64, 64, 1.0) : Vector4(0, 51, 102, 1.0);
 		    Renderer::draw_switch(get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y,
 		        foreground_color.x, foreground_color.y, foreground_color.z, foreground_color.w, // handle (foreground - white)
+			    GUI::gui_shader,
 			    value, background_color, 
-			    outline, outline_width, outline_color, outline_antialiased
+			    outline, outline_width, outline_color, outline_antialiased,
+			    radius
 			);
 	}
     if(is_radio()) {
             //outline_color = (value == 0) ? Vector4(64, 64, 64, 1.0) : restore_outline_color;
+		    ////radius = 100.0; // for a perfect circle, w and h should be equal //std::cout << "radio_size: " << get_size() << std::endl;//20, 20
 		    Renderer::draw_radio(get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y,
 		        background_color.x, background_color.y, background_color.z, background_color.w, 
+			    GUI::gui_shader,
 			    value, foreground_color, // inner color (dokun_blue)
-			    outline, outline_width, outline_color, outline_antialiased
+			    outline, outline_width, outline_color, outline_antialiased,
+			    radius
 			);
 	}
     if(is_checkbox()) {
             background_color = (value == 0) ? off_color : on_color;
             Renderer::draw_checkbox(get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y, background_color.x, background_color.y, background_color.z, background_color.w,
+	            GUI::gui_shader,
 	            value, foreground_color, // value, mark_color (white)
-		        outline, outline_width, outline_color, outline_antialiased); // outline
+		        outline, outline_width, outline_color, outline_antialiased, radius); // outline
 	}
 }
 /////////////
@@ -115,6 +125,7 @@ void Toggle::set_switch()
 	// same foreground color as both checkmark and radio (checkbox)
 	// same background color as both checkmark and radio (checkbox)
 	// background color changes
+	radius = 0.0;//80.0;
 }
 /////////////
 void Toggle::set_radio()
@@ -125,6 +136,7 @@ void Toggle::set_radio()
 	// same background color as both switch and checkbox
 	// foreground color changes	
 	// background color stays the same
+	radius = 100.0;
 }
 /////////////
 void Toggle::set_checkbox()
@@ -134,6 +146,7 @@ void Toggle::set_checkbox()
 	// same foreground color as both switch and radio
 	// same background color as both switch and radio
 	// background color changes
+	radius = 0.0;
 }
 /////////////
 void Toggle::set_value(bool value)
@@ -261,6 +274,9 @@ void Toggle::set_outline_antialiased(bool antialiased)
 	outline_antialiased = antialiased;
 }
 /////////////
+void Toggle::set_radius(double radius) {
+    this->radius = radius;
+}
 /////////////
 /////////////
 /////////////
@@ -327,6 +343,10 @@ Vector4 Toggle::get_handle_color()const
 	return foreground_color;
 }
 /////////////
+/////////////
+double Toggle::get_radius() const {
+    return radius;
+}
 /////////////
 /////////////
 // BOOLEAN

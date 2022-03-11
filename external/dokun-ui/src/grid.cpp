@@ -18,22 +18,8 @@ gradient_color(color)
 	set_orientation(0);
 }
 //////////////
-Grid::Grid(int row, int column) :  color(64, 64, 64, 1.0),
-// outline
-outline(true), 
-outline_width(2.0), 
-outline_antialiased(false),
-outline_color(255, 255, 255, 1.0),
-// highlight
-highlight(false),
-highlight_color(0, 51, 102, 1.0),
-// gradient
-gradient(false),
-gradient_color(color)
+Grid::Grid(int row, int column) : Grid()
 {
-	set_position(0, 0);
-	set_size(50, 50); // size of each individual block in grid
-	set_orientation(0);
 	set_column(column);
 	set_row(row);
 }
@@ -87,6 +73,7 @@ void Grid::draw() // COMPLETE! :D
                 // Draw grid
  				Renderer::draw_box(block[i][j]->get_position().x, block[i][j]->get_position().y, get_width(), 
 			        get_height(), get_angle(), get_scale().x, get_scale().y, block[i][j]->get_color().x, block[i][j]->get_color().y, block[i][j]->get_color().z, block[i][j]->get_color().w,
+			        GUI::gui_shader,
 			        block[i][j]->radius, false, false, 0, color, false, false, false, block[i][j]->get_color(), outline, outline_width, outline_color, outline_antialiased, false, 0.0, color, block[i][j]->gradient, block[i][j]->gradient_color, block[i][j]->gradient_value, false);
 				// Draw label - don't draw label but set parent to this instead and it'll be drawn automatically
 				// Draw image

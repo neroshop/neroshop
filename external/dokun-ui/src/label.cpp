@@ -1,14 +1,12 @@
 #include "../include/label.hpp"
 
-dokun::Label::Label() : width(0), height(0), color(255, 255, 255, 1.0), alignment("none")//, relative_position(0,0) // label size is 0 as no string has been set (empty string)   EVERY LABEL YOU CREATE, SHOULD NOT GET ITS OWN dokun::Font BY DEFAULT, ON CREATION (IT WILL CAUSE MEMORY LEAK!)  // INSTEAD CREATE A DEFAULT dokun::Font THAT ALL INSTANCES OF LABEL CAN USE!!!!!!!!!!!! // ALL LABELS ARE CAPABLE OF USING A SINGLE dokun::Font OBJECT
-{
-    if(!dokun::Font::system_font) throw std::runtime_error("default font is not initialized");
-    if(!dokun::Font::system_font->get_file().empty()) set_font(*dokun::Font::system_font); // if the default font has already been loaded, set the font      //dokun::Logger("Default font has been set to label " + String(this).str());                                                  
+dokun::Label::Label() : width(0), height(0), color(255, 255, 255, 1.0), alignment("none")/*, relative_position(0,0)*/, font(nullptr) // label size is 0 as no string has been set (empty string)
+{                                 
 	set_position(0, 0);
 	set_relative_position(0, 0);
 }
 /////////////
-dokun::Label::Label(const dokun::Label& label)
+dokun::Label::Label(const dokun::Label& label) : dokun::Label()
 {
 	if(label.get_font()) set_font(*label.get_font());
 	set_string(label.get_string());
@@ -23,57 +21,48 @@ dokun::Label::Label(const dokun::Label& label)
 	set_height(label.get_height());	
 }
 /////////////
-dokun::Label::Label(const dokun::Font& font) : width(0), height(0), color(255, 255, 255, 1.0), alignment("none")
+dokun::Label::Label(const dokun::Font& font) : dokun::Label()
 {
 	set_font(font);
-	set_position(0, 0);
-	set_relative_position(0, 0);
 }
 /////////////
-dokun::Label::Label(const std::string& text) : width(0), height(0), color(255, 255, 255, 1.0), alignment("none")
+dokun::Label::Label(const std::string& text) : dokun::Label()
 {
     if(!dokun::Font::system_font) throw std::runtime_error("default font is not initialized");
     if(!dokun::Font::system_font->get_file().empty()) set_font(*dokun::Font::system_font); // if the default font has already been loaded, set the font
 	set_string(text);
-	set_position(0, 0);
-	set_relative_position(0, 0);
 }
 /////////////
-dokun::Label::Label(int x, int y) : width(0), height(0), color(255, 255, 255, 1.0), alignment("none")
+dokun::Label::Label(int x, int y) : dokun::Label()
 {
     if(!dokun::Font::system_font) throw std::runtime_error("default font is not initialized");
     if(!dokun::Font::system_font->get_file().empty()) set_font(*dokun::Font::system_font); // if the default font has already been loaded, set the font 
 	set_position (x, y);
-	set_relative_position(0, 0);
 }
 /////////////
-dokun::Label::Label(int x, int y, int width, int height) : color(255, 255, 255, 1.0), alignment("none")
+dokun::Label::Label(int x, int y, int width, int height) : dokun::Label()
 {
     if(!dokun::Font::system_font) throw std::runtime_error("default font is not initialized");
     if(!dokun::Font::system_font->get_file().empty()) set_font(*dokun::Font::system_font);
 	set_position (x, y);
-	set_relative_position(0, 0); 
 	set_width (width);
 	set_height (height);
 }
 /////////////
-dokun::Label::Label(const std::string& text, int x, int y, int width, int height) : color(255, 255, 255, 1.0), alignment("none")
+dokun::Label::Label(const std::string& text, int x, int y, int width, int height) : dokun::Label()
 {
     if(!dokun::Font::system_font) throw std::runtime_error("default font is not initialized");
     if(!dokun::Font::system_font->get_file().empty()) set_font(*dokun::Font::system_font); // if the default font has already been loaded, set the font
 	set_string (text);
 	set_position (x, y);
-	set_relative_position(0, 0);
 	set_width (width);
 	set_height (height);
 }
 /////////////
-dokun::Label::Label(const std::string& text, const dokun::Font& font) : width(0), height(0), color(255, 255, 255, 1.0), alignment("none")
+dokun::Label::Label(const std::string& text, const dokun::Font& font) : dokun::Label()
 {
 	set_font(font);
 	set_string(text);
-	set_position(0, 0);
-	set_relative_position(0, 0);
 }
 /////////////
 int dokun::Label::label_new(lua_State *L)
@@ -113,15 +102,13 @@ dokun::Label::~Label()
 /////////////
 void dokun::Label::draw()
 {
-    on_draw(); // sets position relative to parent, regardless of visibility
+    on_draw(); // sets position relative to parent, regardless of visibility and generates shaders for all GUIs including Labels
 	if(!font) return; // return if no font //if(string.empty()) return; // return if empty string (BAD: It will prevent from updating label's x and y position)
     if(!is_visible()) return; // exit function if not visible
 	// STORE ALL CHARACTERS IN ARRAY BEFORE DRAWING!
 	font->generate();
     // Draw text
-	Renderer::draw_text2(string, get_x(), get_y(), 
-		get_width(), get_height(), get_angle(), get_scale().x, get_scale().y, 
-	    *font, get_color().x, get_color().y, get_color().z, get_color().w);
+	Renderer::draw_text(string, get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y, get_color().x, get_color().y, get_color().z, get_color().w, *font, label_shader);
 }
 /////////////
 void dokun::Label::draw(double x, double y)
@@ -174,6 +161,58 @@ void dokun::Label::clear() {
 /////////////
 void dokun::Label::update(void)
 {}
+/////////////
+/////////////
+Shader * dokun::Label::label_shader (new Shader());
+/////////////
+void dokun::Label::generate_shader(void) {
+    // assign the object's shader to default shader (if it does not yet have one)
+	if(!shader) shader = label_shader;//{this->shader = label_shader;std::cout << "GUI " << Factory::get_gui_factory()->get_location(this) << " (label) has been assigned a shader program" << std::endl;}
+    if(label_shader->is_linked()) return; // if label_shader is already generated and linked, exit function
+	////////////////////////////
+    const char * vertex_source[] =
+    {
+		"#version 330\n"
+        "layout (location = 0) in vec4 vertex;\n"
+        "\n"
+		"out vec2 Texcoord;\n"
+		"\n"
+		"uniform mat4 model;\n"
+		"uniform mat4 proj;\n"
+		"uniform mat4 view;\n"
+		"\n"
+        "void main(void)\n"
+		"{\n"
+			"Texcoord    = vec2(vertex.z, 1-vertex.w);\n"
+            "gl_Position = proj * view * model * vec4(vertex.xy, 0.0, 1.0);\n"
+		"}\n"
+	};
+	const char * fragment_source[] =
+    {
+	    "#version 330                                                          \n"
+        "\n"
+        "out vec4 out_color;\n"
+        "in vec2 Texcoord  ;\n"
+		"\n"
+        "uniform sampler2D font;\n"
+        "uniform vec3 color    ;\n"
+        "uniform float alpha   ;\n"
+        "\n"
+        "void main(void) {\n"
+            "\n"
+			"out_color = vec4(color, alpha) * vec4(1.0, 1.0, 1.0, texture(font, Texcoord).r);\n"
+        "}\n"
+	};	
+	////////////////////////////
+    if(!label_shader->has_program())
+	{
+		label_shader->create();
+		label_shader->set_source(vertex_source  , 0);
+		label_shader->set_source(fragment_source, 1);
+		label_shader->prepare();
+	    ////std::cout << DOKUN_UI_TAG "Label shaders have been generated (" << label_shader->get_program() << ")" << std::endl;//std::cout << "number of shaders attached to shader object program: " << label_shader->get_shader_count() << std::endl;
+	}
+}
 /////////////
 /////////////
 // SETTERS	
@@ -711,6 +750,38 @@ int dokun::Label::is_label(lua_State *L)
     return 1;	
 }
 /////////////
+/////////////
+// label's width and height is different from other gui elements' size which is why it needed its own implementation of GUI::on_parent()
+void dokun::Label::on_parent() {
+    // if self has no parent, exit function
+	if(!get_parent()) return;
+	// set position of child
+	// only the child's position relative to the parent can be changed, meaning the child no longer has a position of its own once the parent is set
+	// so using "set_position" on a child GUI makes no sense
+	set_position(get_parent()->get_x() + get_relative_x(), get_parent()->get_y() + get_relative_y());
+	// make sure child does not go past parent's x bounds - success!
+	if(get_relative_x() >= (get_parent()->get_width() - (string.length() * 10)/*get_width()*/)) { 
+	    set_position(get_parent()->get_x() + (get_parent()->get_width() - (string.length() * 10)/*get_width()*/), get_y()); 
+	    // fix the incorrect relative x position
+	    // set the relative position to the parent_width - child_width
+	    set_relative_position(get_parent()->get_width() - (string.length() * 10)/*get_width()*/, get_relative_y());	
+	}
+	if(get_x() <= get_parent()->get_x()) set_position(get_parent()->get_x(), get_y());// child_x = parent->get_x() + get_relative_x()
+	// make sure child does not go past parent's y bounds - success!
+	if(get_y() <= get_parent()->get_y()) set_position(get_x(), get_parent()->get_y());// up// child_y = parent->get_y() + get_relative_y() 
+	if(get_relative_y() >= (get_parent()->get_height() - 10/*get_height()*/)) {
+	    set_position(get_x(), get_parent()->get_y() + (get_parent()->get_height() - 10/*get_height()*/));
+	    // fix the incorrect relative y position
+	    // set the relative position to the parent_height - child_height
+	    set_relative_position(get_relative_x(), (get_parent()->get_height() - 10/*get_height()*/));
+	}// down//{std::cout <<"child going outside parent y bounds!\n";}//{set_position(get_x(), parent->get_y());} // REMINDER: shrink size of button and retest this function again	    
+#ifdef DOKUN_DEBUG0	    
+	std::cout << "label_x: " << get_x() << std::endl;
+	std::cout << "label_y: " << get_y() << std::endl;
+	std::cout << "label_rel_x: " << get_relative_x() << std::endl;
+	std::cout << "label_rel_y: " << get_relative_y() << std::endl; // bug: relative position goes out of bound [fixed]
+#endif
+}
 /////////////
 /////////////
 /*  

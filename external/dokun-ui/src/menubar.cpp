@@ -36,35 +36,25 @@ gradient_color(color)
     bar->set_gradient(this->gradient);
     bar->set_gradient_color(this->gradient_color);
 }
-Menubar::Menubar(int x, int y)
+///////////////
+Menubar::Menubar(int x, int y) : Menubar()
 {
 	set_position(x, y);
-	set_size(Renderer::window_width, 20);
-	set_orientation(0);
-	
-	bar = new Box();
-	// set bar properties (to match Menubar)
-	bar->set_position(this->get_x(), this->get_y());
-	bar->set_size(this->get_width(), this->get_height());
-	bar->set_color(this->color);	
 }
-Menubar::Menubar(int x, int y, int width, int height)
+///////////////
+Menubar::Menubar(int x, int y, int width, int height) : Menubar()
 {
 	set_position(x, y);
 	set_size(width, height);
-	set_orientation(0);
-	
-	bar = new Box();
-	// set bar properties (to match Menubar)
-	bar->set_position(this->get_x(), this->get_y());
-	bar->set_size(this->get_width(), this->get_height());
-	bar->set_color(this->color);	
 }
+///////////////
 int Menubar::menu_new(lua_State *L)
 {
     return 1;
 }
-Menubar::~Menubar(){}
+///////////////
+Menubar::~Menubar()
+{}
 ///////////////
 Box * Menubar::selected_menu (nullptr);
 ///////////////		

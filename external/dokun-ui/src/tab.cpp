@@ -5,7 +5,7 @@ Tab::Tab()
     set_size(100, 50);//(50, 10);
     set_color(64, 64, 64, 1.0);
 
-	label = new dokun::Label();
+	//label = new dokun::Label(); // label must be initialized manually!!
 }
 ////////////
 Tab::~Tab()
@@ -24,6 +24,7 @@ void Tab::draw()
 	        //    tab_list.size(), true);
 	        //if(tab_list[i]->get_width())// if tab_width less than label_width, increase tab_width    
 	       	Renderer::draw_tab(tab_list[i]->get_x(), tab_list[i]->get_y(), tab_list[i]->get_width(), tab_list[i]->get_height(), get_angle(), get_scale().x, get_scale().y, tab_list[i]->get_color().x, tab_list[i]->get_color().y, tab_list[i]->get_color().z, tab_list[i]->get_color().w,
+	            GUI::gui_shader,
 	            5/*tab_list.size()*/, true);     
 	        if(label != nullptr)
 	        {

@@ -31,13 +31,13 @@ void start_neromon_server() {
 ////////////////////
 //DB2 db2;
 void connect_database() { // this function is just for testing purposes
-    DB2::get_singleton()->/*db2.*/connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");// dbname=mydb");//("host=localhost port=1234 dbname=mydb connect_timeout=10");//("");//("user=sid dbname=neroshoptest");
+    DB::Psql::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");// dbname=mydb");//("host=localhost port=1234 dbname=mydb connect_timeout=10");//("");//("user=sid dbname=neroshoptest");
     // psql -h localhost -p 5432 -U postgres -d neroshoptest       // or psql neroshoptest
     // Password for user postgres: postgres
     // ctrl + z to exit
     /*std::cout << ": " << << std::endl;
     std::cout << ": " << << std::endl;*/
-    DB2::get_singleton()->/*db2.*/print_database_info();   
+    DB::Psql::get_singleton()->print_database_info();   
     ////////////
     // testing
     /*if(!db2.table_exists("users")) {
@@ -51,8 +51,8 @@ void connect_database() { // this function is just for testing purposes
     }*/
     //db2.insert_into("users", "name, pw_hash, opt_email", "'dude', '$2a$05$bvIG6Nmid91Mu9RcmmWZfO5HJIMCT8riNW0hEp8f6/FuA2/mHZFpe', 'null'"); // libpq does not allow double quotes :(
     //db2.insert_into("users", "name, pw_hash", "'mike', 'blank'");
-    //db2.insert_into("users", "name, pw_hash", DB2::to_psql_string("sid's bish") + "," + DB2::to_psql_string("nothing to see here"));
-    //db2.update("users", "name", DB2::to_psql_string("nameless"), "id = 1");
+    //db2.insert_into("users", "name, pw_hash", DB::Psql::to_psql_string("sid's bish") + "," + DB::Psql::to_psql_string("nothing to see here"));
+    //db2.update("users", "name", DB::Psql::to_psql_string("nameless"), "id = 1");
     ////db2.execute("DROP DATABASE neroshoptest;");
     //////////////
     ////std::cout << db2.get_row_count("users") << " (row count for table users)" << std::endl;
@@ -61,7 +61,7 @@ void connect_database() { // this function is just for testing purposes
     //////////////
     ////std::cout << db2.get_text("SELECT VERSION()") << std::endl; // PostgreSQL 14.1 (Ubuntu 14.1-2.pgdg20.04+1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 9.3.0-17ubuntu1~20.04) 9.3.0, 64-bit
     /////////////
-    std::cout << DB2::get_singleton()->/*db2.*/get_integer("SELECT sum(numbackends) FROM pg_stat_database;") << " (number of connections - including this app)\n";
+    std::cout << DB::Psql::get_singleton()->/*db2.*/get_integer("SELECT sum(numbackends) FROM pg_stat_database;") << " (number of connections - including this app)\n";
     //db2.execute_params("INSERT INTO users (name, pw_hash, opt_email) VALUES ($1, $2, $3)", {});
     //std::cout << "column_exists: " << db2.column_exists("users","role") << "\n";//get_text("SELECT name FROM users WHERE name = 'jack'") << std::endl;
     //db2.drop_table("users");
@@ -103,7 +103,7 @@ void connect_database() { // this function is just for testing purposes
     ////////////
     ////////////
     //PQclear(res); // Should PQclear PGresult whenever it is no longer needed to avoid memory leaks
-    DB2::get_singleton()->/*db2.*/finish(); // close the connection to the database and cleanup
+    //DB::Psql::get_singleton()->finish(); // close the connection to the database and cleanup
     //if(!db2.get_handle()) std::cout << "conn set to nullptr (means connection closed)\n";
 }
 ////////////////////////////////////////////////
@@ -114,7 +114,7 @@ void create_local_database() {
     std::string cache_file_name = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cache.db";
     if(!File::exists(cache_file_name)) {
         // create "cache.db" if it does not yet exist
-        DB db;if(db.open(cache_file_name)) {
+        DB::Sqlite3 db;if(db.open(cache_file_name)) {
             db.execute("PRAGMA journal_mode = WAL;"); // to prevent database from being locked
             // create table "account" if it does not yet exist
             if(!db.table_exists("account")) {
@@ -142,21 +142,24 @@ std::string get_libcurl_version() {
 }
 ////////////////////
 ////////////////////
+lua_State * neroshop::lua_state = luaL_newstate(); // lua_state should be initialized by default
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 namespace neroshop {
     bool status = false; // off (default)
+    ////////////////////
+    //lua_State * lua_state;
     ////////////////////
     static bool on_open() {
         //////////////////////////////////////////////////
         // neromon
         start_neromon_server();
         //////////////////////////////////////////////////
-        // lua       
-        if(DB::get_lua_state() == nullptr) {
-            neroshop::print("\033[1;94m[lua]:\033[0m lua state failed to initialize");
+        // lua
+        if(neroshop::get_lua_state() == nullptr) {
+            neroshop::print(LUA_TAG "lua state failed to initialize");
             return false;
         }
-        luaL_openlibs(DB::get_lua_state()); // opens all standard Lua libraries into the given state. 
+        luaL_openlibs(neroshop::get_lua_state()); // opens all standard Lua libraries into the given state. 
         //////////////////////////////////////////////////
         // dokun-ui
         if(!Engine::open()) {
@@ -165,8 +168,8 @@ namespace neroshop {
         }
         //////////////////////////////////////////////////
         // config.lua
-        if(!DB::create_config()) { // if it fails to create a config file
-            if(!DB::load_config(DB::get_lua_state())) {
+        if(!neroshop::create_config()) { // if it fails to create a config file
+            if(!neroshop::load_config()) {
                 return false;
             } // try loading the config file instead
         }
@@ -194,12 +197,14 @@ namespace neroshop {
     static void on_close() {
         if(status == 0) return; // neroshop is off (already)
         // close lua
-        lua_close(DB::get_lua_state());        
+        lua_close(neroshop::get_lua_state());        
         // close dokun
         Engine::close();//dokun::Engine::close();
         // kill monerod process ??
         // kill neromon process
         delete server_process;
+        // close database server
+        DB::Psql::get_singleton()->finish();
         neroshop::print("neroshop closed");
     }
     ////////////////////
@@ -227,66 +232,66 @@ int main() {
     Item ball("Ball", "A round and bouncy play-thing", 10, 0.5, std::make_tuple(0, 0, 0), "new", "0000-0000-0001");
     Item candy("Candy", "O' so sweet and dee-lish!", 2, 0.01, std::make_tuple(0, 0, 0), "", "0000-0000-0002");
     Item ring("Ring", "One ring to rule them all", 99, 0.5, std::make_tuple(0, 0, 0), "new", "0000-0000-0003");
+    Item sid_ball("Sid's ball", "Sid's bouncy play-thing", 10, 0.5, std::make_tuple(0, 0, 0), "new", "0000-0000-0011");
     // Seller will list some items
-    
     // which users will be able to add to cart
     //Cart::get_singleton()->add(ball, 1);
-    
+    ////ball.upload();
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////	
     // Monero	
     // get config: network_type, ip, port, data_dir, etc.
     // network-type: --stagenet, --testnet
-    std::string network_type = String::lower(Script::get_string(DB::get_lua_state(), "neroshop.daemon.network_type"));
+    std::string network_type = String::lower(Script::get_string(neroshop::get_lua_state(), "neroshop.daemon.network_type"));
     if(network_type.empty()) {
         std::cout << "failed to get network type\nsetting default network type: stagenet" << std::endl;
         network_type = "stagenet";
     }
     // --rpc-bind-ip and --rpc-bind-port
-    std::string ip = Script::get_string(DB::get_lua_state(), "neroshop.daemon.ip");
+    std::string ip = Script::get_string(neroshop::get_lua_state(), "neroshop.daemon.ip");
     if(ip.empty()) {
         std::cout << "failed to get ip\nsetting default ip: 127.0.0.1" << std::endl;
         ip = "127.0.0.1";
     }
-    std::string port = Script::get_string(DB::get_lua_state(), "neroshop.daemon.port");
+    std::string port = Script::get_string(neroshop::get_lua_state(), "neroshop.daemon.port");
     if(port.empty()) {
         std::cout << "failed to get port\nsetting default port: 38081" << std::endl;
         port = "38081";
     }
     // --data-dir [path]
-    std::string data_dir = Script::get_string(DB::get_lua_state(), "neroshop.daemon.data_dir");
+    std::string data_dir = Script::get_string(neroshop::get_lua_state(), "neroshop.daemon.data_dir");
     std::string data_dir_default = std::string("/home/") + System::get_user() + std::string("/.bitmonero");
     if(data_dir.empty()) {
         std::cout << "failed to get data directory\nsetting default data directory: " << data_dir_default << std::endl;
         data_dir = data_dir_default;
     }
     // --confirm-external-bind and --restricted-rpc (if you do not use the --restricted-rpc flag, someone might starting mining on your node >.>)
-    bool confirm_external_bind = Script::get_boolean(DB::get_lua_state(), "neroshop.daemon.confirm_external_bind");
-    if(Script::get_type(DB::get_lua_state(), "neroshop.daemon.confirm_external_bind") == "nil") {
+    bool confirm_external_bind = Script::get_boolean(neroshop::get_lua_state(), "neroshop.daemon.confirm_external_bind");
+    if(Script::get_type(neroshop::get_lua_state(), "neroshop.daemon.confirm_external_bind") == "nil") {
         confirm_external_bind = false;
         if(ip == "0.0.0.0") {
             confirm_external_bind = true;
         }
     } // set default value if nil
-    bool restricted_rpc = Script::get_boolean(DB::get_lua_state(), "neroshop.daemon.restricted_rpc");
-    if(Script::get_type(DB::get_lua_state(), "neroshop.daemon.restricted_rpc") == "nil") {
+    bool restricted_rpc = Script::get_boolean(neroshop::get_lua_state(), "neroshop.daemon.restricted_rpc");
+    if(Script::get_type(neroshop::get_lua_state(), "neroshop.daemon.restricted_rpc") == "nil") {
         restricted_rpc = true;
     } // set default value if nil
     // --remote-node (custom arg)
-    bool is_remote_node = Script::get_boolean(DB::get_lua_state(), "neroshop.daemon.remote");
-    if(Script::get_type(DB::get_lua_state(), "neroshop.daemon.remote") == "nil") is_remote_node = false; // set default value if nil
+    bool is_remote_node = Script::get_boolean(neroshop::get_lua_state(), "neroshop.daemon.remote");
+    if(Script::get_type(neroshop::get_lua_state(), "neroshop.daemon.remote") == "nil") is_remote_node = false; // set default value if nil
     // check the type of the restore_height first
     unsigned int restore_height = 0;
     std::vector < std::string > restore_date_vector;
     // if restore_height is a string
-    if(Script::get_type(DB::get_lua_state(), "neroshop.wallet.restore_height") == "string") { //std::cout << "restore height is a string\n";
+    if(Script::get_type(neroshop::get_lua_state(), "neroshop.wallet.restore_height") == "string") { //std::cout << "restore height is a string\n";
         // convert restore_height (date) to number
-        std::string restore_date = Script::get_string(DB::get_lua_state(), "neroshop.wallet.restore_height");
+        std::string restore_date = Script::get_string(neroshop::get_lua_state(), "neroshop.wallet.restore_height");
         restore_date_vector = String::split(restore_date, "-"); //std::cout << "Y: " << restore_date_vector[0] << " M: " << restore_date_vector[1] << " D: " << restore_date_vector[2] << std::endl;
         //wallet->get_monero_wallet()->get_height_by_date (restore_date_vector[0], restore_date_vector[1], restore_date_vector[2]); // cannot convert since wallet has not been initialized
     }
     // if restore_height is a number
-    if(Script::get_type(DB::get_lua_state(), "neroshop.wallet.restore_height") == "number") { //std::cout << "restore height is a number\n";
-        restore_height = Script::get_number(DB::get_lua_state(), "neroshop.wallet.restore_height"); //std::cout << "restore_height: " << restore_height << std::endl;
+    if(Script::get_type(neroshop::get_lua_state(), "neroshop.wallet.restore_height") == "number") { //std::cout << "restore height is a number\n";
+        restore_height = Script::get_number(neroshop::get_lua_state(), "neroshop.wallet.restore_height"); //std::cout << "restore_height: " << restore_height << std::endl;
         // use default restore height (0) if not set by user
         if(restore_height <= 0) {
             /*std::cout << "no user-specific restore_height\nsetting default restore_height: 0" << std::endl;*/
@@ -294,7 +299,7 @@ int main() {
         }
     }
     // --wallet-file
-    std::string wallet_file = Script::get_string(DB::get_lua_state(), "neroshop.wallet.file"); //std::cout << "network-type= " << network_type << ", rpc-bind= " << ip << ":" << port << ", data-dir= " << data_dir << ", restore-height= " << restore_height << ", confirmed-external-bind= " << confirm_external_bind << ", restricted-rpc= " << restricted_rpc << ", use-remote-node= " <<  is_remote_node/* << ", " <<  */<< " <-(data retrieved from config)" << std::endl;
+    std::string wallet_file = Script::get_string(neroshop::get_lua_state(), "neroshop.wallet.file"); //std::cout << "network-type= " << network_type << ", rpc-bind= " << ip << ":" << port << ", data-dir= " << data_dir << ", restore-height= " << restore_height << ", confirmed-external-bind= " << confirm_external_bind << ", restricted-rpc= " << restricted_rpc << ", use-remote-node= " <<  is_remote_node/* << ", " <<  */<< " <-(data retrieved from config)" << std::endl;
     Wallet * wallet = Wallet::get_singleton();//new Wallet();
     // check if wallet is view only
     //if(wallet->get_monero_wallet()->is_view_only ()) {std::cout << "wallet is view-only\n";}
@@ -310,21 +315,24 @@ int main() {
     // window
     dokun::Window window;
     window.create("neroshop", 
-        (Script::get_number(DB::get_lua_state(), "neroshop.window.width" ) != -1) ? Script::get_number(DB::get_lua_state(), "neroshop.window.width" ) : 1280, 
-        (Script::get_number(DB::get_lua_state(), "neroshop.window.height") != -1) ? Script::get_number(DB::get_lua_state(), "neroshop.window.height") : 720 , 
-        (Script::get_number(DB::get_lua_state(), "neroshop.window.mode"  ) != -1) ? Script::get_number(DB::get_lua_state(), "neroshop.window.mode"  ) : 0   /*1280, 720, 0*/ ); //video->texture->get_width(), video->texture->get_height(), 0); // titlebar is 16x39 //window.set_size(1500, 900);
+        (Script::get_number(neroshop::get_lua_state(), "neroshop.window.width" ) != -1) ? Script::get_number(neroshop::get_lua_state(), "neroshop.window.width" ) : 1280, 
+        (Script::get_number(neroshop::get_lua_state(), "neroshop.window.height") != -1) ? Script::get_number(neroshop::get_lua_state(), "neroshop.window.height") : 720 , 
+        (Script::get_number(neroshop::get_lua_state(), "neroshop.window.mode"  ) != -1) ? Script::get_number(neroshop::get_lua_state(), "neroshop.window.mode"  ) : 0   /*1280, 720, 0*/ ); //video->texture->get_width(), video->texture->get_height(), 0); // titlebar is 16x39 //window.set_size(1500, 900);
     window.show();
+    // ----------------------------------- shaders ---------------------------------------
+    // generate shaders once we have a graphics context (opengl context in this case)
+    //GUI::generate();
     // ----------------------------------- fonts testing ---------------------------------
     // font
-    dokun::Font font;
+    ////dokun::Font * font = new dokun::Font();//font;
     //font->set_height(20);//set_pixel_size(0, 18);
     // setting the font crashes the app, but for some reason only certain fonts do not crash the app
-    font.load("res/Mecha-GXPg.ttf");//https://github.com/tonsky/FiraCode    
+    ////font->load("c0583bt_.pfb");//("UbuntuMono-R.ttf");//("res/Hack-Regular.ttf");//("res/FiraCode-Retina.ttf");//("res/consolab.ttf");//crashes//("c0583bt_.pfb");//works//("res/UbuntuMono-R.ttf");//("res/Mecha-GXPg.ttf");//https://github.com/tonsky/FiraCode    
     // -------------------------------- :P -------------------------------------------
-    Label * neroshop_label = new Label();
-    //neroshop_label->set_font(font);
+    Label * neroshop_label = new Label();// crashes program and prevents user from logging in
+    neroshop_label->set_font(*dokun::Font::get_system_font());//(font);
     neroshop_label->set_string("ner  shop");
-    neroshop_label->set_position(20, 30);
+    neroshop_label->set_position(20, 30); // "n"=pos_x(20)
     //neroshop_label->set_scale(1.5, 1.5);
     //neroshop_label->get_font()->set_pixel_size(0, 20);
     Box * monero_icon = new Box();
@@ -334,7 +342,7 @@ int main() {
     monero_icon->set_size(20, 20); // label characters are 10 units in both width and height
     monero_icon->set_position(neroshop_label->get_x() + 30, neroshop_label->get_y());// / 2);
     // ---------------------------------- message ----------------------------------------
-    Message message_box; //= Message::get_singleton();// hidden by default
+    Message message_box;// hidden by default
     message_box.set_title("message");
     // the hide function was not working because I set their parent to box with GUI::set_parent(parent)
     // which means I probably didn't own it
@@ -344,20 +352,23 @@ int main() {
     message_box.add_button("OK", 0, 0, 50, 30); // 0
     message_box.add_button("Cancel", 0, 0, 100, 30); // 1
     message_box.get_button(1)->set_color(214, 31, 31, 1.0); // Cancel button
-    message_box.add_button("Submit", 0, 0, 100, message_box.get_edit(0)->get_height()); // 2 // add button
+    message_box.add_button("Submit", 0, 0, 100, message_box.get_edit(0)->get_height()); // 2
     // temporary
     message_box.get_edit(0)->set_text("supersecretpassword123");
     // create a second message box - this will display wallet notification messages
-    Message wallet_message_box; //= Message::get_doubleton();
-    // tripleton? nah XD
+    Message wallet_message_box;
+    wallet_message_box.add_button("Close", 0, 0, 100, 30); // 0
+    wallet_message_box.get_button(0)->set_color(214, 31, 31, 1.0);
+    //wallet_message_box.add_button("", 0, 0, 50, 30); // 1
+    wallet_message_box.add_label();   
     // -------------------------------- login -------------------------------------------
     // user_edit ***************************************
     Edit * user_edit = new Edit();
     user_edit->set_size(500, 30); // try using an odd number for width=511
     user_edit->set_character_limit(500);//(32);//(64);//(500);//temp - 500 for testing//(user_edit->get_width() / 10); // 50 characters MAX (width / space_cursor_takes_up_each_increment)
     user_edit->set_position((window.get_width() / 2) - (user_edit->get_width() / 2), (window.get_height() / 2) - (user_edit->get_height() / 2));
-    Label user_edit_label;//(*font); // = new Label(); // Label causes a segment fault in GLFW!!
-    //user_edit_label.set_font(static_cast<dokun::Font&>(*font));
+    Label user_edit_label;// = new Label(); // Label causes a segment fault in GLFW!!
+    user_edit_label.set_font(*dokun::Font::get_system_font());//(static_cast<dokun::Font&>(*font));
     user_edit_label.set_color(0, 0, 0, 1.0);//(49, 39, 19, 1.0);
     user_edit_label.set_relative_position(0, 4);
     user_edit->set_label(user_edit_label);
@@ -372,11 +383,11 @@ int main() {
     pw_edit->set_character_limit(128);//(256);//(pw_edit->get_width() / 10);
     pw_edit->set_position(user_edit->get_x(), user_edit->get_y() + user_edit->get_height() + 5);
     Label pw_edit_label;
+    pw_edit_label.set_font(*dokun::Font::get_system_font());
     pw_edit->set_label(pw_edit_label);
     pw_edit->get_label()->set_color(0, 0, 0, 1.0);
     pw_edit->set_sensative(true);
-    //pw_edit->hide();	
-    //pw_edit->set_text("Password!23");
+    pw_edit->set_text("Password!23"); // THIS IS TEMPORARY!
     // user_button - replace with label "Username"
     //Box * user_edit_icon = new Box();
     // user_edit placeholder image ******************
@@ -404,21 +415,22 @@ int main() {
     //save_toggle->set_radio(); // should actually be a checkbox instead
     // save_login_label
     Label save_user_label; // right
+    save_user_label.set_font(*dokun::Font::get_system_font());
     save_user_label.set_string("Save user");
     //save_toggle->set_position(save_user_label.get_x() - save_user_label.get_width() - 1/*save_toggle->get_width()*/); 
     //pw_edit_icon->hide();
     // get "save" value from config file or database then set it
     // use sqlite instead of lua to save this.
     std::string cache_file_name = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cache.db";
-    DB db(cache_file_name);
+    DB::Sqlite3 db(cache_file_name);
     bool cached_save = db.get_column_integer("account", "save", "id = 1"); // returns zero (false) by default
     std::string cached_username = db.get_column_text("account", "username", "id = 1"); // returns empty string by default
     db.close();
     std::cout << "save: " << cached_save << ", username: " << cached_username << std::endl;
     // store cached "save" value in save_toggle
-    save_toggle->set_value(cached_save);//((Script::get_boolean(DB::get_lua_state(), "neroshop.account.saved") != -1) ? Script::get_boolean(DB::get_lua_state(), "neroshop.account.saved") : false);
+    save_toggle->set_value(cached_save);//((Script::get_boolean(neroshop::get_lua_state(), "neroshop.account.saved") != -1) ? Script::get_boolean(neroshop::get_lua_state(), "neroshop.account.saved") : false);
     // store cached "username" value in user_edit
-    if(save_toggle->get_value() == true) user_edit->set_text(cached_username);//(Script::get_string(DB::get_lua_state(), "neroshop.account.username"));
+    if(save_toggle->get_value() == true) user_edit->set_text(cached_username);//(Script::get_string(neroshop::get_lua_state(), "neroshop.account.username"));
     /////////////
     // login_button
     Button * login_button = new Button();
@@ -434,7 +446,7 @@ int main() {
     register_label.set_alignment("center"); //register_label.set_color(, , );
     register_button->set_label(register_label); // login_width + register_width = must add up to 400
     register_button->set_size(150, 40); //(guest_button->get_width(), 40);//(register_label.get_width() * 2, 40);//guest button width: 374
-    register_button->set_color(0, 174, 191);; //(102, 205, 170); //register_button->set_position();// will be updated in loop
+    register_button->set_color(0, 174, 191); //(102, 205, 170); //register_button->set_position();// will be updated in loop
     //register_button->hide();
     // guest_button
     Button * guest_button = new Button();
@@ -490,6 +502,7 @@ int main() {
     //wallet_edit->set_position(pw_edit->get_x(), pw_edit->get_y() + pw_edit->get_height() + 5);
     wallet_edit->set_color(112, 128, 144);
     Label wallet_label;//(".."); // setting the text crashes the app // wallet_label //wallet_label.get_font()->set_pixel_size(0, 18);// changes the entire font's size//std::cout << "cursor_space: " << wallet_edit->get_cursor_space() << std::endl; // returns the space the cursor is increased by
+    wallet_label.set_font(*dokun::Font::get_system_font());
     wallet_edit->set_label(wallet_label); // length of wallet file was 69
     wallet_edit->set_text_color(32, 32, 32);
     //wallet_label.set_relative_position(wallet_label.get_relative_x() + 10, wallet_label.get_relative_y() + 10);
@@ -512,15 +525,6 @@ int main() {
     sync_box->set_size(12, 12); //sync_box->get_image()->set_size(16, 16);
     sync_box->set_color(255, 0, 0);//->get_image()->set_color(255, 0, 0);
     sync_box->set_position(sync_label.get_x() + sync_label.get_width(), sync_label.get_y());
-    /*// reconnect_button
-    Button * reconnect_button = new Button();
-    Label reconnect_label;
-    reconnect_label.set_string("Reconnect");
-    reconnect_label.set_alignment("center");
-    reconnect_button->set_label(reconnect_label);
-    reconnect_button->set_color(71, 60, 139);
-    reconnect_button->set_size(500, 40);
-    reconnect_button->set_position(guest_button->get_x(), guest_button->get_y() + guest_button->get_height() + 10);*/
     
     // --------------------------------- registration --------------------------------
     // user edit - registration
@@ -528,6 +532,7 @@ int main() {
     user_edit_r->set_size(500, 30);
     user_edit_r->set_character_limit(user_edit_r->get_width() / 10);
     Label user_edit_label_r; // = new Label();
+    user_edit_label_r.set_font(*dokun::Font::get_system_font());
     user_edit_label_r.set_color(0, 0, 0, 1.0);
     //user_edit_label_r.set_relative_position(0, 4);
     user_edit_r->set_label(user_edit_label_r);
@@ -538,6 +543,7 @@ int main() {
     pw_edit_r->set_size(250 - 5, 30); // added a gap (+5) between pw_edit_r and pw_confirm_edit
     pw_edit_r->set_character_limit(128);//(pw_edit_r->get_width() / 10);
     Label pw_edit_label_r; // = new Label();
+    pw_edit_label_r.set_font(*dokun::Font::get_system_font());
     pw_edit_label_r.set_color(0, 0, 0, 1.0);
     pw_edit_r->set_label(pw_edit_label_r);
     pw_edit_r->set_placeholder_text("Password *");
@@ -547,6 +553,7 @@ int main() {
     pw_confirm_edit->set_size(250, 30);
     pw_confirm_edit->set_character_limit(pw_edit_r->get_character_limit());//(pw_confirm_edit->get_width() / 10); //(pw_edit_r->get_character_limit());
     Label pw_confirm_edit_label; // = new Label();
+    pw_confirm_edit_label.set_font(*dokun::Font::get_system_font());
     pw_confirm_edit_label.set_color(0, 0, 0, 1.0);
     pw_confirm_edit->set_label(pw_confirm_edit_label);
     pw_confirm_edit->set_placeholder_text("Confirm password *");
@@ -556,6 +563,7 @@ int main() {
     opt_email_edit->set_size(500, 30);
     opt_email_edit->set_character_limit(opt_email_edit->get_width() / 10);
     Label opt_email_edit_label; // = new Label();
+    opt_email_edit_label.set_font(*dokun::Font::get_system_font());
     opt_email_edit_label.set_color(0, 0, 0, 1.0);
     opt_email_edit->set_label(opt_email_edit_label);
     opt_email_edit->set_placeholder_text("Email (optional)"); // optional, but without it we won't be able to recover your password or send you email notifications
@@ -598,6 +606,18 @@ int main() {
     // forgot your pw? reset here
     //->set_placeholder_text("");
     // --------------------------------- homepage -------------------------------------
+    // catalog
+    Catalog * catalog = new Catalog();
+    catalog->set_size(800, 300);
+    catalog->add_box(); // box positions and sizes are set automatically
+    //catalog->set_();
+    //Button add_to_cart_button("Add to cart");
+    //add_to_cart_button.set_width(200);
+    //Label add_to_cart_label;
+    ////catalog->get_box(0)->add(add_to_cart_button);
+    //_label.set_font(*dokun::Font::get_system_font());
+    ////Image heart_icon(Icon::get["heart"]->get_data(), 64, 64, 1, 4);
+    ////catalog->get_box(0)->add(heart_icon);//catalog->get_box(0)->set_();
     // search_bar
     Edit * search_bar = new Edit(); // crashes when drawn for some reason
     search_bar->set_size(400, 40);//((window.get_client_width() / 4) * 2 , 30); //620 , 30);
@@ -605,6 +625,7 @@ int main() {
     search_bar->set_cursor_color(255, 255, 255);
     search_bar->set_character_limit(1024);//(2048);//(std::numeric_limits<int>::max());//(std::numeric_limits<double>::infinity());//inf
     Label search_bar_label;
+    search_bar_label.set_font(*dokun::Font::get_system_font());
     search_bar_label.set_position(0, 10);
     search_bar_label.set_color(255, 255, 255);//(127, 127, 127);//(32, 32, 32);//(242, 100, 17);
     search_bar->set_label(search_bar_label);
@@ -694,35 +715,6 @@ int main() {
     star_icon->get_image()->set_color(255, 255, 0); // yellow
     bool star_activated = false;*/
     // _icon
-    /*Box * heart_icon = new Box();
-    heart_icon->set_image(*new Image(*Icon::get["heart_outline"]));
-    heart_icon->set_as_icon(true);
-    heart_icon->set_size(32, 32);
-    heart_icon->set_position(star_icon->get_x() + star_icon->get_width() + 1, 250);
-    heart_icon->get_image()->set_color(255, 0, 0); // red 
-    bool heart_activated = false;*/
-    // _icon
-    /*Box * _icon = new Box();
-    _icon->set_image(*new Image(*Icon::get[""]));
-    _icon->set_as_icon(true);
-    _icon->set_size(32, 32);
-    _icon->set_position(_icon->get_x() + _icon->get_width() + 5, 250);
-    bool _activated = false;*/
-    // _icon
-    /*Box * _icon = new Box();
-    _icon->set_image(*new Image(*Icon::get[""]));
-    _icon->set_as_icon(true);
-    _icon->set_size(32, 32);
-    _icon->set_position(_icon->get_x() + _icon->get_width() + 5, 250);
-    bool _activated = false;*/
-    // _icon
-    /*Box * _icon = new Box();
-    _icon->set_image(*new Image(*Icon::get[""]));
-    _icon->set_as_icon(true);
-    _icon->set_size(32, 32);
-    _icon->set_position(_icon->get_x() + _icon->get_width() + 5, 250);
-    bool _activated = false;*/
-    // _icon
     /*Box * _icon = new Box();
     _icon->set_image(*new Image(*Icon::get[""]));
     _icon->set_as_icon(true);
@@ -749,9 +741,6 @@ int main() {
 	// or https://localhost:1234/
 	// brave (chromium): ERR_SSL_PROTOCOL_ERROR
 	// firefox: SSL_ERROR_RX_RECORD_TOO_LONG
-	///////////////////////////////////////////////
-	// temporary
-	pw_edit->set_text("Password!23");
 	/////////////////////////////////////////////////////////////////////////////////
     // order listener timer - checks for pending transaction every x seconds
     Timer order_listener_timer;
@@ -763,13 +752,15 @@ int main() {
     slider->set_position(10, 300);
     //slider->set_value(60);//slider->set_value(2); // value of 2 = ball_x of 4    
     Slider * slider2 = new Slider();
-    slider2->set_value(10);
+    slider2->set_value(100);
     slider2->set_position(10, 325);    
+    //slider2->set_range(0, 1000); // <= doesnt work
     ////////////////
     Box * box = new Box();
     box->set_size(100, 50);
     box->set_color(160, 160, 160, 1.0);//(0, 51, 102);
     Label box_label;
+    box_label.set_font(*dokun::Font::get_system_font());
     box_label.set_alignment("center");
     box->set_label(box_label);
     //box->set_text("Hello");
@@ -786,6 +777,7 @@ int main() {
     spinner->set_separator(true);
     spinner->set_separator_size(5);
     Label spinner_label;
+    spinner_label.set_font(*dokun::Font::get_system_font());
     spinner_label.set_alignment("center");
     spinner_label.set_color(100, 100, 100);
     spinner->set_label(spinner_label); // value is set to 0 by default
@@ -798,6 +790,9 @@ int main() {
     radio->set_radio();
     radio->set_position(30, 550);
     ////////////////
+    Progressbar * pbar = new Progressbar();
+    pbar->set_value(20);
+    pbar->set_direction(1);
     ////////////////
     std::cout << "while loop commencing...\n";
     while(window.is_open()) { // main thread
@@ -827,6 +822,15 @@ int main() {
                     home_menu = true;
                     // show message
                     message_box.set_text("Welcome to neroshop, " + username, 52, 101, 164);//("You have registered successfully!"); // 52, 101, 164 = tango palette entry 4 (blue)
+                    // box text (label)
+                    message_box.get_label(0)->set_alignment("none");
+                    message_box.get_label(0)->set_relative_position((message_box.get_width() - message_box.get_label(0)->get_string().length() * 10/*message_box.get_label(0)->get_width()*/) / 2, ((message_box.get_height() - 10/*message_box.get_label()->height()*/) / 2) - 20);                   
+                    // ok button - not being used at the moment
+                    // cancel button
+                    message_box.get_button(1)->set_text("Close");
+                    //message_box.get_button(1)->set_color(214, 31, 31, 1.0);                    
+                    message_box.get_button(1)->set_relative_position((message_box.get_width() / 2) - (message_box.get_button(1)->get_width() / 2), message_box.get_height() - message_box.get_button(1)->get_height() - 20);
+                    message_box.get_button(1)->show();                    
                     message_box.show();
                 }
             }
@@ -862,7 +866,13 @@ int main() {
             /*// sync status
             sync_label.draw(0 + 20, window.get_client_height() - 20);
             sync_box->draw(sync_label.get_x() + sync_label.get_width(), sync_label.get_y());
-            */////////////////
+            */            
+            /////////////////////
+            // on cancel button pressed
+            if(message_box.get_button(1)->is_pressed()) {
+                message_box.hide();
+            }
+            ////////////////
             if(Keyboard::is_pressed(DOKUN_KEY_ESCAPE) && !message_box.is_visible()) window.destroy();
             message_box.center(window.get_client_width(), window.get_client_height());
             message_box.draw(); // draw if visible
@@ -874,7 +884,6 @@ int main() {
         /////////////////////////////////login_menu//////////////////////////////////////
         while (login_menu) // main application shows when register button is pressed since main_app comes after login_menu :|
         {
-            ////////////////
             //if(user_edit->has_focus()) user_edit->set_color(64, 64, 64);// set color of focused gui
             //else if(!user_edit->has_focus()) user_edit->set_color(0, 255, 255);
             //if(pw_edit->has_focus()) pw_edit->set_color(64, 64, 64);
@@ -885,16 +894,19 @@ int main() {
             window.set_viewport(window.get_client_width(), window.get_client_height());
             window.clear(32, 32, 32);
             /////////////////////
-            // On enter pressed with focus on user_edit
-            //if(user_edit->has_focus() && Keyboard::is_pressed(DOKhttps://www.color-hex.com/color-palette/6591UN_KEY_RETURN)) {
-            //    pw_edit->set_focused(true);
-            //    std::cout << "pw_edit has focus\n";
-            //}
             // On enter pressed with focus on pw_edit
             if(pw_edit->has_focus() && Keyboard::is_pressed(DOKUN_KEY_RETURN)) {
+                pw_edit->set_focus(false);
                 // attempt a login
                 std::cout << "login anaa?\n";
             }            
+            // On enter pressed with focus on user_edit
+            if(user_edit->has_focus() && Keyboard::is_pressed(DOKUN_KEY_RETURN)) {
+                user_edit->set_focus(false);
+                //if(!pw_edit.empty()) { login(); return; }
+                pw_edit->set_focus(true);
+                std::cout << "pw_edit has focus\n";
+            }
             /////////////////////////
             // login_button
             if(login_button->is_pressed() && !message_box.is_visible()) {
@@ -912,12 +924,12 @@ int main() {
                 if(!logged && client->is_connected()) {
                     message_box.set_text("Incorrect login credentials. Please, try again", "red"); //neroshop::message_box.center(window.get_client_width(), window.get_client_height());
                     // box text
-                    message_box.get_box()->get_label()->set_alignment("none");
-                    message_box.get_box()->get_label()->set_relative_position((message_box.get_box()->get_width() - message_box.get_box()->get_label()->get_string().length() * 10/*message_box.get_box()->get_label()->get_width()*/) / 2, 75);
+                    message_box.get_label(0)->set_alignment("none");
+                    message_box.get_label(0)->set_relative_position((message_box.get_width() - message_box.get_label(0)->get_string().length() * 10/*message_box.get_label(0)->get_width()*/) / 2, ((message_box.get_height() - 10/*message_box.get_label()->height()*/) / 2) - 20);
                     // box button
                     message_box.get_button(1)->set_text("Close");//("OK");
                     //message_box.get_button(1)->set_color(0, 51, 102, 1.0);                 
-                    message_box.get_button(1)->set_relative_position((message_box.get_box()->get_width() / 2) - (message_box.get_button(1)->get_width() / 2), message_box.get_box()->get_height() - message_box.get_button(1)->get_height() - 20);//50);
+                    message_box.get_button(1)->set_relative_position((message_box.get_width() / 2) - (message_box.get_button(1)->get_width() / 2), message_box.get_height() - message_box.get_button(1)->get_height() - 20);//50);
                     message_box.get_button(1)->show();                    
                     message_box.show();
                 }
@@ -926,16 +938,16 @@ int main() {
                     // use sql instead of lua for storing the save_user
                     // upon login, update the save_toggle value to whatever the value was set to at the time the user logged in
                     std::string cache_file_name = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cache.db";
-                    DB db(cache_file_name);
+                    DB::Sqlite3 db(cache_file_name);
                     db.update("account", "save", std::to_string(save_toggle->get_value()), "id = 1");
-                    db.update("account", "username", (save_toggle->get_value()) ? DB::to_sql_string(user_edit->get_text()) : "''", "id = 1");
+                    db.update("account", "username", (save_toggle->get_value()) ? DB::Sqlite3::to_sql_string(user_edit->get_text()) : "''", "id = 1");
                     if(save_toggle->get_value() == true ) neroshop::print("Username saved", 3);
                     if(save_toggle->get_value() == false) neroshop::print("Username not saved", 2);
                     db.close();
                     // check whether user is a buyer or seller
-                    DB2::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
-                    unsigned int account_type_id = DB2::get_singleton()->get_integer_params("SELECT account_type_id FROM users WHERE name = $1", { user_edit->get_text() });
-                    DB2::get_singleton()->finish();
+                    ////DB::Psql::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+                    unsigned int account_type_id = DB::Psql::get_singleton()->get_integer_params("SELECT account_type_id FROM users WHERE name = $1", { user_edit->get_text() });
+                    ////DB::Psql::get_singleton()->finish();
                     // create user
                     if(account_type_id <= 0) {
                         std::cout << "This user was not found in database";
@@ -993,7 +1005,7 @@ int main() {
                     //static_cast<Seller *>(user)->list_item(game, 7, 69.00, "usd");
                     /// 2. which users will be able to then add to cart
                     //Cart::get_singleton()->remove(ball, 10);
-                    user->add_to_cart(ball, 2);
+                    //user->add_to_cart(ball, 2);
                     user->add_to_cart(candy, 10);
                     ////Cart::get_singleton()->add(ring, 1);
                     //Cart::get_singleton()->add(game, 1);
@@ -1001,28 +1013,29 @@ int main() {
                     std::string shipping_addr = "Lars Mars\n"
                     "12 Earth St.\n"
                     "Boston MA 02115";
-                    Order * order = user->create_order(shipping_addr);//, "larteyoh@protonmail.com");                    
+                    ////Order * order = user->create_order(shipping_addr);//, "larteyoh@protonmail.com");                    
                     // for an online cart, you can retrieve your cart id like this:
                     // cart_id = db.get_integer_params("SELECT user_id FROM cart WHERE user_id = $1", { user->get_id() });
                     // then save by attaching it to the user
                     // user->set_cart(cart_id);
                     // update cart qty everytime add, remove, or change_qty, is called
-                    cart_button->get_label()->set_string(std::to_string(Cart::get_singleton()->get_total_quantity()));                    
+                    ////cart_button->get_label()->set_string(std::to_string(Cart::get_singleton()->get_total_quantity(user->get_id())));                    
                     // set the wallet
                     //if(user && wallet_opened) static_cast <Seller *>(user)->set_wallet(*wallet);
-                    //std::cout << "is_user_logged_in: " << user->is_logged() << std::endl;
-                    //std::cout << "is_user_registered: " << user->is_registered() << std::endl;
-                    //std::cout << "is_user_guest: " << user->is_guest() << std::endl;
-                    //std::cout << "is_user_buyer: " << user->is_buyer() << std::endl;
-                    //std::cout << "is_user_seller: " << user->is_seller() << std::endl;
                     // 5. rate item you've purchased or rate the seller you purchased from
                     // rate item (from 1-5)
-                    //user->rate_item(ball.get_id(), 2, "It's meh :|");//(game.get_id(), 1, "It's meh"); // give ball a 5 star rating//user->rate_item(ball.get_id(), 5, "Very bouncy. I love it!");
+                    //user->rate_item(ball.get_id(), 3, "Cool");//2, "It's meh :|");//(game.get_id(), 1, "It's meh"); // give ball a 5 star rating//
+                    //user->rate_item(ball.get_id(), 5, "Very bouncy. I love it!");
+                    /*std::cout << "**********************************************************\n";
+                    std::cout << "Ball total ratings: " << ball.get_ratings_count() << std::endl;
+                    int star_num = 5;
+                    std::cout << "Ball star count (" << star_num << "): " << ball.get_star_count(star_num) << std::endl;
+                    std::cout << "Ball average stars: " << ball.get_average_stars() << std::endl;*/
                     // rate seller (from 0-1)
-                    int seller_id = 4;
+                    /*int seller_id = 4;
                     if(user->get_name() == "jack") user->rate_seller(seller_id, 1, "This seller is awesome!");
                     if(user->get_name() == "dude") user->rate_seller(seller_id, 0, "This seller sucks!");
-                    if(user->get_name() == "mike") user->rate_seller(seller_id, 1, "This seller is rocks!");
+                    if(user->get_name() == "mike") user->rate_seller(seller_id, 1, "This seller is rocks!");*/
                     std::cout << "**********************************************************\n";
                     // leave the login_menu           
                     login_menu = false;
@@ -1067,13 +1080,13 @@ int main() {
                 if(!wallet_opened  ) {//wallet->get_monero_wallet() == nullptr ) {
                     message_box.set_text("wallet has not been opened"); //msg_box.get_label()->set_string("  wallet has not been opened");//msg_box.set_width(msg_box.get_label()->get_width()); // update msg_box width based on label's width//message_box.center(window.get_client_width(), window.get_client_height());//msg_box.set_position((window.get_width() / 2) - (msg_box.get_width() / 2), (window.get_height() / 2) - (msg_box.get_height() / 2)); // update msg_box pos since width changed
                     // box text (label)
-                    message_box.get_box()->get_label()->set_alignment("none");
-                    message_box.get_box()->get_label()->set_relative_position((message_box.get_box()->get_width() - message_box.get_box()->get_label()->get_string().length() * 10/*message_box.get_box()->get_label()->get_width()*/) / 2, 75);//55);                    
+                    message_box.get_label(0)->set_alignment("none");
+                    message_box.get_label(0)->set_relative_position((message_box.get_width() - message_box.get_label(0)->get_string().length() * 10/*message_box.get_label(0)->get_width()*/) / 2, ((message_box.get_height() - 10/*message_box.get_label()->height()*/) / 2) - 20);//55);                    
                     // ok button - not being used at the moment
                     // cancel button
                     message_box.get_button(1)->set_text("Close");
                     //message_box.get_button(1)->set_color(214, 31, 31, 1.0);                    
-                    message_box.get_button(1)->set_relative_position((message_box.get_box()->get_width() / 2) - (message_box.get_button(1)->get_width() / 2), message_box.get_box()->get_height() - message_box.get_button(1)->get_height() - 20);//200-30(height)-20(bottompadding) = 150(button_y)
+                    message_box.get_button(1)->set_relative_position((message_box.get_width() / 2) - (message_box.get_button(1)->get_width() / 2), message_box.get_height() - message_box.get_button(1)->get_height() - 20);//200-30(height)-20(bottompadding) = 150(button_y)
                     message_box.get_button(1)->show();
                     message_box.show();
                 }
@@ -1104,13 +1117,15 @@ int main() {
                     wallet_edit->set_text(wallet_file); //wallet_edit->show();
                     ////////////////////
                     // message_box
-                    message_box.set_text("Please enter your wallet password: ", 0, 0, 0, 1.0);
+                    message_box.set_width(500);
                     // set relative positions
                     // box_text - center the x
-                    message_box.get_box()->get_label()->set_alignment("none");
-                    message_box.get_box()->get_label()->set_relative_position((message_box.get_box()->get_width() - message_box.get_box()->get_label()->get_string().length() * 10/*message_box.get_box()->get_label()->get_width()*/) / 2, 75);//(200−10)÷2 = 95 = (200÷2)−(10÷2) //200=box_ht, 10=label_ht, 95=label_y (centered) // 95 - 20(button_y) = 75
+                    message_box.set_text("Please enter your wallet password: ", 0, 0, 0, 1.0);
+                    message_box.get_label(0)->set_alignment("none");
+                    message_box.get_label(0)->set_relative_position((message_box.get_width() - message_box.get_label(0)->get_string().length() * 10/*message_box.get_label(0)->get_width()*/) / 2, ((message_box.get_height() - 10/*message_box.get_label()->height()*/) / 2) - 20);//(200−10)÷2 = 95 = (200÷2)−(10÷2) //200=box_ht, 10=label_ht, 95=label_y (centered) // 95 - 20(button_y) = 75
                     // box_edit
-                    message_box.get_edit(0)->set_relative_position((message_box.get_box()->get_width() / 2) - (message_box.get_edit(0)->get_width() / 2) - ((message_box.get_button(2)->get_width() + 10) / 2), message_box.get_box()->get_height() - message_box.get_edit(0)->get_height() - 20);
+                    message_box.get_edit(0)->set_focus(true);
+                    message_box.get_edit(0)->set_relative_position((message_box.get_width() / 2) - (message_box.get_edit(0)->get_width() / 2) - ((message_box.get_button(2)->get_width() + 10) / 2), message_box.get_height() - message_box.get_edit(0)->get_height() - 20);
                     // box_button
                     message_box.get_button(2)->set_relative_position(message_box.get_edit(0)->get_relative_x() + message_box.get_edit(0)->get_width() + 10, message_box.get_edit(0)->get_relative_y());//message_box.get_edit(0)->get_relative_y());
                     // show edit, button (children must be shown manually), etc.
@@ -1123,13 +1138,13 @@ int main() {
                 else if(wallet_file.empty()) {
                     message_box.set_text("wallet not found");
                     // box text (label)
-                    message_box.get_box()->get_label()->set_alignment("none");
-                    message_box.get_box()->get_label()->set_relative_position((message_box.get_box()->get_width() - message_box.get_box()->get_label()->get_string().length() * 10/*message_box.get_box()->get_label()->get_width()*/) / 2, 75);                   
+                    message_box.get_label(0)->set_alignment("none");
+                    message_box.get_label(0)->set_relative_position((message_box.get_width() - message_box.get_label(0)->get_string().length() * 10/*message_box.get_label(0)->get_width()*/) / 2, ((message_box.get_height() - 10/*message_box.get_label()->height()*/) / 2) - 20);                   
                     // ok button - not being used at the moment
                     // cancel button
                     message_box.get_button(1)->set_text("Close");
                     //message_box.get_button(1)->set_color(214, 31, 31, 1.0);                    
-                    message_box.get_button(1)->set_relative_position((message_box.get_box()->get_width() / 2) - (message_box.get_button(1)->get_width() / 2), message_box.get_box()->get_height() - message_box.get_button(1)->get_height() - 20);
+                    message_box.get_button(1)->set_relative_position((message_box.get_width() / 2) - (message_box.get_button(1)->get_width() / 2), message_box.get_height() - message_box.get_button(1)->get_height() - 20);
                     message_box.get_button(1)->show();                    
                     message_box.show();
                 }
@@ -1142,6 +1157,7 @@ int main() {
                 std::string wallet_name = wallet_edit->get_text(); // wallet (uploaded) from edit
                 std::string password = message_box.get_edit(0)->get_text(); // get pw from edit //std::string password; std::cin >> password;
                 message_box.get_edit(0)->clear_all(); // clear pw from edit
+                message_box.get_edit(0)->set_focus(false);
                 wallet->open(wallet_name.substr(0, wallet_name.find(".")), password); // will crash if password is incorrect // Wallet::open requires that you exclude the ".keys" ext
                 wallet_opened = true;
                 // hide message box, once wallet is opened
@@ -1159,32 +1175,26 @@ int main() {
                 message_box.show();
             }
             /////////////////////
-            /*if(reconnect_button->is_pressed() && !message_box.is_visible()) {
-                message_box.set_text("Attempting to reconnect ...");
-                message_box.show();
-                if(!connected) {//while(!reconnected) {
-                    if(client->reconnect(client_port, client_ip)) {
-                        message_box.set_text("Connected!", "green");
-                        message_box.show();
-                        connected = true;
-                    }
-                }
-            }*/
             /////////////////////
             // on cancel button pressed
             if(message_box.get_button(1)->is_pressed()) {
                 message_box.hide();
             }
             /////////////////////
-            if(Keyboard::is_pressed(DOKUN_KEY_P)) Process::show_processes();
-            if(Keyboard::is_pressed(DOKUN_KEY_K)) {
+            // on close button pressed
+            if(wallet_message_box.get_button(0)->is_pressed()) {
+                wallet_message_box.hide();
+            }            
+            /////////////////////
+            ////if(Keyboard::is_pressed(DOKUN_KEY_P)) Process::show_processes();
+            //if(Keyboard::is_pressed(DOKUN_KEY_K)) {
                 //stop_neromon_server();// close neromon daemon-server
                 ////Process::terminate_by_process_name("neromon"); // DOES NOT WORK -.-
                 //NEROSHOP_TAG_OUT std::cout << "\033[37mProcess: neromon killed (id: " << Process::get_process_by_name("neromon") << ")\033[0m\n"; // ALWAYS RETURNS -1 -.-
-                NEROSHOP_TAG_OUT std::cout << "server_process_id (before termination): " << server_process->get_handle() << std::endl; 
-                server_process->terminate();
-                NEROSHOP_TAG_OUT std::cout << "server_process_id (after termination): " << server_process->get_handle() << std::endl;
-            }
+            //    NEROSHOP_TAG_OUT std::cout << "server_process_id (before termination): " << server_process->get_handle() << std::endl; 
+            //    server_process->terminate();
+            //    NEROSHOP_TAG_OUT std::cout << "server_process_id (after termination): " << server_process->get_handle() << std::endl;
+            //}
             /////////////////////
             if(Keyboard::is_pressed(DOKUN_KEY_DOWN) && !message_box.is_visible()) {
                 //std::cout << "\033[0;32mcopied text to clipboard\033[0m" << std::endl;
@@ -1199,6 +1209,24 @@ int main() {
             if(Keyboard::is_pressed(DOKUN_KEY_ESCAPE) && !message_box.is_visible()) {
                 // do you wish to exit the program
                 window.destroy();
+                    // box text (label)                
+                    //message_box.set_text("Do you wish to exit the program?");
+                    //message_box.get_label(0)->set_alignment("none");
+                    //message_box.get_label(0)->set_relative_position((message_box.get_width() - message_box.get_label(0)->get_string().length() * 10/*message_box.get_label(0)->get_width()*/) / 2, ((message_box.get_height() - 10/*message_box.get_label()->height()*/) / 2) - 20);                   
+                    /*// ok button - will be used now
+                    int button_gap = 10;
+                    message_box.get_button(0)->set_relative_position(
+                        (message_box.get_width() / 2) - (message_box.get_button(0)->get_width() / 2) - ((message_box.get_button(1)->get_width() + button_gap) / 2),
+                        message_box.get_height() - message_box.get_button(0)->get_height() - 20
+                    );
+                    // cancel button
+                    message_box.get_button(1)->set_text("Cancel");
+                    //message_box.get_button(1)->set_color(214, 31, 31, 1.0);                    
+                    message_box.get_button(1)->set_relative_position(message_box.get_button(0)->get_relative_x() + message_box.get_button(0)->get_width() + button_gap, message_box.get_button(0)->get_relative_y());
+                    // display message box
+                    message_box.get_button(0)->show();
+                    message_box.get_button(1)->show();
+                    message_box.show();*/
             }
             // update ui positions (in case window is resized)
             wallet_edit->set_width(window.get_client_width() - (wallet_button->get_x() + wallet_button->get_width() + 5) - (upload_button->get_width() + 5) - 20); // 5 is space b/t upload_button and wallet_edit // 5 is space b/t wallet_button and wallet_edit		    
@@ -1210,7 +1238,6 @@ int main() {
             login_button->set_position(pw_edit->get_x() + ((login_button->get_width() / 2) - (pw_edit->get_width() / 2)), pw_edit->get_y() + pw_edit->get_height() + 70);//10);//set_position(pw_edit->get_x() - (((login_button->get_width() + register_button->get_width() + 5) / 2) - (pw_edit->get_width() / 2)), pw_edit->get_y() + pw_edit->get_height() + 10); //register_button->set_position(login_button->get_x() + login_button->get_width() + 5, login_button->get_y()); // => register and login on same line
             guest_button->set_position(pw_edit->get_x(), login_button->get_y() + login_button->get_height() + 10); //guest_button->set_position(login_button->get_x(), login_button->get_y() + login_button->get_height() + 5);
             register_button->set_position(guest_button->get_x() + guest_button->get_width() + 5, guest_button->get_y());
-            ////reconnect_button->set_position(guest_button->get_x(), guest_button->get_y() + guest_button->get_height() + 10);
             // draw ui
             if(!message_box.is_visible()) { // just so you don't enter keys into the pw and username edits (temporary - until I fix the GUI::focus thing)
                 user_edit->draw(); //
@@ -1226,27 +1253,42 @@ int main() {
             login_button->draw();
             guest_button->draw();
             register_button->draw();
-            ////reconnect_button->draw();
             // save user
-            save_toggle->draw(pw_edit->get_x(), pw_edit->get_y() + 80);
+            save_toggle->draw(pw_edit->get_x(), pw_edit->get_y() + 70);
             save_user_label.draw(save_toggle->get_x() + save_toggle->get_width() + 5, save_toggle->get_y() + (save_toggle->get_height() / 4));
             // sync status
             //sync_label.draw(0 + 20, window.get_client_height() - 20);
             //sync_box->draw(sync_label.get_x() + sync_label.get_width(), sync_label.get_y());
-            // temp
-            ////slider->draw();
+            // temp ----------------------------------------------
+            slider->draw();
             ////slider2->draw();
             //Renderer::draw_spinner(100, 100, 40, 20, 0, 1, 1, 255, 255, 255, 1.0, 0, 
             //    20, Vector4(64, 64, 64, 1.0), // button_width, button_color
             //    8, Vector4(0, 255, 255, 1.0), 2.0,         // shape_size, shape_color, shape_depth 
             //    false, 5); // separator, separator_gap
-            ////spinner->draw();
+            ////spinner->set_height((int)slider->get_value());//spinner->set_style(0);
+            message_box.get_box()->set_radius(slider->get_value());
+            ////login_button->set_radius(slider->get_value());
+            save_toggle->set_radius(slider->get_value());
+            //std::cout << "save_toggle radius: " << save_toggle->get_radius() << std::endl;
+            //std::cout << "login_button radius: " << login_button->get_radius() << std::endl;
+            //std::cout << "box radius: " << message_box.get_box()->get_radius() << std::endl;
+            //-------------------------
+            spinner->set_step(0.01);
+            spinner->set_range(0.00, 1.00);
+            spinner->set_decimals(2); // .00 = two decimal places
+            message_box.get_box()->set_gradient_color(0, 255, 255, 1.0); // cyan
+            message_box.get_box()->set_gradient_value(spinner->get_value());
+            //-------------------------
+            spinner->draw();
             //box->draw();
             //box->set_radius(round(slider->get_value()));
             //std::cout << "slider_value_rounded: " << round(slider->get_value()) << std::endl;//slider->get_value()
             ////checkbox->set_size(round(slider->get_value()), round(slider->get_value()));
             ////checkbox->draw();
+            ////radio->draw();
             //radio->draw(); // causes SEGFAULT
+            ////pbar->draw();
             //Renderer::draw_checkbox(30, 500, slider->get_value(), slider->get_value(), 0, 1, 1, 0, 51, 102, 1.0,
 	        //    true, Vector4(255, 255, 255, 1.0)); // value, checkmark_color
             //->set_(round(slider->get_value()));
@@ -1254,10 +1296,15 @@ int main() {
             //if(Keyboard::is_pressed(DOKUN_KEY_M)) message_box.show();
             //if(Keyboard::is_pressed(DOKUN_KEY_H)) message_box.get_button(0)->hide();
             //if(Keyboard::is_pressed(DOKUN_KEY_S)) message_box.get_button(0)->show();
+            //------------------------------------------------------
+            // draw first message box - for general notifications
             message_box.center(window.get_client_width(), window.get_client_height());
             message_box.draw();
             // draw second message box - for wallet notifications
-            wallet_message_box.center(window.get_client_width(), window.get_client_height());
+            // if there are other msgboxs overlapped by this msgbox, move the y position elsewhere
+            if(message_box.is_visible()) wallet_message_box.set_position(message_box.get_x() + 30, message_box.get_y() + message_box.get_box()->get_title_bar_size().y + 1);//window.get_client_height());
+            // if no other msgbox is being shown, center position
+            if(!message_box.is_visible()) wallet_message_box.center(window.get_client_width(), window.get_client_height());
             wallet_message_box.draw();
             // update window
             window.update();
@@ -1267,13 +1314,15 @@ int main() {
             window.poll_events(); // check for events
             window.set_viewport(window.get_client_width(), window.get_client_height()); // set to dimensions of render client rather than the entire window (for pixel coordinates)
             window.clear(28, 33, 48);//(42, 44, 49);//(62, 65, 71);//(65, 62, 74);//(35,44,49);//(65, 69, 71); //(32, 32, 32);	    
+            // neroshop label
             neroshop_label->draw();
+            // monero icon
             monero_icon->draw();
+            // date and time
             date_display->set_position(window.get_client_width() - date_display->get_width(), window.get_client_height() - date_display->get_height());
             date_display->set_string(Validator::get_date("%Y-%m-%d  %l:%M:%S %p"));
             date_display->draw();
-/*
-            if(Mouse::is_over(cart_button->get_image()->get_rect())) cart_button->get_image()->set_color(242, 100, 17);
+            /*if(Mouse::is_over(cart_button->get_image()->get_rect())) cart_button->get_image()->set_color(242, 100, 17);
             else {
                 cart_button->get_image()->set_color(default_icon_color);
             }
@@ -1313,26 +1362,6 @@ int main() {
                     _icon->get_image()->copy(*Icon::get["_outline"]);
                     _activated = false;
                 }
-            }
-            if(Mouse::is_over(_icon->get_rect())) {
-                if(Mouse::is_pressed(1) && _activated == false) {
-                    _icon->get_image()->copy(*Icon::get[""]);
-                    _activated = true;
-                }
-                else if(Mouse::is_pressed(1) && _activated == true) {
-                    _icon->get_image()->copy(*Icon::get["_outline"]);
-                    _activated = false;
-                }
-            }
-            if(Mouse::is_over(_icon->get_rect())) {
-                if(Mouse::is_pressed(1) && _activated == false) {
-                    _icon->get_image()->copy(*Icon::get[""]);
-                    _activated = true;
-                }
-                else if(Mouse::is_pressed(1) && _activated == true) {
-                    _icon->get_image()->copy(*Icon::get["_outline"]);
-                    _activated = false;
-                }
             }*/
             //if(Mouse::is_over(_icon->get_rect())) _icon->get_image()->set_color(242, 100, 17); else _icon->get_image()->set_color(default_icon_color);
             //cart_button->draw();
@@ -1350,20 +1379,13 @@ int main() {
             //        synced = true;    
             //    }
             //}
-            /*
-            // draw ui
-            user_button->draw(); // user
-            order_button->draw(); // order history
-            
-            status_icon->draw();
-            //test_icon->draw();
-            //star_icon->draw();*/
             /////////////////////////////////////
             /////////////////////////////////////
             // DON'T open database in loop!!!
             // each time an item is added or removed or qty_changed from the cart, update this string 
             // causes crash
             //cart_button->get_label()->set_string(std::to_string(Cart::get_singleton()->get_total_quantity()));
+            if(user->is_registered()) cart_button->get_label()->set_string(std::to_string(Cart::get_singleton()->get_total_quantity(user->get_id())));
             //cart_button->get_label()->set_color(); // (cart_qty >= 100) = red(255, 0, 0), (cart_qty >= (100 / 2)) = yellow(255,191,0), (cart_qty <= ((100 / 2) - 1)) = white);
             cart_button->get_label()->set_relative_position(20, (cart_button->get_height() - 10/*cart_label.get_height()*/) / 2);
             cart_button->get_image()->set_relative_position(cart_label.get_relative_x() + (cart_label.get_string().length() * 10) + 10, (cart_button->get_height() - cart_icon.get_height_scaled()) / 2);// "(cart_label.get_string().length() * 10)" could be replaced with the entire label's width
@@ -1382,7 +1404,11 @@ int main() {
             logout_button->draw(order_button->get_x() - logout_button->get_width() - 1, 20);
             /////////////////////////////////////
             /////////////////////////////////////
-            /////////////////////////////////////                        
+            /////////////////////////////////////
+            slider2->draw(slider2->get_x(), 500);// temp
+            catalog->set_width(slider2->get_value() * 10); // temp
+            /////////////////////////////////////
+            catalog->draw(50, 90);                        
             /////////////////////////////////////
             ////search_suggestion_list->draw(search_bar->get_x(), search_bar->get_y() + search_bar->get_height());
             //std::cout << "search_bar cursor position: " << search_bar->get_cursor_position() << std::endl;
@@ -1393,15 +1419,15 @@ int main() {
                 if(search_bar->has_focus()) search_bar->set_focus(false);
             }
             // on enter pressed (with focus on search_bar)
-            // can search for products, users (sellers), etc.
+            // will search for products, users (sellers), etc.
             if(search_bar->has_focus() && Keyboard::is_pressed(DOKUN_KEY_RETURN)) {
                 if(!search_bar->is_empty()) std::cout << "searching for \033[1;93m" << search_bar->get_text() << "\033[0m" << std::endl;
                 search_bar->set_focus(false);
             }
             // adjust search_bar size on window resize
-            // edit has a bug when its resized :/
-            // everytime the edit's size changes, the cursor positions gets messed up and everything is ruined
-            search_bar->set_size((window.get_client_width() < 1280) ? 400 : (window.get_client_width() / 4) * 2, 40);//search_bar->set_size((window.get_client_width() > 1280) ? (window.get_client_width() / 4) * 2 : 400, 40);//search_bar->set_text(search_bar->get_text());
+            // edit has a bug when its resized - everytime the edit's size changes, the cursor positions gets messed up and everything is ruined :/
+            // I will just use a fixed size for now :|
+            ////search_bar->set_size((window.get_client_width() < 1280) ? 400 : (window.get_client_width() / 4) * 2, 40);//search_bar->set_size((window.get_client_width() > 1280) ? (window.get_client_width() / 4) * 2 : 400, 40);//search_bar->set_text(search_bar->get_text());     
             search_bar->draw(150, 20);//((window.get_client_width() / 2) - ((search_bar->get_width() + search_button->get_width() + 1) / 2), 60); // center of window // search_bar and search_button will act as one single GUI element
             search_button->draw(search_bar->get_x() + search_bar->get_width() + 1, search_bar->get_y()); // leave a tiny gap between sbar and sbutton
             /////////////////////////////////////
@@ -1425,6 +1451,14 @@ int main() {
             sync_label.draw(0 + 20, window.get_client_height() - 20);
             sync_box->draw(sync_label.get_x() + sync_label.get_width(), sync_label.get_y());
             ////////////////
+            // temporary
+            //if(Keyboard::is_pressed(DOKUN_KEY_G)) wallet->address_unused();            
+            /////////////////////
+            // on close button pressed
+            if(wallet_message_box.get_button(0)->is_pressed()) {
+                wallet_message_box.hide();
+            }            
+            /////////////////////
             // if esc is pressed
             if(Keyboard::is_pressed(DOKUN_KEY_ESCAPE) && !message_box.is_visible()) {
                 // do you wish to exit the program
@@ -1432,8 +1466,15 @@ int main() {
             }
             //if(Mouse::is_down()) std::cout << "mouse down\n";//is_pressed => locked = true
             //if(Mouse::is_released(1)) std::cout << "mouse released\n";//locked = false;//is_locked && mouse_down
+            // draw first message box - for general notifications
             message_box.center(window.get_client_width(), window.get_client_height());
             message_box.draw(); // draw msgbox if visible
+            // draw second message box - for wallet notifications
+            // if there are other msgboxs overlapped by this msgbox, move the y position elsewhere
+            if(message_box.is_visible()) wallet_message_box.set_position(message_box.get_x() + 30, message_box.get_y() + message_box.get_box()->get_title_bar_size().y + 1);//window.get_client_height());
+            // if no other msgbox is being shown, center position
+            if(!message_box.is_visible()) wallet_message_box.center(window.get_client_width(), window.get_client_height());
+            wallet_message_box.draw();
             ////////////////
             ////////////////
             window.update();

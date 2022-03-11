@@ -279,7 +279,7 @@ static std::string narrow( const std::wstring& str )
 	    return first_n;
 	}
 	static std::string get_last_n_characters(const std::string& str, int n) {
-	    std::string last_n = str.substr(str.length() - 4);
+	    std::string last_n = str.substr(str.length() - n);
 	    return last_n;
 	}	
 	static std::vector<unsigned int> get_index(const std::string& str, char what) // finds a character at multiple locations in a string - added 2019-07-31

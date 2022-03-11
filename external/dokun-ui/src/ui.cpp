@@ -20,7 +20,7 @@ GUI::~GUI(void)
 /////////////
 GUI * GUI::focused  (nullptr);
 /////////////
-Shader * GUI::shader(new Shader());
+Shader * GUI::gui_shader(new Shader());//(nullptr); // cannot create/initialize shader until we have a graphics context
 /////////////
 void GUI::show()
 {
@@ -116,8 +116,14 @@ void GUI::connect(const GUI& a, int signal, const GUI& b, std::function<void(voi
 	}	
 }
 /////////////  
-void GUI::generate(void)
+// generates the default shader used by most GUI elements
+void GUI::generate_shader(void)
 {
+    // assign the object's shader to default shader (if it does not yet have one)
+	if(!shader) shader = gui_shader;//{this->shader = gui_shader; std::cout << "GUI " << Factory::get_gui_factory()->get_location(this) << " (?) has been assigned a shader program" << std::endl;}
+    if(gui_shader->is_linked()) return; // exit if shader_program has already been generated//if(!shader) throw std::runtime_error("GUI Shader is not initialized");
+	// create (initialize) a shader
+	//gui_shader = new Shader();
 	const char * vertex_source[] =
 	{
         "#version 330\n"
@@ -133,27 +139,42 @@ void GUI::generate(void)
         "void main()\n"
         "{\n"
 		    "Texcoord    = tex_coord;\n"
-            "gl_Position = proj * model * vec4(position, 0.0, 1.0);\n" // no need for 'view' as GUIs do not depend on camera
+            "gl_Position = proj * model * vec4(position, 0.0, 1.0);\n"
         "}\n"
 	};
 	const char * fragment_source[] =
 	{
 	    "#version 330\n"
+	    // temp --------------------------------
+	    //"#define linearstep(edge0, edge1, x) clamp((x - (edge0)) / (edge1 - (edge0)), 0.0, 1.0)\n"// basically the same as smoothstep() as seen here: https://docs.gl/sl4/smoothstep // http://jeremt.github.io/pages/anti-aliased_shapes_in_glsl.html
+	    "\n"
+	    // temp ^ ------------------------------
+        "\n"
+        "const float PI = 3.14159265;\n"
         "\n"
 		"out vec4 out_color;\n"
         "uniform vec4 color;\n"
-        "//uniform sampler2D base;\n"
+        "uniform sampler2D texture;\n"
 		"in vec2 Texcoord;\n"
+		"uniform vec2 size;"
+		"uniform float radius;"
 		"\n"
+		"\n" // uniform float radius;
 		"float round_corner(vec2 p, vec2 b, float r) {\n"
-		    "return length(max(abs(p)-b+r, 0.0));\n"
+		    "return length(max(abs(p)-b+r,0.0))-r;\n" // length(max(abs(p)-b, 0.0))-r;"
 		"}\n"
+		"float circle(in vec2 _st, in float _radius) {\n"
+        "    vec2 dist = _st - vec2(0.5);\n"
+	    "    return 1. - smoothstep(_radius - (_radius * 0.01), _radius+(_radius*0.01), dot(dist, dist) * 4.0);\n"
+        "}"// usage: vec3 color = vec3(circle(st,0.9));
 		"\n"
 		"uniform vec2 resolution;\n"
+		"uniform float time;"
+		"uniform vec2 mouse;"
+		"\n"
 		"vec2 position;" // Texcoord.x = from_left_to_right, Texcoord.y = from_up_to_down
 		"struct Gradient {\n"
-		    "vec4 color0;\n" // top
-		    "vec4 color1;\n" // bottom
+			"vec4 color;\n" // bottom // the color used to mix with the original color (which will be the top color)
 			"float value;\n"
 		    "bool enabled;\n"
 		"\n"
@@ -163,30 +184,73 @@ void GUI::generate(void)
 		"\n"
         "void main()\n"
         "{\n"
-		    "\n"
-		    "\n"
+            "vec2 st = Texcoord.xy / resolution.xy;\n"
+            "float aspect = resolution.x / resolution.y;\n"
+            "vec2 uv = (2.0 * st - 1.0) * vec2(aspect, 1.0);\n"
+            "vec2 half_res = 0.5 * resolution;\n"
+            "vec2 half_size = 0.5 * size;\n" // half of the box_size or center of box
 			"\n"
-		    "out_color = color;\n"
-            "if(gradient.enabled == true)\n" 
+			"\n"
+            // temp ----------------------------------
+            "vec2 uv_temp = abs((Texcoord/*uv*/ - vec2(0.5)) * vec2(aspect, 1.0));\n"
+            "float half_width = aspect * 0.5;\n"
+            "float radius_temp = clamp((radius/100) , 0.0, 1.0) * min(half_width, 0.5);\n" // convert radius (int) to opengl floating point number = radius / 100; or radius * 0.01; // 100 is the max radius
+            "vec2 center = vec2(half_width, 0.5) - vec2(radius_temp);\n"
+            "// outer edge\n"
+            "vec2 half_uv = uv_temp - vec2(half_width, 0.5);\n"
+            "float d = mix(-max(half_uv.x, half_uv.y), radius_temp - distance(uv_temp, center),"
+            "    float(uv_temp.x >= center.x && uv_temp.y >= center.y));\n"
+            "// apply anti-aliasing (makes edges look smooth instead of pixelated)\n"
+            "float border = smoothstep(0.0, fwidth(d), d);//linearstep(0.0, fwidth(d), d);//d;\n"
+            "\n"
+            // temp ^ --------------------------------
+			//"if( (length(Texcoord * size - vec2(0)) < radius)  || (length(Texcoord * size - vec2(0, size.y)) < radius) || (length(Texcoord * size - vec2(size.x, 0)) < radius) || (length(Texcoord * size - size) < radius) )"
+            //"{     discard;"
+            //"}"
+			"\n" // size_x = (size.x / 2) * (size.x / size.y)    or  size_y = (size.y / 2) * (size.y / size.x)
+		    "float b = 1.0 - round_corner(Texcoord * size - half_res, half_res, abs(radius));  //(Texcoord - half_res, half_res, radius);\n" // position, size, radius // abs() turns a negative number into a positive number
+		    "float round = smoothstep(0.0, 1.0, b);          \n" //"vec4 pixel = texture2D(texture, Texcoord);" // if texture is present
+		    // fragment color (default):
+		    "out_color = vec4(color.x, color.y, color.z, color.w);//vec4(color.xyz, color.w);\n" //border is in percentage(%) rather than HTML pixel(px)// 1.0, 1.0, 1.0, 1.0 is default frag_color
+		    // rounded corners (radius - uses anti-aliasing via smoothstep to smoothen edges):
+		    "if(radius > 0.0) out_color = vec4(color.xyz, color.w * border);// border);//round);\n" // smooth or linear (anti-aliasing)
+		    // setting anti-aliasing (smoothness) to gui edges without changing the radius:
+		    //"out_color = vec4(color.xyz, color.w * (smoothstep(vec2(0), fwidth(Texcoord), Texcoord) * smoothstep(vec2(0), fwidth(Texcoord), vec2(1) - Texcoord)) );\n"
+		    // gradient color:
+            "if(gradient.enabled == true)\n"
 			"{"
-			    "position  = Texcoord; //out_color.xy / resolution;\n"
-			    "out_color = vec4(mix(vec4(gradient.color0 + (1.0 - gradient.color0) * 0.25), vec4(gradient.color1 + (0.0 - gradient.color1) * 0.25), position.y));\n"
-			    "\n"
+			    // top-to-bottom gradient
+			    "position  = Texcoord.st;\n" // can use either .xy or .st
+			    "vec4 top = vec4(color + (1.0 - color) * gradient.value);\n" // tint  (1=white)
+			    "vec4 bottom = vec4(gradient.color + (0.0 - gradient.color) * gradient.value);\n" // shade (0=black)
+			    "out_color = vec4(mix(top, bottom, position.y).xyz, color.w);\n" // position.y = top-to-bottom, position.x = left-to-right
+			    "if(radius > 0.0) out_color = vec4(mix(top, bottom, position.y).xyz, color.w * border);\n" // rounded corner with gradient
+			    // left-to-right gradient
+			    // ...
+			    // normal (point) gradient
+			    ////"float mix_value = distance(Texcoord, vec2(0, 0));\n"// no significant difference b/t Texcoord and gl_PointCoord (for now)// (0, 0) = top-left | (0, 1) = bottom-left | (1, 0) = top-right corner
+			    ////"vec3 color_final = mix(gradient.color0.xyz, gradient.color1.xyz, mix_value);\n"// or "vec4 color_final = mix(gradient.color0, gradient.color1, mix_value);\n"
+			    ////"out_color = vec4(color_final, 1.0);\n" // or "out_color = vec4(color_final);\n"
 			"}\n"
         "}\n"
-	};	
-	bool is_shader = shader->has_program();
+	};
+	bool is_shader = gui_shader->has_program();
     if(is_shader == false)
 	{
-		shader->create();
-		shader->set_source(vertex_source  , 0);
-		shader->set_source(fragment_source, 1);
-		shader->compile(0);
-		shader->compile(1);
-		shader->attach(0);
-		shader->attach(1);
-		shader->link();
+		gui_shader->create();
+		gui_shader->set_source(vertex_source  , 0);
+		gui_shader->set_source(fragment_source, 1);
+		gui_shader->prepare();
+		/*gui_shader->compile(0);
+		gui_shader->compile(1);
+		gui_shader->attach(0);
+		gui_shader->attach(1);
+		gui_shader->link();*/
+		// Shader::prepare() is equivalent to the code after the last "shader->set_source(src, shader_idx)" and does all three: compile() + attach() + link()
+	    ////std::cout << DOKUN_UI_TAG "GUI shaders have been generated (" << gui_shader->get_program() << ")" << std::endl;//std::cout << "number of shaders attached to shader object program: " << gui_shader->get_shader_count() << std::endl;
 	}		
+	// assign the shader to the object
+	//gui_element->set_shader(*GUI::gui_shader);
 }
 /////////////  
 /////////////  
@@ -1133,11 +1197,13 @@ void GUI::on_create()
 /////////////
 void GUI::on_draw() // NOTE: position can be set regardless of whether gui is visible or not
 {
+    generate_shader(); // generate shaders before drawing
     on_parent(); // set child's position relative to its parent, regardless of whether it is visible or not
     on_focus();  // set the GUI's focus, but only if it is visible!
 }
 /////////////
-void GUI::on_draw_edit() {
+void GUI::on_draw_no_focus() {
+    generate_shader(); // generate shaders before drawing
     on_parent(); // set child's position relative to its parent, regardless of whether it is visible or not
 }
 /////////////
@@ -1340,7 +1406,27 @@ bool GUI::is_resized()
 	}
 	return false;
 }
-///////////// 
+/////////////
+// might not need these two functions after all ...
+bool GUI::has_shader() {
+    if(!gui_shader) return false; // if shader is null, return false
+#ifdef DOKUN_OPENGL
+    if(gui_shader->has_program()) return true; // check if shader has a valid program // every shader object has a program at the time of their creation (edit: not anymore)
+#endif
+    return false;
+}
+/////////////
+bool GUI::is_shader_generated() {
+    if(!gui_shader) return false; // if shader is null, return false
+#ifdef DOKUN_OPENGL
+    if(gui_shader->has_program()) return true; // check if shader has a valid program
+    if(gui_shader->is_linked()) return true; // check if at least 2 shaders have been linked to the shader_program
+#endif
+    return false;
+}
+/////////////
+//if(!gui_shader) throw std::runtime_error("GUI Shader is not initialized");
+/////////////
 ///////////// 
 //int GUI::(lua_State * L)
 //{}

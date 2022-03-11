@@ -1,32 +1,25 @@
 #include "../include/entity.hpp"
 
-Entity::Entity() : visible(true), mode(0)
+Entity::Entity() : visible(true), mode(0), component_list({}), shader(nullptr), script(nullptr)
 {
 	Factory::get_entity_factory()->store(this);
 #ifdef DOKUN_DEBUG
 #endif	
 }
 ///////////
-Entity::Entity(const std::string& name) : visible(true), mode(0)
+Entity::Entity(const std::string& name) : Entity()
 {
 	add_component(new Component("name", String(name)));
-	Factory::get_entity_factory()->store(this);
-#ifdef DOKUN_DEBUG
-#endif		
 }
 ///////////
 Entity::~Entity()
 {
-	for(int i = 0; i < component_list.size(); i++)
-	{
-		if(component_list[i]) delete component_list[i];
+	for(auto components : component_list) {//for(int i = 0; i < component_list.size(); i++) {
+		if(components)//if(component_list[i]) 
+		    delete components;//delete component_list[i];
 	}
-	for(int i = 0; i < shader_list.size(); i++)
-	{
-		if(shader_list[i]) delete shader_list[i];
-	}
+	if(shader) delete shader; // shader object containing multiple shaders and a single program
     if(script) delete script;
-    
 	Factory::get_entity_factory()->release(this);
 #ifdef DOKUN_DEBUG
 #endif		
@@ -270,7 +263,7 @@ int Entity::set_component(lua_State *L)
 ///////////
 void Entity::set_shader(const Shader& shader)
 {	
-	shader_list.push_back(&const_cast<Shader&>(shader));
+	this->shader = &const_cast<Shader&>(shader);//shader_list.push_back(&const_cast<Shader&>(shader));
 }
 ///////////
 int Entity::set_shader(lua_State *L)
@@ -291,6 +284,7 @@ int Entity::set_shader(lua_State *L)
 	return 0;
 }
 ///////////
+// maybe remove this function ?
 void Entity::set_script(lua_State *L, const std::string& file_name)
 {
 	Script * script = new Script(L, file_name);
@@ -375,9 +369,9 @@ int Entity::get_component(lua_State *L)
 	return 1;
 }
 ///////////
-Shader * Entity::get_shader(int index)const
+Shader * Entity::get_shader()const
 {
-	return shader_list[index];
+	return shader;
 }
 ///////////
 int Entity::get_shader(lua_State *L)
@@ -430,7 +424,7 @@ int Entity::get_count(const std::string& what)const
 	if(String::lower(what).find("component") != std::string::npos)
 		return component_list.size();
 	if(String::lower(what).find("shader") != std::string::npos)
-		return shader_list.size();
+		return (shader != nullptr); // should return 1 ... I think :O
 	if(String::lower(what).find("script") != std::string::npos)
 		return 1;
 	return 0;
@@ -452,15 +446,11 @@ int Entity::get_count(lua_State *L)
 }
 ///////////
 ///////////
-std::vector<Component *> Entity::get_component_array() const
+std::vector<Component *> Entity::get_component_container() const
 {
 	return component_list;
 }
 ///////////
-std::vector<Shader *> Entity::get_shader_array()       const
-{
-	return shader_list;
-}
 ///////////
 ///////////
 ///////////

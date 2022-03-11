@@ -51,10 +51,28 @@ public: // can be accessed by any class or function
     bool is_full() const; // cart is full (has reached max items)
 	bool in_cart(unsigned int item_id) const;//(const neroshop::Item& item) const;
 	//bool validate_item(const neroshop::Item& item) const;
+	///////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////
+    // postgresql version - registered user cart
+    bool load_cart(int user_id); // loads existing cart from the database server into memory
+    void add(int user_id, const neroshop::Item& item, int quantity = 1);
+    void remove(int user_id, const neroshop::Item& item, int quantity = 1);
+    void empty(int user_id); // empties the cart
+    // getters - user
+    int get_total_quantity(int user_id) const;
+    double get_subtotal_price(int user_id) const;
+    float get_total_weight(int user_id) const;
+    unsigned int get_id() const;
+	// boolean - user
+	bool is_empty(int user_id) const;
+    bool is_full(int user_id) const; // cart is full (has reached max items)
+	bool in_cart(int user_id, unsigned int item_id) const;
 	// friends
-	friend class Buyer; // buyer can access cart's private members
+	friend class User;//Buyer; // buyer can access cart's private members
 	friend class Order;
 private: // can be accessed by only this class (cannot even be inherited)
+    int id; // 0 by default
     std::vector <neroshop::Item *> contents;//protected: // cannot be accessed outside of class but by a derived class (subclass)
     unsigned int max_items; // cart can only hold up to 10 items
     unsigned int max_quantity; // the max quantity each item can add up to is 100, so 10 items can have 10 quantity each, making the total number of items 100 //unsigned int id;
@@ -62,6 +80,12 @@ private: // can be accessed by only this class (cannot even be inherited)
     static void load(const neroshop::Item& item, unsigned int quantity); // loads cart.db on app start
     static void add_db(unsigned int item_id); // adds item to cart table for first time
     static void remove_db(unsigned int item_id); // removes item from cart table
+private:	    
+    // libpq database functions
+    static void create_cart_item_table(); // creates cart_item table
+    static void create_table(); // calls create_cart_item_table()
+    static void insert_into(int user_id, int item_id, int item_qty, double item_price, float item_weight);
+    static void delete_from(int user_id, int item_id);
 };
 }
 #endif

@@ -1,6 +1,6 @@
 #include "../include/box.hpp"
 
-Box::Box() : radius(0.0), color(160, 160, 160, 1.0)/*(64, 64, 64, 1.0)*/, fill(true), image (nullptr), type("box"),
+Box::Box() : radius(0.0), color(160, 160, 160, 1.0)/*(64, 64, 64, 1.0)*/, fill(true), label(nullptr), image (nullptr), type("box"),
 iconified(false),
 maximized(false),
 restored(true),
@@ -17,7 +17,7 @@ title_bar_color(0, 51, 102, 1.0), // I call this color, dokun_blue
 title_bar_button_iconify(false),  // cannot have button_iconify  without button_close
 title_bar_button_maximize(false), // cannot have button_minimize without button_close
 title_bar_button_close(true),     // can have button_close by itself or with other buttons
-title_bar_button_width(10),
+////title_bar_button_width(10), // this won't be set since the tb_button_width is set automatically
 title_bar_image(nullptr), // if you operate on this and do not assign it to nullptr or any value then the engine will crash (on Linux especially)
 title_bar_label(nullptr), // if you operate on this and do not assign it to nullptr or any value then the engine will crash (on Linux especially)
 title_bar_button_close_color(64, 64, 64, 1.0), // 235, 26, 34, 1.0
@@ -35,7 +35,7 @@ border_style(0),
 border_radius(10.0),
 border_color(47, 79, 79, 1.0),
 // gradient
-gradient(false),
+gradient(true),//(false),
 gradient_color(color),
 gradient_value(0.25),
 gradient_type("linear"), // or radial (circle-like)
@@ -64,10 +64,9 @@ next(nullptr)
 	set_position(0, 0);
 	set_size(200, 150);
 	set_orientation(0);
-	set_label(*new dokun::Label()); // create a(n)(initialized) label for widget (You will no longer need to check whether label is nullptr)
 }
 /////////////
-Box::Box(const Box& widget)
+Box::Box(const Box& widget) : Box()
 {
 	set_position(widget.get_position());
 	set_size(widget.get_size());
@@ -100,46 +99,45 @@ Box::Box(const Box& widget)
 	//set_(widget.has_());
 }
 /////////////
-Box::Box(const std::string& type)
+Box::Box(const std::string& type) : Box()
 {
 	this->type = type;
-    set_position(0, 0);
-	set_size(200, 150);
-	set_orientation(0);		
-	set_label(*new dokun::Label());
 }
 /////////////
-Box::Box(int x, int y)
+Box::Box(int x, int y) : Box()
 {
     set_position(x, y);
-	set_size(200, 150);
-	set_orientation(0);
-	set_label(*new dokun::Label());
 }
 /////////////
-Box::Box(int x, int y, int width, int height)
+Box::Box(int x, int y, int width, int height) : Box()
 {
     set_position(x, y);
 	set_width  (width);
 	set_height(height);
-	set_orientation(0);
-	set_label(*new dokun::Label());
 }
 /////////////
 Box::~Box(void)
 {
-    // delete titlebar image
-    if(title_bar_image) {
-        delete title_bar_image;
-        title_bar_image = nullptr;
-    }
     // delete titlebar label
     if(title_bar_label) {
         delete title_bar_label;
         title_bar_label = nullptr;
     }
-	//if(label) delete label; // call label destructor
-	//if(image) delete image; // call image destructor
+    // delete titlebar image
+    if(title_bar_image) {
+        delete title_bar_image;
+        title_bar_image = nullptr;
+    }
+    // delete label
+	if(label) {
+	    delete label; // call label destructor
+	    label = nullptr;
+	}
+	// delete image
+	if(image) {
+	    delete image; // call image destructor
+	    image = nullptr;
+	}
 	std::cout << "box deleted\n";
 }
 /////////////
@@ -232,7 +230,7 @@ int Box::draw(lua_State *L)
 	return 0;
 }
 /////////////
-void Box::draw_box() {
+void Box::draw_box() { // other boxes: list, grid
     if(!is_box()) return; 
     if(!is_visible()) return;
 	if(!is_active()) {} // add shade to color
@@ -241,9 +239,11 @@ void Box::draw_box() {
     on_drag();
 	on_resize();
     /////////////////////////////////////////////////////////////////////////
+    // update tb button width
+    title_bar_button_width = title_bar_height / 2;//std::cout << "draw_box: title_bar_button_Width: " << title_bar_button_width << std::endl;
     // Draw box	- at (0, 0) the titlebar will not show as it is the main widget at 0, 0 so the title bar would be hidden by the window's titlebar		
 	Renderer::draw_box(get_position().x, get_position().y, get_width(), get_height(), get_angle(), 
-			get_scale().x, get_scale().y, color.x, color.y, color.z, color.w,
+			get_scale().x, get_scale().y, color.x, color.y, color.z, color.w, GUI::gui_shader,
 			    radius, is_iconified(),
 				// title_bar
 				title_bar, title_bar_height, title_bar_color,
@@ -357,7 +357,7 @@ void Box::draw_tooltip() {
 	if(!is_active()) {}// add shade to color
 	if(is_active()) {}  // add tint to color    
     // Draw tooltip
-	Renderer::draw_tooltip("Hello", get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y, get_color().x, get_color().y, get_color().z, get_color().w, tooltip_arrow_direction, tooltip_arrow_width, tooltip_arrow_height, tooltip_arrow_position/*, tooltip_arrow_color*/);
+	Renderer::draw_tooltip("Hello", get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y, get_color().x, get_color().y, get_color().z, get_color().w, GUI::gui_shader, tooltip_arrow_direction, tooltip_arrow_width, tooltip_arrow_height, tooltip_arrow_position/*, tooltip_arrow_color*/);
     // Draw label (goes inside box) **********************************************************
     if(label) // make sure Box has an "initialized" label beforehand (or else engine will crash)
     {   // set label's alignment and position relative to the Tooltip (Box)                     // 10 is the space between the text and the Box's edge
@@ -796,7 +796,7 @@ int Box::set_gradient(lua_State * L)
 	}
 	return 0;	
 }
-void Box::set_gradient_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
+void Box::set_gradient_color(unsigned int red, unsigned int green, unsigned int blue, double alpha) // color that will mix with the default color
 {
 	gradient_color = Vector4(red, green, blue, alpha);
 }
@@ -817,6 +817,9 @@ void Box::set_gradient_color(const Vector4& color0, const Vector4& color1)
 {
 	color = color0;
 	gradient_color = color1;
+}
+void Box::set_gradient_value(double gradient_value) {
+    this->gradient_value = gradient_value;
 }
 
 void Box::set_forbidden_area(int x, int y, int width, int height) // set forbidden_area within the gui (relative to the gui)
@@ -1327,7 +1330,8 @@ int Box::get_label_list(lua_State * L)
 /////////////
 std::string Box::get_text() const
 {
-	return get_label()->get_string();
+    if(!label) throw std::runtime_error("label is not initialized");
+	return label->get_string();
 }
 /////////////
 Vector2 Box::get_title_bar_position() const

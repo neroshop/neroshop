@@ -1,13 +1,15 @@
 #include "../include/spinner.hpp"
 
-Spinner::Spinner() : value(0), range(0, 100), step(1), decimal_places(0), color(160, 160, 160, 1.0), disabled(false),
+Spinner::Spinner() : value(0), range(0, 100), step(1), decimal_places(0), color(160, 160, 160, 1.0), disabled(false), style(1),
 // label
 label(nullptr),
 // button
 button_width(20), // looks better when same as spinner-center height
 button_color(0, 51, 102, 1.0)/*(64, 64, 64, 1.0)*/,
+// shape (arrows)
+arrow_size(6, 3),//(5, 3),
 // shape (+, -)
-shape_size(8),//(10),
+shape_size(8),//(10), // anything less than 8 will make shape uneven
 shape_color(255, 255, 255, 1.0)/*(0, 255, 255, 1.0)*/,
 shape_depth(2.0),
 // separator (gap)
@@ -23,22 +25,19 @@ gradient(false),
 gradient_color(color)
 {
 	set_position(0, 0);
-	set_size(60, 20);
+	set_size(60, 20);//(40, 20/*30*/); // ideally, the width of spinner-center should be large enough to fit big numbers
 	set_orientation(0);
 }
 /////////////
-Spinner::Spinner(int x, int y)
+Spinner::Spinner(int x, int y) : Spinner()
 {
 	set_position(x, y);
-	set_size(40/*60*/, 20/*30*/); // ideally, the width of spinner-center should be large enough to fit big numbers
-	set_orientation(0);
 }
 /////////////
-Spinner::Spinner(int x, int y, int width, int height)
+Spinner::Spinner(int x, int y, int width, int height) : Spinner()
 {
 	set_position(x, y);
 	set_size(width, height);
-	set_orientation(0);
 }
 /////////////
 int spinner_new(lua_State *L)
@@ -62,12 +61,20 @@ void Spinner::draw()
     // callback
 	on_button_press();
 	// Draw spinner
-	//Renderer::draw_spinner_old(get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y, color.x, color.y, color.z, color.w, value, button_width, button_color, outline, outline_width, outline_color, outline_antialiased);
-    Renderer::draw_spinner(get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y, color.x, color.y, color.z, color.w,
-        button_width, button_color,
-        shape_size, shape_color, shape_depth, 
-        separator, separator_size 
-    );
+	if(style == 0) {
+	    Renderer::draw_spinner0(get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y, color.x, color.y, color.z, color.w, GUI::gui_shader, value, 
+	        button_width, button_color, 
+	        arrow_size, shape_color,
+	        outline, outline_width, outline_color, outline_antialiased);
+    }
+    if(style == 1) {
+        Renderer::draw_spinner(get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y, color.x, color.y, color.z, color.w,
+            GUI::gui_shader,
+            button_width, button_color,
+            shape_size, shape_color, shape_depth, 
+            separator, separator_size 
+        );
+    }
     if(!label) return;
     // Increase spinner-center size if necessary (when number gets too big and spinner is not wide enough to hold number)
     // EDIT: User must adjust the width manually
@@ -75,23 +82,21 @@ void Spinner::draw()
     //    std::cout << "number size has exceeded spinner width\n";
     //    set_width(label->get_string().length() * 10);
     //}
-    // Reduce value to 2 decimal places
-    if(decimal_places >= std::cout.precision()) decimal_places = std::cout.precision(); // default precision is probably 6 // decimal places cannot be more than 6 (MAX)
-    std::string value_str = std::to_string(value); // output: 0.000000
-    std::string value_formatted = value_str.erase((value_str.find(".") + 1) + decimal_places);//value_str.substr(0, value_str.find(".") + 1 + decimal_places); // 0.00 //std::cout << "value reduced to 2 decimal places: " << value_truncated << std::endl;
+    // std::cout.precision(); // default precision is probably 6
+    // format the value
+    std::string value_str = String::to_string_with_precision(value, decimal_places);
     // Update label string (value)
-    label->set_string((decimal_places > 0) ? value_formatted : std::to_string(static_cast<int>(value)));
+    label->set_string(value_str);
     // set label_position relative to slider_position - the "10" represents each glyph's width/height in the label
     if(label->get_alignment() == "left"  ) label->set_relative_position(0, (get_height() / 2) - (10 / 2)); // left will remain 0, y will be centered
-	if(label->get_alignment() == "center") label->set_relative_position((get_width() / 2) - ((10 * label->get_string().length()) / 2), (get_height() / 2) - (10 / 2)); // both x and y will be centered; adjusted based on label string's length
+	if(label->get_alignment() == "center") label->set_relative_position((get_width() / 2) - ((10 * label->get_string().length()) / 2), (get_height() - 10) / 2); // both x and y will be centered; adjusted based on label string's length
 	if(label->get_alignment() == "right" ) label->set_relative_position(get_width() - (10 * label->get_string().length()), (get_height() / 2) - (10 / 2)); // right will be move to the far right (width), y will be centered; adjusted based on label string's length
-	if(label->get_alignment() == "none"  ) label->set_relative_position(label->get_relative_x(), label->get_relative_y()); // nothing is changed here
+	////if(label->get_alignment() == "none"  ) label->set_relative_position(label->get_relative_x(), label->get_relative_y()); // nothing is changed here
 	label->set_position(get_x() + label->get_relative_x(), get_y() + label->get_relative_y());//(get_height() / 4));//label->set_position(get_x() + label->get_x(), get_y() + label->get_y());//label->set_position(get_x() + label->get_relative_x(), get_y() + label->get_relative_y());
     //std::cout << "label_relative_pos: " << spinner->get_label()->get_relative_position() << std::endl;
     //std::cout << "label_pos: " << spinner->get_label()->get_position() << std::endl; 		    
 	// Draw label
-	label->get_font()->generate(); // generate font glpyh in case it has not yet been generated
-	Renderer::draw_text2(label->get_string(), label->get_x(), label->get_y(), label->get_width(), label->get_height(), label->get_angle(), label->get_scale().x, label->get_scale().y, *label->get_font(), label->get_color().x, label->get_color().y, label->get_color().z, label->get_color().w);
+    label->draw();
 }
 /////////////
 void Spinner::draw(double x, double y)
@@ -142,6 +147,10 @@ void Spinner::set_step(double step) {
     this->step = fabs(step); // step MUST be a non-negative number!!
 }
 /////////////
+void Spinner::set_decimals(unsigned int decimals) {
+    this->decimal_places = decimals;
+}
+/////////////
 void Spinner::set_color(unsigned int red, unsigned int green, unsigned int blue) {
     color = Vector4(red, green, blue, color.w);
 }
@@ -186,6 +195,10 @@ void Spinner::set_disabled(bool disabled) {
         button_color = Vector4(64, 64, 64, 1.0);
         //shape_color = // keep the same
     }
+}
+/////////////
+void Spinner::set_style(int style) {
+    this->style = style;
 }
 /////////////
 // button functions
@@ -283,6 +296,10 @@ Vector2 Spinner::get_range() const
 int Spinner::get_range(lua_State * L)
 {
     return 2;
+}
+/////////////
+int Spinner::get_style() const {
+    return style;
 }
 /////////////
 // full position and width of spinner (with slider and buttons combined)
@@ -409,17 +426,23 @@ void Spinner::on_button_press()
 {
     if(disabled) return; // disabled GUI cannot interact with user
 	// Mouse
-	/*if(Mouse::is_over(get_top_button_x(), get_top_button_y(), get_top_button_width(), get_top_button_height())) {
-		if(Mouse::is_pressed(1)) set_value(value + step);
+	// old spinner (arrows = <, >)
+	if(style == 0) {
+	    if(Mouse::is_over(get_top_button_x(), get_top_button_y(), get_top_button_width(), get_top_button_height())) {
+		    if(Mouse::is_pressed(1)) set_value(value + step);
+	    }
+	    if(Mouse::is_over(get_bottom_button_x(), get_bottom_button_y(), get_bottom_button_width(), get_bottom_button_height())) {
+		    if(Mouse::is_pressed(1)) set_value(value - step);
+	    }
 	}
-	if(Mouse::is_over(get_bottom_button_x(), get_bottom_button_y(), get_bottom_button_width(), get_bottom_button_height())) {
-		if(Mouse::is_pressed(1)) set_value(value - step);
-	}*/
-	if(Mouse::is_over(get_left_button_x(), get_left_button_y(), get_left_button_width(), get_left_button_height())) {
-	    if(Mouse::is_pressed(1)) set_value(value - step);
-	}
-	if(Mouse::is_over(get_right_button_x(), get_right_button_y(), get_right_button_width(), get_right_button_height())) {
-	    if(Mouse::is_pressed(1)) set_value(value + step);
+	// new spinner (plus and minus = +, -)
+	if(style == 1) {
+	    if(Mouse::is_over(get_left_button_x(), get_left_button_y(), get_left_button_width(), get_left_button_height())) {
+	        if(Mouse::is_pressed(1)) set_value(value - step);
+	    }
+	    if(Mouse::is_over(get_right_button_x(), get_right_button_y(), get_right_button_width(), get_right_button_height())) {
+	        if(Mouse::is_pressed(1)) set_value(value + step);
+	    }
 	}
 }
 /////////////

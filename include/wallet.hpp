@@ -102,10 +102,10 @@ public:
     static Wallet * get_singleton();
     // get wallet handles
     monero_wallet_full * get_monero_wallet() const;
+    std::vector<std::string> recent_address_list; // recently used addresses
     // dokun-ui
     static Progressbar * sync_bar;
     static dokun::Label * sync_label;
-    //static neroshop::Message * wallet_message; // REMOVE THIS   
 private:
     void set_daemon(); // "set_daemon <host>[:<port>] [trusted|untrusted|this-is-probably-a-spy-node]" - connects to a daemon
     void refresh(); // "refresh" - Synchronize wallet with the Monero network.
@@ -115,9 +115,9 @@ private:
 private:
     static Wallet * wallet_obj; // singleton obj
     monero_wallet_full * monero_wallet_obj; // monero wallet
-    std::string file; // wallet file
     //monero_wallet_listener * wallet_listener; // listens to wallet for incoming txs // void monero::monero_wallet_full::add_listener	(	monero_wallet_listener & 	listener	)
     monero_network_type network_type; // default will be Mainnet when this app launches
+    std::string file; // wallet file    
     Process * process; // monerod process
 };
 }

@@ -15,53 +15,27 @@ Image::Image() : width(0), height(0), depth(1), channel(4), data (nullptr), x(0)
 	Factory::get_image_factory()->store(this);
 }
 /////////////
-Image::Image(const Image& image) : x(0), y(0), angle(0), scale(1, 1), color(255, 255, 255, 1.0), 
-    relative_x(0), relative_y(0), alignment("none"), visible(true)
+Image::Image(const Image& image) : Image()
 {
 	copy(image);
-	Factory::get_image_factory()->store(this);
 }
 /////////////
-Image::Image(const Texture& texture) : x(0), y(0), angle(0), scale(1, 1), color(255, 255, 255, 1.0), 
-    relative_x(0), relative_y(0), alignment("none"), visible(true)
+Image::Image(const Texture& texture) : Image()
 {
 	copy(texture);
-    Factory::get_image_factory()->store(this);
 }
 /////////////
-Image::Image(const std::string& file_name) : x(0), y(0), angle(0), scale(1, 1), color(255, 255, 255, 1.0), 
-    relative_x(0), relative_y(0), alignment("none"), visible(true)
+Image::Image(const std::string& file_name) : Image()
 {
-	if(!load(file_name))
-	{
-		dokun::Logger("Could not load " + file_name);
+	if(!load(file_name)) {
+		dokun::Logger("Could not load " + file_name); // channel will be obtained once image has successfully loaded and the proper format will be set inside Image::load()
 	}
-#ifdef DOKUN_OPENGL	
-	buffer          = 0;	
-    mag_filter      = GL_LINEAR;
-    min_filter      = GL_LINEAR;
-    wrap_s          = GL_CLAMP_TO_BORDER;
- 	wrap_t          = GL_CLAMP_TO_BORDER;
-    internal_format = GL_RGBA;
-	format = (channel == 4) ? GL_RGBA : GL_RGB;
-#endif	
-	Factory::get_image_factory()->store(this);
 }
 /////////////
-Image::Image(void * data, int width, int height, int depth, int channel) : width(0), height(0), depth(1), data (nullptr), x(0), y(0), angle(0), scale(1, 1), color(255, 255, 255, 1.0), 
-    relative_x(0), relative_y(0), alignment("none"), visible(true)
+Image::Image(void * data, int width, int height, int depth, int channel) : Image()
 {
 	if(!load(data, width, height, depth, channel))
-		dokun::Logger("Could not load image from data");
-#ifdef DOKUN_OPENGL	
-	buffer          = 0;	
-    mag_filter      = GL_LINEAR;
-    min_filter      = GL_LINEAR;
-    wrap_s          = GL_CLAMP_TO_BORDER;
- 	wrap_t          = GL_CLAMP_TO_BORDER;
-    internal_format = GL_RGBA;
-#endif
-	Factory::get_image_factory()->store(this);
+		dokun::Logger("Could not load image from data"); // channel will be obtained once image has successfully loaded and the proper format will be set inside Image::load()
 }
 /////////////
 Image::~Image(void)
@@ -91,11 +65,13 @@ bool Image::load(void * data , int width, int height, int depth, int channel) //
 	this->height  = height;
 	this->depth   = depth;
 	this->channel = channel;
-	format = (channel == 4) ? DOKUN_RGBA : DOKUN_RGB;
+#ifdef DOKUN_OPENGL	
+	format = (channel == 4) ? GL_RGBA : GL_RGB;
+#endif	
 	return true;
 }
 /////////////
-int Image:: load(lua_State *L)
+int Image::load(lua_State *L)
 {
     luaL_checktype(L, 1, LUA_TTABLE);
 	luaL_checkany(L, 2); // string or userdata
@@ -125,12 +101,12 @@ int Image:: load(lua_State *L)
 	return 1;
 }
 /////////////
-void Image:: draw ()
+void Image::draw ()
 {
-	if(visible) {
-	    generate();
-	    Renderer::draw_image(buffer, width, height, depth, x, y, angle, scale.x, scale.y, color.x, color.y, color.z, color.w, channel); // pass actual width and height, instead of get_width() and get_height as it also includes the scale factor
-	}
+	if(!visible) return;
+	generate(); // generate texture
+	generate_shader(); // generate shaders
+	Renderer::draw_image(buffer, width, height, depth, x, y, angle, scale.x, scale.y, color.x, color.y, color.z, color.w, channel, image_shader); // pass actual width and height, instead of get_width() and get_height as it also includes the scale factor
 }
 /////////////
 void Image::draw(double x, double y)
@@ -374,6 +350,7 @@ void Image::generate()
 	}
 #endif	
 }
+/////////////
 int Image::generate(lua_State *L)
 {
     luaL_checktype(L, 1, LUA_TTABLE);
@@ -495,6 +472,66 @@ int Image::clear(lua_State * L)
         image->clear();
 	}
     return 0;
+}
+/////////////
+/////////////
+Shader * Image::image_shader (new Shader());
+/////////////
+void Image::generate_shader(void) {
+    if(image_shader->is_linked()) return; // if image_shader is already generated and linked, exit function
+	////////////////////////////
+    // vertex shader
+	const char * vertex_source[] =
+	{
+        "#version 330\n"
+        "\n"
+        "layout (location = 0) in vec2 position ;\n"
+        "layout (location = 1) in vec2 tex_coord;\n"
+		"out vec2 Texcoord;\n"
+		"\n"
+		"\n"
+		"uniform mat4 model;\n"
+		"uniform mat4 proj ;\n"
+		"uniform mat4 view ;\n"
+		"\n"
+        "void main()\n"
+        "{\n"
+		    "Texcoord    = vec2(tex_coord.x, 1.0 - tex_coord.y);\n"
+            "gl_Position = proj * view * model * vec4(position, 0.0, 1.0);\n" // 2:image uses camera (via "view")
+        "}\n"
+	};
+	// fragment shader
+	const char * fragment_source[] =
+	{
+	    "#version 330\n"
+        "\n"
+		"out vec4 out_color;\n"
+        "uniform vec4 color;\n"
+        "uniform sampler2D base;\n"
+		"in vec2 Texcoord;\n"
+		"uniform bool has_texture;\n"
+		"\n"
+        "void main()\n"
+        "{\n"
+		    "if(has_texture == false)\n"
+		    "{\n"
+                "out_color = color;\n"
+            "}"	
+		    "if(has_texture == true)\n"
+		    "{\n"
+                "out_color = color * texture(base, Texcoord);\n"
+            "}"
+		"}\n"
+	};	
+	////////////////////////////
+    if(!image_shader->has_program())
+	{
+		image_shader->create();
+		image_shader->set_source(vertex_source  , 0);
+		image_shader->set_source(fragment_source, 1);
+		image_shader->prepare();
+	    ////std::cout << DOKUN_UI_TAG "Image shaders have been generated (" << image_shader->get_program() << ")" << std::endl;//std::cout << "number of shaders attached to shader object program: " << image_shader->get_shader_count() << std::endl;
+	}
 }
 /////////////
 /////////////
