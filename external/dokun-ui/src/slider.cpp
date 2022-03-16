@@ -1,7 +1,8 @@
 #include "../include/slider.hpp"
 
-Slider::Slider() : value(0), range(0, 100), radius(50), foreground_color(0, 51, 102, 1.0), background_color(160, 160, 160, 1.0),
-    ball_size(10), ball_color(64, 64, 64, 0.9), ball_radius(50), ball_locked(false), label(nullptr),
+Slider::Slider() : value(0), range(0, 100), decimals(2), step(1), foreground_color(0, 51, 102, 1.0), background_color(160, 160, 160, 1.0),
+    radius(0.0),
+    ball_size(10), ball_color(64, 64, 64, 0.9), ball_radius(0.0), ball_locked(false), label(nullptr),
 	// outline
 	outline (false),
     outline_color(0, 0, 0, 1.0),
@@ -14,6 +15,11 @@ Slider::Slider() : value(0), range(0, 100), radius(50), foreground_color(0, 51, 
 	set_position(0, 0);
 	set_size(200, 20);
 	set_orientation(0);
+	// temporary ====== I think that users should set the label manually thats why I'm making this temp
+    label = std::make_shared<dokun::Label>(String::to_string_with_precision(value, decimals));
+    label->set_parent(*this);
+    label->set_alignment("center"); // label will ALWAYS be fixed at the center of its parent (the slider)
+    //=================
 }
 /////////////            
 Slider::Slider(int x, int y) : Slider()
@@ -29,19 +35,18 @@ Slider::Slider(int x, int y, int width, int height) : Slider()
 /////////////
 Slider::~Slider()
 {
+    // we no longer need to delete label now that we are using smart_ptrs
     // delete label
-    if(label) {
+    /*if(label) {
         delete label;
         label = nullptr;
-    }
+    }*/
 }
 /////////////		
 void Slider::draw()
 {
     on_draw(); // sets position relative to parent, regardless of visibility
 	if(!is_visible()) return;  // is it visible? //if(!is_active())
-	    double min_val = get_range().x;
-	    double max_val = get_range().y;
 		double angle = get_angle();
 		//on_keyboard_test();//temp
 		on_mouse_move_ball();
@@ -52,9 +57,9 @@ void Slider::draw()
 			// shader    
 			    GUI::gui_shader,
 			// beam properties
-			    min_val, max_val, value, background_color,
+			    get_range().x, get_range().y, value, background_color, radius,
 			// ball properties
-			    ball_width, ball_color
+			    ball_width, ball_color, ball_radius
 			// outline
 			    );
 		}
@@ -62,20 +67,19 @@ void Slider::draw()
 		    int ball_height = ball_size;
 		    Renderer::draw_slider_vertical(get_x(), get_y(), get_width(), get_height(), 0, get_scale().x, get_scale().y, foreground_color.x, foreground_color.y, foreground_color.z, foreground_color.w,
 			    GUI::gui_shader,
-			    min_val, max_val, value, background_color, ball_height, ball_color);
+			    get_range().x, get_range().y, value, background_color, ball_height, ball_color);
 		}	
-	// Label	
-	if(label) {//if(!label) return;// as long as label is not nullptr. Does not matter if text is empty, still need to set proper x and y positions
+	// Label
+	if(!label) return;
     // set label_position relative to progressbar_position
     if(label->get_alignment() == "left"  ) label->set_relative_position(0, (get_height() / 2) - (10 / 2)); // left will remain 0, y will be centered
 	if(label->get_alignment() == "center") label->set_relative_position((get_width() / 2) - ((10 * label->get_string().length()) / 2), (get_height() / 2) - (10 / 2)); // both x and y will be centered; adjusted based on label string's length
 	if(label->get_alignment() == "right" ) label->set_relative_position(get_width() - (10 * label->get_string().length()), (get_height() / 2) - (10 / 2)); // right will be move to the far right (width), y will be centered; adjusted based on label string's length
-	if(label->get_alignment() == "none"  ) label->set_relative_position(label->get_relative_x(), label->get_relative_y()); // nothing is changed here
-	label->set_position(get_x() + label->get_relative_x(), get_y() + label->get_relative_y());
+	if(label->get_alignment() == "none"  ) {} // nothing is changed here
+    // update label string as the slider's value changes
+    label->set_string(String::to_string_with_precision(value, decimals));
     // draw label manually since there can only be one label for slider
     label->draw();
-    }
-    // NO need to draw label since child GUI are automatically drawn //label->draw();//Renderer::draw_label(get_text(), x, y, angle, 0.5, 0.5, get_label()->get_font()->get_data(), get_label()->get_color().x, get_label()->get_color().y, get_label()->get_color().z, get_label()->get_color().w);
 }    
 /////////////
 void Slider::draw(double x, double y)
@@ -144,9 +148,12 @@ int set_foreground_color(lua_State *L) {
     return 0;
 }
 /////////////
-void Slider::set_range(double max, double min)
+void Slider::set_range(double minimum_value, double maximum_value)
 {
-	range = Vector2(min, max);
+	range = Vector2(minimum_value, maximum_value);
+	// to make sure value does not go below min_val or surpass max_val
+	if(value < minimum_value) value = minimum_value;
+	if(value > maximum_value) value = maximum_value;
 } 
 /////////////
 int Slider::set_range(lua_State *L)
@@ -186,6 +193,11 @@ int Slider::set_value(lua_State *L)
 	return 0;
 }
 /////////////
+void Slider::set_decimals(int decimals) {
+    this->decimals = decimals;
+}
+/////////////
+/////////////
 void Slider::set_ball_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {
     ball_color = Vector4(red, green, blue, alpha); // outer
@@ -222,9 +234,13 @@ void Slider::set_ball_size(int ball_size)
 	this->ball_size = ball_size;
 }
 /////////////
-void Slider::set_radius(double radius)
+void Slider::set_ball_radius(float ball_radius) {
+    this->ball_radius = ball_radius;
+}
+/////////////
+void Slider::set_radius(float radius)
 {
-	//(this)->radius = radius;
+	this->radius = radius;
 }  
 /////////////
 int Slider::set_radius(lua_State *L)
@@ -232,10 +248,13 @@ int Slider::set_radius(lua_State *L)
 	return 0;
 }
 /////////////
-void Slider::set_label(const dokun::Label& label)
+void Slider::set_label(const dokun::Label& label) // we no longer need this function since slider will have its own label by default, eh, but I'll keep this function anyways ...
 {
-    this->label = &const_cast<dokun::Label&>(label);
-    this->label->set_parent(* this);
+    std::shared_ptr<dokun::Label> slider_label(&const_cast<dokun::Label&>(label));
+    this->label = slider_label;
+    this->label->set_parent(*this);
+    this->label->set_string(String::to_string_with_precision(value, decimals)); // we will be updating this value in the draw call too which is why I added this here
+    this->label->set_alignment("center"); // label will ALWAYS be fixed at the center of its parent (the slider)
 }
 /////////////
 int Slider::set_label(lua_State *L)
@@ -286,6 +305,10 @@ int Slider::get_maximum_value(lua_State *L)
 	return 1;
 }
 /////////////
+unsigned int Slider::get_decimals() const {
+    return decimals;
+}
+/////////////
 Vector4 Slider::get_color() const
 {
 	return foreground_color;
@@ -297,7 +320,7 @@ int Slider::get_color(lua_State *L)
 /////////////
 dokun::Label * Slider::get_label() const
 {
-    return label;
+    return label.get();
 }
 /////////////
 int Slider::get_label(lua_State *L)
@@ -305,6 +328,9 @@ int Slider::get_label(lua_State *L)
     return 1;
 }
 /////////////
+float Slider::get_radius() const {
+    return radius;
+}
 /////////////
 /////////////
 /////////////
@@ -352,6 +378,9 @@ Vector4 Slider::get_ball_color(int layer) const { //0=outer=default, 1=inner
     return ball_color;
 }
 /////////////
+float Slider::get_ball_radius() const {
+    return ball_radius;
+}
 /////////////
 /////////////
 /////////////
@@ -371,9 +400,9 @@ int Slider::is_moved(lua_State *L)
 void Slider::on_keyboard_test() {
     if(!has_focus()) return;
     if(dokun::Keyboard::is_pressed(DOKUN_KEY_LEFT)) 
-        set_value(value - 1);
+        set_value(value - step);
     if(dokun::Keyboard::is_pressed(DOKUN_KEY_RIGHT)) 
-        set_value(value + 1);
+        set_value(value + step);
 #ifdef DOKUN_DEBUG0
     std::cout << "value changed: " << value << " (ball_x: " << get_ball_x() << ")" << std::endl;
 #endif    

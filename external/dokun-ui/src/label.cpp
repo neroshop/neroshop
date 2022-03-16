@@ -167,7 +167,11 @@ Shader * dokun::Label::label_shader (new Shader());
 /////////////
 void dokun::Label::generate_shader(void) {
     // assign the object's shader to default shader (if it does not yet have one)
-	if(!shader) shader = label_shader;//{this->shader = label_shader;std::cout << "GUI " << Factory::get_gui_factory()->get_location(this) << " (label) has been assigned a shader program" << std::endl;}
+	if(!shader) {//shader = label_shader;
+	    std::shared_ptr<Shader> entity_shader(label_shader);
+	    shader = entity_shader;
+	    //if(shader) std::cout << "GUI " << Factory::get_gui_factory()->get_location(this) << " (label) has been assigned a shader program" << std::endl;
+	}
     if(label_shader->is_linked()) return; // if label_shader is already generated and linked, exit function
 	////////////////////////////
     const char * vertex_source[] =

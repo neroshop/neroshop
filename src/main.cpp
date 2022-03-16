@@ -31,13 +31,13 @@ void start_neromon_server() {
 ////////////////////
 //DB2 db2;
 void connect_database() { // this function is just for testing purposes
-    DB::Psql::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");// dbname=mydb");//("host=localhost port=1234 dbname=mydb connect_timeout=10");//("");//("user=sid dbname=neroshoptest");
+    DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");// dbname=mydb");//("host=localhost port=1234 dbname=mydb connect_timeout=10");//("");//("user=sid dbname=neroshoptest");
     // psql -h localhost -p 5432 -U postgres -d neroshoptest       // or psql neroshoptest
     // Password for user postgres: postgres
     // ctrl + z to exit
     /*std::cout << ": " << << std::endl;
     std::cout << ": " << << std::endl;*/
-    DB::Psql::get_singleton()->print_database_info();   
+    DB::Postgres::get_singleton()->print_database_info();   
     ////////////
     // testing
     /*if(!db2.table_exists("users")) {
@@ -51,8 +51,8 @@ void connect_database() { // this function is just for testing purposes
     }*/
     //db2.insert_into("users", "name, pw_hash, opt_email", "'dude', '$2a$05$bvIG6Nmid91Mu9RcmmWZfO5HJIMCT8riNW0hEp8f6/FuA2/mHZFpe', 'null'"); // libpq does not allow double quotes :(
     //db2.insert_into("users", "name, pw_hash", "'mike', 'blank'");
-    //db2.insert_into("users", "name, pw_hash", DB::Psql::to_psql_string("sid's bish") + "," + DB::Psql::to_psql_string("nothing to see here"));
-    //db2.update("users", "name", DB::Psql::to_psql_string("nameless"), "id = 1");
+    //db2.insert_into("users", "name, pw_hash", DB::Postgres::to_psql_string("sid's bish") + "," + DB::Postgres::to_psql_string("nothing to see here"));
+    //db2.update("users", "name", DB::Postgres::to_psql_string("nameless"), "id = 1");
     ////db2.execute("DROP DATABASE neroshoptest;");
     //////////////
     ////std::cout << db2.get_row_count("users") << " (row count for table users)" << std::endl;
@@ -61,7 +61,7 @@ void connect_database() { // this function is just for testing purposes
     //////////////
     ////std::cout << db2.get_text("SELECT VERSION()") << std::endl; // PostgreSQL 14.1 (Ubuntu 14.1-2.pgdg20.04+1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 9.3.0-17ubuntu1~20.04) 9.3.0, 64-bit
     /////////////
-    std::cout << DB::Psql::get_singleton()->/*db2.*/get_integer("SELECT sum(numbackends) FROM pg_stat_database;") << " (number of connections - including this app)\n";
+    std::cout << DB::Postgres::get_singleton()->/*db2.*/get_integer("SELECT sum(numbackends) FROM pg_stat_database;") << " (number of connections - including this app)\n";
     //db2.execute_params("INSERT INTO users (name, pw_hash, opt_email) VALUES ($1, $2, $3)", {});
     //std::cout << "column_exists: " << db2.column_exists("users","role") << "\n";//get_text("SELECT name FROM users WHERE name = 'jack'") << std::endl;
     //db2.drop_table("users");
@@ -103,7 +103,7 @@ void connect_database() { // this function is just for testing purposes
     ////////////
     ////////////
     //PQclear(res); // Should PQclear PGresult whenever it is no longer needed to avoid memory leaks
-    //DB::Psql::get_singleton()->finish(); // close the connection to the database and cleanup
+    //DB::Postgres::get_singleton()->finish(); // close the connection to the database and cleanup
     //if(!db2.get_handle()) std::cout << "conn set to nullptr (means connection closed)\n";
 }
 ////////////////////////////////////////////////
@@ -204,7 +204,7 @@ namespace neroshop {
         // kill neromon process
         delete server_process;
         // close database server
-        DB::Psql::get_singleton()->finish();
+        DB::Postgres::get_singleton()->finish();
         neroshop::print("neroshop closed");
     }
     ////////////////////
@@ -312,6 +312,7 @@ int main() {
     bool wallet_set = false;
     bool connected = false;
     int times_reconnected = 0;
+    bool favorite_set = false;// temp
     // window
     dokun::Window window;
     window.create("neroshop", 
@@ -329,18 +330,21 @@ int main() {
     // setting the font crashes the app, but for some reason only certain fonts do not crash the app
     ////font->load("c0583bt_.pfb");//("UbuntuMono-R.ttf");//("res/Hack-Regular.ttf");//("res/FiraCode-Retina.ttf");//("res/consolab.ttf");//crashes//("c0583bt_.pfb");//works//("res/UbuntuMono-R.ttf");//("res/Mecha-GXPg.ttf");//https://github.com/tonsky/FiraCode    
     // -------------------------------- :P -------------------------------------------
-    Label * neroshop_label = new Label();// crashes program and prevents user from logging in
-    neroshop_label->set_font(*dokun::Font::get_system_font());//(font);
-    neroshop_label->set_string("ner  shop");
-    neroshop_label->set_position(20, 30); // "n"=pos_x(20)
-    //neroshop_label->set_scale(1.5, 1.5);
-    //neroshop_label->get_font()->set_pixel_size(0, 20);
+    Label neroshop_label;// crashes program and prevents user from logging in
+    neroshop_label.set_font(*dokun::Font::get_system_font());//(font);
+    neroshop_label.set_string("ner  shop");
+    neroshop_label.set_position(20, 30); // "n"=pos_x(20)
+    //neroshop_label.set_scale(1.5, 1.5);
+    //neroshop_label.get_font()->set_pixel_size(0, 20);
     Box * monero_icon = new Box();
     Image monero_icon_img(Icon::get["monero_symbol"]->get_data(), 64, 64, 1, 4);
+    //monero_icon_img.set_outline(true);
+    //monero_icon_img.set_outline_thickness(0.5);
+    //monero_icon_img.set_outline_color(58, 33, 102);
     monero_icon->set_image(monero_icon_img); // use image data rather than the image obj (since it causes a crash for some reason)
     monero_icon->set_as_icon(true);
     monero_icon->set_size(20, 20); // label characters are 10 units in both width and height
-    monero_icon->set_position(neroshop_label->get_x() + 30, neroshop_label->get_y());// / 2);
+    monero_icon->set_position(neroshop_label.get_x() + 30, neroshop_label.get_y());// / 2);
     // ---------------------------------- message ----------------------------------------
     Message message_box;// hidden by default
     message_box.set_title("message");
@@ -607,17 +611,98 @@ int main() {
     //->set_placeholder_text("");
     // --------------------------------- homepage -------------------------------------
     // catalog
-    Catalog * catalog = new Catalog();
-    catalog->set_size(800, 300);
-    catalog->add_box(); // box positions and sizes are set automatically
+    Catalog * catalog = new Catalog(); // w=1000 here
+    catalog->set_size(400/*800*/, 300); // w=300 here
+    ////catalog->add_box(); // box positions and sizes are set automatically
     //catalog->set_();
-    //Button add_to_cart_button("Add to cart");
-    //add_to_cart_button.set_width(200);
-    //Label add_to_cart_label;
-    ////catalog->get_box(0)->add(add_to_cart_button);
-    //_label.set_font(*dokun::Font::get_system_font());
-    ////Image heart_icon(Icon::get["heart"]->get_data(), 64, 64, 1, 4);
-    ////catalog->get_box(0)->add(heart_icon);//catalog->get_box(0)->set_();
+    // ITEM IMAGE
+    Image product_image(Icon::get["monero_symbol"]->get_data(), 64, 64, 1, 4);
+    product_image.set_relative_position(10, 10);
+    catalog->get_box(0)->add_image(product_image);
+    // PRODUCT NAME LABEL
+    Label product_name_label("Monero Ball"); // place at bottom of image or next to image
+    product_name_label.set_color(0, 0, 0, 1.0);//int product_image_width = (product_image.is_resized()) ? product_image.get_width_scaled() : product_image.get_width();
+    int product_image_height = (product_image.is_resized()) ? product_image.get_height_scaled() : product_image.get_height();
+    product_name_label.set_relative_position(product_image.get_relative_x(), product_image.get_relative_y() + product_image_height + 10);
+    catalog->get_box(0)->add_gui(product_name_label);
+    // BRAND NAME LABEL
+    // ...
+    // STARS (FROM THE CALCULATED AVERAGE STARS - 5)
+    std::vector<std::shared_ptr<Image>> product_stars; // size will be 5    //std::cout << "number of stars: " << product_stars.size() << std::endl;
+    for(int i = 0; i < 5; i++) {
+        // create and load stars
+        product_stars.push_back(std::make_shared<Image>());
+        product_stars[i]->load(Icon::get["star"]->get_data(), 64, 64, 1, 4);//"star_half"
+        product_stars[i]->resize(20, 20);//(16, 16);
+        product_stars[i]->set_color(255, 179, 68, 1.0);
+        product_stars[i]->set_outline(true); // gives the star an illusion of depth
+        product_stars[i]->set_outline_thickness(0.6);//(1.0);
+        product_stars[i]->set_outline_color(182, 108, 0);// shades = rgb(255, 151, 0), rgb(182, 108, 0)//product_stars[i]->set_outline_threshold(0.0);
+        catalog->get_box(0)->add_image(*product_stars[i].get());// same as: catalog->get_box(0)->set_image(*product_stars[0].get(), i); // except that Box::set_image uses insert() rather than push_back(). This is the only difference between Box::add_image and Box::set_image
+        if(i == 0) { 
+            product_stars[0]->set_relative_position(product_name_label.get_relative_x(), product_name_label.get_relative_y() + 10/*product_name_label.get_height()*/ + 10);//5); // set position of the first star (other stars will follow it)
+            continue; // skip the first star for now
+        }
+        int star_widths = (product_stars[i]->is_resized()) ? product_stars[i]->get_width_scaled() : product_stars[i]->get_width();//std::cout << "product_star_widths[" << i << "]: " << star_widths << std::endl;
+        product_stars[i]->set_relative_position(product_stars[i - 1]->get_relative_x() + star_widths + 1, product_stars[0]->get_relative_y()); // same y_rel_pos as first star
+    }
+    // STARS LABEL (FROM THE CALCULATED AVERAGE STARS)
+    Label product_reviews_label("(0 ratings)");//(star_ratings > 0) ? std::to_string(star_ratings)+" ratings" : "No ratings yet");
+    product_reviews_label.set_color(16, 16, 16, 1.0);
+    int last_star_width = (product_stars[product_stars.size() - 1]->is_resized()) ? product_stars[product_stars.size() - 1]->get_width_scaled() : product_stars[product_stars.size() - 1]->get_width();
+    int star_height = (product_stars[0]->is_resized()) ? product_stars[0]->get_height_scaled() : product_stars[0]->get_height();//std::cout << "star_height: " << star_height << std::endl;
+    product_reviews_label.set_relative_position(product_stars[product_stars.size() - 1]->get_relative_x() + last_star_width + 1, product_stars[product_stars.size() - 1]->get_relative_y() + (star_height - 10/*product_reviews_label.get_height()*/) / 2);
+    catalog->get_box(0)->add_gui(product_reviews_label);
+    // PRICE LABEL
+    Label price_label("$" + String::to_string_with_precision(0.00, 2));
+    price_label.set_color(32, 32, 32, 1.0);
+    price_label.set_relative_position(product_stars[0]->get_relative_x(), product_stars[0]->get_relative_y() + star_height + 10);
+    catalog->get_box(0)->add_gui(price_label);//add_gui//add_label    
+    // COLOR PALETTE - UP TO 12
+    // TYPE/MODEL, SIZE COMBOBOX
+    // PACKAGING/QUANTITY - SPINNER BOX - THIS SHOULD BE FOR WHEN CHECKING OUT AS WELL
+    Label quantity_spinner_label;
+    quantity_spinner_label.set_font(*dokun::Font::get_system_font());
+    quantity_spinner_label.set_color(0, 0, 0, 1.0);
+    Spinner quantity_spinner;
+    quantity_spinner.set_range(1, 100);
+    quantity_spinner.set_color(128, 128, 128, 0.0); // full transparency
+    quantity_spinner.set_button_color(64, 64, 64, 1.0);
+    //quantity_spinner.set_shape_color(255, 102, 0, 1.0); // cyan :O
+    //quantity_spinner.set_separator(true);
+    //quantity_spinner.set_separator_size(5);        
+    quantity_spinner.set_label(quantity_spinner_label);
+    catalog->get_box(0)->add_gui(quantity_spinner);
+    // TRASHCAN ICON + BUTTON - FOR REMOVING ITEM FROM CART (this will only be shown in the cart menu, not in the catalogue)
+    // INFO ICON - TO GET DETAILS ABOUT A PRODUCT (place at left side of box opposite to heart icon)
+    //info_icon.set_color(30, 79, 151);//151 or 255
+    // HEART ICON
+    Image heart_icon(Icon::get["heart"]->get_data(), 64, 64, 1, 4); // CRASHES HERE
+    heart_icon.set_color(128, 128, 128, 1.0);//(224, 93, 93, 1.0);
+    heart_icon.resize(24, 24);//(16, 16);
+    heart_icon.set_alignment("center");
+    // HEART BUTTON (FAVORITES / WISHLIST) - add white outline to button
+    /*Button*/Box favorite_button; // place at top right of box
+    favorite_button.set_size(32, 32);//(24, 24);
+    favorite_button.set_color(catalog->get_box(0)->get_color());//(128, 128, 128, 0.5);//1.0);//(255, 255, 255, 1.0)
+    favorite_button.set_outline(true);//favorite_button.set_outline_color(255, 255, 255, 1.0);
+    favorite_button.set_relative_position(catalog->get_box(0)->get_width() - favorite_button.get_width() - 10, 10);
+    favorite_button.set_image(heart_icon);
+    catalog->get_box(0)->add_gui(favorite_button);//catalog->get_box(0)->set_();    
+    // BELL BUTTON - FOR SALES AND DEALS NOTIFICATIONS
+    // ADD TO CART BUTTON
+    Button cart_add_button("Add to cart");
+    cart_add_button.set_width(catalog->get_box(0)->get_width());//(200);
+    cart_add_button.set_color(82, 70, 86);//(55, 25, 255);//bluish-purple//(42, 25, 255);//(50, 25, 255);//(30, 30, 255);
+    catalog->get_box(0)->add_gui(cart_add_button);    
+    // place all set_pos() and set_rel_pos() functions in loop for it to be frequently updated in real-time!
+    // cart_button position
+    cart_add_button.set_relative_position((catalog->get_box(0)->get_width() - cart_add_button.get_width()) / 2, catalog->get_box(0)->get_height() - cart_add_button.get_height()/* - 10*/); // center x, lower y
+    //std::cout << "catalog size: " << catalog->get_size() << std::endl;
+    //std::cout << "catalog box size: " << catalog->get_box(0)->get_size() << std::endl;
+    // qty_spinner position
+    quantity_spinner.set_relative_position((catalog->get_box(0)->/*cart_add_button.*/get_width() / 2) - (quantity_spinner.get_full_width() / 2), catalog->get_box(0)->get_height() - cart_add_button.get_height() - quantity_spinner.get_height() - 10);
+    // -----------------------------
     // search_bar
     Edit * search_bar = new Edit(); // crashes when drawn for some reason
     search_bar->set_size(400, 40);//((window.get_client_width() / 4) * 2 , 30); //620 , 30);
@@ -652,9 +737,10 @@ int main() {
     */
     // upload login_button    
     // date and time
-    Label * date_display = new Label();
-    date_display->set_string(Validator::get_date("%Y-%m-%d  %H:%M:%S %p"));
-    date_display->set_position(window.get_client_width() - date_display->get_width(), window.get_client_height() - date_display->get_height());
+    Label date_display;
+    date_display.set_font(*dokun::Font::get_system_font());
+    date_display.set_string(Validator::get_date("%Y-%m-%d  %H:%M:%S %p"));
+    date_display.set_position(window.get_client_width() - date_display.get_width(), window.get_client_height() - date_display.get_height());
     // icon_settings
     Vector4 default_icon_color = Vector4(255, 255, 255, 1.0); // will get image's color instead if box_type is an icon
     // cart_button
@@ -754,7 +840,20 @@ int main() {
     Slider * slider2 = new Slider();
     slider2->set_value(100);
     slider2->set_position(10, 325);    
-    //slider2->set_range(0, 1000); // <= doesnt work
+    slider2->set_range(0, 500);//1000);
+    // color sliders
+    Slider color_slider_r; // red
+    color_slider_r.set_foreground_color(255, 0, 0);
+    color_slider_r.set_range(0, 255);
+    color_slider_r.set_position(500, 300);
+    Slider color_slider_g; // green
+    color_slider_g.set_foreground_color(0, 255, 0);
+    color_slider_g.set_range(0, 255);
+    color_slider_g.set_position(500, 350);    
+    Slider color_slider_b; // blue
+    color_slider_b.set_foreground_color(0, 0, 255);
+    color_slider_b.set_range(0, 255);
+    color_slider_b.set_position(500, 400);    
     ////////////////
     Box * box = new Box();
     box->set_size(100, 50);
@@ -764,7 +863,7 @@ int main() {
     box_label.set_alignment("center");
     box->set_label(box_label);
     //box->set_text("Hello");
-    //box->set_as_tooltip(true);
+    box->set_as_tooltip(true);
     box->set_position(100, 150);
     box->set_title_bar(true);
     box->set_radius(50.0); // for rounded corner
@@ -816,6 +915,8 @@ int main() {
                     pw_edit_r->clear_all();
                     pw_confirm_edit->clear_all();
                     opt_email_edit->clear_all();
+                    // clear all GUI focus
+                    GUI::clear_all();
                     // leave the register_menu
                     register_menu = false;
                     // go to the home_menu
@@ -841,6 +942,10 @@ int main() {
                 pw_edit_r->clear_all();
                 pw_confirm_edit->clear_all();
                 opt_email_edit->clear_all();
+                // clear all GUI focus
+                GUI::clear_all();
+                // set focus to username edit
+                ////user_edit->focus();                
                 // leave the register_menu
                 register_menu = false;
                 // return to the login_menu
@@ -945,9 +1050,9 @@ int main() {
                     if(save_toggle->get_value() == false) neroshop::print("Username not saved", 2);
                     db.close();
                     // check whether user is a buyer or seller
-                    ////DB::Psql::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
-                    unsigned int account_type_id = DB::Psql::get_singleton()->get_integer_params("SELECT account_type_id FROM users WHERE name = $1", { user_edit->get_text() });
-                    ////DB::Psql::get_singleton()->finish();
+                    ////DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+                    unsigned int account_type_id = DB::Postgres::get_singleton()->get_integer_params("SELECT account_type_id FROM users WHERE name = $1", { user_edit->get_text() });
+                    ////DB::Postgres::get_singleton()->finish();
                     // create user
                     if(account_type_id <= 0) {
                         std::cout << "This user was not found in database";
@@ -1037,6 +1142,8 @@ int main() {
                     if(user->get_name() == "dude") user->rate_seller(seller_id, 0, "This seller sucks!");
                     if(user->get_name() == "mike") user->rate_seller(seller_id, 1, "This seller is rocks!");*/
                     std::cout << "**********************************************************\n";
+                    // clear all GUI focus
+                    GUI::clear_all();
                     // leave the login_menu           
                     login_menu = false;
                     // go to home menu
@@ -1053,6 +1160,8 @@ int main() {
                 //std::cout << "is_user_guest: " << user->is_guest() << std::endl;
                 //std::cout << "is_user_buyer: " << user->is_buyer() << std::endl;
                 //std::cout << "is_user_seller: " << user->is_seller() << std::endl;
+                // clear all GUI focus
+                GUI::clear_all();
                 // leave the login_menu
                 login_menu = false;
                 // go to home_menu
@@ -1061,6 +1170,10 @@ int main() {
             /////////////////////
             // register_button
             if(register_button->is_pressed() && !message_box.is_visible()) {
+                // clear all GUI focus
+                GUI::clear_all();
+                // set focus to registration username edit
+                ////user_edit_r->focus();
                 // leave the login_menu
                 login_menu = false; // causes to exit program
                 // take user to the register_menu ...
@@ -1078,7 +1191,7 @@ int main() {
             // daemon_button
             if(daemon_button->is_pressed() && !message_box.is_visible()) { // && !msg_box.is_visible()
                 if(!wallet_opened  ) {//wallet->get_monero_wallet() == nullptr ) {
-                    message_box.set_text("wallet has not been opened"); //msg_box.get_label()->set_string("  wallet has not been opened");//msg_box.set_width(msg_box.get_label()->get_width()); // update msg_box width based on label's width//message_box.center(window.get_client_width(), window.get_client_height());//msg_box.set_position((window.get_width() / 2) - (msg_box.get_width() / 2), (window.get_height() / 2) - (msg_box.get_height() / 2)); // update msg_box pos since width changed
+                    message_box.set_text("wallet has not been uploaded"); //msg_box.get_label()->set_string("  wallet has not been opened");//msg_box.set_width(msg_box.get_label()->get_width()); // update msg_box width based on label's width//message_box.center(window.get_client_width(), window.get_client_height());//msg_box.set_position((window.get_width() / 2) - (msg_box.get_width() / 2), (window.get_height() / 2) - (msg_box.get_height() / 2)); // update msg_box pos since width changed
                     // box text (label)
                     message_box.get_label(0)->set_alignment("none");
                     message_box.get_label(0)->set_relative_position((message_box.get_width() - message_box.get_label(0)->get_string().length() * 10/*message_box.get_label(0)->get_width()*/) / 2, ((message_box.get_height() - 10/*message_box.get_label()->height()*/) / 2) - 20);//55);                    
@@ -1269,21 +1382,21 @@ int main() {
             ////spinner->set_height((int)slider->get_value());//spinner->set_style(0);
             message_box.get_box()->set_radius(slider->get_value());
             ////login_button->set_radius(slider->get_value());
-            save_toggle->set_radius(slider->get_value());
+            ////save_toggle->set_radius(slider->get_value());
             //std::cout << "save_toggle radius: " << save_toggle->get_radius() << std::endl;
             //std::cout << "login_button radius: " << login_button->get_radius() << std::endl;
             //std::cout << "box radius: " << message_box.get_box()->get_radius() << std::endl;
             //-------------------------
-            spinner->set_step(0.01);
-            spinner->set_range(0.00, 1.00);
-            spinner->set_decimals(2); // .00 = two decimal places
-            message_box.get_box()->set_gradient_color(0, 255, 255, 1.0); // cyan
-            message_box.get_box()->set_gradient_value(spinner->get_value());
+            //spinner->set_step(0.01);
+            //spinner->set_range(0.00, 1.00);
+            //spinner->set_decimals(2); // .00 = two decimal places
+            //message_box.get_box()->set_gradient_color(0, 255, 255, 1.0); // cyan
+            //message_box.get_box()->set_gradient_value(spinner->get_value());
             //-------------------------
-            spinner->draw();
-            //box->draw();
+            ////spinner->draw();
+            box->set_radius(slider->get_value());
+            box->draw();
             //box->set_radius(round(slider->get_value()));
-            //std::cout << "slider_value_rounded: " << round(slider->get_value()) << std::endl;//slider->get_value()
             ////checkbox->set_size(round(slider->get_value()), round(slider->get_value()));
             ////checkbox->draw();
             ////radio->draw();
@@ -1313,15 +1426,44 @@ int main() {
         while (home_menu) {
             window.poll_events(); // check for events
             window.set_viewport(window.get_client_width(), window.get_client_height()); // set to dimensions of render client rather than the entire window (for pixel coordinates)
-            window.clear(28, 33, 48);//(42, 44, 49);//(62, 65, 71);//(65, 62, 74);//(35,44,49);//(65, 69, 71); //(32, 32, 32);	    
+            window.clear(16, 16, 16);////window.clear(color_slider_r.get_value(), color_slider_g.get_value(), color_slider_b.get_value());////(28, 33, 48);//(42, 44, 49);//(62, 65, 71);//(65, 62, 74);//(35,44,49);//(65, 69, 71); //(32, 32, 32);	    
             // neroshop label
-            neroshop_label->draw();
+            neroshop_label.draw();
             // monero icon
             monero_icon->draw();
             // date and time
-            date_display->set_position(window.get_client_width() - date_display->get_width(), window.get_client_height() - date_display->get_height());
-            date_display->set_string(Validator::get_date("%Y-%m-%d  %l:%M:%S %p"));
-            date_display->draw();
+            date_display.set_position(window.get_client_width() - date_display.get_width(), window.get_client_height() - date_display.get_height());
+            date_display.set_string(Validator::get_date("%Y-%m-%d  %l:%M:%S %p"));
+            date_display.draw();
+            // TEMP---------------------------
+            if(favorite_button.is_pressed() && !favorite_set) {
+                favorite_set = true;
+                favorite_button.get_image()->set_color(224, 93, 93, 1.0);
+                //return;
+            }
+            else if(favorite_button.is_pressed() && favorite_set) {
+                favorite_set = false;
+                favorite_button.get_image()->set_color(128, 128, 128);
+                //return;
+            }          
+            //-------------------------------  
+            if(Keyboard::is_pressed(DOKUN_KEY_LEFT)) {
+                //quantity_spinner.set_relative_position(quantity_spinner.get_relative_x() - 5, quantity_spinner.get_relative_y());
+                price_label.set_relative_position(price_label.get_relative_x() - 5, price_label.get_relative_y());
+            }
+            if(Keyboard::is_pressed(DOKUN_KEY_RIGHT)) {
+                //quantity_spinner.set_relative_position(quantity_spinner.get_relative_x() + 5, quantity_spinner.get_relative_y());
+                price_label.set_relative_position(price_label.get_relative_x() + 5, price_label.get_relative_y());
+            }
+            if(Keyboard::is_pressed(DOKUN_KEY_UP)) {
+                //quantity_spinner.set_relative_position(quantity_spinner.get_relative_x(), quantity_spinner.get_relative_y() - 5);
+                price_label.set_relative_position(price_label.get_relative_x(), price_label.get_relative_y() - 5);
+            }
+            if(Keyboard::is_pressed(DOKUN_KEY_DOWN)) {
+                //quantity_spinner.set_relative_position(quantity_spinner.get_relative_x(), quantity_spinner.get_relative_y() + 5);
+                price_label.set_relative_position(price_label.get_relative_x(), price_label.get_relative_y() + 5);
+            }            
+            //-------------------------------  
             /*if(Mouse::is_over(cart_button->get_image()->get_rect())) cart_button->get_image()->set_color(242, 100, 17);
             else {
                 cart_button->get_image()->set_color(default_icon_color);
@@ -1398,6 +1540,10 @@ int main() {
             /////////////////////////////////////
             // on logout_button pressed, return to the login menu
             if(logout_button->is_pressed()) {
+                // clear all GUI focus
+                GUI::clear_all();
+                // set focus to username edit
+                ////user_edit->focus();
                 home_menu = false;
                 login_menu = true;
             }
@@ -1405,8 +1551,20 @@ int main() {
             /////////////////////////////////////
             /////////////////////////////////////
             /////////////////////////////////////
+            // TEMPORARY TESTING CODE
+            color_slider_r.draw(); // temp
+            color_slider_g.draw(); // temp
+            color_slider_b.draw(); // temp
             slider2->draw(slider2->get_x(), 500);// temp
-            catalog->set_width(slider2->get_value() * 10); // temp
+            //->set_color(color_slider_r.get_value(), color_slider_g.get_value(), color_slider_b.get_value());
+            cart_add_button.set_color(color_slider_r.get_value(), color_slider_g.get_value(), color_slider_b.get_value());
+            ////catalog->set_width(slider2->get_value() * 10); // temp
+            product_stars[0]->set_outline_thickness(slider2->get_value() / 100.0f);
+            product_stars[1]->set_outline_thickness(slider2->get_value() / 100.0f);
+            product_stars[2]->set_outline_thickness(slider2->get_value() / 100.0f);
+            product_stars[3]->set_outline_thickness(slider2->get_value() / 100.0f);
+            product_stars[4]->set_outline_thickness(slider2->get_value() / 100.0f);
+            ////std::cout << "slider2 value: " << slider2->get_value() / 100.0f << std::endl;
             /////////////////////////////////////
             catalog->draw(50, 90);                        
             /////////////////////////////////////

@@ -699,7 +699,7 @@ void Edit::set_scrollable(bool scrollable) {
 }
 /////////////
 void Edit::set_focus(bool focus) {
-    std::cout << "edit set_focus(" << ((focus) ? "true" : "false") << ") called\n";
+    //std::cout << "edit set_focus(" << ((focus) ? "true" : "false") << ") called\n";
     Edit::focused = (focus == true) ? this : nullptr;
 }
 /////////////

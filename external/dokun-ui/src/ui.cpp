@@ -92,10 +92,8 @@ void GUI::focus() {
 /////////////
 void GUI::clear_all() {
     //GUI::focused = nullptr;// some GUI (like Edit) have their own focus member, so we have to loop all gui and set their focus
-    for (int i = 0; i < Factory::get_gui_factory()->get_size(); i++) 
-	{
-	    GUI * gui = static_cast<GUI *>(Factory::get_gui_factory()->get_object(i));
-		gui->set_focus(false);
+    for(auto guis : Factory::get_gui_factory()->get_storage()) {//for (int i = 0; i < Factory::get_gui_factory()->get_size(); i++) {
+	    static_cast<GUI *>(guis)->set_focus(false);//GUI * gui = static_cast<GUI *>(guis);//GUI * gui = static_cast<GUI *>(Factory::get_gui_factory()->get_object(i));
 	}
 	std::cout << DOKUN_UI_TAG "all focus cleared\n";
 }
@@ -120,7 +118,11 @@ void GUI::connect(const GUI& a, int signal, const GUI& b, std::function<void(voi
 void GUI::generate_shader(void)
 {
     // assign the object's shader to default shader (if it does not yet have one)
-	if(!shader) shader = gui_shader;//{this->shader = gui_shader; std::cout << "GUI " << Factory::get_gui_factory()->get_location(this) << " (?) has been assigned a shader program" << std::endl;}
+	if(!shader) {//shader = gui_shader;
+        std::shared_ptr<Shader> entity_shader(gui_shader);
+        shader = entity_shader;
+        //if(shader) std::cout << "GUI " << Factory::get_gui_factory()->get_location(this) << " (?) has been assigned a shader program" << std::endl;
+    }
     if(gui_shader->is_linked()) return; // exit if shader_program has already been generated//if(!shader) throw std::runtime_error("GUI Shader is not initialized");
 	// create (initialize) a shader
 	//gui_shader = new Shader();
@@ -130,7 +132,7 @@ void GUI::generate_shader(void)
         "\n"
         "layout (location = 0) in vec2 position ;\n"
         "layout (location = 1) in vec2 tex_coord;\n"
-		"out vec2 Texcoord;\n"
+		"out vec2 tex_coords;\n"
 		"\n"
 		"\n"
 		"uniform mat4 model;\n"
@@ -138,7 +140,7 @@ void GUI::generate_shader(void)
 		"\n"
         "void main()\n"
         "{\n"
-		    "Texcoord    = tex_coord;\n"
+		    "tex_coords = tex_coord;\n"
             "gl_Position = proj * model * vec4(position, 0.0, 1.0);\n"
         "}\n"
 	};
@@ -155,7 +157,7 @@ void GUI::generate_shader(void)
 		"out vec4 out_color;\n"
         "uniform vec4 color;\n"
         "uniform sampler2D texture;\n"
-		"in vec2 Texcoord;\n"
+		"in vec2 tex_coords;\n"
 		"uniform vec2 size;"
 		"uniform float radius;"
 		"\n"
@@ -172,7 +174,7 @@ void GUI::generate_shader(void)
 		"uniform float time;"
 		"uniform vec2 mouse;"
 		"\n"
-		"vec2 position;" // Texcoord.x = from_left_to_right, Texcoord.y = from_up_to_down
+		"vec2 position;" // tex_coords.x = from_left_to_right, tex_coords.y = from_up_to_down
 		"struct Gradient {\n"
 			"vec4 color;\n" // bottom // the color used to mix with the original color (which will be the top color)
 			"float value;\n"
@@ -184,7 +186,7 @@ void GUI::generate_shader(void)
 		"\n"
         "void main()\n"
         "{\n"
-            "vec2 st = Texcoord.xy / resolution.xy;\n"
+            "vec2 st = tex_coords.xy / resolution.xy;\n"
             "float aspect = resolution.x / resolution.y;\n"
             "vec2 uv = (2.0 * st - 1.0) * vec2(aspect, 1.0);\n"
             "vec2 half_res = 0.5 * resolution;\n"
@@ -192,9 +194,9 @@ void GUI::generate_shader(void)
 			"\n"
 			"\n"
             // temp ----------------------------------
-            "vec2 uv_temp = abs((Texcoord/*uv*/ - vec2(0.5)) * vec2(aspect, 1.0));\n"
+            "vec2 uv_temp = abs((tex_coords/*uv*/ - vec2(0.5)) * vec2(aspect, 1.0));\n"
             "float half_width = aspect * 0.5;\n"
-            "float radius_temp = clamp((radius/100) , 0.0, 1.0) * min(half_width, 0.5);\n" // convert radius (int) to opengl floating point number = radius / 100; or radius * 0.01; // 100 is the max radius
+            "float radius_temp = clamp((radius/100.0) , 0.0, 1.0) * min(half_width, 0.5);\n" // convert radius (int) to opengl floating point number = radius / 100; or radius * 0.01; // 100 is the max radius
             "vec2 center = vec2(half_width, 0.5) - vec2(radius_temp);\n"
             "// outer edge\n"
             "vec2 half_uv = uv_temp - vec2(half_width, 0.5);\n"
@@ -204,23 +206,23 @@ void GUI::generate_shader(void)
             "float border = smoothstep(0.0, fwidth(d), d);//linearstep(0.0, fwidth(d), d);//d;\n"
             "\n"
             // temp ^ --------------------------------
-			//"if( (length(Texcoord * size - vec2(0)) < radius)  || (length(Texcoord * size - vec2(0, size.y)) < radius) || (length(Texcoord * size - vec2(size.x, 0)) < radius) || (length(Texcoord * size - size) < radius) )"
+			//"if( (length(tex_coords * size - vec2(0)) < radius)  || (length(tex_coords * size - vec2(0, size.y)) < radius) || (length(tex_coords * size - vec2(size.x, 0)) < radius) || (length(tex_coords * size - size) < radius) )"
             //"{     discard;"
             //"}"
 			"\n" // size_x = (size.x / 2) * (size.x / size.y)    or  size_y = (size.y / 2) * (size.y / size.x)
-		    "float b = 1.0 - round_corner(Texcoord * size - half_res, half_res, abs(radius));  //(Texcoord - half_res, half_res, radius);\n" // position, size, radius // abs() turns a negative number into a positive number
-		    "float round = smoothstep(0.0, 1.0, b);          \n" //"vec4 pixel = texture2D(texture, Texcoord);" // if texture is present
+		    "float b = 1.0 - round_corner(tex_coords * size - half_res, half_res, abs(radius));  //(tex_coords - half_res, half_res, radius);\n" // position, size, radius // abs() turns a negative number into a positive number
+		    "float round = smoothstep(0.0, 1.0, b);          \n" //"vec4 pixel = texture2D(texture, tex_coords);" // if texture is present
 		    // fragment color (default):
 		    "out_color = vec4(color.x, color.y, color.z, color.w);//vec4(color.xyz, color.w);\n" //border is in percentage(%) rather than HTML pixel(px)// 1.0, 1.0, 1.0, 1.0 is default frag_color
 		    // rounded corners (radius - uses anti-aliasing via smoothstep to smoothen edges):
 		    "if(radius > 0.0) out_color = vec4(color.xyz, color.w * border);// border);//round);\n" // smooth or linear (anti-aliasing)
 		    // setting anti-aliasing (smoothness) to gui edges without changing the radius:
-		    //"out_color = vec4(color.xyz, color.w * (smoothstep(vec2(0), fwidth(Texcoord), Texcoord) * smoothstep(vec2(0), fwidth(Texcoord), vec2(1) - Texcoord)) );\n"
+		    //"out_color = vec4(color.xyz, color.w * (smoothstep(vec2(0), fwidth(tex_coords), tex_coords) * smoothstep(vec2(0), fwidth(tex_coords), vec2(1) - tex_coords)) );\n"
 		    // gradient color:
             "if(gradient.enabled == true)\n"
 			"{"
 			    // top-to-bottom gradient
-			    "position  = Texcoord.st;\n" // can use either .xy or .st
+			    "position  = tex_coords.st;\n" // can use either .xy or .st
 			    "vec4 top = vec4(color + (1.0 - color) * gradient.value);\n" // tint  (1=white)
 			    "vec4 bottom = vec4(gradient.color + (0.0 - gradient.color) * gradient.value);\n" // shade (0=black)
 			    "out_color = vec4(mix(top, bottom, position.y).xyz, color.w);\n" // position.y = top-to-bottom, position.x = left-to-right
@@ -228,7 +230,7 @@ void GUI::generate_shader(void)
 			    // left-to-right gradient
 			    // ...
 			    // normal (point) gradient
-			    ////"float mix_value = distance(Texcoord, vec2(0, 0));\n"// no significant difference b/t Texcoord and gl_PointCoord (for now)// (0, 0) = top-left | (0, 1) = bottom-left | (1, 0) = top-right corner
+			    ////"float mix_value = distance(tex_coords, vec2(0, 0));\n"// no significant difference b/t tex_coords and gl_PointCoord (for now)// (0, 0) = top-left | (0, 1) = bottom-left | (1, 0) = top-right corner
 			    ////"vec3 color_final = mix(gradient.color0.xyz, gradient.color1.xyz, mix_value);\n"// or "vec4 color_final = mix(gradient.color0, gradient.color1, mix_value);\n"
 			    ////"out_color = vec4(color_final, 1.0);\n" // or "out_color = vec4(color_final);\n"
 			"}\n"

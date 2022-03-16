@@ -30,6 +30,7 @@ class Factory // Object manager - can create, store, and retrieve objects
 		static int get_userdata(lua_State *L);
 		int get_size(); static int get_size(Factory & factory);  static int get_size(lua_State *L);
 	    int get_location(void *obj);  static int get_location(lua_State *L);
+	    std::vector<void *> get_storage() const; // returns the storage object
 	    // special getters 
 		static Factory * get_engine_factory();
 		static Factory * get_state_factory();

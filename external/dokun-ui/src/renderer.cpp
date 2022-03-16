@@ -35,7 +35,7 @@ void Renderer::start(void){ // initialize default values for renderer
 }
 void Renderer::destroy (void){ // call this function to deallocate attached renderer objects before deleting renderer
 }
-void Renderer::generate_vertex_array(double x, double y, unsigned int width, unsigned int height) // sprites not showing up when using this :(
+void Renderer::generate_vertex_array(float x, float y, unsigned int width, unsigned int height) // sprites not showing up when using this :(
 {
 #ifdef DOKUN_OPENGL
     if(!glIsVertexArray(sprite_vertex_array_obj)) // if vao has not been generated
@@ -203,7 +203,8 @@ void Renderer::device_check (void)
 ////////////
 ////////////
 ////////////
-void Renderer::draw_image(const unsigned int buffer, int width, int height, int depth, double x, double y, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, int channel, Shader* shader) // good !
+void Renderer::draw_image(const unsigned int buffer, int width, int height, int depth, float x, float y, float angle, float scale_x, float scale_y, unsigned int red, unsigned int green, unsigned int blue, float alpha, int channel, Shader* shader,
+    bool outline, float outline_thickness, const Vector3& outline_color, float outline_threshold) // good !
 {
 #ifdef DOKUN_OPENGL	// OpenGL is defined
 	context_check();
@@ -252,9 +253,12 @@ void Renderer::draw_image(const unsigned int buffer, int width, int height, int 
     // State
 	glDisable(GL_DEPTH_TEST);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Enable transparent background
-	glEnable(GL_BLEND);	
+	glEnable(GL_BLEND);
+	///////////////////
+	//glBlendEquation(GL_FUNC_ADD);	
+    //glEnable(GL_LINE_SMOOTH); glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);	
 	// Shader
-	shader->use ();
+	shader->use();
 #ifdef use_glm	
 	// uniform	
 	glm::mat4 model = glm::mat4(1.0);;
@@ -263,19 +267,33 @@ void Renderer::draw_image(const unsigned int buffer, int width, int height, int 
 	model = glm::scale(model, glm::vec3(scale_x, scale_y, 1));
 	model = glm::translate(model, glm::vec3(-x, -y, 1));//model = glm::translate(model, glm::vec3(-x - width/2, -y - height/2, 1));
     // projection and view (camera)
-	glm::mat4 proj  = glm::ortho(0.0f, static_cast<float>(window_width), static_cast<float>(window_height), 0.0f, -1.0f, 1.0f);
-	glm::mat4 view  = glm::lookAt(glm::vec3(0, 0, 0), glm::vec3(0, 0,-1), glm::vec3(0, 1, 0)); // uses its own camera (not subject to the Renderer's camera)
+	glm::mat4 proj = glm::ortho(0.0f, static_cast<float>(window_width), static_cast<float>(window_height), 0.0f, -1.0f, 1.0f);
+	glm::mat4 view = glm::lookAt(glm::vec3(0, 0, 0), glm::vec3(0, 0,-1), glm::vec3(0, 1, 0)); // uses its own camera (not subject to the Renderer's camera)
 	// pass matrix data to the shader	
 	glUniformMatrix4fv(glGetUniformLocation(shader->get_program(), "model"), 1, GL_FALSE, glm::value_ptr(model));
 	glUniformMatrix4fv(glGetUniformLocation(shader->get_program(), "proj") , 1, GL_FALSE, glm::value_ptr(proj) );
 	glUniformMatrix4fv(glGetUniformLocation(shader->get_program(), "view") , 1, GL_FALSE, glm::value_ptr(view) );
 #endif	
-	shader->set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);	
-	shader->set_integer("has_texture", (buffer != 0));	
-	// Draw
+    // Draw border
+	/*/////// temp ////////
+	shader->set_integer("has_texture", false);//(buffer != 0));
+	shader->set_float("color", (255 / 255.0), (102 / 255.0), (0 / 255.0), alpha);
+    glBindVertexArray(vertex_array_obj); // (vao start 2)
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);                // (vao end 2  )
+    glBindTexture(GL_TEXTURE_2D, 0);  // unbind texture
+    /////////////////////*/        	
+	// Draw image
+    shader->set_integer("has_texture", (buffer != 0));
+    // Draw outline
+    shader->set_integer("outline", outline);
+    shader->set_float("outline_threshold", outline_threshold);//0.5);
+    shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
 	glActiveTexture(GL_TEXTURE0 + 0);
 	glBindTexture(GL_TEXTURE_2D, buffer);  // bind texture
 	shader->set_integer("base", 0);
+	shader->set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
     glBindVertexArray(vertex_array_obj); // (vao start 2)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);                // (vao end 2  )
@@ -345,8 +363,8 @@ void Renderer::draw_camera(double eye_x, double eye_y, double eye_z, double cent
 /////////////////////////////
 /////////////////////////////
 
-void Renderer::draw_box(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, Shader* shader,
-    double radius, bool iconify,
+void Renderer::draw_box(int x, int y, int width, int height, float angle, float scale_x, float scale_y, unsigned int red, unsigned int green, unsigned int blue, float alpha, Shader* shader,
+    float radius, bool iconify,
     // title bar
 	bool title_bar,
 	int title_bar_height,
@@ -356,7 +374,7 @@ void Renderer::draw_box(int x, int y, int width, int height, double angle, doubl
     bool title_bar_button_close, const Vector4& title_bar_button_close_color,
 	// outline
     bool outline,
-    double outline_width,
+    float outline_width,
     const Vector4& outline_color,
     bool outline_antialiased,
     // border
@@ -782,7 +800,7 @@ void Renderer::draw_quad_instanced(int x, int y, int width, int height) {
 
 ////////////////////////////
 ////////////
-void Renderer::draw_text_old (const std::string& text, double x, double y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, const dokun::Font& font, Shader* shader)
+void Renderer::draw_text_old (const std::string& text, float x, float y, int width, int height, float angle, float scale_x, float scale_y, unsigned int red, unsigned int green, unsigned int blue, float alpha, const dokun::Font& font, Shader* shader)
 {
 #ifdef DOKUN_OPENGL	
     context_check();
@@ -929,7 +947,7 @@ void Renderer::draw_text_old (const std::string& text, double x, double y, int w
 } 
 ////////////////////////////
 // new version of draw_text (2019-07-29)
-void Renderer::draw_text(const std::string& text, double x, double y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, const dokun::Font& font, Shader* shader)
+void Renderer::draw_text(const std::string& text, float x, float y, int width, int height, float angle, float scale_x, float scale_y, unsigned int red, unsigned int green, unsigned int blue, float alpha, const dokun::Font& font, Shader* shader)
 {
     dokun::Font * font_ptr = &const_cast<dokun::Font&>(font); // std::cout << const_cast<dokun::Font&>(font).get_bitmap(*c)->get_size() << "; character: " << *c << " = size of bitmap" << std::endl; // prints the characters in the text (e.g 'S')
     /////////////////////////////////////////
@@ -1082,7 +1100,7 @@ void Renderer::draw_text(const std::string& text, double x, double y, int width,
 #endif    
 }
 ////////////////////////////
-void Renderer::draw_glyph (unsigned char glyph, double x, double y, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, const dokun::Font& font, Shader* shader)
+void Renderer::draw_glyph (unsigned char glyph, float x, float y, float angle, float scale_x, float scale_y, unsigned int red, unsigned int green, unsigned int blue, float alpha, const dokun::Font& font, Shader* shader)
 {
 #ifdef DOKUN_OPENGL	
     context_check();
@@ -1174,17 +1192,17 @@ void Renderer::draw_glyph (unsigned char glyph, double x, double y, double angle
 }
 ////////////////////////////
 ////////////
-void Renderer::draw_button(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, Shader* shader, 
+void Renderer::draw_button(int x, int y, int width, int height, float angle, float scale_x, float scale_y, unsigned int red, unsigned int green, unsigned int blue, float alpha, Shader* shader, 
 	// outline
 	bool outline, 
-	double outline_width, 
+	float outline_width, 
 	const Vector4& outline_color,
 	bool outline_antialiased,
 	// border
 	//bool border,
 	//const Vector4& border_color,
 	// radius
-	double radius,
+	float radius,
 	// gradient
     bool gradient,
 	const Vector4& gradient_color
@@ -1197,8 +1215,6 @@ void Renderer::draw_button(int x, int y, int width, int height, double angle, do
 	// Enable transparent background
     glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA); 
 	glEnable(GL_BLEND);
-	// Set polygon mode 
-	//if(!fill) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // wireframe 
 	// use shader
 	shader->use ();
 	// uniform
@@ -1297,15 +1313,15 @@ void Renderer::draw_button(int x, int y, int width, int height, double angle, do
 #endif
 }
 ////////////
-void Renderer::draw_progressbar(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, Shader* shader, 
+void Renderer::draw_progressbar(int x, int y, int width, int height, float angle, float scale_x, float scale_y, unsigned int red, unsigned int green, unsigned int blue, float alpha, Shader* shader, 
     double min_value, double max_value, double value, const Vector4& background_color,
 	// outline
 	bool outline, 
-	double outline_width, 
+	float outline_width, 
 	const Vector4& outline_color,
 	bool outline_antialiased,
 	// radius
-	double radius
+	float radius
 )
 {
 #ifdef DOKUN_OPENGL	// OpenGL is defined
@@ -1523,7 +1539,7 @@ void Renderer::draw_progressbar(int x, int y, int width, int height, double angl
 #endif
 }
 ////////////
-void Renderer::draw_edit(const std::string& text, int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, Shader* shader,
+void Renderer::draw_edit(const std::string& text, int x, int y, int width, int height, float angle, float scale_x, float scale_y, unsigned int red, unsigned int green, unsigned int blue, float alpha, Shader* shader,
 	bool multilined,
 	// cursor
 	bool cursor,
@@ -1756,11 +1772,13 @@ void Renderer::draw_cursor(double cursor_x, double cursor_y, int cursor_width, i
 }
 ////////////
 ////////////
-void Renderer::draw_slider(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, Shader* shader,
+void Renderer::draw_slider(int x, int y, int width, int height, float angle, float scale_x, float scale_y, unsigned int red, unsigned int green, unsigned int blue, float alpha, Shader* shader,
     // beam
 	double min_value, double max_value, double value, const Vector4& background_color,
+	// radius (for beam)
+	float radius, 
 	// ball
-	int ball_width, const Vector4& ball_color)
+	int ball_width, const Vector4& ball_color, float ball_radius)
 {
 #ifdef DOKUN_OPENGL	// OpenGL is defined
 	context_check();
@@ -1840,6 +1858,7 @@ void Renderer::draw_slider(int x, int y, int width, int height, double angle, do
         glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);*/
 	// Draw slider (beam)
+	shader->set_float("radius", radius);
 	shader->set_float("color", (background_color.x / 255.0), (background_color.y / 255.0), (background_color.z / 255.0), background_color.w);
     glBindVertexArray(slider_vertex_array_obj); // (vao start 2)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -1893,6 +1912,7 @@ void Renderer::draw_slider(int x, int y, int width, int height, double angle, do
         glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);*/
 	// Draw beam_bar (foreground)
+	////shader->set_float("radius", radius);
 	shader->set_float("color", (red/ 255.0), (green / 255.0), (blue / 255.0), alpha); //  foreground_color
     glBindVertexArray(bar_vertex_array_obj); // (vao start 2)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -1941,10 +1961,13 @@ void Renderer::draw_slider(int x, int y, int width, int height, double angle, do
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
 	// Draw ball / handle
+	shader->set_float("radius", ball_radius);
 	shader->set_float("color", (ball_color.x/ 255.0), (ball_color.y / 255.0), (ball_color.z / 255.0), ball_color.w);
     glBindVertexArray(ball_vertex_array_obj); // (vao start 2)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);                // (vao end 2  )	
+	// Restore default radius
+	shader->set_float("radius", 0.0);
 	// Clean textures
 	// Clean buffers
 	// :slider
@@ -1972,7 +1995,7 @@ void Renderer::draw_slider(int x, int y, int width, int height, double angle, do
 #endif
 }
 ////////////
-void Renderer::draw_slider_vertical(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, Shader* shader,
+void Renderer::draw_slider_vertical(int x, int y, int width, int height, float angle, float scale_x, float scale_y, unsigned int red, unsigned int green, unsigned int blue, float alpha, Shader* shader,
     // beam
 	double min_value, double max_value, double value, const Vector4& background_color,
 	// ball
@@ -2189,16 +2212,16 @@ void Renderer::draw_slider_vertical(int x, int y, int width, int height, double 
 #endif
 }
 ////////////
-void Renderer::draw_switch(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, Shader* shader,
+void Renderer::draw_switch(int x, int y, int width, int height, float angle, float scale_x, float scale_y, unsigned int red, unsigned int green, unsigned int blue, float alpha, Shader* shader,
 	int value,
 	const Vector4& background_color,
 	// border
 	bool outline,
-	double outline_width,
+	float outline_width,
 	const Vector4& outline_color,
 	bool outline_antialiased,
 	// radius
-	double radius	
+	float radius	
 )
 {
 #ifdef DOKUN_OPENGL	// OpenGL is defined
@@ -2366,7 +2389,8 @@ void Renderer::draw_switch(int x, int y, int width, int height, double angle, do
 #endif
 }
 //////////// // Usage: Renderer::draw_tooltip("Hello", 750, 500, 100, 50, 0.0, 1, 1, 106, 106, 106, 255.0);
-void Renderer::draw_tooltip(const std::string& text, int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, Shader* shader,
+void Renderer::draw_tooltip(const std::string& text, int x, int y, int width, int height, float angle, float scale_x, float scale_y, unsigned int red, unsigned int green, unsigned int blue, float alpha, Shader* shader,
+	float radius,    
     std::string direction, int arrow_width, int arrow_height, double arrow_offset)
 {
 #ifdef DOKUN_OPENGL	// OpenGL is defined
@@ -2378,7 +2402,7 @@ void Renderer::draw_tooltip(const std::string& text, int x, int y, int width, in
 	glEnable(GL_BLEND);
 	// set outline
 	//glLineWidth(10.0);
-		float radius = 50.0f;
+		//float radius = 50.0f;
 	float angle_rad = 3.14159265359f * angle / 180.f;
 	float x_rad = sin(angle) * radius;
 	float y_rad = cos(angle) * radius;
@@ -2399,7 +2423,6 @@ void Renderer::draw_tooltip(const std::string& text, int x, int y, int width, in
 	glm::mat4 proj  = glm::ortho(0.0f, window_width, window_height, 0.0f, -1.0f, 1.0f);
 	glUniformMatrix4fv(glGetUniformLocation(shader->get_program(), "model"), 1, GL_FALSE, glm::value_ptr(model));
 	glUniformMatrix4fv(glGetUniformLocation(shader->get_program(), "proj") , 1, GL_FALSE, glm::value_ptr(proj) );
-	shader->set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
     // vertex array obj  - stores vertices
     GLuint vertex_array_obj;
     glGenVertexArrays(1, &vertex_array_obj);
@@ -2449,11 +2472,15 @@ void Renderer::draw_tooltip(const std::string& text, int x, int y, int width, in
         glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);	*/
 	// Draw
+	shader->set_float("radius", radius);
+	shader->set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
     glBindVertexArray(vertex_array_obj); // (vao start 2)
         glDrawElements(GL_TRIANGLE_FAN, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);                // (vao end 2  )
     //glBindTexture(GL_TEXTURE_2D, base);  // bind texture
+    // Restore defaults
+    shader->set_float("radius", 0.0);
 //---------------------------------------------
 	//////////////////////
     // TRIANGLE	
@@ -2546,15 +2573,15 @@ void Renderer::draw_tooltip(const std::string& text, int x, int y, int width, in
 #endif	
 }
 ////////////
-void Renderer::draw_radio(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, Shader* shader,
+void Renderer::draw_radio(int x, int y, int width, int height, float angle, float scale_x, float scale_y, unsigned int red, unsigned int green, unsigned int blue, float alpha, Shader* shader,
 	    int value, const Vector4& inner_color,
 		// outline
 		bool outline,
-		double outline_width,
+		float outline_width,
 		const Vector4& outline_color,
 		bool outline_antialiased,
 		// radius
-		double radius
+		float radius
 )
 {
 #ifdef DOKUN_OPENGL	// OpenGL is defined
@@ -2723,15 +2750,15 @@ void Renderer::draw_radio(int x, int y, int width, int height, double angle, dou
 #endif
 }
 ////////////
-void Renderer::draw_checkbox(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, Shader* shader,
+void Renderer::draw_checkbox(int x, int y, int width, int height, float angle, float scale_x, float scale_y, unsigned int red, unsigned int green, unsigned int blue, float alpha, Shader* shader,
     bool value, const Vector4& checkmark_color,
 	// outline or border
 	bool outline,
-	double outline_width,
+	float outline_width,
 	const Vector4& outline_color,
 	bool outline_antialiased,
 	// radius
-	double radius
+	float radius
 ) {
 #ifdef DOKUN_OPENGL	// OpenGL is defined    
 	context_check();
@@ -2915,7 +2942,7 @@ void Renderer::draw_checkbox(int x, int y, int width, int height, double angle, 
 }
 ////////////
 ////////////
-void Renderer::draw_scrollbar(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, Shader* shader,
+void Renderer::draw_scrollbar(int x, int y, int width, int height, float angle, float scale_x, float scale_y, unsigned int red, unsigned int green, unsigned int blue, float alpha, Shader* shader,
 	double value, double min_value, double max_value, 
 	// handle
 	double handle_y, int handle_height, const Vector4& handle_color,
@@ -2925,7 +2952,7 @@ void Renderer::draw_scrollbar(int x, int y, int width, int height, double angle,
 	bool arrow, const Vector4& arrow_color,
 	// outline
 	bool outline, 
-	double outline_width, 
+	float outline_width, 
 	const Vector4& outline_color,
 	bool outline_antialiased,
 	// border
@@ -3387,7 +3414,7 @@ void Renderer::draw_scrollbar(int x, int y, int width, int height, double angle,
 ////////////
 ////////////
 ////////////
-void Renderer::draw_spinner0(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, Shader* shader,
+void Renderer::draw_spinner0(int x, int y, int width, int height, float angle, float scale_x, float scale_y, unsigned int red, unsigned int green, unsigned int blue, float alpha, Shader* shader,
     double value,		
 	// button
     int button_width, const Vector4& button_color, 
@@ -3395,7 +3422,7 @@ void Renderer::draw_spinner0(int x, int y, int width, int height, double angle, 
     const Vector2& arrow_size, const Vector4& arrow_color,
 	// border
 	bool outline,
-	double outline_width,
+	float outline_width,
 	const Vector4& outline_color,
 	bool outline_antialiased)
 {
@@ -3749,7 +3776,7 @@ void Renderer::draw_spinner0(int x, int y, int width, int height, double angle, 
 #endif
 }
 ////////////
-void Renderer::draw_spinner(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, Shader* shader,
+void Renderer::draw_spinner(int x, int y, int width, int height, float angle, float scale_x, float scale_y, unsigned int red, unsigned int green, unsigned int blue, float alpha, Shader* shader,
     int button_width, const Vector4& button_color,        // shape (+, -)
 	int shape_size, const Vector4& shape_color, double shape_depth,
 	bool separator, int separator_size) {
@@ -4084,7 +4111,7 @@ void Renderer::draw_spinner(int x, int y, int width, int height, double angle, d
 ////////////
 ////////////
 ////////////
-void Renderer::draw_combobox(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, Shader* shader,
+void Renderer::draw_combobox(int x, int y, int width, int height, float angle, float scale_x, float scale_y, unsigned int red, unsigned int green, unsigned int blue, float alpha, Shader* shader,
     const Vector4& button_color, int button_width, bool button_on)
 {
 #ifdef DOKUN_OPENGL	// OpenGL is defined
@@ -4304,7 +4331,7 @@ void Renderer::draw_combobox(int x, int y, int width, int height, double angle, 
 #endif
 }
 ////////////
-void Renderer::draw_tab(int x, int y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha, Shader* shader,
+void Renderer::draw_tab(int x, int y, int width, int height, float angle, float scale_x, float scale_y, unsigned int red, unsigned int green, unsigned int blue, float alpha, Shader* shader,
     int tab_count, bool visible)
 {
 #ifdef DOKUN_OPENGL	// OpenGL is defined
@@ -4537,7 +4564,7 @@ void Renderer::draw_tab(int x, int y, int width, int height, double angle, doubl
 ////////////
 void Renderer::draw_point()
 {}
-void Renderer::draw_line(double x, double y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha)
+void Renderer::draw_line(float x, float y, int width, int height, float angle, float scale_x, float scale_y, unsigned int red, unsigned int green, unsigned int blue, float alpha)
 {
 #ifdef DOKUN_OPENGL	// OpenGL is defined
 	context_check();
@@ -4658,7 +4685,7 @@ void Renderer::draw_circle()
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // wireframe 
 	//=glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // normal
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);  // points (that you can barely see)
-	int width = 100; int height = 100; double x = 0.0; double y = 0.0; double angle = 15*(double)(clock()/CLOCKS_PER_SEC);double scale_x = 1.0; double scale_y = 1.0;
+	int width = 100; int height = 100; float x = 0.0; float y = 0.0; float angle = 15*(double)(clock()/CLOCKS_PER_SEC);float scale_x = 1.0; float scale_y = 1.0;
 	int red = 255; int green = 255; int blue = 100; int alpha = 255;
 	// vertex shader	
 	Shader vertex_shader;
@@ -4828,7 +4855,7 @@ void Renderer::draw_circle()
 #endif			*/
 }
 //////////// //Renderer::draw_triangle(700, 500, 5, 5, 0.0, 1, 1, 255, 255, 255, 255.0);
-void Renderer::draw_triangle(double x, double y, int width, int height, double angle, double scale_x, double scale_y, unsigned int red, unsigned int green, unsigned int blue, double alpha)
+void Renderer::draw_triangle(float x, float y, int width, int height, float angle, float scale_x, float scale_y, unsigned int red, unsigned int green, unsigned int blue, float alpha)
 {
 #ifdef DOKUN_OPENGL	// OpenGL is defined
 	context_check();
@@ -4995,7 +5022,7 @@ void Renderer::set_viewport(int x, int y, int width, int height)
 }
 ////////////
 ////////////
-void Renderer::set_clear(unsigned int red, unsigned int green, unsigned int blue, double alpha, double depth, int stencil)
+void Renderer::set_clear(unsigned int red, unsigned int green, unsigned int blue, float alpha, float depth, int stencil)
 {
 	color = Vector4(red, green, blue, alpha);
 #ifdef DOKUN_OPENGL

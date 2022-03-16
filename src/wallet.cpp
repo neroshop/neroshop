@@ -268,7 +268,7 @@ struct : monero_wallet_listener { // listener	- listener to receive notification
         #endif
         }
         //////////
-        neroshop::Wallet::sync_bar->get_label()->set_string(std::to_string(progress) + "%");
+        neroshop::Wallet::sync_bar->get_label()->set_string(std::to_string(progress) + "%"); // or String::to_string_with_precision(value, 2)
         neroshop::Wallet::sync_bar->set_value(progress);
         //////////
         if(progress >= 100 && !neroshop::Message::get_second()->is_visible()) { // only show this msg once

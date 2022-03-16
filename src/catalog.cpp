@@ -12,7 +12,7 @@ neroshop::Catalog::~Catalog() {
 void neroshop::Catalog::initialize() {
     ////////////////////
     // create box
-    std::shared_ptr<Box> box = std::shared_ptr<Box>(new Box());
+    std::shared_ptr<Box> box = std::make_shared<Box>();
     // store box
     box_list.push_back(box); // box 0
     ////////////////////
@@ -23,8 +23,7 @@ void neroshop::Catalog::initialize() {
     ////////////////////
 }
 ////////////////////
-void neroshop::Catalog::draw() {
-    ////////////////////
+void neroshop::Catalog::update() {
     // update positions
     for(int i = 0; i < box_list.size(); i++) {//for(auto boxes : box_list) {
         if(box_list[i] == box_list[0]) continue; // skip first box
@@ -43,7 +42,12 @@ void neroshop::Catalog::draw() {
         int box_width = width / box_list.size(); // single box width (be sure box_list.size() is not zero or you'll get floating point exception error)
         int box_height = height;//height / box_list.size(); // single box height            
         boxes->set_size(box_width, box_height);//std::cout << "boxes heights: " << boxes->get_height() << std::endl;
-        // draw box
+    }
+}
+////////////////////
+void neroshop::Catalog::draw() {
+    update();
+    for(auto boxes : box_list) {
         boxes->draw();
     }
 }
@@ -62,7 +66,7 @@ void neroshop::Catalog::add_box() {
     if(box_list.empty()) { neroshop::print("The catalog is empty!", 1); return; }
     ////////////////////
     // create box
-    std::shared_ptr<Box> box = std::shared_ptr<Box>(new Box());
+    std::shared_ptr<Box> box = std::make_shared<Box>();
     ////////////////////
     // set box properties
     box->set_size(width / box_list.size(), height);//height / box_list.size());
@@ -74,26 +78,75 @@ void neroshop::Catalog::add_box() {
     box_list.push_back(box);
 }
 ////////////////////
+void neroshop::Catalog::add_contents(int box_index) {
+    // first, we must retrieve item information from the database
+    /////std::string product_name;
+    ////fetch_name(product_name); // maybe set a limit on number of names we can fetch and maybe fetch only the bestselling items
+    // then we will add the item's contents (image, name, price, star ratings, etc.) to the catalog
+    /*for(auto boxes : box_list) {
+        // create content here
+        // ...
+        // then add the contents to the boxes
+        boxes->add_();
+    }*/
+}
+////////////////////
+void neroshop::Catalog::fetch_product_data() {
+    std::string command = "SELECT * FROM inventory;"; //WHERE stock_qty > 0;";
+    std::vector<const char *> param_values = { /*nothing here*/ };
+    PGresult * result = PQexec(DB::Postgres::get_singleton()->get_handle(), command.c_str());//PQexecParams(DB::Postgres::get_singleton()->get_handle(), command.c_str(), 1, nullptr, param_values.data(), nullptr, nullptr, 0);
+    if (PQresultStatus(result) != PGRES_TUPLES_OK) {
+        neroshop::print("Catalog::fetch(): No items found", 2);        
+        PQclear(result);//DB::Postgres::get_singleton()->finish();//exit(1);
+        return; // exit so we don't double free "result"
+    }
+    int rows = PQntuples(result);
+    for(int i = 0; i < rows; i++) {
+        std::cout << PQgetvalue(result, i, 0) << std::endl; // inventory_id
+        std::cout << PQgetvalue(result, i, 1) << std::endl; // item_id
+        std::cout << PQgetvalue(result, i, 2) << std::endl; // seller_id
+        std::cout << PQgetvalue(result, i, 3) << std::endl; // stock_qty
+        std::cout << PQgetvalue(result, i, 4) << std::endl; // seller_price or sales_price (not the same as list_price)
+        std::cout << PQgetvalue(result, i, 5) << std::endl; // seller's currency of choice (which will be converted to buyer's native currency at checkout)
+        std::cout << PQgetvalue(result, i, 6) << std::endl; // seller_discount
+        std::cout << PQgetvalue(result, i, 7) << std::endl; // discount_qty
+        std::cout << PQgetvalue(result, i, 8) << std::endl; // discount_times
+        std::cout << PQgetvalue(result, i, 9) << std::endl; // discount_expiry
+        std::cout << PQgetvalue(result, i, 10) << std::endl; // item_condition 
+        //std::cout << PQgetvalue(result, i, 11) << std::endl; //std::cout << PQgetvalue(result, i, 12) << std::endl; // //std::cout << PQgetvalue(result, i, 0) << std::endl; // 
+        std::cout << std::endl;
+        /*PQgetvalue(result, i, 0); // 
+        PQgetvalue(result, i, 0); // 
+        PQgetvalue(result, i, 0); // 
+        PQgetvalue(result, i, 0); // 
+        PQgetvalue(result, i, 0); // */
+    }
+    PQclear(result); // free result
+}
+////////////////////
 ////////////////////
 void neroshop::Catalog::set_position(int x, int y) {
     if(box_list.empty()) { neroshop::print("The catalog is empty!", 1); return; }
     // each box will follow the first box or previous boxes
     box_list[0]->set_position(x, y);
+    update();
 }
 ////////////////////
 void neroshop::Catalog::set_width(int width) {
     this->width = width;
+    update();
 }
 ////////////////////
 void neroshop::Catalog::set_height(int height) {
     this->height = height;
+    update();
 }
 ////////////////////
 void neroshop::Catalog::set_size(int width, int height) {
     if(box_list.empty()) { neroshop::print("The catalog is empty!", 1); return; }
     // make sure width is not greater than window's width//if(width > window_width) width = window_width;
-    this->width = width;
-    this->height = height;
+    set_width(width); // will also call update()
+    set_height(height); // will also call update()
 }
 ////////////////////
 ////////////////////

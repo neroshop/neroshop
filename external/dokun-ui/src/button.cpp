@@ -25,11 +25,6 @@ Button::Button() : color(0, 51, 102, 1.0), tint_factor(0.05), shade_factor(0.25)
 	set_orientation(0);
 }
 /////////////
-Button::Button(const std::string& text) : Button()
-{
-	label = new dokun::Label(text); // since we are creating a new button with a text, it will need an initialized label
-}
-/////////////
 Button::Button(int x, int y) : Button()
 {
     set_position(x, y);
@@ -42,10 +37,17 @@ Button::Button(int x, int y, int width, int height) : Button()
 	set_height(height);
 }  
 /////////////
+Button::Button(const std::string& text) : Button()
+{
+	label = new dokun::Label(text); // since we are creating a new button with a text, it will need an initialized label
+	label->set_alignment("center"); // buttons should center labels by default or nah? this is assuming that the button contains only a label and no image - seems reasonable to me ¯\_(•‿•)_/¯
+}
+/////////////
 Button::Button(const std::string& text, int x, int y) : Button()
 {
 	set_position(x, y);
 	label = new dokun::Label(text);
+	label->set_alignment("center"); // buttons should center labels by default or nah?
 }
 /////////////
 Button::Button(const std::string& text, int x, int y, int width, int height) : Button()
@@ -54,6 +56,7 @@ Button::Button(const std::string& text, int x, int y, int width, int height) : B
 	set_width(width);
 	set_height(height);
 	label = new dokun::Label(text);
+	label->set_alignment("center"); // buttons should center labels by default or nah?
 }
 /////////////
 Button::~Button(void)
@@ -220,7 +223,7 @@ int Button::set_image(lua_State *L)
 void Button::set_label(const dokun::Label& label)
 {
 	this->label = &const_cast<dokun::Label&>(label);
-	this->label->set_parent(* this);
+	this->label->set_parent(*this);
 }
 /////////////
 int Button::set_label(lua_State *L)

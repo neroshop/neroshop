@@ -1,7 +1,9 @@
 #include "../include/image.hpp"
 /////////////
 Image::Image() : width(0), height(0), depth(1), channel(4), data (nullptr), x(0), y(0), angle(0), scale(1, 1), color(255, 255, 255, 1.0), 
-    relative_x(0), relative_y(0), alignment("none"), visible(true)
+    relative_x(0), relative_y(0), alignment("none"), visible(true),
+    // outline
+    outline(false), outline_thickness(0.0), outline_color(0, 0, 0), outline_threshold(0.0)
 {
 #ifdef DOKUN_OPENGL	
 	buffer          = 0;	
@@ -106,7 +108,7 @@ void Image::draw ()
 	if(!visible) return;
 	generate(); // generate texture
 	generate_shader(); // generate shaders
-	Renderer::draw_image(buffer, width, height, depth, x, y, angle, scale.x, scale.y, color.x, color.y, color.z, color.w, channel, image_shader); // pass actual width and height, instead of get_width() and get_height as it also includes the scale factor
+	Renderer::draw_image(buffer, width, height, depth, x, y, angle, scale.x, scale.y, color.x, color.y, color.z, color.w, channel, image_shader, outline, outline_thickness, outline_color, outline_threshold); // pass actual width and height, instead of get_width() and get_height as it also includes the scale factor
 }
 /////////////
 void Image::draw(double x, double y)
@@ -382,7 +384,7 @@ void Image::destroy()
 	{
         if(is_png()) delete [] static_cast<png_byte *>(data); // array allocated with "new", so I guess I have to delete it this way???
         data = nullptr; // set image pixel data to nullptr
-#ifdef DOKUN_DEBUG
+#ifdef DOKUN_DEBUG0
         if(!data) std::cout << "Image_" << String(Factory::get_texture_factory()->get_location(this)) << ": data deleted." << std::endl;
 #endif
 	}			
@@ -487,7 +489,7 @@ void Image::generate_shader(void) {
         "\n"
         "layout (location = 0) in vec2 position ;\n"
         "layout (location = 1) in vec2 tex_coord;\n"
-		"out vec2 Texcoord;\n"
+		"out vec2 tex_coords;\n"
 		"\n"
 		"\n"
 		"uniform mat4 model;\n"
@@ -496,7 +498,7 @@ void Image::generate_shader(void) {
 		"\n"
         "void main()\n"
         "{\n"
-		    "Texcoord    = vec2(tex_coord.x, 1.0 - tex_coord.y);\n"
+		    "tex_coords = vec2(tex_coord.x, 1.0 - tex_coord.y);\n"
             "gl_Position = proj * view * model * vec4(position, 0.0, 1.0);\n" // 2:image uses camera (via "view")
         "}\n"
 	};
@@ -508,8 +510,13 @@ void Image::generate_shader(void) {
 		"out vec4 out_color;\n"
         "uniform vec4 color;\n"
         "uniform sampler2D base;\n"
-		"in vec2 Texcoord;\n"
+		"in vec2 tex_coords;\n"
 		"uniform bool has_texture;\n"
+		"\n"
+		"uniform bool outline = false;\n"
+		"uniform float outline_thickness = 0.2;\n"
+		"uniform vec3 outline_color = vec3(0, 0, 0);\n"
+		"uniform float outline_threshold = 0.5;\n"
 		"\n"
         "void main()\n"
         "{\n"
@@ -519,7 +526,35 @@ void Image::generate_shader(void) {
             "}"	
 		    "if(has_texture == true)\n"
 		    "{\n"
-                "out_color = color * texture(base, Texcoord);\n"
+                "out_color = color * texture(base, tex_coords);\n"
+            //////////////////////////////////////////////////////
+                "if (outline && out_color.a <= outline_threshold) {\n"
+                    "ivec2 size = textureSize(base, 0);\n"
+                    "\n"
+                    "float uv_x = tex_coords.x * size.x;\n"
+                    "float uv_y = tex_coords.y * size.y;\n"
+                    "\n"
+                    "float sum = 0.0;\n"
+                    "for (int n = 0; n < 9; ++n) {\n"
+                        "uv_y = (tex_coords.y * size.y) + (outline_thickness * float(n - 4.5));\n"
+                        "float h_sum = 0.0;\n"
+                        "h_sum += texelFetch(base, ivec2(uv_x - (4.0 * outline_thickness), uv_y), 0).a;\n"
+                        "h_sum += texelFetch(base, ivec2(uv_x - (3.0 * outline_thickness), uv_y), 0).a;\n"
+                        "h_sum += texelFetch(base, ivec2(uv_x - (2.0 * outline_thickness), uv_y), 0).a;\n"
+                        "h_sum += texelFetch(base, ivec2(uv_x - outline_thickness, uv_y), 0).a;\n"
+                        "h_sum += texelFetch(base, ivec2(uv_x, uv_y), 0).a;\n"
+                        "h_sum += texelFetch(base, ivec2(uv_x + outline_thickness, uv_y), 0).a;\n"
+                        "h_sum += texelFetch(base, ivec2(uv_x + (2.0 * outline_thickness), uv_y), 0).a;\n"
+                        "h_sum += texelFetch(base, ivec2(uv_x + (3.0 * outline_thickness), uv_y), 0).a;\n"
+                        "h_sum += texelFetch(base, ivec2(uv_x + (4.0 * outline_thickness), uv_y), 0).a;\n"
+                        "sum += h_sum / 9.0;\n"
+                    "}\n"
+                    "\n"
+                    "if (sum / 9.0 >= 0.0001) {\n"
+                        "out_color = vec4(outline_color, 1);\n"
+                    "}\n"
+                "}\n"
+        //////////////////////////////////////////////////////
             "}"
 		"}\n"
 	};	
@@ -773,6 +808,27 @@ int Image::set_visible(lua_State *L)
 	}
     return 0;		
 }
+/////////////
+void Image::set_outline(bool outline) {
+    this->outline = outline;
+}
+/////////////
+void Image::set_outline_thickness(float outline_thickness) {
+    this->outline_thickness = outline_thickness;
+}
+/////////////
+void Image::set_outline_color(unsigned int red, unsigned int green, unsigned int blue) {
+	outline_color = Vector3(red, green, blue);
+}
+/////////////
+void Image::set_outline_color(const Vector3& outline_color) {
+    set_outline_color(outline_color.x, outline_color.y, outline_color.z);
+}
+/////////////
+void Image::set_outline_threshold(float outline_threshold) {
+    this->outline_threshold = outline_threshold;
+}
+/////////////
 /////////////
 /////////////
 void Image::set_filter(int min_filter, int mag_filter)
@@ -1311,6 +1367,21 @@ int Image::get_rect(lua_State * L)
     return 4;
 }
 /////////////
+float Image::get_outline_thickness() const {
+    return outline_thickness;
+}
+/////////////
+Vector3 Image::get_outline_color() const {
+    return outline_color;
+}
+/////////////
+float Image::get_outline_threshold() const {
+    return outline_threshold;
+}
+/////////////
+/////////////
+/////////////
+/////////////
 /////////////
 // BOOLEAN
 /////////////
@@ -1430,6 +1501,10 @@ int Image::is_visible(lua_State *L)
 	}
 	lua_pushboolean(L, false);
 	return 1;	
+}
+/////////////
+bool Image::has_outline() const {
+    return (outline && (outline_thickness > 0.0));
 }
 /////////////
 /////////////

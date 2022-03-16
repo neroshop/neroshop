@@ -215,6 +215,11 @@ int Factory::get_location(lua_State *L) // works!
 	return 1;
 }
 /////////////
+std::vector<void *> Factory::get_storage() const {
+    return storage; // container for objects of any type
+}
+/////////////
+/////////////
 Factory * Factory::engine_factory (nullptr);
 // container factories
 Factory * Factory::window_factory (nullptr);

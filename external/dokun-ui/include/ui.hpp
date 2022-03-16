@@ -126,7 +126,7 @@ class GUI: public Entity
         int height;	
 		double x, y;
 		int orientation; // hor=0, vert=1, diag=2
-		GUI * parent;
+		GUI * parent; // might need to be a shared_ptr
 		double scale_x, scale_y;
 		double angle;
 		Vector2 relative; // position relative to parent

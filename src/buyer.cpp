@@ -47,13 +47,13 @@ neroshop::User * neroshop::Buyer::on_login(const std::string& username) { // if 
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
-    //DB::Psql::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+    //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
     neroshop::User * user = new Buyer(username); // create seller obj
     dynamic_cast<Buyer *>(user)->set_logged(true); // protected, so only instance of derived class can call this function
-    int user_id = DB::Psql::get_singleton()->get_integer_params("SELECT id FROM users WHERE name = $1", { username });
+    int user_id = DB::Postgres::get_singleton()->get_integer_params("SELECT id FROM users WHERE name = $1", { username });
     dynamic_cast<Buyer *>(user)->set_id(user_id);
     dynamic_cast<Buyer *>(user)->set_account_type(user_account_type::buyer); // set the account_type    
-    //DB::Psql::get_singleton()->finish();
+    //DB::Postgres::get_singleton()->finish();
     //-----------------------------------------
     // load orders
     dynamic_cast<Buyer *>(user)->load_orders();

@@ -64,11 +64,11 @@ public:
     int get_label_count() const;
     // boolean
     bool is_visible();
-private: // I kinda understand smart pointers a little :| // https://codereview.stackexchange.com/questions/160053/c-erasing-an-object-from-vector-of-pointers/160058#160058
-    static Message * first;
+private: // https://codereview.stackexchange.com/questions/160053/c-erasing-an-object-from-vector-of-pointers/160058#160058
+    static Message * first; // static objects have a static lifetime so I guess there's no need for shared_ptr here whatsoever   source: https://stackoverflow.com/questions/41751514/are-shared-ptr-on-static-objects-good#comment70695503_41751514
     static Message * second;
     //static Message * third;
-    Box * box; // unique_ptr cannot be copied so I switched to smart pointers
+    std::shared_ptr<Box> box; // unique_ptr cannot be copied so I switched to smart pointers
     std::vector<std::shared_ptr<dokun::Label>> label_list; // since I can't do multi-lined labels :/
     std::vector<std::shared_ptr<Button>> button_list;//std::vector<Button*> button_list;   
     std::vector<std::shared_ptr<Edit>> edit_list;//std::vector<Edit*> edit_list;

@@ -5,6 +5,7 @@
 #define CATALOG_HPP_NEROSHOP
 // neroshop
 #include "debug.hpp"
+#include "db.hpp"
 // dokun-ui
 #include <box.hpp>
 // STL
@@ -42,6 +43,18 @@ private:
     //unsigned int rows;
     std::vector<std::shared_ptr<Box>> box_list;
     void initialize();
+    void update(); // updates size and width of boxes
+    // box contents
+    void add_contents(int box_index); // adds everything
+    // product data
+    void fetch_product_data();
+    /*void add_product_image();
+    void add_product_price();
+    void add_product_stars(); // star ratings
+    void add_product_star_label();
+    void add_product_quantity_spinner();
+    void add_heart(); // favorite or wishlist
+    void add_cart_button(); // add-to-cart button*/
     // views: list_view, grid_view
 };
 }

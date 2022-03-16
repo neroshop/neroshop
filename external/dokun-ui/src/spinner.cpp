@@ -47,11 +47,12 @@ int spinner_new(lua_State *L)
 /////////////
 Spinner::~Spinner()
 {
+    // we no longer need to delete label now that we are using smart_ptrs
     // delete label
-    if(label) {
+    /*if(label) {
         delete label;
         label = nullptr;
-    }
+    }*/
 }
 /////////////		
 void Spinner::draw()
@@ -91,10 +92,7 @@ void Spinner::draw()
     if(label->get_alignment() == "left"  ) label->set_relative_position(0, (get_height() / 2) - (10 / 2)); // left will remain 0, y will be centered
 	if(label->get_alignment() == "center") label->set_relative_position((get_width() / 2) - ((10 * label->get_string().length()) / 2), (get_height() - 10) / 2); // both x and y will be centered; adjusted based on label string's length
 	if(label->get_alignment() == "right" ) label->set_relative_position(get_width() - (10 * label->get_string().length()), (get_height() / 2) - (10 / 2)); // right will be move to the far right (width), y will be centered; adjusted based on label string's length
-	////if(label->get_alignment() == "none"  ) label->set_relative_position(label->get_relative_x(), label->get_relative_y()); // nothing is changed here
-	label->set_position(get_x() + label->get_relative_x(), get_y() + label->get_relative_y());//(get_height() / 4));//label->set_position(get_x() + label->get_x(), get_y() + label->get_y());//label->set_position(get_x() + label->get_relative_x(), get_y() + label->get_relative_y());
-    //std::cout << "label_relative_pos: " << spinner->get_label()->get_relative_position() << std::endl;
-    //std::cout << "label_pos: " << spinner->get_label()->get_position() << std::endl; 		    
+	if(label->get_alignment() == "none"  ) {} // nothing is changed here 
 	// Draw label
     label->draw();
 }
@@ -131,6 +129,9 @@ int Spinner::set_value(lua_State * L)
 void Spinner::set_range(double min_val, double max_val)
 {
 	range = Vector2(min_val, max_val);
+	// to make sure value does not go below min_val or surpass max_val
+	if(value < min_val) value = min_val;
+	if(value > max_val) value = max_val;
 }
 /////////////
 void Spinner::set_range(const Vector2& range)
@@ -176,11 +177,11 @@ int Spinner::set_color(lua_State * L)
 /////////////
 void Spinner::set_label(const dokun::Label& label)
 {
-	this->label = &const_cast<dokun::Label&>(label);
-	this->label->set_parent(* this); // set parent to Spinner
-	this->label->set_string(std::to_string(value));
-	// set position of label relative to the spinner
-	//this->label->set_position(get_x(), get_y() + 5);//get_height());//5);//(get_height() / 2) - (10 / 2));//this->label->set_alignment("left");
+    std::shared_ptr<dokun::Label> spinner_label(&const_cast<dokun::Label&>(label));
+	this->label = spinner_label;
+	this->label->set_parent(*this); // set parent to Spinner
+	this->label->set_string(String::to_string_with_precision(value, decimal_places));
+	this->label->set_alignment("center"); // spinners should center labels by default
 }
 /////////////
 int Spinner::set_label(lua_State * L)
@@ -336,7 +337,7 @@ int Spinner::get_color(lua_State * L)
 /////////////
 dokun::Label * Spinner::get_label() const
 {
-	return label;
+	return label.get();
 }
 /////////////
 int Spinner::get_label(lua_State * L)
@@ -420,6 +421,36 @@ unsigned int Spinner::get_right_button_height() const {
 /////////////
 /////////////
 /////////////
+/////////////
+void Spinner::on_parent() // call this before drawing self
+{
+    // if self has no parent, exit function
+	if(!get_parent()) return;
+	// only the child's position relative to the parent can be changed, meaning the child no longer has a position of its own once the parent is set
+	// so using "set_position" on a child GUI makes no sense
+	// fake relative_x
+	int separator_size = (!separator) ? 0 : separator_size; // if it has a separator	
+	double relative_x = button_width + get_relative_x(); // left button width
+	set_position(get_parent()->get_x() + relative_x, get_parent()->get_y() + get_relative_y());
+	// make sure child does not go past parent's x bounds - success!
+	if(relative_x >= (get_parent()->get_width() - (get_width() + button_width))) { 
+	    set_position(get_parent()->get_x() + (get_parent()->get_width() - (get_width() + button_width)), get_y());
+	    set_relative_position(get_parent()->get_width() - (get_width() + button_width * 2), get_relative_y()); // good!
+	}
+	// make sure child does not go past parent's y bounds - fine.
+	if(get_relative_y() >= (get_parent()->get_height() - get_height())) {
+	    set_position(get_x(), get_parent()->get_y() + (get_parent()->get_height() - get_height()));
+	    set_relative_position(relative_x - button_width, (get_parent()->get_height() - get_height())); // good!
+	}
+#ifdef DOKUN_DEBUG0
+	std::cout << "spinner_x: " << get_x() << std::endl;
+	std::cout << "spinner_y: " << get_y() << std::endl;
+	std::cout << "spinner_x (full): " << get_full_x() << std::endl;
+	std::cout << "spinner_y (full): " << get_full_y() << std::endl;
+	std::cout << "spinner_rel_x: " << relative_x << std::endl; // plus button_width
+	std::cout << "spinner_rel_y: " << get_relative_y() << std::endl; // bug: relative position goes out of bound [fixed]
+#endif
+}
 /////////////
 /////////////
 void Spinner::on_button_press() 

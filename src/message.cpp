@@ -26,11 +26,12 @@ neroshop::Message::~Message() {
     // delete button(s)
     // delete edit(s)
     destroy_children();
+    // no need to delete box now that it is a shared_ptr
     // delete box
-    if(box) {
+    /*if(box) {
         delete box;
         box = nullptr;
-    }
+    }*/
 }
 ////////////////////
 neroshop::Message * neroshop::Message::first(nullptr);
@@ -45,7 +46,7 @@ void neroshop::Message::initialize()
     if(box) return; // box must be uninitialized before it can be initialized
     std::cout << "message_box initialized\n";
     // create a message_box - box size set in Message::restore()
-    box = new Box();
+    box = std::make_shared<Box>();
     //box->set_outline(true);
     box->set_draggable(true);
     box->set_color(167,173,186);//(101,115,126);//(54,69,79);//(112,128,144);//(17,17,24);//(72, 88, 111, 1.0);
@@ -126,7 +127,7 @@ void neroshop::Message::add_label(int relative_x, int relative_y) {
         return;
     }
     //////////////////////////////
-    std::shared_ptr<dokun::Label> label = std::shared_ptr<dokun::Label>(new dokun::Label());
+    std::shared_ptr<dokun::Label> label = std::make_shared<dokun::Label>();
 	//std::cout << "label.get() = "<< label.get() << std::endl;
 	//std::cout << "label.use_count() = " << label.use_count() << std::endl;    
     label->set_font(*dokun::Font::get_system_font());
@@ -144,7 +145,7 @@ void neroshop::Message::add_label(int relative_x, int relative_y) {
 ////////////////////
 void neroshop::Message::add_button(const std::string& text, int relative_x, int relative_y, int width, int height) {
     if(!box) throw std::runtime_error("message box is not initialized");
-    std::shared_ptr<Button> button = std::shared_ptr<Button>(new Button());//Button * button = new Button();
+    std::shared_ptr<Button> button = std::make_shared<Button>();//Button * button = new Button();
 	//std::cout << "button.get() = "<< button.get() << std::endl;
 	//std::cout << "button.use_count() = " << button.use_count() << std::endl;    
     //////////////////////////////
@@ -163,7 +164,7 @@ void neroshop::Message::add_button(const std::string& text, int relative_x, int 
 ////////////////////
 void neroshop::Message::add_edit(int relative_x, int relative_y, int width, int height) {
     if(!box) throw std::runtime_error("message box is not initialized");
-    std::shared_ptr<Edit> edit = std::shared_ptr<Edit>(new Edit());//Edit * edit = new Edit();
+    std::shared_ptr<Edit> edit = std::make_shared<Edit>();//Edit * edit = new Edit();
 	//std::cout << "edit.get() = "<< edit.get() << std::endl;
 	//std::cout << "edit.use_count() = " << edit.use_count() << std::endl;
 	//////////////////////////////
@@ -472,7 +473,7 @@ neroshop::Message * neroshop::Message::get_doubleton() {
 ////////////////////
 ////////////////////
 Box * neroshop::Message::get_box() const {
-    return box;
+    return box.get();
 }
 ////////////////////
 Button * neroshop::Message::get_button(int index) const {

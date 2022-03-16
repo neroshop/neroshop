@@ -9,17 +9,21 @@ Entity::Entity() : visible(true), mode(0), component_list({}), shader(nullptr), 
 ///////////
 Entity::Entity(const std::string& name) : Entity()
 {
-	add_component(new Component("name", String(name)));
+    std::shared_ptr<Component> component = std::make_shared<Component>("name", String(name));//std::shared_ptr<Component>();//std::make_shared is the recommendation for allocating new shared_ptrs
+	std::cout << DOKUN_UI_TAG "component 'name' set (" << static_cast<String>(component->get_value()) << ")" << std::endl;
+	add_component(*component.get());//(*new Component("name", String(name)));
 }
 ///////////
 Entity::~Entity()
 {
-	for(auto components : component_list) {//for(int i = 0; i < component_list.size(); i++) {
+    // no need to delete components now that we are using shared_ptrs
+	/*for(auto components : component_list) {//for(int i = 0; i < component_list.size(); i++) {
 		if(components)//if(component_list[i]) 
 		    delete components;//delete component_list[i];
-	}
-	if(shader) delete shader; // shader object containing multiple shaders and a single program
-    if(script) delete script;
+	}*/
+	// no need to delete shader and script objects now that we are using shared_ptrs
+	//if(shader) delete shader; // shader object containing multiple shaders and a single program
+    //if(script) delete script;
 	Factory::get_entity_factory()->release(this);
 #ifdef DOKUN_DEBUG
 #endif		
@@ -117,13 +121,14 @@ int Entity::hide(lua_State *L)
 	return 0;
 }
 ///////////
-void Entity::add_component(Component * component)
+void Entity::add_component(const Component& component)
 {
-	component_list.push_back(component);
+    std::shared_ptr<Component> entity_component(&const_cast<Component&>(component));//(&const_cast<Component&>(component));
+	component_list.push_back(entity_component);
 }
 ///////////
 int Entity::add_component(lua_State *L)
-{
+{/*
     luaL_checktype(L, 1, LUA_TTABLE);
 	luaL_checktype(L, 2, LUA_TSTRING);
 	luaL_checkany(L, 3);
@@ -142,16 +147,16 @@ int Entity::add_component(lua_State *L)
 		if(lua_isnil(L, 3))       entity->add_component(new Component(lua_tostring(L, 2), static_cast<void *>(nullptr)));
 	}
 	lua_pushvalue(L, 3);
-	lua_setfield(L, 1, lua_tostring(L, 2));	
+	lua_setfield(L, 1, lua_tostring(L, 2));	*/
     return 0;	
 }
 ///////////
-void Entity::remove_component(Component * component)
+void Entity::remove_component(const Component& component)
 {
 	for (int i = 0; i < component_list.size(); i++)
 	{
-		if(component_list[i] == component) 
-		{	
+		if(component_list[i].get() == &const_cast<Component&>(component)) 
+		{
 			component_list.erase(component_list.begin() + i);
 		}
 	}
@@ -263,7 +268,8 @@ int Entity::set_component(lua_State *L)
 ///////////
 void Entity::set_shader(const Shader& shader)
 {	
-	this->shader = &const_cast<Shader&>(shader);//shader_list.push_back(&const_cast<Shader&>(shader));
+    std::shared_ptr<Shader> entity_shader(&const_cast<Shader&>(shader));
+	this->shader = entity_shader;
 }
 ///////////
 int Entity::set_shader(lua_State *L)
@@ -293,7 +299,8 @@ void Entity::set_script(lua_State *L, const std::string& file_name)
 ///////////
 void Entity::set_script(const Script& script)
 {
-	this->script = &const_cast<Script&>(script);
+    std::shared_ptr<Script> entity_script(&const_cast<Script&>(script));
+	this->script = entity_script;
 }
 ///////////
 int Entity::set_script(lua_State *L)
@@ -346,16 +353,15 @@ int Entity::set_polygon_mode(lua_State *L)
 ///////////
 Component * Entity::get_component(int index)const
 {
-    return component_list[index];
+    return component_list[index].get();
 }
 ///////////
 Component * Entity::get_component(const std::string& name)const
 {
-	for(int i = 0; i < component_list.size(); i++)
+	for(int i = 0; i < component_list.size(); i++) 
 	{
-		if(component_list[i]->get_name() == name)
-		{
-			return component_list[i];
+		if(component_list[i]->get_name() == name) {
+			return component_list[i].get();
 		}
 	}
     return (nullptr);	
@@ -369,9 +375,14 @@ int Entity::get_component(lua_State *L)
 	return 1;
 }
 ///////////
+std::vector<std::shared_ptr<Component>> Entity::get_component_container() const
+{
+	return component_list;
+}
+///////////
 Shader * Entity::get_shader()const
 {
-	return shader;
+	return shader.get();
 }
 ///////////
 int Entity::get_shader(lua_State *L)
@@ -390,7 +401,7 @@ int Entity::get_shader(lua_State *L)
 ///////////
 Script * Entity::get_script() const
 {
-    return script;
+    return script.get();
 }
 ///////////
 int Entity::get_script(lua_State *L)
@@ -445,11 +456,6 @@ int Entity::get_count(lua_State *L)
 	return 1;
 }
 ///////////
-///////////
-std::vector<Component *> Entity::get_component_container() const
-{
-	return component_list;
-}
 ///////////
 ///////////
 ///////////
@@ -520,12 +526,11 @@ bool Entity::has_component(const std::string& name)const
     return false;	
 }
 ///////////
-bool Entity::has_component(Component * component)const
+bool Entity::has_component(const Component& component)const
 {
 	for(int i = 0; i < component_list.size(); i++)
 	{
-		if(component_list[i] == component)
-		{
+		if(component_list[i].get() == &const_cast<Component&>(component)) {
 			return true;
 		}
 	}

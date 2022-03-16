@@ -78,57 +78,57 @@ void neroshop::User::rate_seller(unsigned int seller_id, int score, std::string 
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
-    //DB::Psql::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+    //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
     // create table seller_ratings if it does not yet exist
-    if(!DB::Psql::get_singleton()->table_exists("seller_ratings")) {
-        DB::Psql::get_singleton()->create_table("seller_ratings");
-        DB::Psql::get_singleton()->add_column("seller_ratings", "seller_id", "integer REFERENCES users(id)");
-        DB::Psql::get_singleton()->add_column("seller_ratings", "score", "integer"); // 0=bad, 1=good
-        DB::Psql::get_singleton()->add_column("seller_ratings", "user_id", "integer REFERENCES users(id)");
-        DB::Psql::get_singleton()->add_column("seller_ratings", "comments", "text");
+    if(!DB::Postgres::get_singleton()->table_exists("seller_ratings")) {
+        DB::Postgres::get_singleton()->create_table("seller_ratings");
+        DB::Postgres::get_singleton()->add_column("seller_ratings", "seller_id", "integer REFERENCES users(id)");
+        DB::Postgres::get_singleton()->add_column("seller_ratings", "score", "integer"); // 0=bad, 1=good
+        DB::Postgres::get_singleton()->add_column("seller_ratings", "user_id", "integer REFERENCES users(id)");
+        DB::Postgres::get_singleton()->add_column("seller_ratings", "comments", "text");
     }
-    if(DB::Psql::get_singleton()->table_exists("seller_ratings")) {
+    if(DB::Postgres::get_singleton()->table_exists("seller_ratings")) {
         // seller_id must be an actual seller and not just a normal user (buyer)
-        int account_type_id = DB::Psql::get_singleton()->get_integer_params("SELECT account_type_id FROM users WHERE id = $1", { std::to_string(seller_id) });//std::string account_type = db.get_column_text("users", "account_type", "id = " + std::to_string(seller_id));
-        if(account_type_id != 2) {neroshop::print("This user (id: " + std::to_string(seller_id) + ") is not a seller, so they cannot be rated", 2); /*DB::Psql::get_singleton()->finish();*/ return;}//if(String::lower(account_type) != "seller") {neroshop::print("You cannot rate a non-seller");return;}
+        int account_type_id = DB::Postgres::get_singleton()->get_integer_params("SELECT account_type_id FROM users WHERE id = $1", { std::to_string(seller_id) });//std::string account_type = db.get_column_text("users", "account_type", "id = " + std::to_string(seller_id));
+        if(account_type_id != 2) {neroshop::print("This user (id: " + std::to_string(seller_id) + ") is not a seller, so they cannot be rated", 2); /*DB::Postgres::get_singleton()->finish();*/ return;}//if(String::lower(account_type) != "seller") {neroshop::print("You cannot rate a non-seller");return;}
         // prevent seller from rating him/herself
         if(seller_id == get_id()) {
             neroshop::print("You cannot rate yourself", 2);
-            /*DB::Psql::get_singleton()->finish();*/
+            /*DB::Postgres::get_singleton()->finish();*/
             return; // exit function
         }
         // to prevent duplicating seller_id that is has already been rated by this user_id (a user cannot rate the same seller twice, except update his or her score rating for a specific seller_id
-        int rated_seller = DB::Psql::get_singleton()->get_integer_params("SELECT seller_id FROM seller_ratings "
+        int rated_seller = DB::Postgres::get_singleton()->get_integer_params("SELECT seller_id FROM seller_ratings "
             "WHERE seller_id = $1 AND user_id = $2", { std::to_string(seller_id), std::to_string(get_id()) });
 	    if(rated_seller == seller_id) { 
 	        neroshop::print("You have previously rated this seller (id: " + std::to_string(seller_id) + ")", 2);
-	        DB::Psql::get_singleton()->execute_params("UPDATE seller_ratings SET score = $1 WHERE seller_id = $2 AND user_id = $3", { std::to_string(score), std::to_string(seller_id), std::to_string(get_id()) });
-	        DB::Psql::get_singleton()->execute_params("UPDATE seller_ratings SET comments = $1 WHERE seller_id = $2 AND user_id = $3", { comments, std::to_string(seller_id), std::to_string(get_id()) });
+	        DB::Postgres::get_singleton()->execute_params("UPDATE seller_ratings SET score = $1 WHERE seller_id = $2 AND user_id = $3", { std::to_string(score), std::to_string(seller_id), std::to_string(get_id()) });
+	        DB::Postgres::get_singleton()->execute_params("UPDATE seller_ratings SET comments = $1 WHERE seller_id = $2 AND user_id = $3", { comments, std::to_string(seller_id), std::to_string(get_id()) });
 	        neroshop::print("Your rating for seller (id: " + std::to_string(seller_id) + ") has been updated to a score of " + ((score != 0) ? "\033[1;32m" : "\033[1;91m") + std::to_string(score) + "\033[0m");
-	        /*DB::Psql::get_singleton()->finish();*/
+	        /*DB::Postgres::get_singleton()->finish();*/
 	        return; // exit function
 	    }
         // insert initial values
-        DB::Psql::get_singleton()->execute_params("INSERT INTO seller_ratings (seller_id, score, user_id, comments) "
+        DB::Postgres::get_singleton()->execute_params("INSERT INTO seller_ratings (seller_id, score, user_id, comments) "
             "VALUES ($1, $2, $3, $4)", { std::to_string(seller_id),
             std::to_string(score), std::to_string(get_id()), comments
         });
         neroshop::print("You have rated seller (id: " + std::to_string(seller_id) + ") with a score of " + ((score != 0) ? "\033[1;32m" : "\033[1;91m") + std::to_string(score) + "\033[0m");
     #ifdef NEROSHOP_DEBUG        
         // get number of seller ratings (for a specific seller_id)
-        unsigned int total_seller_ratings = DB::Psql::get_singleton()->get_integer_params("SELECT COUNT(*) FROM seller_ratings WHERE seller_id = $1", { std::to_string(seller_id) });
+        unsigned int total_seller_ratings = DB::Postgres::get_singleton()->get_integer_params("SELECT COUNT(*) FROM seller_ratings WHERE seller_id = $1", { std::to_string(seller_id) });
         std::cout << "total ratings for seller (id: " << seller_id << "): \033[1;93m" << total_seller_ratings << "\033[0m" << std::endl;
         // get seller rating from user (0 = bad, 1 = good)
-        unsigned int good_ratings = DB::Psql::get_singleton()->get_integer_params("SELECT COUNT(score) FROM seller_ratings WHERE seller_id = $1 AND score = $2", { std::to_string(seller_id), std::to_string(1) });
+        unsigned int good_ratings = DB::Postgres::get_singleton()->get_integer_params("SELECT COUNT(score) FROM seller_ratings WHERE seller_id = $1 AND score = $2", { std::to_string(seller_id), std::to_string(1) });
         std::cout << "number of good ratings for seller (id: " << seller_id << "): \033[1;32m" << good_ratings << "\033[0m" << std::endl;
-        unsigned int bad_ratings  = DB::Psql::get_singleton()->get_integer_params("SELECT COUNT(score) FROM seller_ratings WHERE seller_id = $1 AND score = $2", { std::to_string(seller_id), std::to_string(0) });                
+        unsigned int bad_ratings  = DB::Postgres::get_singleton()->get_integer_params("SELECT COUNT(score) FROM seller_ratings WHERE seller_id = $1 AND score = $2", { std::to_string(seller_id), std::to_string(0) });                
         std::cout << "number of bad ratings for seller  (id: " << seller_id << "): \033[1;91m" << bad_ratings << "\033[0m" << std::endl;
         // calculate seller reputation
         double reputation = (good_ratings / static_cast<double>(total_seller_ratings)) * 100;
         std::cout << "reputation of seller (id: " << seller_id << "):\033[0;93m " << static_cast<int>(reputation) << "%\033[0m" << std::endl;
     #endif
     }    
-    /*DB::Psql::get_singleton()->finish();*/
+    /*DB::Postgres::get_singleton()->finish();*/
     ////////////////////////////////    
 } 
 // int seller_id = 2;
@@ -222,62 +222,62 @@ void neroshop::User::rate_item(unsigned int item_id, int stars, std::string comm
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
-    //DB::Psql::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+    //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
     // create table item_ratings if it does not yet exist
-    if(!DB::Psql::get_singleton()->table_exists("item_ratings")) {
+    if(!DB::Postgres::get_singleton()->table_exists("item_ratings")) {
         // create table item_ratings if it does not yet exist
-        DB::Psql::get_singleton()->create_table("item_ratings");
-        DB::Psql::get_singleton()->add_column("item_ratings", "item_id", "integer REFERENCES item(id)");
-        DB::Psql::get_singleton()->add_column("item_ratings", "stars", "integer"); // number of stars that user_id has given to this item_id
-        DB::Psql::get_singleton()->add_column("item_ratings", "user_id", "integer REFERENCES users(id)");
+        DB::Postgres::get_singleton()->create_table("item_ratings");
+        DB::Postgres::get_singleton()->add_column("item_ratings", "item_id", "integer REFERENCES item(id)");
+        DB::Postgres::get_singleton()->add_column("item_ratings", "stars", "integer"); // number of stars that user_id has given to this item_id
+        DB::Postgres::get_singleton()->add_column("item_ratings", "user_id", "integer REFERENCES users(id)");
         //db.column("item_ratings", "ADD", "purchased", "BOOLEAN"); // verified_purchase
-        DB::Psql::get_singleton()->add_column("item_ratings", "comments", "text");
+        DB::Postgres::get_singleton()->add_column("item_ratings", "comments", "text");
     }    
     // if table item_ratings does exist, insert data
-    if(DB::Psql::get_singleton()->table_exists("item_ratings")) {
+    if(DB::Postgres::get_singleton()->table_exists("item_ratings")) {
         // check if user has previously ordered this item
         bool purchased = false;
         for(int i = 0; i < get_order_count(); i++) {
-            int ordered_item = DB::Psql::get_singleton()->get_integer_params("SELECT item_id FROM order_item WHERE item_id = $1 AND order_id = $2", { std::to_string(item_id), std::to_string(get_order(i)->get_id()) });
+            int ordered_item = DB::Postgres::get_singleton()->get_integer_params("SELECT item_id FROM order_item WHERE item_id = $1 AND order_id = $2", { std::to_string(item_id), std::to_string(get_order(i)->get_id()) });
             if(ordered_item == item_id) {
                 //std::cout << "You previously ordered this item \033[0;35m(order_id: " << get_order(i)->get_id() << "\033[0m, contains \033[0;93mitem_id: " << item_id << "\033[0m)" << std::endl;
                 purchased = true; // set purchased to true since user has previously purchased this item
                 break; // break from the for-loop so we don't stay stuck in loop forever
             }
         }
-        if(!purchased) {neroshop::print("You must purchase this item (id: " + std::to_string(item_id) + ") before rating it"); /*DB::Psql::get_singleton()->finish();*/ return;}
+        if(!purchased) {neroshop::print("You must purchase this item (id: " + std::to_string(item_id) + ") before rating it"); /*DB::Postgres::get_singleton()->finish();*/ return;}
         // to prevent duplicating item_id that is has already been rated by this user_id (a user cannot rate (insert star ratings) for the same item twice, except update his or her star rating for a specific item)
-        int rated_item = DB::Psql::get_singleton()->get_integer_params("SELECT item_id FROM item_ratings " 
+        int rated_item = DB::Postgres::get_singleton()->get_integer_params("SELECT item_id FROM item_ratings " 
             "WHERE item_id = $1 AND user_id = $2", { std::to_string(item_id), std::to_string(get_id()) });
 	    if(rated_item == item_id) { 
 	        neroshop::print("You have previously rated this item (id: " + std::to_string(item_id) + ")", 2);
 	        // if user has previous rated this item, update the user's rating
-	        DB::Psql::get_singleton()->execute_params("UPDATE item_ratings SET stars = $1 WHERE item_id = $2 AND user_id = $3", { std::to_string(stars), std::to_string(item_id), std::to_string(get_id()) });
-	        DB::Psql::get_singleton()->execute_params("UPDATE item_ratings SET comments = $1 WHERE item_id = $2 AND user_id = $3", { comments, std::to_string(item_id), std::to_string(get_id()) });
+	        DB::Postgres::get_singleton()->execute_params("UPDATE item_ratings SET stars = $1 WHERE item_id = $2 AND user_id = $3", { std::to_string(stars), std::to_string(item_id), std::to_string(get_id()) });
+	        DB::Postgres::get_singleton()->execute_params("UPDATE item_ratings SET comments = $1 WHERE item_id = $2 AND user_id = $3", { comments, std::to_string(item_id), std::to_string(get_id()) });
 	        neroshop::print("Your star rating on item (id: " + std::to_string(item_id) + ") has been updated to \033[1;33m" + std::to_string(stars) + "\033[1;37m stars\033[0m");
-	        /*DB::Psql::get_singleton()->finish();*/
+	        /*DB::Postgres::get_singleton()->finish();*/
 	        return; // exit function
 	    }        
         // insert initial values
-        DB::Psql::get_singleton()->execute_params("INSERT INTO item_ratings (item_id, stars, user_id, comments) "
+        DB::Postgres::get_singleton()->execute_params("INSERT INTO item_ratings (item_id, stars, user_id, comments) "
             "VALUES ($1, $2, $3, $4)"/*, $5)"*/, { std::to_string(item_id), std::to_string(stars),
             std::to_string(get_id()), /*std::to_string(purchased),*/ comments }); // guests don't have ids
         //std::cout << "You have rated item (id: " << item_id << ") with " << ((stars >= 3) ? "\033[1;32m" : "\033[1;91m") << stars << " \033[0mstars" << std::endl;
         neroshop::print("You have rated item (id: " + std::to_string(item_id) + ") with " + ((stars >= 3) ? "\033[1;32m" : "\033[1;91m") + std::to_string(stars) + " \033[0mstars");
     #ifdef NEROSHOP_DEBUG        
         // get number of star ratings (for a specific item_id)
-        unsigned int total_star_ratings = DB::Psql::get_singleton()->get_integer_params("SELECT COUNT(*) FROM item_ratings WHERE item_id = $1", { std::to_string(item_id) });
+        unsigned int total_star_ratings = DB::Postgres::get_singleton()->get_integer_params("SELECT COUNT(*) FROM item_ratings WHERE item_id = $1", { std::to_string(item_id) });
         std::cout << "# star ratings for item (id: " << item_id << "): \033[1;33m" << total_star_ratings << "\033[0m" << std::endl;
         // get number of 1, 2, 3, 4, and 5 star_ratings   
-        int one_star_count = DB::Psql::get_singleton()->get_integer_params("SELECT COUNT(stars) FROM item_ratings WHERE item_id = $1 AND stars = $2", { std::to_string(item_id), std::to_string(1) });
+        int one_star_count = DB::Postgres::get_singleton()->get_integer_params("SELECT COUNT(stars) FROM item_ratings WHERE item_id = $1 AND stars = $2", { std::to_string(item_id), std::to_string(1) });
         std::cout << "# of 1 star ratings for item (id: " << item_id << "):\033[0;93m " << one_star_count << "\033[0m" << std::endl;
-        int two_star_count = DB::Psql::get_singleton()->get_integer_params("SELECT COUNT(stars) FROM item_ratings WHERE item_id = $1 AND stars = $2", { std::to_string(item_id), std::to_string(2) });
+        int two_star_count = DB::Postgres::get_singleton()->get_integer_params("SELECT COUNT(stars) FROM item_ratings WHERE item_id = $1 AND stars = $2", { std::to_string(item_id), std::to_string(2) });
         std::cout << "# of 2 star ratings for item (id: " << item_id << "):\033[0;93m " << two_star_count << "\033[0m" << std::endl;
-        int three_star_count = DB::Psql::get_singleton()->get_integer_params("SELECT COUNT(stars) FROM item_ratings WHERE item_id = $1 AND stars = $2", { std::to_string(item_id), std::to_string(3) }); 
+        int three_star_count = DB::Postgres::get_singleton()->get_integer_params("SELECT COUNT(stars) FROM item_ratings WHERE item_id = $1 AND stars = $2", { std::to_string(item_id), std::to_string(3) }); 
         std::cout << "# of 3 star ratings for item (id: " << item_id << "):\033[0;93m " << three_star_count << "\033[0m" << std::endl;
-        int four_star_count = DB::Psql::get_singleton()->get_integer_params("SELECT COUNT(stars) FROM item_ratings WHERE item_id = $1 AND stars = $2", { std::to_string(item_id), std::to_string(4) });
+        int four_star_count = DB::Postgres::get_singleton()->get_integer_params("SELECT COUNT(stars) FROM item_ratings WHERE item_id = $1 AND stars = $2", { std::to_string(item_id), std::to_string(4) });
         std::cout << "# of 4 star ratings for item (id: " << item_id << "):\033[0;93m " << four_star_count << "\033[0m" << std::endl;
-        int five_star_count = DB::Psql::get_singleton()->get_integer_params("SELECT COUNT(stars) FROM item_ratings WHERE item_id = $1 AND stars = $2", { std::to_string(item_id), std::to_string(5) });        
+        int five_star_count = DB::Postgres::get_singleton()->get_integer_params("SELECT COUNT(stars) FROM item_ratings WHERE item_id = $1 AND stars = $2", { std::to_string(item_id), std::to_string(5) });        
         std::cout << "# of 5 star ratings for item (id: " << item_id << "):\033[0;93m " << five_star_count << "\033[0m" << std::endl;        
         // SELECT COUNT(stars) FROM item_ratings WHERE item_id = # AND stars = #
         // now calculate average stars
@@ -292,7 +292,7 @@ void neroshop::User::rate_item(unsigned int item_id, int stars, std::string comm
         // test average at: https://calculator.academy/average-rating-calculator-star-rating/#f1p1|f2p0
     #endif
     }    
-    /*DB::Psql::get_singleton()->finish();*/
+    /*DB::Postgres::get_singleton()->finish();*/
     ////////////////////////////////    
 } 
 // user->rate_item(ball.get_id(), 5, "Very bouncy. I love it!");
@@ -311,13 +311,13 @@ void neroshop::User::convert() {
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
-    //DB::Psql::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
-    DB::Psql::get_singleton()->execute("BEGIN;");
-    DB::Psql::get_singleton()->execute("SAVEPOINT before_account_conversion_savepoint;");//ROLLBACK TO before_account_conversion_savepoint;
-    DB::Psql::get_singleton()->execute_params("UPDATE users SET account_type_id = $1 WHERE id = $2", { std::to_string(2), std::to_string(this->id) });
+    //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+    DB::Postgres::get_singleton()->execute("BEGIN;");
+    DB::Postgres::get_singleton()->execute("SAVEPOINT before_account_conversion_savepoint;");//ROLLBACK TO before_account_conversion_savepoint;
+    DB::Postgres::get_singleton()->execute_params("UPDATE users SET account_type_id = $1 WHERE id = $2", { std::to_string(2), std::to_string(this->id) });
     neroshop::print("You have converted from a buyer to a seller");    
-    DB::Psql::get_singleton()->execute("COMMIT;");
-    /*DB::Psql::get_singleton()->finish();*/
+    DB::Postgres::get_singleton()->execute("COMMIT;");
+    /*DB::Postgres::get_singleton()->finish();*/
     ////////////////////////////////    
 }
 // if(user->is_buyer()) user->convert(); // convert buyer to seller
@@ -343,26 +343,26 @@ void neroshop::User::delete_account() {
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
-    //DB::Psql::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
-    DB::Psql::get_singleton()->execute("BEGIN;");
-    DB::Psql::get_singleton()->execute("SAVEPOINT before_account_deletion_savepoint;");//ROLLBACK TO before_account_deletion_savepoint;
-    DB::Psql::get_singleton()->execute_params("DELETE FROM users WHERE id = $1 AND name = $2", { std::to_string(this->id), this->name });
+    //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+    DB::Postgres::get_singleton()->execute("BEGIN;");
+    DB::Postgres::get_singleton()->execute("SAVEPOINT before_account_deletion_savepoint;");//ROLLBACK TO before_account_deletion_savepoint;
+    DB::Postgres::get_singleton()->execute_params("DELETE FROM users WHERE id = $1 AND name = $2", { std::to_string(this->id), this->name });
     neroshop::print("Your account has been permanently deleted", 1);
     // send account to deleted accounts table (or graveyard >:})
-    //if(!DB::Psql::get_singleton()->table_exists("deleted_users")) {
-    //DB::Psql::get_singleton()->create_table("deleted_users");
-    //DB::Psql::get_singleton()->add_column("deleted_users", "name", "text REFERENCES users(name)");//"text");
-    //DB::Psql::get_singleton()->create_index("idx_deleted_users", "deleted_users", "name");
+    //if(!DB::Postgres::get_singleton()->table_exists("deleted_users")) {
+    //DB::Postgres::get_singleton()->create_table("deleted_users");
+    //DB::Postgres::get_singleton()->add_column("deleted_users", "name", "text REFERENCES users(name)");//"text");
+    //DB::Postgres::get_singleton()->create_index("idx_deleted_users", "deleted_users", "name");
     //}
-    //DB::Psql::get_singleton()->execute_params("INSERT INTO deleted_users (name) VALUES ($1)", { this->name });
+    //DB::Postgres::get_singleton()->execute_params("INSERT INTO deleted_users (name) VALUES ($1)", { this->name });
     // reset user information and logout user
     set_id(0);
     name.clear();
     set_account_type(user_account_type::guest);
     set_logged(false); // logout here (will call on_logout callback, if logged is false)    
     // end transaction
-    DB::Psql::get_singleton()->execute("COMMIT;");
-    /*DB::Psql::get_singleton()->finish();*/
+    DB::Postgres::get_singleton()->execute("COMMIT;");
+    /*DB::Postgres::get_singleton()->finish();*/
     ////////////////////////////////    
 } // username of deleted accounts cannot be reused ?? :O
 ////////////////////
@@ -427,21 +427,21 @@ void neroshop::User::load_orders() {
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
-    //DB::Psql::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
-    //if(!DB::Psql::get_singleton()->table_exists("orders")) {/*DB::Psql::get_singleton()->finish();*/ return;} // user probably has no order history
+    //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+    //if(!DB::Postgres::get_singleton()->table_exists("orders")) {/*DB::Postgres::get_singleton()->finish();*/ return;} // user probably has no order history
     // first, check if user has any orders
-    int user_order_count = DB::Psql::get_singleton()->get_integer_params("SELECT COUNT(*) FROM orders WHERE user_id = $1", { std::to_string(get_id()) });// get number of orders this user has made so far
-    if(user_order_count < 1) {neroshop::print("No order history found on your account"); /*DB::Psql::get_singleton()->finish();*/ return;} // for this user    
+    int user_order_count = DB::Postgres::get_singleton()->get_integer_params("SELECT COUNT(*) FROM orders WHERE user_id = $1", { std::to_string(get_id()) });// get number of orders this user has made so far
+    if(user_order_count < 1) {neroshop::print("No order history found on your account"); /*DB::Postgres::get_singleton()->finish();*/ return;} // for this user    
     // THIS IS FASTER THAN THE FORMER, SINCE IT DOES NOT LOOP THROUGH ALL THE ORDERS IN THE TABLE orders
     std::string command = "SELECT id FROM orders WHERE user_id = $1 ORDER BY id"; // sort by id; ASC order is the default (lowest-to-highest)
     std::vector<const char *> param_values = { std::to_string(get_id()).c_str() };
-    PGresult * result = PQexecParams(DB::Psql::get_singleton()->get_handle(), command.c_str(), 1, nullptr, param_values.data(), nullptr, nullptr, 0);
+    PGresult * result = PQexecParams(DB::Postgres::get_singleton()->get_handle(), command.c_str(), 1, nullptr, param_values.data(), nullptr, nullptr, 0);
     int rows = PQntuples(result);
-    //if(rows < 1) {PQclear(result); /*DB::Psql::get_singleton()->finish();*/ return;}    
+    //if(rows < 1) {PQclear(result); /*DB::Postgres::get_singleton()->finish();*/ return;}    
     if (PQresultStatus(result) != PGRES_TUPLES_OK) {
         neroshop::print("User::load_orders(): You have no orders in your account", 2);        
         PQclear(result);
-        //DB::Psql::get_singleton()->finish();//exit(1);
+        //DB::Postgres::get_singleton()->finish();//exit(1);
         return; // exit so we don't double free "result" or double close the database
     }
     for(int i = 0; i < rows; i++) {
@@ -452,7 +452,7 @@ void neroshop::User::load_orders() {
     }    
     PQclear(result);
     ////////////////////////////////    
-    /*DB::Psql::get_singleton()->finish();*/
+    /*DB::Postgres::get_singleton()->finish();*/
     ////////////////////////////////    
 }
 ////////////////////
@@ -539,10 +539,10 @@ bool neroshop::User::is_buyer() const// buyer and guests are not required to reg
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
-    //DB::Psql::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
-    int account_type_id = DB::Psql::get_singleton()->get_integer_params("SELECT account_type_id FROM users WHERE id = $1::int", { std::to_string(this->id) });
-    if(account_type_id != 1) {/*DB::Psql::get_singleton()->finish();*/return false;} // 1 = buyer //neroshop::print("User " + name + " is a buyer", 4); // only print when there's an error   
-    /*DB::Psql::get_singleton()->finish();*/
+    //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+    int account_type_id = DB::Postgres::get_singleton()->get_integer_params("SELECT account_type_id FROM users WHERE id = $1::int", { std::to_string(this->id) });
+    if(account_type_id != 1) {/*DB::Postgres::get_singleton()->finish();*/return false;} // 1 = buyer //neroshop::print("User " + name + " is a buyer", 4); // only print when there's an error   
+    /*DB::Postgres::get_singleton()->finish();*/
     ////////////////////////////////
     return true;
 }
@@ -558,10 +558,10 @@ bool neroshop::User::is_seller() const
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
-    //DB::Psql::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
-    int account_type_id = DB::Psql::get_singleton()->get_integer_params("SELECT account_type_id FROM users WHERE id = $1::int", { std::to_string(this->id) });
-    if(account_type_id != 2) {/*DB::Psql::get_singleton()->finish();*/return false;} // 2 = seller //neroshop::print("User " + name + " is a seller", 4); // only print when there's an error
-    /*DB::Psql::get_singleton()->finish();*/
+    //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+    int account_type_id = DB::Postgres::get_singleton()->get_integer_params("SELECT account_type_id FROM users WHERE id = $1::int", { std::to_string(this->id) });
+    if(account_type_id != 2) {/*DB::Postgres::get_singleton()->finish();*/return false;} // 2 = seller //neroshop::print("User " + name + " is a seller", 4); // only print when there's an error
+    /*DB::Postgres::get_singleton()->finish();*/
     ////////////////////////////////
     return true;
 }
@@ -582,22 +582,22 @@ bool neroshop::User::is_registered() const {
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
-    //DB::Psql::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+    //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
 	// if table Users does not exist, that means no accounts are registered
-	if(!DB::Psql::get_singleton()->table_exists("users")) {
+	if(!DB::Postgres::get_singleton()->table_exists("users")) {
 	    neroshop::print("Failed to retrieve data (Database is ether missing or corrupted or table users simply does not exist)", 1);
-	    /*DB::Psql::get_singleton()->finish();*/
+	    /*DB::Postgres::get_singleton()->finish();*/
 	    return false; // failed to retrieve username
 	}
 	// confirm that this user's id is in the db (to further prove that they are registered)
-	int user_id = DB::Psql::get_singleton()->get_integer_params("SELECT id FROM users WHERE id = $1", { std::to_string(get_id()) });
+	int user_id = DB::Postgres::get_singleton()->get_integer_params("SELECT id FROM users WHERE id = $1", { std::to_string(get_id()) });
 	if(id < 1) {
 	    neroshop::print("You are not a registered user", 1);
-	    /*DB::Psql::get_singleton()->finish();*/
+	    /*DB::Postgres::get_singleton()->finish();*/
 	    return false;    
     }
     //neroshop::print("You are a registered user", 3); // only print when there is an error
-    /*DB::Psql::get_singleton()->finish();*/
+    /*DB::Postgres::get_singleton()->finish();*/
     ////////////////////////////////	
     return true;
 }
@@ -619,22 +619,22 @@ bool neroshop::User::is_registered(const std::string& name) { // no need to logi
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
-    //DB::Psql::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+    //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
 	// confirm that this user's name is in the db (to prove that they are registered)
-	std::string user = DB::Psql::get_singleton()->get_text_params("SELECT name FROM users WHERE name = $1", { String::lower(name) });
+	std::string user = DB::Postgres::get_singleton()->get_text_params("SELECT name FROM users WHERE name = $1", { String::lower(name) });
 	// if table users does not exist, that means no accounts are registered
-	if(!DB::Psql::get_singleton()->table_exists("users")) {
+	if(!DB::Postgres::get_singleton()->table_exists("users")) {
 	    neroshop::print("Failed to retrieve data (Database is ether missing or corrupted or table users simply does not exist)", 1);
-	    /*DB::Psql::get_singleton()->finish();*/
+	    /*DB::Postgres::get_singleton()->finish();*/
 	    return false; // failed to retrieve username
 	}
 	if(user.empty()) {
 	    neroshop::print("No user with such name found: \033[1;97m" + name + "\033[0m", 1); // Found no user with such name
-	    /*DB::Psql::get_singleton()->finish();*/
+	    /*DB::Postgres::get_singleton()->finish();*/
 	    return false; // no user with such name
     }
     //neroshop::print(user + " is a registered user", 3);
-    /*DB::Psql::get_singleton()->finish();*/
+    /*DB::Postgres::get_singleton()->finish();*/
     ////////////////////////////////	
     return true;
 }
@@ -656,15 +656,15 @@ bool neroshop::User::has_email() const {
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
-    //DB::Psql::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
-    std::string email = DB::Psql::get_singleton()->get_text_params("SELECT opt_email FROM users WHERE id = $1::int", { std::to_string(get_id()) });
+    //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+    std::string email = DB::Postgres::get_singleton()->get_text_params("SELECT opt_email FROM users WHERE id = $1::int", { std::to_string(get_id()) });
     if(email.empty()) {
         neroshop::print("no email found on account", 2);
-        /*DB::Psql::get_singleton()->finish();*/
+        /*DB::Postgres::get_singleton()->finish();*/
         return false;
     }
     if(!email.empty()) neroshop::print("email found: " + email, 3);
-    /*DB::Psql::get_singleton()->finish();*/
+    /*DB::Postgres::get_singleton()->finish();*/
     ////////////////////////////////
     return true;
 }

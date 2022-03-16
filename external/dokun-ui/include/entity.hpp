@@ -50,8 +50,8 @@ class Entity // or GameObject; base abtract class that acts as parent for Sprite
 		virtual void show();                           static int show(lua_State *L);
 		virtual void hide();                           static int hide(lua_State *L);
 		// virtual functions can be overriden, but pure virtual MUST be overriden by the derived class by force!
-		void add_component(Component * component);     static int add_component(lua_State *L);
-		void remove_component(Component * component);
+		void add_component(const Component& component);     static int add_component(lua_State *L);
+		void remove_component(const Component& component);
 		void remove_component(const std::string& name);
 		// setters
 		void set_component(const std::string& name, int value, bool boolean_ = false);        static int set_component(lua_State *L); // update an attached component
@@ -73,12 +73,11 @@ class Entity // or GameObject; base abtract class that acts as parent for Sprite
 		// getters
 		Component * get_component(int index)const;          static int get_component(lua_State *L);// get a component at a index
 		Component * get_component(const std::string& name)const;   // get a component by name 
+		std::vector<std::shared_ptr<Component>> get_component_container() const;
 		Shader * get_shader()const;                         static int get_shader(lua_State *L); // once set, shaders will be attached to the main program; pure entity clasess(excluding Sprites and Models) must have their own shaders. There are no default entity shaders
 		Script * get_script() const;                        static int get_script(lua_State *L);   		
 		int get_polygon_mode()const;                        static int get_polygon_mode(lua_State *L);
 		int get_count(const std::string& what)const;        static int get_count(lua_State *L);
-		// array
-		std::vector<Component *> get_component_container() const;
 		// other getters
 		virtual std::string get_name();
 		virtual int get_id();
@@ -86,15 +85,15 @@ class Entity // or GameObject; base abtract class that acts as parent for Sprite
 		bool is_entity()const;                              static int is_entity(lua_State *L);
 		bool is_visible()const;                             static int is_visible(lua_State *L);
 		bool has_component(const std::string& name)const;          static int has_component(lua_State *L);
-		bool has_component(Component * component)const;
+		bool has_component(const Component& component)const;
 	protected:
 	    //double x, y;		
 		// component list
-		std::vector<Component *> component_list; // component - additional data members that can be attached to entities
+		std::vector<std::shared_ptr<Component>> component_list; // component - additional data members that can be attached to entities
 		// shader
-		Shader * shader; // shaders - for custom rendering of entities
+		std::shared_ptr<Shader> shader; // shaders - for custom rendering of entities
 		// script (each entity needs no more than 1 script)
-		Script * script;
+		std::shared_ptr<Script> script;
 		bool visible;
 		int mode;
 };

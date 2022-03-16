@@ -1,6 +1,6 @@
 #include "../include/box.hpp"
 
-Box::Box() : radius(0.0), color(160, 160, 160, 1.0)/*(64, 64, 64, 1.0)*/, fill(true), label(nullptr), image (nullptr), type("box"),
+Box::Box() : radius(0.0), color(160, 160, 160, 1.0)/*(64, 64, 64, 1.0)*/, fill(true), child_list({}), label_list({}), image_list({}), type("box"),
 iconified(false),
 maximized(false),
 restored(true),
@@ -35,7 +35,7 @@ border_style(0),
 border_radius(10.0),
 border_color(47, 79, 79, 1.0),
 // gradient
-gradient(true),//(false),
+gradient(false),
 gradient_color(color),
 gradient_value(0.25),
 gradient_type("linear"), // or radial (circle-like)
@@ -128,16 +128,16 @@ Box::~Box(void)
         delete title_bar_image;
         title_bar_image = nullptr;
     }
-    // delete label
-	if(label) {
+    // delete label - we no longer need to delete labels now that we are using shared_ptrs
+	/*if(label) {
 	    delete label; // call label destructor
 	    label = nullptr;
-	}
-	// delete image
-	if(image) {
+	}*/
+	// delete image - we no longer need to delete images now that we are using shared_ptrs
+	/*if(image) {
 	    delete image; // call image destructor
 	    image = nullptr;
-	}
+	}*/
 	std::cout << "box deleted\n";
 }
 /////////////
@@ -160,10 +160,11 @@ int Box::widget_new(lua_State *L)
 	    return 1; // return nil
 }
 /////////////
-void Box::add(const GUI& gui) // for box widgets only
+void Box::add_gui(const GUI& gui) // for box widgets only
 {
-	const_cast<GUI&>(gui).set_parent(*this);
-	child_list.push_back(&const_cast<GUI&>(gui)); // bad idea since child gui can set_parent without Box::add()
+    std::shared_ptr<GUI> box_child (&const_cast<GUI&>(gui));
+	box_child->set_parent(*this);
+	child_list.push_back(box_child);
 }
 /////////////
 int Box::add(lua_State *L)
@@ -178,13 +179,28 @@ int Box::add(lua_State *L)
 	    if(lua_isuserdata(L, -1))
 	    {
 			Box * widget = *static_cast<Box **>(lua_touserdata(L, -1));
-			widget->add(*gui);
+			widget->add_gui(*gui);
 	    }
 	}		
 	return 0;
 }
 /////////////
-void Box::remove(const GUI& gui) // for box widgets only
+void Box::add_label(const dokun::Label& label) { 
+    std::shared_ptr<dokun::Label> box_label(&const_cast<dokun::Label&>(label));
+    box_label->set_parent(*this);
+    label_list.push_back(box_label); // for tooltips
+    //------------------------------
+    std::shared_ptr<GUI> box_gui(&const_cast<dokun::Label&>(label));
+    child_list.push_back(box_gui); // for boxes
+}
+/////////////
+void Box::add_image(const Image& image) {
+    // convert raw_ptr to shared_ptr
+    std::shared_ptr<Image> box_image (&const_cast<Image&>(image));
+    image_list.push_back(box_image);
+}
+/////////////
+void Box::remove_gui(const GUI& gui) // for box widgets only
 {
     if(gui.get_parent() == this) {
         const_cast<GUI&>(gui).set_parent(nullptr);
@@ -196,6 +212,12 @@ void Box::remove(const GUI& gui) // for box widgets only
         //if(std::find(contents.begin(), contents.end(), &const_cast<neroshop::Item&>(item)) != contents.end());
         std::cout << "child removed from box (parent)" << std::endl;
     }
+}
+/////////////
+void Box::remove_label(const dokun::Label& label) {
+}
+/////////////
+void Box::remove_image(const Image& image) {
 }
 /////////////
 void Box::draw(void) 
@@ -290,42 +312,26 @@ void Box::draw_box() { // other boxes: list, grid
                 }
 			} // end of titlebar image *********************************************
     /////////////////////////////////////////////////////////////////////////
-			// Draw label (goes inside box) **********************************************************
-            if(label) // make sure Box has an "initialized" label beforehand (or else engine will crash)
-            {   // set label's alignment and position relative to the Box
-		        if(label->get_alignment() == "left"  ) { label->set_relative_position(0, 0); }
-				if(label->get_alignment() == "center") { label->set_relative_position((get_width() - label->get_string().length() * 10/*label->get_width()*/) / 2, (get_height() - 10/*label->get_height()*/) / 2); }						
-				if(label->get_alignment() == "right" ) { label->set_relative_position((get_width() - label->get_string().length() * 10/*label->get_width()*/), 0); }	
-                if(label->get_alignment() == "none"  ) {} // default - with this you are free to set the label's relative position to whatever you want // relative_position will always be (0, 0) unless you change it    
-                label->set_position(get_x() + label->get_relative_x(), get_y() + label->get_relative_y()); // set actual position (No need to call since GUI::on_draw auto fixes child position to parent's)
-				// NO need to draw label since child GUI are automatically drawn  // child objects are drawn automatically (via GUI::on_draw()). So DO NOT call draw function!!!
-            }
-             // Draw multiple labels ... horizontal? vertical?
-            for(int l = 0; l < label_list.size(); l++)//for(int l = 1; l <= label_list.size()-1; l++)
-            {
-                label_list[0]->set_position(label->get_x(), (label->get_y() + label->get_height()) + 2);//if(label ) label_list[0]->set_position(label->get_x(), (label->get_y() + label->get_height()) + 2);
-                //if(!label) label_list[0]->set_position(get_x() + label_list[0]->get_relative_x(), get_y() + label_list[0]->get_relative_y());
-                // label_list[0] is the default label, so exclude it
-                if(l != 0) { dokun::Label * prev = label_list[l-1];    label_list[l]->set_position(prev->get_x(), (prev->get_y() + prev->get_height())); }// set the sub labels position based on label0's position. Don't worry about alignments and whatnot       
-                // NO need to draw label since child GUI are automatically drawn (via GUI::on_draw()). So DO NOT call draw function!!!
-            }
     /////////////////////////////////////////////////////////////////////////
 			// Draw image (goes inside box) *******************************************
-            if(image != nullptr)
-			{
-				// get image size whether its original or resized or scaled
-				int image_width  = (image->is_resized() == false) ? image->get_width () : image->get_width_scaled ();
-			    int image_height = (image->is_resized() == false) ? image->get_height() : image->get_height_scaled();
-                // set image alignment and position relative to GUI	
-				if(image->get_alignment() == "left"  ) {image->set_relative_position(0, 0);}					
-                if(image->get_alignment() == "center") {image->set_relative_position((get_width() - image_width) / 2, (get_height() - image_height) / 2);}
-				if(image->get_alignment() == "right" ) {image->set_relative_position(get_width() - image_width, 0);}
-                if(image->get_alignment() == "none"  ) {}
-				image->set_position(get_x() + image->get_relative_x(), get_y() + image->get_relative_y());
-				// if image is larger than box, scale it to fit box
-				if(image_width > get_width () || image_height > get_height()) image->scale_to_fit(get_width(), get_height());// if image is wider than widget, make width equal or if image is taller than widget, make height equal
-				// and finally, draw the image ...	
-				image->draw(); // Image is not a GUI so you cannot set its parent which means it must be drawn manually
+            if(!image_list.empty()) {
+			    for(auto images : image_list) { //Image * image = image_list[0].get();// temp
+                //----------------------------------
+				    // get image size whether its original or resized or scaled
+				    int image_width  = (images->is_resized() == false) ? images->get_width () : images->get_width_scaled ();
+			        int image_height = (images->is_resized() == false) ? images->get_height() : images->get_height_scaled();
+                    // set image alignment and position relative to GUI	
+				    if(images->get_alignment() == "left"  ) {images->set_relative_position(0, 0);}					
+                    if(images->get_alignment() == "center") {images->set_relative_position((get_width() - image_width) / 2, (get_height() - image_height) / 2);}
+				    if(images->get_alignment() == "right" ) {images->set_relative_position(get_width() - image_width, 0);}
+                    if(images->get_alignment() == "none"  ) {}
+				    images->set_position(get_x() + images->get_relative_x(), get_y() + images->get_relative_y());
+				    // if image is larger than box, scale it to fit box
+				    if(image_width > get_width () || image_height > get_height()) images->scale_to_fit(get_width(), get_height());// if image is wider than widget, make width equal or if image is taller than widget, make height equal
+				    // and finally, draw the image ...	
+				    images->draw(); // Image is not a GUI so you cannot set its parent which means it must be drawn manually
+			    //-----------------------------------
+			    }
 			}
 			// Draw multiple images ...
 			/////////////////////////////////////////////////////////////////////////
@@ -341,14 +347,23 @@ void Box::draw_box() { // other boxes: list, grid
 			        Renderer::draw_line(get_x() + separator_position.x, get_y() + separator_position.y, separator_width, separator_height, 0.0, 1, 1, separator_color.x, separator_color.y, separator_color.z, separator_color.w);
 			    }
 			}
-			/////////////////////////////////////////////////////////////////////////
-			// on draw callback (if visible)
-	        for(int i = 0; i < Factory::get_gui_factory()->get_size(); i++) { // for(int i = 0; i < child_list.size(); i++) {
-			    GUI * gui = static_cast<GUI*>(Factory::get_gui_factory()->get_object(i));//static_cast<GUI*>(child_list[i]);
-			    if(gui == nullptr) continue; // skip null objs
-			    if(!gui->is_visible()) continue; // skip hidden objs
-			    if(gui->get_parent() == this) gui->draw(); // draw all children // no need to check if child is visible since draw() calls already do that
-		    }
+	/////////////////////////////////////////////////////////////////////////
+    if(!child_list.empty()) {
+	    for(auto guis : child_list) { 
+	        if(!guis.get()) continue; // skip nullptrs
+			// Get labels then set relative positions based on alignment
+			if(dynamic_cast<dokun::Label *>(guis.get())->is_label()) { 
+			    dokun::Label * labels = static_cast<dokun::Label *>(guis.get());//std::cout << "drawing label " << Factory::get_gui_factory()->get_location(labels) << " inside box .." << std::endl;
+		        if(labels->get_alignment() == "left"  ) { labels->set_relative_position(0, 0); }
+				if(labels->get_alignment() == "center") { labels->set_relative_position((get_width() - labels->get_string().length() * 10/*labels->get_width()*/) / 2, (get_height() - 10/*labels->get_height()*/) / 2); }						
+				if(labels->get_alignment() == "right" ) { labels->set_relative_position((get_width() - labels->get_string().length() * 10/*labels->get_width()*/), 0); }	
+                if(labels->get_alignment() == "none"  ) {} // default - with this you are free to set the label's relative position to whatever you want // relative_position will always be (0, 0) unless you change it    
+                // No need to set the label's position manually since GUI::on_draw automatically keeps child position within parent's bounds
+			}
+			// Draw children (including labels)
+			guis->draw(); // no need to check if child is visible since draw() calls already does that
+        }
+    }
 }
 /////////////
 void Box::draw_tooltip() {
@@ -357,10 +372,13 @@ void Box::draw_tooltip() {
 	if(!is_active()) {}// add shade to color
 	if(is_active()) {}  // add tint to color    
     // Draw tooltip
-	Renderer::draw_tooltip("Hello", get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y, get_color().x, get_color().y, get_color().z, get_color().w, GUI::gui_shader, tooltip_arrow_direction, tooltip_arrow_width, tooltip_arrow_height, tooltip_arrow_position/*, tooltip_arrow_color*/);
+	Renderer::draw_tooltip("Hello", get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y, get_color().x, get_color().y, get_color().z, get_color().w, GUI::gui_shader, radius, tooltip_arrow_direction, tooltip_arrow_width, tooltip_arrow_height, tooltip_arrow_position/*, tooltip_arrow_color*/);
     // Draw label (goes inside box) **********************************************************
-    if(label) // make sure Box has an "initialized" label beforehand (or else engine will crash)
-    {   // set label's alignment and position relative to the Tooltip (Box)                     // 10 is the space between the text and the Box's edge
+    if(!label_list.empty()) // make sure Box has an "initialized" label beforehand (or else engine will crash)
+    {   
+        dokun::Label * label = label_list[0].get();
+        //----------------------------------
+        // set label's alignment and position relative to the Tooltip (Box)                     // 10 is the space between the text and the Box's edge
 		        if(label->get_alignment() == "left"  ) { label->set_relative_position(0 + 10                                , 0 + 10); }
 				if(label->get_alignment() == "center") { label->set_relative_position((get_width() - label->get_width()) / 2, (get_height() - label->get_height()) / 2); }
 				if(label->get_alignment() == "right" ) { label->set_relative_position((get_width() - label->get_width())    , 0 + 10); }
@@ -368,8 +386,10 @@ void Box::draw_tooltip() {
         label->draw();
     }
     // Draw image (goes inside box) *******************************************
-    if(image) // make sure Box has an "initialized" image beforehand (or else engine will crash)
+    if(image_list.size() > 0) // make sure Box has an "initialized" image beforehand (or else engine will crash)
 	{   // get image size whether its original or resized or scaled
+                Image * image = image_list[0].get();// temp
+                //----------------------------------
 				int image_width  = (image->is_resized() == false) ? image->get_width () : image->get_width_scaled ();
 			    int image_height = (image->is_resized() == false) ? image->get_height() : image->get_height_scaled();
                 // set image alignment and position relative to GUI	
@@ -390,7 +410,8 @@ void Box::draw_icon() {
     if(!is_visible()) return;
 	if(!is_active()) {}// add shade to color
 	if(is_active()) {}  // add tint to color
-	if(!image) return;
+	if(image_list.empty()) return;
+	Image * image = image_list[0].get();// temp
 	image->set_position(get_x(), get_y());//(get_x() + image->get_relative_x(), get_y() + image->get_relative_y());
     image->resize(get_size());
 	image->draw();
@@ -420,8 +441,12 @@ void Box::iconify(void) // if maximized, keep maximized while iconified at the s
 {
 	if(!is_iconified()) { // if not yet iconified (keep current size, whether maximized or minimized)
 	    // hide content
-	    if(image) image->set_visible(false);
-	    if(label) label->set_visible(false);
+	    if(!image_list.empty()) { // if image_list is not empty
+	        for(auto images : image_list) images->set_visible(false); // hide all the images in image_list
+	    }
+	    if(!label_list.empty()) { 
+	        for(auto labels : label_list) labels->set_visible(false);
+	    }
 	    // set iconify to true
 	    restored = false; // not restored to default size
 	    iconified = true;
@@ -438,8 +463,12 @@ void Box::restore(void)
 	if(!restored) { // if maximized
 	    if(is_iconified()) { // if iconified just put it down dont mess with sizes
 	        // show content
-	        if(image) image->set_visible(true);
-	        if(label) label->set_visible(true);
+	        if(!image_list.empty()) { // if image_list is not empty
+	            for(auto images : image_list) images->set_visible(true); // show all the images in image_list
+	        }
+	        if(!label_list.empty()) { 
+	            for(auto labels : label_list) labels->set_visible(true);
+	        }
 	        iconified = false; // set iconified to false in order to restore
 	        if(is_maximized()) {return;} // restore but in maximized mode
 	    }
@@ -1050,14 +1079,18 @@ void Box::set_as_icon(bool icon)
     //if(icon) set_size(image->get_width(), image->get_height());// also, change the color to the image's color//set_color(image->get_color());
 	type = (icon == true) ? "icon" : "box";
 }
-void Box::set_image(const Image& image) // images are not GUIs so they do not require a parent
+/////////////
+void Box::set_image(const Image& image, int index) // images are not GUIs so they do not require a parent
 {
-	this->image = &const_cast<Image&>(image); // add image to box 
+    std::shared_ptr<Image> box_image (&const_cast<Image&>(image));
+	image_list.insert(image_list.begin() + index, box_image);//this->image = &const_cast<Image&>(image); // add image to box 
 }
+/////////////
 int Box::set_image(lua_State *L)
 {
-	luaL_checktype(L, 1, LUA_TTABLE);
+	/*luaL_checktype(L, 1, LUA_TTABLE);
 	luaL_checktype(L, 2, LUA_TTABLE);
+	luaL_checktype(L, 3, LUA_TNUMBER);
 	lua_getfield(L, 2, "udata");
 	if(lua_isuserdata(L, -1))
 	{
@@ -1066,20 +1099,23 @@ int Box::set_image(lua_State *L)
 	    if(lua_isuserdata(L, -1))
 	    {
 		    Box * widget = *static_cast<Box **>(lua_touserdata(L, -1));
+		    ////int index = lua_tonumber(L, 2);
 		    widget->set_image(*image);
 			// set in Lua as well
 			lua_pushvalue(L, 2);
 			lua_setfield(L, 1, "image");
 	    }
-	}
+	}*/
 	return 0;	
 }
-void Box::set_image_list(const Image& image)
+/////////////
+void Box::set_image_list(const std::vector<std::shared_ptr<Image>>& image_list)
 {
-    image_list.push_back(&const_cast<Image&>(image)); // store image in image_list (first image set will ALWAYS be in index 0)
+    this->image_list = image_list; // store image in image_list (first image set will ALWAYS be in index 0)
 }
+/////////////
 int Box::set_image_list(lua_State *L)
-{
+{/*
 	luaL_checktype(L, 1, LUA_TTABLE);
 	luaL_checktype(L, 2, LUA_TTABLE);
 	lua_getfield(L, 2, "udata");
@@ -1095,16 +1131,16 @@ int Box::set_image_list(lua_State *L)
             lua_pushvalue(L, 2);
 			lua_setfield(L, 1, std::string( std::string("image") + std::to_string((int)widget->image_list.size()) ).c_str());
 	    }
-	}
+	}*/
 	return 0;
 }
 /////////////
 /////////////
 // label		
-void Box::set_text(const std::string& text)
+void Box::set_text(const std::string& text, int index)
 {
-    if(!label) throw std::runtime_error("label is not initialized");
-	label->set_string(text);
+    if(label_list.empty()) throw std::runtime_error("label list is empty");
+	label_list[index]->set_string(text);
 }
 int Box::set_text(lua_State * L)
 {
@@ -1119,11 +1155,14 @@ int Box::set_text(lua_State * L)
 	return 0;
 }
 /////////////
-void Box::set_label(const dokun::Label& label) // Labels are GUI elements so they are drawn automatically once a parent is set
+void Box::set_label(const dokun::Label& label, int index) // Labels are GUI elements so they are drawn automatically once a parent is set
 {
-    //const_cast<dokun::Label&>(label).set_color(0, 0, 0, 1.0);
-	this->label = &const_cast<dokun::Label&>(label); // add label to box
-	this->label->set_parent(* this); // set parent to Box
+	std::shared_ptr<dokun::Label> box_label(&const_cast<dokun::Label&>(label));
+    box_label->set_parent(*this); // set parent to Box
+    label_list.insert(label_list.begin() + index, box_label); // for tooltips
+    //-------------------------------------------------------
+    std::shared_ptr<GUI> box_gui(&const_cast<dokun::Label&>(label));
+    child_list.insert(child_list.begin() + index, box_gui); // for boxes
 } 
 int Box::set_label(lua_State * L)	
 {
@@ -1148,13 +1187,12 @@ int Box::set_label(lua_State * L)
 	}
     return 0;	
 }	
-void Box::set_label_list(const dokun::Label& label) // Labels are GUI elements so they are drawn automatically once a parent is set
+void Box::set_label_list(const std::vector<std::shared_ptr<dokun::Label>>& label_list) // Labels are GUI elements so they are drawn automatically once a parent is set
 {
-    label_list.push_back(&const_cast<dokun::Label&>(label)); // store label in label_list (first label set will always be in index 0)
-    label_list[label_list.size()-1]->set_parent(* this); // set Box as parent - C++ indexes start from 0
+    this->label_list = label_list;
 }
 int Box::set_label_list(lua_State *L)
-{
+{/*
 	luaL_checktype(L, 1, LUA_TTABLE); // box
 	luaL_checktype(L, 2, LUA_TTABLE); // label
 	lua_getfield(L, 2, "udata");
@@ -1195,7 +1233,7 @@ int Box::set_label_list(lua_State *L)
                 return 0;
             }
         }
-    }    
+    }    */
     return 0;
 }
 /////////////
@@ -1264,31 +1302,36 @@ int Box::get_color(lua_State * L)
     return color.w;
 }*/
 //////////////
-GUI * Box::get_child(unsigned int index)const {
+GUI * Box::get_gui(unsigned int index)const {
     if(index > (child_list.size()-1)) throw std::runtime_error("attempt to access invalid index at Box::child_list");
-    return child_list[index];
+    return child_list[index].get();
+}
+//////////////
+std::vector<std::shared_ptr<GUI>> Box::get_gui_list() const {
+    return child_list;
 }
 //////////////
 //////////////
 //////////////
-//////////////
-Image * Box::get_image() const
+Image * Box::get_image(int index) const
 {
-	return image;
+	return image_list[index].get();
 }
+//////////////
 int Box::get_image(lua_State * L)
 {
-	luaL_checktype(L, 1, LUA_TTABLE);
-	lua_getfield(L, 1, "image");
+	/*luaL_checktype(L, 1, LUA_TTABLE);
+	lua_getfield(L, 1, "image");*/
 	return 1;
 }
-Image * Box::get_image_list(int index) const
-{
-	return image_list[index];
+//////////////
+std::vector<std::shared_ptr<Image>>	Box::get_image_list() const { // maybe change func name to get_image_container() instead since a vector is not a list
+    return image_list;    
 }
+//////////////
 int Box::get_image_list(lua_State * L)
 {
-	luaL_checktype(L, 1, LUA_TTABLE); // box (arg:1)
+	/*luaL_checktype(L, 1, LUA_TTABLE); // box (arg:1)
     luaL_checktype(L, 2, LUA_TNUMBER); // index (arg:2)
     lua_getfield(L, 1, "image_list"); // image_list (arg:3)
     if(lua_istable(L, -1))
@@ -1296,13 +1339,13 @@ int Box::get_image_list(lua_State * L)
 	    lua_rawgeti(L, -1, lua_tointeger(L, 2));
         return 1;
     }
-    lua_pushnil(L);
+    lua_pushnil(L);*/
 	return 1;	
 }
 /////////////
-dokun::Label * Box::get_label() const
+dokun::Label * Box::get_label(int index) const
 {
-	return label;
+	return label_list[index].get();
 }
 int Box::get_label(lua_State * L)
 {
@@ -1310,9 +1353,9 @@ int Box::get_label(lua_State * L)
 	lua_getfield(L, 1, "label");
 	return 1;	
 }
-dokun::Label * Box::get_label_list(int index) const
+std::vector<std::shared_ptr<dokun::Label>> Box::get_label_list() const
 {
-	return label_list[index];
+	return label_list;
 }
 int Box::get_label_list(lua_State * L)
 {
@@ -1328,10 +1371,10 @@ int Box::get_label_list(lua_State * L)
 	return 1;	
 }
 /////////////
-std::string Box::get_text() const
+std::string Box::get_text(int index) const
 {
-    if(!label) throw std::runtime_error("label is not initialized");
-	return label->get_string();
+    if(label_list.empty()) throw std::runtime_error("label list is empty");
+	return label_list[index]->get_string();
 }
 /////////////
 Vector2 Box::get_title_bar_position() const

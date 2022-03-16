@@ -183,7 +183,7 @@ int Component::call(lua_State *L)
 ////////////
 void Component::set_name(const std::string& name)
 {
-	(this)->name = name;
+	this->name = name;
 }
 ////////////
 int Component::set_name(lua_State *L)
@@ -215,13 +215,13 @@ void Component::set_value(double value)
 ////////////
 void Component::set_value(const std::string& value) // string - this function is treated as Component::set_value(void *) unless you use a static cast
 {
-	(this)->string = value;
+	this->string = value;
 	set_type(DOKUN_COMPONENT_STRING);
 }
 ////////////
 void Component::set_value(const String& value) // string - this function is treated as Component::set_value(void *) unless you use a static cast
 {
-	(this)->string = value;
+	this->string = value;
 	set_type(DOKUN_COMPONENT_STRING);
 }
 ////////////
@@ -257,13 +257,13 @@ void Component::set_value(lua_CFunction value)
 ////////////
 void Component::set_value(std::function<void (void)> value)
 {
-	(this)->function = value;
+	this->function = value;
 	set_type(DOKUN_COMPONENT_FUNCTION);
 }
 ////////////
 void Component::set_type(int type)
 {
-	(this)->type = type;
+	this->type = type;
 }
 ////////////
 int Component::set_type(lua_State *L)

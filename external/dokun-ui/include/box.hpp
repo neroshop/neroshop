@@ -18,8 +18,12 @@ class Box : public GUI { // A box ui - ui element that can act as a container fo
         Box(int x, int y, int width, int height);
 		~Box();
 		// normal
-		void add(const GUI& gui);                                                      static int add(lua_State * L);
-		void remove(const GUI& gui); // added 2021-10-17
+		void add_gui(const GUI& gui);  
+		void add_label(const dokun::Label& label);  
+		void add_image(const Image& image);                                                    static int add(lua_State * L);
+		void remove_gui(const GUI& gui); // added 2021-10-17
+		void remove_label(const dokun::Label& label);
+		void remove_image(const Image& image); // added 2021-10-17
 		void draw(void);                                                               static int draw(lua_State * L);
 		void draw(double x, double y);
 		void draw(const Vector2& position);		
@@ -84,25 +88,26 @@ class Box : public GUI { // A box ui - ui element that can act as a container fo
 		void set_forbidden_area(const Vector4& rect);
 		// icon
 		void set_as_icon(bool icon);
-		void set_image(const Image& image);                                            static int set_image(lua_State *L);
-        void set_image_list(const Image& image);                                       static int set_image_list(lua_State *L);
+		void set_image(const Image& image, int index = 0);                                            static int set_image(lua_State *L);
+        void set_image_list(const std::vector<std::shared_ptr<Image>>& image_list);                                       static int set_image_list(lua_State *L);
 		// label
-		void set_text(const std::string& text);                                        static int set_text(lua_State * L);
+		void set_text(const std::string& text, int index = 0);                                        static int set_text(lua_State * L);
         void set_text_list(const std::string& text, int index);                        static int set_text_list(lua_State * L);
-		void set_label(const dokun::Label& label);                                            static int set_label(lua_State * L);
-        void set_label_list(const dokun::Label& label);                                       static int set_label_list(lua_State * L);
+		void set_label(const dokun::Label& label, int index = 0);                                            static int set_label(lua_State * L);
+        void set_label_list(const std::vector<std::shared_ptr<dokun::Label>>& label_list);                                       static int set_label_list(lua_State * L);
         // tooltip
         void set_as_tooltip(bool tooltip);                                             static int set_as_tooltip(lua_State *L);
 		// getters
 		Vector4 get_color() const;                                                     static int get_color(lua_State * L);
-		Image * get_image () const;                                                    static int get_image(lua_State * L);	
-        Image * get_image_list (int index) const;                                      static int get_image_list(lua_State * L);
-		dokun::Label * get_label() const;                                                     static int get_label(lua_State * L);
-        dokun::Label * get_label_list(int index) const;                                       static int get_label_list(lua_State * L);
-		std::string get_text() const;                                                  static int get_text(lua_State * L);
+		Image * get_image(int index = 0) const;                                                    static int get_image(lua_State * L);
+		std::vector<std::shared_ptr<Image>>	get_image_list() const;                                      static int get_image_list(lua_State * L);
+		dokun::Label * get_label(int index = 0) const;                                                     static int get_label(lua_State * L);
+        std::vector<std::shared_ptr<dokun::Label>> get_label_list() const;                                       static int get_label_list(lua_State * L);
+		std::string get_text(int index = 0) const;                                                  static int get_text(lua_State * L);
         std::string get_text_list(int index) const;                                    static int get_text_list(lua_State * L);
 		std::string get_alignment()const;                                              static int get_alignment(lua_State * L);
-		GUI * get_child(unsigned int index)const;
+		GUI * get_gui(unsigned int index)const;
+		std::vector<std::shared_ptr<GUI>> get_gui_list() const;
 		// title_bar
 		Vector2 get_title_bar_position()const;
 		Vector2 get_title_bar_size()const;
@@ -183,13 +188,11 @@ class Box : public GUI { // A box ui - ui element that can act as a container fo
 		double tooltip_arrow_position; // can be either x or y
 		Vector4 tooltip_arrow_color;
 		// Box : contents
-		dokun::Label * label; // default label
-		Image * image; // default image
-		std::vector<GUI *> box; // can store lists
+		//std::vector<GUI *> box; // can store lists
         // NEW! 2019-07-27. Boxs can now have multiple labels and images. The default label and image will be push_back to 0 index.
-        std::vector<dokun::Label *> label_list;
-        std::vector<Image *> image_list;
-        std::vector<GUI *> child_list; // 2021-10-17
+        std::vector<std::shared_ptr<dokun::Label>> label_list; // DELETE THIS AS LABELS ARE ALSO CHILD GUI
+        std::vector<std::shared_ptr<Image>> image_list;
+        std::vector<std::shared_ptr<GUI>> child_list; // 2021-10-17
 		// Box : title_bar
 		bool title_bar;
 		int title_bar_height;

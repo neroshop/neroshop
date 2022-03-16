@@ -33,13 +33,15 @@ public:
 		void set_minimum_value(double min_val);                                   static int set_minimum_value(lua_State *L);
 		void set_maximum_value(double max_val);                                   static int set_maximum_value(lua_State *L);
 		void set_value(double value);                                             static int set_value(lua_State *L);
+		void set_decimals(int decimals);
 		// ball properties
 		void set_ball_color(unsigned int red, unsigned int green, unsigned int blue, double alpha);             static int set_ball_color(lua_State *L);// sets overall ball color for both inner and outer
 		void set_ball_inner_color(unsigned int red, unsigned int green, unsigned int blue, double alpha); static int set_ball_inner_color(lua_State *L);// ball and beam parts of slider
 		void set_ball_outer_color(unsigned int red, unsigned int green, unsigned int blue, double alpha); static int set_ball_outer_color(lua_State *L);// ball and beam parts of slider
 		void set_ball_size(int ball_size);
+		void set_ball_radius(float ball_radius);
 		// slider (beam) properties
-		void set_radius(double radius);                                           static int set_radius(lua_State *L);// roundness of beam edges [===========]
+		void set_radius(float radius);                                           static int set_radius(lua_State *L);// roundness of beam edges [===========]
 		// label
 		void set_label(const dokun::Label& label);                                       static int set_label(lua_State *L);
 		// outline properties
@@ -58,14 +60,17 @@ public:
 		Vector2 get_range() const;                                                static int get_range(lua_State *L);
 		double get_minimum_value() const;                                         static int get_minimum_value(lua_State *L);
 		double get_maximum_value()const;                                          static int get_maximum_value(lua_State *L);
+		unsigned int get_decimals() const;
 		Vector4 get_color() const;                                                static int get_color(lua_State *L);
 		dokun::Label * get_label() const;                                                static int get_label(lua_State *L);
+		float get_radius() const;
 		// ball
 		int get_ball_x();                                                         static int get_ball_x(lua_State *L);
 		int get_ball_y();                                                         static int get_ball_y(lua_State *L);
 		int get_ball_width();                                                     static int get_ball_width(lua_State *L);
 		int get_ball_height();                                                    static int get_ball_height(lua_State *L);
 		Vector4 get_ball_color(int layer = 0) const;
+		float get_ball_radius() const;
 		// boolean
 		bool is_moved();                                                          static int is_moved(lua_State *L); // ball on slider is moved(value changed)
 		//static int (lua_State *L);
@@ -76,9 +81,11 @@ private:
 	    // beam
 	    double value;
 		Vector2 range;
+		unsigned int decimals;
+		double step; // this isn't actually being used except maybe for testing purposes	
 		Vector4 foreground_color;
 		Vector4 background_color;
-		double radius;
+		float radius;
 		// ball
 		double ball_position;
 		Vector4 ball_color;
@@ -88,7 +95,7 @@ private:
 		double ball_radius;
 		bool ball_locked;
 		// label
-		dokun::Label * label;
+		std::shared_ptr<dokun::Label> label;
 		// outline
 		bool outline;
 		Vector4 outline_color;

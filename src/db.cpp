@@ -5,23 +5,23 @@
 // PostgreSQL
 /////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-neroshop::DB::Psql::Psql() : conn(nullptr)
+neroshop::DB::Postgres::Postgres() : conn(nullptr)
 {}
 ////////////////////
-neroshop::DB::Psql::Psql(const std::string& file_url) : Psql() // delegating constructor (will call default constructor)
+neroshop::DB::Postgres::Postgres(const std::string& file_url) : Postgres() // delegating constructor (will call default constructor)
 {
     if(!connect(file_url)) {
         neroshop::print(POSTGRESQL_TAG_ERROR + std::string("Connection to database failed: ") + std::string(PQerrorMessage(conn)));//fprintf(stderr, "Connection to database failed: %s\n", PQerrorMessage(conn));
     }
 }
 ////////////////////
-neroshop::DB::Psql::~Psql() {
+neroshop::DB::Postgres::~Postgres() {
     finish();
 }
 ////////////////////
-neroshop::DB::Psql * neroshop::DB::Psql::db_obj (nullptr);
+neroshop::DB::Postgres * neroshop::DB::Postgres::db_obj (nullptr);
 ////////////////////
-bool neroshop::DB::Psql::connect(const std::string& conninfo) {
+bool neroshop::DB::Postgres::connect(const std::string& conninfo) {
     // If you ever get this warning then it means
     // database connections are being called within each other like this:
     // db->connect("...");
@@ -38,14 +38,14 @@ bool neroshop::DB::Psql::connect(const std::string& conninfo) {
     return true;
 }
 ////////////////////
-void neroshop::DB::Psql::finish() {
+void neroshop::DB::Postgres::finish() {
     if(!conn) return; // there's no need to close twice so its better to just exit function
     PQfinish(conn);
     conn = nullptr; // set to null after deletion (to confirm that it has been properly deleted :])
     neroshop::print("connection to database server is now closed");
 }
 ////////////////////
-void neroshop::DB::Psql::execute(const std::string& command, ExecStatusType status_type) {
+void neroshop::DB::Postgres::execute(const std::string& command, ExecStatusType status_type) {
     if(!conn) throw std::runtime_error("database is not connected");
     PGresult * result = PQexec(conn, command.c_str());
     // PGRES_COMMAND_OK = Successful completion of a command returning no data.
@@ -63,7 +63,7 @@ void neroshop::DB::Psql::execute(const std::string& command, ExecStatusType stat
     PQclear(result); // Frees the storage associated with a PGresult. Every command result should be freed via PQclear when it is no longer needed, to avoid memory leaks.
 }
 ////////////////////
-void neroshop::DB::Psql::execute_params(const std::string& command, const std::vector<std::string>& args, ExecStatusType status_type) {
+void neroshop::DB::Postgres::execute_params(const std::string& command, const std::vector<std::string>& args, ExecStatusType status_type) {
     if(!conn) throw std::runtime_error("database is not connected");
     std::vector<const char*> params = {};
     for (int i = 0; i < args.size(); i++) params.push_back(args[i].c_str());//std::cout << "args: " << values[i] << std::endl; // '' <= quotes should be removed
@@ -87,7 +87,7 @@ void neroshop::DB::Psql::execute_params(const std::string& command, const std::v
 // an execute function that returns the result
 ////////////////////
 ////////////////////
-void neroshop::DB::Psql::print_database_info(void) {
+void neroshop::DB::Postgres::print_database_info(void) {
     if(!conn) throw std::runtime_error("database is not connected");
     char * db_name = PQdb(conn);
     char * user_name = PQuser(conn); 
@@ -103,7 +103,7 @@ void neroshop::DB::Psql::print_database_info(void) {
     std::cout << "port: " << port_number << std::endl;
 }
 ////////////////////
-void neroshop::DB::Psql::create_table(const std::string& table_name) {
+void neroshop::DB::Postgres::create_table(const std::string& table_name) {
     std::string command = "CREATE TABLE IF NOT EXISTS table_name(id  SERIAL PRIMARY KEY);"; // SMALLSERIAL, SERIAL, and BIGSERIAL are the same as AUTO_INCREMENT // bigserial should be used if you anticipate the use of more than 2^31 identifiers over the lifetime of the table // serial (4 bytes) is an autoincrementing integer, ranging from 1 to 2147483647 (2.15 billion)
     command = String::swap_first_of(command, "table_name", table_name);
 #ifdef NEROSHOP_DEBUG0
@@ -112,7 +112,7 @@ void neroshop::DB::Psql::create_table(const std::string& table_name) {
     execute(command);
 }
 ////////////////////
-void neroshop::DB::Psql::rename_table(const std::string& table_name, const std::string& new_name) {
+void neroshop::DB::Postgres::rename_table(const std::string& table_name, const std::string& new_name) {
     std::string command = "ALTER TABLE table_name RENAME TO new_name;";
     // rename table
 	command = String::swap_first_of(command, "table_name", table_name);
@@ -123,7 +123,7 @@ void neroshop::DB::Psql::rename_table(const std::string& table_name, const std::
     execute(command);	    
 }
 ////////////////////
-void neroshop::DB::Psql::alter_table(const std::string& table_name, const std::string& action, const std::string& action_arg, std::string extra_args) {
+void neroshop::DB::Postgres::alter_table(const std::string& table_name, const std::string& action, const std::string& action_arg, std::string extra_args) {
     std::string command = "ALTER TABLE table_name action action_arg extra_args;";
 	// add a column to table 
 	command = String::swap_first_of(command, "table_name", table_name );
@@ -137,7 +137,7 @@ void neroshop::DB::Psql::alter_table(const std::string& table_name, const std::s
     execute(command);
 } // alter_table("users", "ADD", "name", "text");
 ////////////////////
-void neroshop::DB::Psql::add_column(const std::string& table_name, const std::string& column_name, std::string column_type) {
+void neroshop::DB::Postgres::add_column(const std::string& table_name, const std::string& column_name, std::string column_type) {
     std::string command = "ALTER TABLE table_name ADD COLUMN IF NOT EXISTS column_name column_type;";//"ALTER TABLE table_name action COLUMN column_name column_type;";
 	// add a column to table 
 	command = String::swap_first_of(command, "table_name", table_name  );
@@ -149,7 +149,7 @@ void neroshop::DB::Psql::add_column(const std::string& table_name, const std::st
     execute(command);
 } // add_column("users", "name", "text");
 ////////////////////
-void neroshop::DB::Psql::insert_into(const std::string& table_name, const std::string& column_names, const std::string& values) {
+void neroshop::DB::Postgres::insert_into(const std::string& table_name, const std::string& column_names, const std::string& values) {
     std::string command = "INSERT INTO table_name (column_names) "
 	                      "VALUES (values);";
     // set column value
@@ -162,7 +162,7 @@ void neroshop::DB::Psql::insert_into(const std::string& table_name, const std::s
     execute(command);
 }
 ////////////////////
-void neroshop::DB::Psql::update(const std::string& table_name, const std::string& column_name, const std::string& value, std::string condition) {
+void neroshop::DB::Postgres::update(const std::string& table_name, const std::string& column_name, const std::string& value, std::string condition) {
     std::string command = "UPDATE table_name SET column_name = value " 
 	                      "WHERE condition;";
 	                      //"RETURNING *;";
@@ -180,7 +180,7 @@ void neroshop::DB::Psql::update(const std::string& table_name, const std::string
     execute(command);
 }
 ////////////////////
-void neroshop::DB::Psql::update_replace(const std::string& table_name, const std::string& column_name, const std::string& old_str, const std::string& new_str, std::string condition) {
+void neroshop::DB::Postgres::update_replace(const std::string& table_name, const std::string& column_name, const std::string& old_str, const std::string& new_str, std::string condition) {
     std::string command = "UPDATE table_name "
     "SET column_name = REPLACE (column_name, 'old_str', 'new_str') "
     "WHERE condition;";
@@ -197,7 +197,7 @@ void neroshop::DB::Psql::update_replace(const std::string& table_name, const std
 }
 ////////////////////
 ////////////////////
-void neroshop::DB::Psql::create_index(const std::string& index_name, const std::string& table_name, const std::string& indexed_columns) {
+void neroshop::DB::Postgres::create_index(const std::string& index_name, const std::string& table_name, const std::string& indexed_columns) {
     std::string command = "CREATE UNIQUE INDEX index_name ON table_name (indexed_columns);";//USING index_type (indexed_columns)//PostgreSQL has several index types: B-tree, Hash, GiST, SP-GiST, GIN, and BRIN //PostgreSQL uses B-tree index type by default because it is best fit the most common queries
     ////////////////
     command = String::swap_first_of(command, "index_name", index_name  );
@@ -209,7 +209,7 @@ void neroshop::DB::Psql::create_index(const std::string& index_name, const std::
     execute(command);
 }
 ////////////////////
-void neroshop::DB::Psql::drop_index(const std::string& index_name) {
+void neroshop::DB::Postgres::drop_index(const std::string& index_name) {
     std::string command = "DROP INDEX IF EXISTS index_name;";
     command = String::swap_first_of(command, "index_name", index_name);
 #ifdef NEROSHOP_DEBUG0
@@ -219,7 +219,7 @@ void neroshop::DB::Psql::drop_index(const std::string& index_name) {
 }
 ////////////////////
 ////////////////////
-void neroshop::DB::Psql::truncate(const std::string& table_name) {
+void neroshop::DB::Postgres::truncate(const std::string& table_name) {
     std::string command = "DELETE FROM table_name;";
     // set table_name
     command = String::swap_first_of(command, "table_name", table_name);
@@ -229,7 +229,7 @@ void neroshop::DB::Psql::truncate(const std::string& table_name) {
     execute(command);    
 }
 ////////////////////
-void neroshop::DB::Psql::delete_from(const std::string& table_name, const std::string& condition) {
+void neroshop::DB::Postgres::delete_from(const std::string& table_name, const std::string& condition) {
     std::string command = "DELETE FROM table_name WHERE condition;";
     // set table_name and condition
     command = String::swap_first_of(command, "table_name", table_name);
@@ -240,7 +240,7 @@ void neroshop::DB::Psql::delete_from(const std::string& table_name, const std::s
     execute(command);
 }
 ////////////////////
-void neroshop::DB::Psql::drop_column(const std::string& table_name, const std::string& column_name) {
+void neroshop::DB::Postgres::drop_column(const std::string& table_name, const std::string& column_name) {
     std::string command = "ALTER TABLE table_name DROP COLUMN IF EXISTS column_name;";
     // set table_name and column_name
     command = String::swap_first_of(command, "table_name", table_name);
@@ -252,7 +252,7 @@ void neroshop::DB::Psql::drop_column(const std::string& table_name, const std::s
 }
 ////////////////////
 // use CASCADE to drop the dependent objects (tables) too, if other objects (tables) depend on the table (ex. "DROP TABLE item CASCADE;" <- will also drop table inventory, which depends on table item)
-void neroshop::DB::Psql::drop_table(const std::string& table_name) {
+void neroshop::DB::Postgres::drop_table(const std::string& table_name) {
     std::string command = "DROP TABLE IF EXISTS table_name;";
     // set table_name
     command = String::swap_first_of(command, "table_name", table_name);
@@ -262,7 +262,7 @@ void neroshop::DB::Psql::drop_table(const std::string& table_name) {
     execute(command);
 }
 ////////////////////
-void neroshop::DB::Psql::drop_database(const std::string& database_name) {
+void neroshop::DB::Postgres::drop_database(const std::string& database_name) {
     std::string command = "DROP DATABASE IF EXISTS database_name;";
     // set database_name
     command = String::swap_first_of(command, "database_name", database_name);
@@ -273,7 +273,7 @@ void neroshop::DB::Psql::drop_database(const std::string& database_name) {
 }
 ////////////////////
 // vacuum should be called periodically or when a certain number of records have been updated/deleted
-void neroshop::DB::Psql::vacuum(std::string opt_arg) {
+void neroshop::DB::Postgres::vacuum(std::string opt_arg) {
     std::string command = "VACUUM opt_arg;";
     command = String::swap_first_of(command, "opt_arg", opt_arg); // VACUUM FULL returns unused space to the operating system, reducing the db size while plain VACUUM reserves the space for the table and does not return it to the operating system, leaving the db size to remain the same
 #ifdef NEROSHOP_DEBUG0
@@ -291,7 +291,7 @@ void neroshop::DB::Psql::vacuum(std::string opt_arg) {
 ////////////////////
 ////////////////////
 ////////////////////
-std::string neroshop::DB::Psql::to_psql_string(const std::string& str) {
+std::string neroshop::DB::Postgres::to_psql_string(const std::string& str) {
     //return "'" + str + "'";//"\'" + str + "\'";//"&apos" + str + "&apos";//"$" + str + "$"; // double quotes are not allowed to be used on strings in postgresql unfortunately :( // double quotes are reserved for identifiers (ex. CREATE TABLE "mytable")
     std::string temp_str = String::swap_all(str, "'", "\""); // replace all apostrophes to string quotes //str;//"REGEXP_REPLACE ('" + str + "', '" + apostrophe + "', '" + new_str + "');";
     return "'" + temp_str + "'";
@@ -299,20 +299,20 @@ std::string neroshop::DB::Psql::to_psql_string(const std::string& str) {
 ////////////////////
 // getters
 ////////////////////
-int neroshop::DB::Psql::get_lib_version() {
+int neroshop::DB::Postgres::get_lib_version() {
     return PQlibVersion(); // 140001 = 14.1
 }
 ////////////////////
-int neroshop::DB::Psql::get_server_version() const {
+int neroshop::DB::Postgres::get_server_version() const {
     if(!conn) throw std::runtime_error("database is not connected");
     return PQserverVersion(conn);
 }
 ////////////////////
-PGconn * neroshop::DB::Psql::get_handle() const {
+PGconn * neroshop::DB::Postgres::get_handle() const {
     return conn;
 }
 ////////////////////
-int neroshop::DB::Psql::get_integer(const std::string& select_stmt) const {
+int neroshop::DB::Postgres::get_integer(const std::string& select_stmt) const {
     if(!conn) throw std::runtime_error("database is not connected");
     PGresult * result = PQexec(conn, select_stmt.c_str());
     if (PQresultStatus(result) != PGRES_TUPLES_OK) {
@@ -329,7 +329,7 @@ int neroshop::DB::Psql::get_integer(const std::string& select_stmt) const {
     return number_int;    
 }
 ////////////////////
-int neroshop::DB::Psql::get_integer_params(const std::string& select_stmt, const std::vector<std::string>& values) const { // not tested yet
+int neroshop::DB::Postgres::get_integer_params(const std::string& select_stmt, const std::vector<std::string>& values) const { // not tested yet
     if(!conn) throw std::runtime_error("database is not connected");
     std::vector<const char*> params = {};
     for (int i = 0; i < values.size(); i++) params.push_back(values[i].c_str());//std::cout << "args: " << values[i] << std::endl; // '' <= quotes should be removed
@@ -360,7 +360,7 @@ int neroshop::DB::Psql::get_integer_params(const std::string& select_stmt, const
     return number_int;        
 }
 ////////////////////
-float neroshop::DB::Psql::get_real(const std::string& select_stmt) const {
+float neroshop::DB::Postgres::get_real(const std::string& select_stmt) const {
     if(!conn) throw std::runtime_error("database is not connected");
     PGresult * result = PQexec(conn, select_stmt.c_str());
     if (PQresultStatus(result) != PGRES_TUPLES_OK) {
@@ -377,7 +377,7 @@ float neroshop::DB::Psql::get_real(const std::string& select_stmt) const {
     return number_float;        
 }
 ////////////////////
-float neroshop::DB::Psql::get_real_params(const std::string& select_stmt, const std::vector<std::string>& values) const {
+float neroshop::DB::Postgres::get_real_params(const std::string& select_stmt, const std::vector<std::string>& values) const {
     if(!conn) throw std::runtime_error("database is not connected");
     std::vector<const char*> params = {};
     for (int i = 0; i < values.size(); i++) params.push_back(values[i].c_str());//std::cout << "args: " << values[i] << std::endl; // '' <= quotes should be removed
@@ -408,15 +408,15 @@ float neroshop::DB::Psql::get_real_params(const std::string& select_stmt, const 
     return number_float;
 }
 ////////////////////
-float neroshop::DB::Psql::get_float(const std::string& select_stmt) const {
+float neroshop::DB::Postgres::get_float(const std::string& select_stmt) const {
     return get_real(select_stmt);
 }
 ////////////////////
-float neroshop::DB::Psql::get_float_params(const std::string& select_stmt, const std::vector<std::string>& values) const {
+float neroshop::DB::Postgres::get_float_params(const std::string& select_stmt, const std::vector<std::string>& values) const {
     return get_real_params(select_stmt, values);
 }
 ////////////////////
-double neroshop::DB::Psql::get_double(const std::string& select_stmt) const {
+double neroshop::DB::Postgres::get_double(const std::string& select_stmt) const {
     if(!conn) throw std::runtime_error("database is not connected");
     PGresult * result = PQexec(conn, select_stmt.c_str());
     if (PQresultStatus(result) != PGRES_TUPLES_OK) {
@@ -433,7 +433,7 @@ double neroshop::DB::Psql::get_double(const std::string& select_stmt) const {
     return number_double;
 }
 ////////////////////
-double neroshop::DB::Psql::get_double_params(const std::string& select_stmt, const std::vector<std::string>& values) const {
+double neroshop::DB::Postgres::get_double_params(const std::string& select_stmt, const std::vector<std::string>& values) const {
     if(!conn) throw std::runtime_error("database is not connected");
     std::vector<const char*> params = {};
     for (int i = 0; i < values.size(); i++) params.push_back(values[i].c_str());//std::cout << "args: " << values[i] << std::endl; // '' <= quotes should be removed
@@ -465,7 +465,7 @@ double neroshop::DB::Psql::get_double_params(const std::string& select_stmt, con
 }
 ////////////////////
 ////////////////////
-std::string neroshop::DB::Psql::get_text(const std::string& select_stmt) const {
+std::string neroshop::DB::Postgres::get_text(const std::string& select_stmt) const {
     if(!conn) throw std::runtime_error("database is not connected");
     PGresult * result = PQexec(conn, select_stmt.c_str());
     if (PQresultStatus(result) != PGRES_TUPLES_OK) {
@@ -484,7 +484,7 @@ std::string neroshop::DB::Psql::get_text(const std::string& select_stmt) const {
     return text;
 }
 ////////////////////
-std::string neroshop::DB::Psql::get_text_params(const std::string& select_stmt, const std::vector<std::string>& values) const {
+std::string neroshop::DB::Postgres::get_text_params(const std::string& select_stmt, const std::vector<std::string>& values) const {
     if(!conn) throw std::runtime_error("database is not connected");
     std::vector<const char*> params = {};
     for (int i = 0; i < values.size(); i++) params.push_back(values[i].c_str());//std::cout << "args: " << values[i] << std::endl; // '' <= quotes should be removed
@@ -516,14 +516,14 @@ std::string neroshop::DB::Psql::get_text_params(const std::string& select_stmt, 
 }
 ////////////////////
 ////////////////////
-unsigned int neroshop::DB::Psql::get_row_count(const std::string& table_name) const {
+unsigned int neroshop::DB::Postgres::get_row_count(const std::string& table_name) const {
     std::string command = "SELECT COUNT(*) FROM table_name"; // number of rows in a table
     // replace table_name
     command = String::swap_first_of(command, "table_name", table_name);         
     return get_integer(command);
 }
 ////////////////////
-int neroshop::DB::Psql::get_last_id(const std::string& table_name) const {
+int neroshop::DB::Postgres::get_last_id(const std::string& table_name) const {
     // if table has no rows (empty table) then exit function
     //if(get_row_count(table_name) < 1) return 0; // no need for this, its better if the error is displayed so we know what the problem is
     std::string command = "SELECT * FROM table_name ORDER BY id DESC LIMIT 1;";
@@ -533,23 +533,23 @@ int neroshop::DB::Psql::get_last_id(const std::string& table_name) const {
 }
 ////////////////////
 ////////////////////
-int neroshop::DB::Psql::get_connections_count() const { // works! :D
+int neroshop::DB::Postgres::get_connections_count() const { // works! :D
     std::string command = "SELECT sum(numbackends) FROM pg_stat_database;";
     return get_integer(command);
 }
 ////////////////////
 ////////////////////
-std::string neroshop::DB::Psql::localtimestamp_to_utc(const std::string& localtimestamp) const {
+std::string neroshop::DB::Postgres::localtimestamp_to_utc(const std::string& localtimestamp) const {
     return get_text_params("SELECT $1::timestamptz AT TIME ZONE 'UTC'", { localtimestamp });
 }
 // localtimestamp_to_utc("2022-02-11 07:00:00.339934-05")
 ////////////////////
-std::string neroshop::DB::Psql::localtime_to_utc(const std::string& localtime) const {
+std::string neroshop::DB::Postgres::localtime_to_utc(const std::string& localtime) const {
     return get_text_params("SELECT $1::timetz AT TIME ZONE 'UTC'", { localtime });
 }
 ////////////////////
-neroshop::DB::Psql * neroshop::DB::Psql::get_singleton() {
-    if(!db_obj) db_obj = new DB::Psql(); // conn is null by default
+neroshop::DB::Postgres * neroshop::DB::Postgres::get_singleton() {
+    if(!db_obj) db_obj = new DB::Postgres(); // conn is null by default
     return db_obj;
 }
 ////////////////////
@@ -557,7 +557,7 @@ neroshop::DB::Psql * neroshop::DB::Psql::get_singleton() {
 ////////////////////
 // boolean
 ////////////////////
-bool neroshop::DB::Psql::table_exists(const std::string& table_name) const {
+bool neroshop::DB::Postgres::table_exists(const std::string& table_name) const {
     // pg_tables view contains information about each table in the database. // pg_tables ia a lot more faster than information_schema.tables and allows you to access tables without being a tableowner // to get current scheme: "SELECT current_schema();"
     std::string command = "SELECT EXISTS ("
                           "SELECT FROM pg_tables " 
@@ -569,7 +569,7 @@ bool neroshop::DB::Psql::table_exists(const std::string& table_name) const {
     return exists;
 }
 ////////////////////
-bool neroshop::DB::Psql::column_exists(const std::string& table_name, const std::string& column_name) const {
+bool neroshop::DB::Postgres::column_exists(const std::string& table_name, const std::string& column_name) const {
     std::string command = "SELECT COUNT(column_name) FROM table_name;"; // this actually counts the number of rows in a column (if column is empty then it will return 0)
     // replace table_name and column_name
     command = String::swap_first_of(command, "table_name", table_name);

@@ -64,51 +64,51 @@ void neroshop::Validator::save_user(const std::string& username, const char pw_h
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
-    //DB::Psql::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");////DB::Psql::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+    //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");////DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
     // begin transaction
-    DB::Psql::get_singleton()->execute("BEGIN;");
+    DB::Postgres::get_singleton()->execute("BEGIN;");
     // create a restore point
-    DB::Psql::get_singleton()->execute("SAVEPOINT before_account_creation_savepoint;");
+    DB::Postgres::get_singleton()->execute("SAVEPOINT before_account_creation_savepoint;");
     ////////////////////////////////
     // table: account_type
-    if(!DB::Psql::get_singleton()->table_exists("account_type")) {
-        DB::Psql::get_singleton()->create_table("account_type");
-        DB::Psql::get_singleton()->add_column("account_type", "name", "text");
+    if(!DB::Postgres::get_singleton()->table_exists("account_type")) {
+        DB::Postgres::get_singleton()->create_table("account_type");
+        DB::Postgres::get_singleton()->add_column("account_type", "name", "text");
         // these rows are only inserted once since roles are static and do not change // 2 roles (1=buyer, 2=seller)
-        DB::Psql::get_singleton()->insert_into("account_type", "name", "'Buyer'");
-        DB::Psql::get_singleton()->insert_into("account_type", "name", "'Seller'");
+        DB::Postgres::get_singleton()->insert_into("account_type", "name", "'Buyer'");
+        DB::Postgres::get_singleton()->insert_into("account_type", "name", "'Seller'");
     }
     ////////////////////////////////    
     // table: users
-    if(!DB::Psql::get_singleton()->table_exists("users")) {
-        DB::Psql::get_singleton()->create_table("users");
-        DB::Psql::get_singleton()->add_column("users", "name", "text");
-        DB::Psql::get_singleton()->add_column("users", "pw_hash", "text");
-        DB::Psql::get_singleton()->add_column("users", "opt_email", "text DEFAULT '' NOT null");
-        DB::Psql::get_singleton()->add_column("users", "account_type_id", "integer REFERENCES account_type(id)"); //  foreign key is a column or a group of columns in a table that reference the primary key of another table // testing invalid foreign key: DB::Psql::get_singleton()->execute("INSERT INTO users (name, pw_hash, opt_email, account_type_id) VALUES('jack', 'null', 'null', 3) "); // acount_type_id 3 does not exist :O, so this should trigger an error :}
+    if(!DB::Postgres::get_singleton()->table_exists("users")) {
+        DB::Postgres::get_singleton()->create_table("users");
+        DB::Postgres::get_singleton()->add_column("users", "name", "text");
+        DB::Postgres::get_singleton()->add_column("users", "pw_hash", "text");
+        DB::Postgres::get_singleton()->add_column("users", "opt_email", "text DEFAULT '' NOT null");
+        DB::Postgres::get_singleton()->add_column("users", "account_type_id", "integer REFERENCES account_type(id)"); //  foreign key is a column or a group of columns in a table that reference the primary key of another table // testing invalid foreign key: DB::Postgres::get_singleton()->execute("INSERT INTO users (name, pw_hash, opt_email, account_type_id) VALUES('jack', 'null', 'null', 3) "); // acount_type_id 3 does not exist :O, so this should trigger an error :}
         // usernames and emails MUST be unique!
-        DB::Psql::get_singleton()->execute("CREATE UNIQUE INDEX index_users ON users (name, opt_email);");
+        DB::Postgres::get_singleton()->execute("CREATE UNIQUE INDEX index_users ON users (name, opt_email);");
     }
     // insert new data into table users
-    int user_id = DB::Psql::get_singleton()->get_integer_params("INSERT INTO users (name, pw_hash, opt_email, account_type_id) VALUES ($1, $2, $3, $4) RETURNING id", { String::lower(username), pw_hash, email_hash, std::to_string(1) });//DB::Psql::get_singleton()->execute_params("INSERT INTO users (name, pw_hash, opt_email, account_type_id) VALUES ($1, $2, $3, $4)", { String::lower(username), pw_hash, email_hash, std::to_string(1) });
+    int user_id = DB::Postgres::get_singleton()->get_integer_params("INSERT INTO users (name, pw_hash, opt_email, account_type_id) VALUES ($1, $2, $3, $4) RETURNING id", { String::lower(username), pw_hash, email_hash, std::to_string(1) });//DB::Postgres::get_singleton()->execute_params("INSERT INTO users (name, pw_hash, opt_email, account_type_id) VALUES ($1, $2, $3, $4)", { String::lower(username), pw_hash, email_hash, std::to_string(1) });
 	if(user_id < 1) {
-	    DB::Psql::get_singleton()->execute("ROLLBACK TO before_account_creation_savepoint;");
+	    DB::Postgres::get_singleton()->execute("ROLLBACK TO before_account_creation_savepoint;");
 	    return; // exit function
 	}
 	//std::cout << "Validator::register_user(): user with id: " << user_id << " has just been created" << std::endl;
 	////////////////////////////////
 	// table: cart
-	if(!DB::Psql::get_singleton()->table_exists("cart")) {
-	    DB::Psql::get_singleton()->create_table("cart");
-	    DB::Psql::get_singleton()->execute("ALTER TABLE cart ADD COLUMN user_id integer REFERENCES users(id);");
+	if(!DB::Postgres::get_singleton()->table_exists("cart")) {
+	    DB::Postgres::get_singleton()->create_table("cart");
+	    DB::Postgres::get_singleton()->execute("ALTER TABLE cart ADD COLUMN user_id integer REFERENCES users(id);");
 	    // If user is a guest, then their id (user_id) will be 0 but their session_id will be unique
-	    //DB::Psql::get_singleton()->execute("ALTER TABLE cart ADD COLUMN session_id uuid REFERENCES guests(id);"); // for guests
+	    //DB::Postgres::get_singleton()->execute("ALTER TABLE cart ADD COLUMN session_id uuid REFERENCES guests(id);"); // for guests
 	}
 	// insert new data into table cart - each user will have their own cart
-	DB::Psql::get_singleton()->execute_params("INSERT INTO cart (user_id) VALUES ($1)", { std::to_string(user_id) });
+	DB::Postgres::get_singleton()->execute_params("INSERT INTO cart (user_id) VALUES ($1)", { std::to_string(user_id) });
 	// end transaction
-	DB::Psql::get_singleton()->execute("COMMIT;");
-    /*DB::Psql::get_singleton()->finish();*/
+	DB::Postgres::get_singleton()->execute("COMMIT;");
+    /*DB::Postgres::get_singleton()->finish();*/
     ////////////////////////////////
 }
 ////////////////////
@@ -128,13 +128,13 @@ bool neroshop::Validator::login(const std::string& username, const std::string& 
     // postgresql
     ////////////////////////////////
     if(username.empty()) return false; // exit if username is empty -.-
-    //DB::Psql::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
-    if(!DB::Psql::get_singleton()->table_exists("users")) {NEROSHOP_TAG_OUT std::cout << "\033[0;33;49m" << "This account is not registered" << "\033[0m" << std::endl; /*DB::Psql::get_singleton()->finish();*/ return false;}
+    //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+    if(!DB::Postgres::get_singleton()->table_exists("users")) {NEROSHOP_TAG_OUT std::cout << "\033[0;33;49m" << "This account is not registered" << "\033[0m" << std::endl; /*DB::Postgres::get_singleton()->finish();*/ return false;}
     // SELECT pw_hash from users WHERE name=username
-    std::string pw_hash = DB::Psql::get_singleton()->get_text_params("SELECT pw_hash FROM users WHERE name = $1;", { String::lower(username) });//DB::Psql::get_singleton()->get_text("SELECT pw_hash FROM users WHERE name = " + DB::Psql::to_psql_string(String::lower(username)) + ";");//std::cout << "pw_hash: " << pw_hash << " (retrieved from database)\n";
+    std::string pw_hash = DB::Postgres::get_singleton()->get_text_params("SELECT pw_hash FROM users WHERE name = $1;", { String::lower(username) });//DB::Postgres::get_singleton()->get_text("SELECT pw_hash FROM users WHERE name = " + DB::Postgres::to_psql_string(String::lower(username)) + ";");//std::cout << "pw_hash: " << pw_hash << " (retrieved from database)\n";
 	// if no pw_hash could be found then the user does not exist (or the db is missing or corrupted)
-	if(pw_hash.empty()) { NEROSHOP_TAG_OUT std::cout << "\033[0;33;49m" << "This user does not exist" << "\033[0m" << std::endl; /*DB::Psql::get_singleton()->finish();*/ return false; }    
-    /*DB::Psql::get_singleton()->finish();*/
+	if(pw_hash.empty()) { NEROSHOP_TAG_OUT std::cout << "\033[0;33;49m" << "This user does not exist" << "\033[0m" << std::endl; /*DB::Postgres::get_singleton()->finish();*/ return false; }    
+    /*DB::Postgres::get_singleton()->finish();*/
     ////////////////////////////////
 	// validate the pre-hashed pw
     std::string pw_prehash;
@@ -168,18 +168,18 @@ bool neroshop::Validator::login_with_email(const std::string& email, const std::
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
-    //DB::Psql::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
-    if(!DB::Psql::get_singleton()->table_exists("users")) {NEROSHOP_TAG_OUT std::cout << "\033[0;33;49m" << "This account is not registered" << "\033[0m" << std::endl; /*DB::Psql::get_singleton()->finish();*/ return false;}
+    //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+    if(!DB::Postgres::get_singleton()->table_exists("users")) {NEROSHOP_TAG_OUT std::cout << "\033[0;33;49m" << "This account is not registered" << "\033[0m" << std::endl; /*DB::Postgres::get_singleton()->finish();*/ return false;}
 	// get email_hash (from email)
 	std::string email_hash;
-	if(!generate_sha256_hash(email, email_hash)) { neroshop::print("An error occured", 1); /*DB::Psql::get_singleton()->finish();*/ return false;}
+	if(!generate_sha256_hash(email, email_hash)) { neroshop::print("An error occured", 1); /*DB::Postgres::get_singleton()->finish();*/ return false;}
 	// SELECT pw_hash from users WHERE email_hash = email_hash
-	std::string pw_hash = DB::Psql::get_singleton()->get_text_params("SELECT pw_hash FROM users WHERE opt_email = $1;", { email_hash });//+ DB::Psql::to_psql_string(email_hash));  
+	std::string pw_hash = DB::Postgres::get_singleton()->get_text_params("SELECT pw_hash FROM users WHERE opt_email = $1;", { email_hash });//+ DB::Postgres::to_psql_string(email_hash));  
     // if no pw_hash could be found then the user does not exist (or the db is missing or corrupted)
-    if(pw_hash.empty()) { NEROSHOP_TAG_OUT std::cout << "\033[0;33;49m" << "This user does not exist" << "\033[0m" << std::endl; /*DB::Psql::get_singleton()->finish();*/ return false; }//std::cout << "pw_hash: " << pw_hash << " (retrieved from db) "/* + username + ")"*/ << std::endl;
+    if(pw_hash.empty()) { NEROSHOP_TAG_OUT std::cout << "\033[0;33;49m" << "This user does not exist" << "\033[0m" << std::endl; /*DB::Postgres::get_singleton()->finish();*/ return false; }//std::cout << "pw_hash: " << pw_hash << " (retrieved from db) "/* + username + ")"*/ << std::endl;
     // also, get username from db (only for display purposes)
-    std::string username = DB::Psql::get_singleton()->get_text_params("SELECT name FROM users WHERE opt_email = $1", { email_hash });// + DB::Psql::to_psql_string(email_hash));
-    /*DB::Psql::get_singleton()->finish();*/
+    std::string username = DB::Postgres::get_singleton()->get_text_params("SELECT name FROM users WHERE opt_email = $1", { email_hash });// + DB::Postgres::to_psql_string(email_hash));
+    /*DB::Postgres::get_singleton()->finish();*/
     ////////////////////////////////	
 	// validate the pre-hashed pw
     std::string pw_prehash;
@@ -283,26 +283,26 @@ bool neroshop::Validator::validate_username(const std::string& username)
     // postgresql
     ////////////////////////////////
     // check db to see if username is not already taken (last thing to worry about)
-    //DB::Psql::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
-	if(DB::Psql::get_singleton()->table_exists("users")) 
+    //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+	if(DB::Postgres::get_singleton()->table_exists("users")) 
 	{   // make sure table Users exists first
-	    std::string name = DB::Psql::get_singleton()->get_text_params("SELECT name FROM users WHERE name = $1;", { String::lower(username) });//+ DB::Psql::to_psql_string(String::lower(username)));
+	    std::string name = DB::Postgres::get_singleton()->get_text_params("SELECT name FROM users WHERE name = $1;", { String::lower(username) });//+ DB::Postgres::to_psql_string(String::lower(username)));
 	    if(name == String::lower(username)) { // names are stored in lowercase
 	        neroshop::print("This username is already taken", 2);
-	        /*DB::Psql::get_singleton()->finish();*/
+	        /*DB::Postgres::get_singleton()->finish();*/
 	        return false;
 	    }//std::cout << "name: " << name << " (retrieved from db)" << std::endl;
 	}    
 	// make sure any deleted user's name is not re-used
-	if(DB::Psql::get_singleton()->table_exists("deleted_users")) {
-	    std::string deleted_user = DB::Psql::get_singleton()->get_text_params("SELECT name FROM deleted_users WHERE name = $1;", { username });//+ DB::Psql::to_psql_string(username));
+	if(DB::Postgres::get_singleton()->table_exists("deleted_users")) {
+	    std::string deleted_user = DB::Postgres::get_singleton()->get_text_params("SELECT name FROM deleted_users WHERE name = $1;", { username });//+ DB::Postgres::to_psql_string(username));
 	    if(deleted_user == String::lower(username)) {
 	        neroshop::print("This username cannot be used"/*re-used"*/, 2);
-            /*DB::Psql::get_singleton()->finish();*/
+            /*DB::Postgres::get_singleton()->finish();*/
             return false;
 	    }
 	}    
-    /*DB::Psql::get_singleton()->finish();*/
+    /*DB::Postgres::get_singleton()->finish();*/
     ////////////////////////////////    
     return true; // default return value
 }
@@ -370,19 +370,19 @@ bool neroshop::Validator::validate_email(const std::string& email) {
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
-    //DB::Psql::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
-	if(DB::Psql::get_singleton()->table_exists("users")) {
-	    std::string email_taken = DB::Psql::get_singleton()->get_text_params("SELECT opt_email FROM users WHERE opt_email = $1;", { email_hash });//+ DB::Psql::to_psql_string(email_hash));
+    //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
+	if(DB::Postgres::get_singleton()->table_exists("users")) {
+	    std::string email_taken = DB::Postgres::get_singleton()->get_text_params("SELECT opt_email FROM users WHERE opt_email = $1;", { email_hash });//+ DB::Postgres::to_psql_string(email_hash));
 	    // cannot process an empty string, so close db and exit function
-	    if(email_taken.empty()) { /*DB::Psql::get_singleton()->finish();*/ return true;}
+	    if(email_taken.empty()) { /*DB::Postgres::get_singleton()->finish();*/ return true;}
         // compare the email_hash with the email_taken_hash - if its a match then the email is already in use
         if(email_hash == email_taken) {
             neroshop::print("This email address is already in use", 1);
-            /*DB::Psql::get_singleton()->finish();*/
+            /*DB::Postgres::get_singleton()->finish();*/
             return false;
         }	    
 	}    
-    /*DB::Psql::get_singleton()->finish();*/
+    /*DB::Postgres::get_singleton()->finish();*/
     ////////////////////////////////
     return true;
 }

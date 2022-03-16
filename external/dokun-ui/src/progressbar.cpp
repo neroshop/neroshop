@@ -38,11 +38,12 @@ Progressbar::Progressbar(int x, int y, int width, int height) : Progressbar()
 /////////////
 Progressbar::~Progressbar()
 {
+    // we no longer need to delete label now that we are using smart_ptrs
     // delete label
-    if(label) {
+    /*if(label) {
         delete label;
         label = nullptr;
-    }
+    }*/
     std::cout << "progress_bar deleted\n";
 }
 /////////////
@@ -54,37 +55,22 @@ void Progressbar::draw()
 		if(is_active()) {}// is it active or disabled? (would be darker in color if not active)    
 	    double min_val = get_range().x;
 	    double max_val = get_range().y;
-		double value = get_value();
-	    double x = get_position().x;
-		double y = get_position().y;
-		double angle = get_angle();
-		double scale_x = get_scale().x;
-		double scale_y = get_scale().y;
-		int width  = get_width();
-		int height = get_height();
-        int red    = get_color().x;
-        int green  = get_color().y;
-        int blue   = get_color().z;		
-		double alpha  = get_color().w;
 	
-		Renderer::draw_progressbar(x, y, width, height, angle, scale_x, scale_y,
-		    red, green, blue, alpha,
+		Renderer::draw_progressbar(get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y,
+		    foreground_color.x, foreground_color.y, foreground_color.z, foreground_color.w,
 		    GUI::gui_shader,
 			min_val, max_val, value, background_color,
 			outline, outline_width, outline_color, outline_antialiased,
 			radius
 			);
-		if(label) // as long as label is not nullptr. Does not matter if text is empty, still need to set proper x and y positions
-		{
-            // set label_position relative to progressbar_position
-			if(label->get_alignment() == "left"  ) {label->set_relative_position(0                                     , (get_height() - 10/*label->get_height()*/) / 2);} // keep label_y positioned at center of progressbar at all times
-			if(label->get_alignment() == "center") {label->set_relative_position((get_width() - label->get_width()) / 2, (get_height() - 10/*label->get_height()*/) / 2);} // keep label_y positioned at center of progressbar at all times						
-			if(label->get_alignment() == "right" ) {label->set_relative_position( get_width() - label->get_width()     , (get_height() - 10/*label->get_height()*/) / 2);} // keep label_y positioned at center of progressbar at all times	
-            if(label->get_alignment() == "none"  ) {}
-			label->set_position(get_x() + label->get_relative_x(), get_y() + label->get_relative_y());
-            // draw label manually since there is only one
-            label->draw();//Renderer::draw_label(get_text(), x, y, angle, 0.5, 0.5, get_label()->get_font()->get_data(), get_label()->get_color().x, get_label()->get_color().y, get_label()->get_color().z, get_label()->get_color().w);
-		}
+		if(!label.get()) return;// as long as label is not nullptr. Does not matter if text is empty, still need to set proper x and y positions
+        // set label_position relative to progressbar_position
+		if(label->get_alignment() == "left"  ) {label->set_relative_position(0                                     , (get_height() - 10/*label->get_height()*/) / 2);} // keep label_y positioned at center of progressbar at all times
+		if(label->get_alignment() == "center") {label->set_relative_position((get_width() - label->get_width()) / 2, (get_height() - 10/*label->get_height()*/) / 2);} // keep label_y positioned at center of progressbar at all times						
+		if(label->get_alignment() == "right" ) {label->set_relative_position( get_width() - label->get_width()     , (get_height() - 10/*label->get_height()*/) / 2);} // keep label_y positioned at center of progressbar at all times	
+        if(label->get_alignment() == "none"  ) {}
+        // draw label manually since there is only one
+        label->draw();//Renderer::draw_label(get_text(), x, y, angle, 0.5, 0.5, get_label()->get_font()->get_data(), get_label()->get_color().x, get_label()->get_color().y, get_label()->get_color().z, get_label()->get_color().w);
     }
 }
 /////////////
@@ -135,8 +121,9 @@ int Progressbar::set_text(lua_State *L)
 /////////////
 void Progressbar::set_label(const dokun::Label& label)
 {
-	(this)->label = &const_cast<dokun::Label&>(label);
-	this->label->set_parent(* this); // also set as child
+    std::shared_ptr<dokun::Label> progress_label(&const_cast<dokun::Label&>(label));
+	this->label = progress_label;
+	this->label->set_parent(*this); // also set as child // label must be centered manually
 }   
 /////////////
 int Progressbar::set_label(lua_State *L)
@@ -239,6 +226,9 @@ int Progressbar::set_background_color(lua_State *L)
 void Progressbar::set_range(double minimum_value, double maximum_value)
 {
 	range = Vector2(minimum_value, maximum_value);
+	// to make sure value does not go below min_val or surpass max_val
+	if(value < minimum_value) value = minimum_value;
+	if(value > maximum_value) value = maximum_value;
 }  
 /////////////
 void Progressbar::set_range(const Vector2& range)
@@ -500,7 +490,7 @@ int Progressbar::get_text(lua_State *L)
 /////////////
 dokun::Label * Progressbar::get_label()const
 {
-	return label;
+	return label.get();
 }
 /////////////
 int Progressbar::get_label(lua_State *L)

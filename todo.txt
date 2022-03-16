@@ -1,4 +1,10 @@
 [HIGH PRIORITY]
+- replace inappropriate doubles with floats                      []
+- discard all raw pointers and replace them with shared pointers []
+- stop using raw pointers for non-static objects                 []
+- use delegating constructor for every class                     []
+
+[MID PRIORITY]
 - rewrite renderer.cpp from scratch (if I can't find an experienced graphics programmer)
 - figure out how to turn qrcode data into png and jpeg
 - change font
@@ -13,6 +19,7 @@
 - learn to backup database
 - add auction system
 - remove login as guest option (for now, since I don't know how guest data will be stored in main database)
+- make neroshop p2p (peer-to-peer)
 
 [LOW PRIORITY]
 - create neroshop domain name (.org preffered)
@@ -41,7 +48,9 @@
 - created a new version of spinner                       [x] 2021-12-18
 - add functional tab widget                              []
 - fix edit text and cursor when resized                  []
-- replace innapropriate doubles with floats              []
+- add eye icon to text edit to toggle sensative text visibility []
+- work on list gui                                       []
+- work on combobox gui                                   []
 
 [Spinner][Progress:98%]
 [Edit][Progress:79%]

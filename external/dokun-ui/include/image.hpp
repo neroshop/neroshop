@@ -69,6 +69,11 @@ public:
 	void set_color(const Vector4& color);
 	void set_alignment(const std::string& alignment);           static int set_alignment(lua_State *L);
 	void set_visible(bool visible); static int set_visible(lua_State *L);
+	void set_outline(bool outline);
+	void set_outline_thickness(float outline_thickness);
+	void set_outline_color(unsigned int red, unsigned int green, unsigned int blue);
+	void set_outline_color(const Vector3& outline_color);
+	void set_outline_threshold(float outline_threshold);
 	// opengl-related
 	void set_filter(int min, int mag);                    static int set_filter(lua_State * L);
 	void set_wrap(int wrap_s, int wrap_t);                static int set_wrap(lua_State * L);
@@ -100,6 +105,10 @@ public:
 	double get_aspect_ratio_correction(int rect_x, int rect_y) const;     static int get_aspect_ratio_correction(lua_State * L);
 	std::string get_alignment() const;               static int get_alignment(lua_State *L);
 	Vector4 get_rect() const; static int get_rect(lua_State * L);
+	// outline
+	float get_outline_thickness() const;
+	Vector3 get_outline_color() const;
+	float get_outline_threshold() const;
 	// OPENGL
 	unsigned int get_buffer()const;                 static int get_buffer(lua_State *L); // returns a texture buffer object
 	Vector2i get_filter()const;                     static int get_filter(lua_State *L);
@@ -118,6 +127,7 @@ public:
 	bool is_resized() const;                         static int is_resized(lua_State *L);
     bool is_generated()const;                        static int is_generated(lua_State *L);
 	bool is_visible()const;                          static int is_visible(lua_State *L);
+	bool has_outline() const;
 	// operator overload
 	Image operator = (const Texture& texture)
 	{ 
@@ -148,6 +158,11 @@ private:
 	std::string    file;
 	Vector4 color;
 	Texture * texture;
+	// outline
+	bool outline;
+	float outline_thickness;
+	Vector3 outline_color;
+	float outline_threshold;
 	// after resize
 	unsigned int new_width;
 	unsigned int new_height;

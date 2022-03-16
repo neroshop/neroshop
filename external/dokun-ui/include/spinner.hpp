@@ -96,7 +96,7 @@ private:
 	bool separator;
 	unsigned int separator_size;
 	// label
-	dokun::Label * label;
+	std::shared_ptr<dokun::Label> label;
 	// outline
 	bool outline;
 	double outline_width;
@@ -106,6 +106,7 @@ private:
 	bool gradient;
 	Vector4 gradient_color;	
     // callbacks
+    void on_parent() final; // re-implementation of a callback
     void on_button_press();	
 };
 #endif

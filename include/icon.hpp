@@ -3,6 +3,7 @@
 
 #include "image.hpp"
 
+// icons8.com/icon/set/ecommerce/material--white
 //typedef std::tuple<unsigned int, unsigned int, unsigned int> dimensions; // width height channel
 namespace neroshop {
 class Icon {
@@ -32,8 +33,7 @@ private:
     static bool load_door();
     //static bool load_();
 public:    
-    static std::map<std::string, Image *> get; // a map is basically a std::vector of std::pairs
-    //static std::vector< std::pair<std::string, Image *> > get; //Icon * icon_ptr; // singleton obj
+    static std::map<std::string, std::shared_ptr<Image>> get; // a map is basically a std::vector of std::pairs // same as: static std::vector<std::pair<std::string, std::shared_ptr<Image>>> get;
 }; 
 }
 #endif
