@@ -418,6 +418,10 @@ int GUI::set_scale(lua_State *L)
 	return 0;
 }
 ///////////// 
+void GUI::set_scale(const Vector2& scale) {
+    set_scale(scale.x, scale.y);
+}
+///////////// 
 void GUI::set_angle(double angle)
 {
 	this->angle = angle; // in degrees

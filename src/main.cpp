@@ -463,12 +463,12 @@ int main() {
     // ----------------------------------- settings ------------------------------------
     // settings button
     Button * settings_button = new Button();
-    //Box * settings_icon = new Box();
-    Image settings_icon(Icon::get["settings"]->get_data(), 64, 64, 1, 4);
-    settings_icon.resize(32, 32);
-    settings_icon.set_alignment("center");
-    settings_button->set_image(settings_icon);
-    //settings_icon->set_as_icon(true);	
+    //Box * config_icon = new Box();
+    Image config_icon(Icon::get["config"]->get_data(), 64, 64, 1, 4);
+    config_icon.resize(32, 32);
+    config_icon.set_alignment("center");
+    settings_button->set_image(config_icon);
+    //config_icon->set_as_icon(true);	
     settings_button->set_size(50, 40);
     settings_button->set_position(20, 20);
     settings_button->set_color(0, 22, 119); //(60, 105, 134);//settings_button->get_image()->set_color(255, 213, 0);
@@ -610,54 +610,69 @@ int main() {
     // forgot your pw? reset here
     //->set_placeholder_text("");
     // --------------------------------- homepage -------------------------------------
+    // 3 pages: 
+    // 1. catalog page (contains only the item image)
+    // 2. product page (contains image, name, price, stars, favorite_button and info_iconcart_add_button, quantity_spinner, etc.)
+    // 3. cart / checkout page
     // catalog
-    Catalog * catalog = new Catalog(); // w=1000 here
-    catalog->set_size(400/*800*/, 300); // w=300 here
-    ////catalog->add_box(); // box positions and sizes are set automatically
+    Catalog * catalog = new Catalog();
+    // catalog page (item listings)
+    //-----------------------------------------
+    // current page (product page)
+    catalog->get_current()->set_position(50, 90); // for each individual box size
+    //std::cout << "catalog size: " << catalog->get_size() << std::endl;
+    //std::cout << "catalog box_size: " << catalog->get_current()->get_size() << std::endl;
+    ////catalog->add_image(product_image);
     //catalog->set_();
+////catalog->get_current()->show(); // this is hidden by default
+    // product_page ------------------------------------------------------------------
     // ITEM IMAGE
     Image product_image(Icon::get["monero_symbol"]->get_data(), 64, 64, 1, 4);
-    product_image.set_relative_position(10, 10);
-    catalog->get_box(0)->add_image(product_image);
+    product_image.set_relative_position((catalog->get_current()->get_width() - product_image.get_width_scaled()) / 2, 10);//(10, 10);
+    catalog->get_current()->add_image(product_image);
     // PRODUCT NAME LABEL
     Label product_name_label("Monero Ball"); // place at bottom of image or next to image
-    product_name_label.set_color(0, 0, 0, 1.0);//int product_image_width = (product_image.is_resized()) ? product_image.get_width_scaled() : product_image.get_width();
-    int product_image_height = (product_image.is_resized()) ? product_image.get_height_scaled() : product_image.get_height();
-    product_name_label.set_relative_position(product_image.get_relative_x(), product_image.get_relative_y() + product_image_height + 10);
-    catalog->get_box(0)->add_gui(product_name_label);
+    product_name_label.set_color(0, 0, 0, 1.0);
+    product_name_label.set_relative_position(10, product_image.get_relative_y() + product_image.get_height_scaled() + 10);//((catalog->get_current()->get_width() - (product_name_label.get_string().length() * 10)/*product_name_label.get_width()*/) / 2, product_image.get_relative_y() + product_image.get_height_scaled() + 10);//(product_image.get_relative_x(), product_image.get_relative_y() + product_image_height + 10);
+    catalog->get_current()->add_gui(product_name_label);
     // BRAND NAME LABEL
     // ...
     // STARS (FROM THE CALCULATED AVERAGE STARS - 5)
     std::vector<std::shared_ptr<Image>> product_stars; // size will be 5    //std::cout << "number of stars: " << product_stars.size() << std::endl;
+    product_stars.push_back(std::make_shared<Image>()); // 0
+    product_stars.push_back(std::make_shared<Image>()); // 1
+    product_stars.push_back(std::make_shared<Image>()); // 2
+    product_stars.push_back(std::make_shared<Image>()); // 3
+    product_stars.push_back(std::make_shared<Image>()); // 4
     for(int i = 0; i < 5; i++) {
-        // create and load stars
-        product_stars.push_back(std::make_shared<Image>());
+        // load stars
         product_stars[i]->load(Icon::get["star"]->get_data(), 64, 64, 1, 4);//"star_half"
         product_stars[i]->resize(20, 20);//(16, 16);
         product_stars[i]->set_color(255, 179, 68, 1.0);
         product_stars[i]->set_outline(true); // gives the star an illusion of depth
         product_stars[i]->set_outline_thickness(0.6);//(1.0);
-        product_stars[i]->set_outline_color(182, 108, 0);// shades = rgb(255, 151, 0), rgb(182, 108, 0)//product_stars[i]->set_outline_threshold(0.0);
-        catalog->get_box(0)->add_image(*product_stars[i].get());// same as: catalog->get_box(0)->set_image(*product_stars[0].get(), i); // except that Box::set_image uses insert() rather than push_back(). This is the only difference between Box::add_image and Box::set_image
+        product_stars[i]->set_outline_color(230, 136, 0);// shades = rgb(230, 136, 0) = THE perfect outline color, rgb(179, 106, 0) = looks really bad//product_stars[i]->set_outline_threshold(0.0);
+        catalog->get_current()->add_image(*product_stars[i].get());// same as: catalog->get_current()->set_image(*product_stars[0].get(), i); // except that Box::set_image uses insert() rather than push_back(). This is the only difference between Box::add_image and Box::set_image
         if(i == 0) { 
-            product_stars[0]->set_relative_position(product_name_label.get_relative_x(), product_name_label.get_relative_y() + 10/*product_name_label.get_height()*/ + 10);//5); // set position of the first star (other stars will follow it)
+            product_stars[0]->set_relative_position(product_name_label.get_relative_x(), product_name_label.get_relative_y() + product_name_label.get_height() + 10);//5); // set position of the first star (other stars will follow it)
             continue; // skip the first star for now
         }
-        int star_widths = (product_stars[i]->is_resized()) ? product_stars[i]->get_width_scaled() : product_stars[i]->get_width();//std::cout << "product_star_widths[" << i << "]: " << star_widths << std::endl;
-        product_stars[i]->set_relative_position(product_stars[i - 1]->get_relative_x() + star_widths + 1, product_stars[0]->get_relative_y()); // same y_rel_pos as first star
+        // update positions of stars
+        product_stars[i]->set_relative_position(product_stars[i - 1]->get_relative_x() + product_stars[i - 1]->get_width_scaled() + 1, product_stars[0]->get_relative_y()); // same y_rel_pos as first star
     }
     // STARS LABEL (FROM THE CALCULATED AVERAGE STARS)
     Label product_reviews_label("(0 ratings)");//(star_ratings > 0) ? std::to_string(star_ratings)+" ratings" : "No ratings yet");
     product_reviews_label.set_color(16, 16, 16, 1.0);
-    int last_star_width = (product_stars[product_stars.size() - 1]->is_resized()) ? product_stars[product_stars.size() - 1]->get_width_scaled() : product_stars[product_stars.size() - 1]->get_width();
-    int star_height = (product_stars[0]->is_resized()) ? product_stars[0]->get_height_scaled() : product_stars[0]->get_height();//std::cout << "star_height: " << star_height << std::endl;
-    product_reviews_label.set_relative_position(product_stars[product_stars.size() - 1]->get_relative_x() + last_star_width + 1, product_stars[product_stars.size() - 1]->get_relative_y() + (star_height - 10/*product_reviews_label.get_height()*/) / 2);
-    catalog->get_box(0)->add_gui(product_reviews_label);
+    //int last_star_width = (product_stars[product_stars.size() - 1]->is_resized()) ? product_stars[product_stars.size() - 1]->get_width_scaled() : product_stars[product_stars.size() - 1]->get_width();
+    //int star_height = (product_stars[0]->is_resized()) ? product_stars[0]->get_height_scaled() : product_stars[0]->get_height();//std::cout << "star_height: " << star_height << std::endl;
+    product_reviews_label.set_relative_position(product_stars[product_stars.size() - 1]->get_relative_x() + product_stars[product_stars.size() - 1]->get_width_scaled() + 1, product_stars[product_stars.size() - 1]->get_relative_y() + (product_stars[0]->get_height_scaled() - product_reviews_label.get_height()) / 2);
+    catalog->get_current()->add_gui(product_reviews_label);
     // PRICE LABEL
-    Label price_label("$" + String::to_string_with_precision(0.00, 2));
+    Label price_label("$" + String::to_string_with_precision(0.00, 2)); // size should be made large to emphasize price
     price_label.set_color(32, 32, 32, 1.0);
-    price_label.set_relative_position(product_stars[0]->get_relative_x(), product_stars[0]->get_relative_y() + star_height + 10);
-    catalog->get_box(0)->add_gui(price_label);//add_gui//add_label    
+    price_label.set_scale(1.2, 1.2);
+    price_label.set_relative_position(product_stars[0]->get_relative_x(), product_stars[0]->get_relative_y() + product_stars[0]->get_height_scaled() + 10);
+    catalog->get_current()->add_gui(price_label);//add_gui//add_label    
     // COLOR PALETTE - UP TO 12
     // TYPE/MODEL, SIZE COMBOBOX
     // PACKAGING/QUANTITY - SPINNER BOX - THIS SHOULD BE FOR WHEN CHECKING OUT AS WELL
@@ -672,36 +687,53 @@ int main() {
     //quantity_spinner.set_separator(true);
     //quantity_spinner.set_separator_size(5);        
     quantity_spinner.set_label(quantity_spinner_label);
-    catalog->get_box(0)->add_gui(quantity_spinner);
+    catalog->get_current()->add_gui(quantity_spinner);
     // TRASHCAN ICON + BUTTON - FOR REMOVING ITEM FROM CART (this will only be shown in the cart menu, not in the catalogue)
     // INFO ICON - TO GET DETAILS ABOUT A PRODUCT (place at left side of box opposite to heart icon)
-    //info_icon.set_color(30, 79, 151);//151 or 255
-    // HEART ICON
+    Image info_icon(Icon::get["info_colored"]->get_data(), 64, 64, 1, 4);
+    info_icon.resize(24, 24);//(32, 32);
+    //info_icon.set_color(30, 80, 155); //155 or 255
+    info_icon.set_relative_position(10, 10);
+    catalog->get_current()->add_image(info_icon);
+    // HEART ICON + BUTTON (FAVORITES / WISHLIST) - add white outline to button 
     Image heart_icon(Icon::get["heart"]->get_data(), 64, 64, 1, 4); // CRASHES HERE
     heart_icon.set_color(128, 128, 128, 1.0);//(224, 93, 93, 1.0);
     heart_icon.resize(24, 24);//(16, 16);
     heart_icon.set_alignment("center");
-    // HEART BUTTON (FAVORITES / WISHLIST) - add white outline to button
     /*Button*/Box favorite_button; // place at top right of box
     favorite_button.set_size(32, 32);//(24, 24);
-    favorite_button.set_color(catalog->get_box(0)->get_color());//(128, 128, 128, 0.5);//1.0);//(255, 255, 255, 1.0)
-    favorite_button.set_outline(true);//favorite_button.set_outline_color(255, 255, 255, 1.0);
-    favorite_button.set_relative_position(catalog->get_box(0)->get_width() - favorite_button.get_width() - 10, 10);
+    favorite_button.set_color(catalog->get_current()->get_color());//(128, 128, 128, 0.5);//1.0);//(255, 255, 255, 1.0)
+    favorite_button.set_outline(true);
+    favorite_button.set_outline_color(255, 255, 255, 1.0);
+    favorite_button.set_relative_position(catalog->get_current()->get_width() - favorite_button.get_width() - 10, 10);
     favorite_button.set_image(heart_icon);
-    catalog->get_box(0)->add_gui(favorite_button);//catalog->get_box(0)->set_();    
-    // BELL BUTTON - FOR SALES AND DEALS NOTIFICATIONS
+    catalog->get_current()->add_gui(favorite_button);//catalog->get_current()->set_();    
+    // BELL ICON + BUTTON - FOR PRICE-RELATED (SALES AND DEALS) NOTIFICATIONS OR SET REMINDER FOR WHEN ITEM IS BACK IN STOCK
+    Image bell_icon(Icon::get["bell"]->get_data(), 64, 64, 1, 4);
+    bell_icon.set_color(255, 182, 77);
+    bell_icon.resize(24, 24);
+    bell_icon.set_alignment("center");
+    Button notif_button;
+    notif_button.set_size(32, 32);
+    notif_button.set_color(catalog->get_current()->get_color());
+    notif_button.set_outline(true); // white by default
+    notif_button.set_relative_position(favorite_button.get_relative_x() - favorite_button.get_width() - 5, favorite_button.get_relative_y());
+    notif_button.set_image(bell_icon);
+    catalog->get_current()->add_gui(notif_button);
     // ADD TO CART BUTTON
     Button cart_add_button("Add to cart");
-    cart_add_button.set_width(catalog->get_box(0)->get_width());//(200);
+    cart_add_button.set_width(catalog->get_current()->get_width());//(200);
     cart_add_button.set_color(82, 70, 86);//(55, 25, 255);//bluish-purple//(42, 25, 255);//(50, 25, 255);//(30, 30, 255);
-    catalog->get_box(0)->add_gui(cart_add_button);    
+    catalog->get_current()->add_gui(cart_add_button);    
     // place all set_pos() and set_rel_pos() functions in loop for it to be frequently updated in real-time!
     // cart_button position
-    cart_add_button.set_relative_position((catalog->get_box(0)->get_width() - cart_add_button.get_width()) / 2, catalog->get_box(0)->get_height() - cart_add_button.get_height()/* - 10*/); // center x, lower y
+    cart_add_button.set_relative_position((catalog->get_current()->get_width() - cart_add_button.get_width()) / 2, catalog->get_current()->get_height() - cart_add_button.get_height()/* - 10*/); // center x, lower y
     //std::cout << "catalog size: " << catalog->get_size() << std::endl;
-    //std::cout << "catalog box size: " << catalog->get_box(0)->get_size() << std::endl;
+    //std::cout << "catalog box size: " << catalog->get_current()->get_size() << std::endl;
     // qty_spinner position
-    quantity_spinner.set_relative_position((catalog->get_box(0)->/*cart_add_button.*/get_width() / 2) - (quantity_spinner.get_full_width() / 2), catalog->get_box(0)->get_height() - cart_add_button.get_height() - quantity_spinner.get_height() - 10);
+    quantity_spinner.set_relative_position((catalog->get_current()->/*cart_add_button.*/get_width() / 2) - (quantity_spinner.get_full_width() / 2), catalog->get_current()->get_height() - cart_add_button.get_height() - quantity_spinner.get_height() - 10);
+    // TEMP
+    catalog->fetch_inventory();
     // -----------------------------
     // search_bar
     Edit * search_bar = new Edit(); // crashes when drawn for some reason
@@ -772,7 +804,7 @@ int main() {
     //order_button->set_position(user_button->get_x() + user_button->get_width() + 10, 10);
     // login_button
     Button * logout_button = new Button();
-    Image logout_icon(Icon::get["door"]->get_data(), 64, 64, 1, 4);
+    Image logout_icon(Icon::get["open_door"]->get_data(), 64, 64, 1, 4);
     logout_button->set_image(logout_icon);
     logout_button->get_image()->resize(24, 24);
     logout_button->get_image()->set_alignment("center");
@@ -838,22 +870,27 @@ int main() {
     slider->set_position(10, 300);
     //slider->set_value(60);//slider->set_value(2); // value of 2 = ball_x of 4    
     Slider * slider2 = new Slider();
-    slider2->set_value(100);
-    slider2->set_position(10, 325);    
-    slider2->set_range(0, 500);//1000);
+    slider2->set_value(1);//(100);
+    slider2->set_position(10, 450);    
+    slider2->set_range(1, 500);//1000);
+    //--------------------------------
+    Slider * slider3 = new Slider();
+    slider3->set_value(1);
+    slider3->set_position(10, slider2->get_y() + 50);    
+    slider3->set_range(1, 500);//1000);
     // color sliders
     Slider color_slider_r; // red
     color_slider_r.set_foreground_color(255, 0, 0);
     color_slider_r.set_range(0, 255);
-    color_slider_r.set_position(500, 300);
+    color_slider_r.set_position(10, slider3->get_y() + 50);//550);
     Slider color_slider_g; // green
     color_slider_g.set_foreground_color(0, 255, 0);
     color_slider_g.set_range(0, 255);
-    color_slider_g.set_position(500, 350);    
+    color_slider_g.set_position(10, color_slider_r.get_y() + 50);    
     Slider color_slider_b; // blue
     color_slider_b.set_foreground_color(0, 0, 255);
     color_slider_b.set_range(0, 255);
-    color_slider_b.set_position(500, 400);    
+    color_slider_b.set_position(10, color_slider_g.get_y() + 50);    
     ////////////////
     Box * box = new Box();
     box->set_size(100, 50);
@@ -893,6 +930,14 @@ int main() {
     pbar->set_value(20);
     pbar->set_direction(1);
     ////////////////
+    Grid * grid = new Grid();//(5, 1); // rows x columns
+    grid->set_size(200, 100);
+    grid->set_columns(6);
+    grid->set_rows(5);
+    //Image test_image(Icon::get["paid"]->get_data(), 64, 64, 1, 4);
+    //grid->get_block(0, 0)->add_image(test_image);
+    ////////////////
+    ////////////////
     std::cout << "while loop commencing...\n";
     while(window.is_open()) { // main thread
         window.poll_events(); // check for events        
@@ -925,7 +970,7 @@ int main() {
                     message_box.set_text("Welcome to neroshop, " + username, 52, 101, 164);//("You have registered successfully!"); // 52, 101, 164 = tango palette entry 4 (blue)
                     // box text (label)
                     message_box.get_label(0)->set_alignment("none");
-                    message_box.get_label(0)->set_relative_position((message_box.get_width() - message_box.get_label(0)->get_string().length() * 10/*message_box.get_label(0)->get_width()*/) / 2, ((message_box.get_height() - 10/*message_box.get_label()->height()*/) / 2) - 20);                   
+                    message_box.get_label(0)->set_relative_position((message_box.get_width() - message_box.get_label(0)->get_width()) / 2, ((message_box.get_height() - message_box.get_label(0)->get_height()) / 2) - 20);                   
                     // ok button - not being used at the moment
                     // cancel button
                     message_box.get_button(1)->set_text("Close");
@@ -1030,7 +1075,7 @@ int main() {
                     message_box.set_text("Incorrect login credentials. Please, try again", "red"); //neroshop::message_box.center(window.get_client_width(), window.get_client_height());
                     // box text
                     message_box.get_label(0)->set_alignment("none");
-                    message_box.get_label(0)->set_relative_position((message_box.get_width() - message_box.get_label(0)->get_string().length() * 10/*message_box.get_label(0)->get_width()*/) / 2, ((message_box.get_height() - 10/*message_box.get_label()->height()*/) / 2) - 20);
+                    message_box.get_label(0)->set_relative_position((message_box.get_width() - message_box.get_label(0)->get_width()) / 2, ((message_box.get_height() - message_box.get_label(0)->get_height()) / 2) - 20);
                     // box button
                     message_box.get_button(1)->set_text("Close");//("OK");
                     //message_box.get_button(1)->set_color(0, 51, 102, 1.0);                 
@@ -1194,7 +1239,7 @@ int main() {
                     message_box.set_text("wallet has not been uploaded"); //msg_box.get_label()->set_string("  wallet has not been opened");//msg_box.set_width(msg_box.get_label()->get_width()); // update msg_box width based on label's width//message_box.center(window.get_client_width(), window.get_client_height());//msg_box.set_position((window.get_width() / 2) - (msg_box.get_width() / 2), (window.get_height() / 2) - (msg_box.get_height() / 2)); // update msg_box pos since width changed
                     // box text (label)
                     message_box.get_label(0)->set_alignment("none");
-                    message_box.get_label(0)->set_relative_position((message_box.get_width() - message_box.get_label(0)->get_string().length() * 10/*message_box.get_label(0)->get_width()*/) / 2, ((message_box.get_height() - 10/*message_box.get_label()->height()*/) / 2) - 20);//55);                    
+                    message_box.get_label(0)->set_relative_position((message_box.get_width() - message_box.get_label(0)->get_width()) / 2, ((message_box.get_height() - message_box.get_label(0)->get_height()) / 2) - 20);//55);                    
                     // ok button - not being used at the moment
                     // cancel button
                     message_box.get_button(1)->set_text("Close");
@@ -1235,7 +1280,7 @@ int main() {
                     // box_text - center the x
                     message_box.set_text("Please enter your wallet password: ", 0, 0, 0, 1.0);
                     message_box.get_label(0)->set_alignment("none");
-                    message_box.get_label(0)->set_relative_position((message_box.get_width() - message_box.get_label(0)->get_string().length() * 10/*message_box.get_label(0)->get_width()*/) / 2, ((message_box.get_height() - 10/*message_box.get_label()->height()*/) / 2) - 20);//(200−10)÷2 = 95 = (200÷2)−(10÷2) //200=box_ht, 10=label_ht, 95=label_y (centered) // 95 - 20(button_y) = 75
+                    message_box.get_label(0)->set_relative_position((message_box.get_width() - message_box.get_label(0)->get_width()) / 2, ((message_box.get_height() - message_box.get_label(0)->get_height()) / 2) - 20);//(200−10)÷2 = 95 = (200÷2)−(10÷2) //200=box_ht, 10=label_ht, 95=label_y (centered) // 95 - 20(button_y) = 75
                     // box_edit
                     message_box.get_edit(0)->set_focus(true);
                     message_box.get_edit(0)->set_relative_position((message_box.get_width() / 2) - (message_box.get_edit(0)->get_width() / 2) - ((message_box.get_button(2)->get_width() + 10) / 2), message_box.get_height() - message_box.get_edit(0)->get_height() - 20);
@@ -1252,7 +1297,7 @@ int main() {
                     message_box.set_text("wallet not found");
                     // box text (label)
                     message_box.get_label(0)->set_alignment("none");
-                    message_box.get_label(0)->set_relative_position((message_box.get_width() - message_box.get_label(0)->get_string().length() * 10/*message_box.get_label(0)->get_width()*/) / 2, ((message_box.get_height() - 10/*message_box.get_label()->height()*/) / 2) - 20);                   
+                    message_box.get_label(0)->set_relative_position((message_box.get_width() - message_box.get_label(0)->get_width()) / 2, ((message_box.get_height() - message_box.get_label(0)->get_height()) / 2) - 20);                   
                     // ok button - not being used at the moment
                     // cancel button
                     message_box.get_button(1)->set_text("Close");
@@ -1325,7 +1370,7 @@ int main() {
                     // box text (label)                
                     //message_box.set_text("Do you wish to exit the program?");
                     //message_box.get_label(0)->set_alignment("none");
-                    //message_box.get_label(0)->set_relative_position((message_box.get_width() - message_box.get_label(0)->get_string().length() * 10/*message_box.get_label(0)->get_width()*/) / 2, ((message_box.get_height() - 10/*message_box.get_label()->height()*/) / 2) - 20);                   
+                    //message_box.get_label(0)->set_relative_position((message_box.get_width() - message_box.get_label(0)->get_width()) / 2, ((message_box.get_height() - message_box.get_label(0)->get_height()) / 2) - 20);                   
                     /*// ok button - will be used now
                     int button_gap = 10;
                     message_box.get_button(0)->set_relative_position(
@@ -1373,14 +1418,14 @@ int main() {
             //sync_label.draw(0 + 20, window.get_client_height() - 20);
             //sync_box->draw(sync_label.get_x() + sync_label.get_width(), sync_label.get_y());
             // temp ----------------------------------------------
-            slider->draw();
+            ////slider->draw();
             ////slider2->draw();
             //Renderer::draw_spinner(100, 100, 40, 20, 0, 1, 1, 255, 255, 255, 1.0, 0, 
             //    20, Vector4(64, 64, 64, 1.0), // button_width, button_color
             //    8, Vector4(0, 255, 255, 1.0), 2.0,         // shape_size, shape_color, shape_depth 
             //    false, 5); // separator, separator_gap
             ////spinner->set_height((int)slider->get_value());//spinner->set_style(0);
-            message_box.get_box()->set_radius(slider->get_value());
+            ////message_box.get_box()->set_radius(slider->get_value());
             ////login_button->set_radius(slider->get_value());
             ////save_toggle->set_radius(slider->get_value());
             //std::cout << "save_toggle radius: " << save_toggle->get_radius() << std::endl;
@@ -1393,9 +1438,14 @@ int main() {
             //message_box.get_box()->set_gradient_color(0, 255, 255, 1.0); // cyan
             //message_box.get_box()->set_gradient_value(spinner->get_value());
             //-------------------------
+            // set gap between each grid block
+            grid->set_gap(5);
+            // center grid at window
+            grid->set_position((window.get_client_width() / 2) - (grid->get_full_width() / 2), (window.get_client_height() / 2) - (grid->get_full_height() / 2));            
+            ////grid->draw();
             ////spinner->draw();
-            box->set_radius(slider->get_value());
-            box->draw();
+            //box->set_radius(slider->get_value());
+            ////box->draw();
             //box->set_radius(round(slider->get_value()));
             ////checkbox->set_size(round(slider->get_value()), round(slider->get_value()));
             ////checkbox->draw();
@@ -1432,7 +1482,7 @@ int main() {
             // monero icon
             monero_icon->draw();
             // date and time
-            date_display.set_position(window.get_client_width() - date_display.get_width(), window.get_client_height() - date_display.get_height());
+            date_display.set_position(window.get_client_width() - date_display.get_width() - 10, window.get_client_height() - date_display.get_height() - 10);
             date_display.set_string(Validator::get_date("%Y-%m-%d  %l:%M:%S %p"));
             date_display.draw();
             // TEMP---------------------------
@@ -1470,7 +1520,7 @@ int main() {
             }
             if(Mouse::is_over(search_button->get_rect())) search_button->get_image()->set_color(242, 100, 17);
             else search_button->get_image()->set_color(default_icon_color);
-            //if(Mouse::is_over(settings_icon->get_rect())) settings_icon->get_image()->set_color(242, 100, 17); else settings_icon->get_image()->set_color(default_icon_color);
+            //if(Mouse::is_over(config_icon->get_rect())) config_icon->get_image()->set_color(242, 100, 17); else config_icon->get_image()->set_color(default_icon_color);
             if(Mouse::is_over(user_button->get_rect())) user_button->get_image()->set_color(242, 100, 17);
             else user_button->get_image()->set_color(default_icon_color);
             if(Mouse::is_over(order_button->get_rect())) order_button->get_image()->set_color(242, 100, 17);
@@ -1529,7 +1579,7 @@ int main() {
             //cart_button->get_label()->set_string(std::to_string(Cart::get_singleton()->get_total_quantity()));
             if(user->is_registered()) cart_button->get_label()->set_string(std::to_string(Cart::get_singleton()->get_total_quantity(user->get_id())));
             //cart_button->get_label()->set_color(); // (cart_qty >= 100) = red(255, 0, 0), (cart_qty >= (100 / 2)) = yellow(255,191,0), (cart_qty <= ((100 / 2) - 1)) = white);
-            cart_button->get_label()->set_relative_position(20, (cart_button->get_height() - 10/*cart_label.get_height()*/) / 2);
+            cart_button->get_label()->set_relative_position(20, (cart_button->get_height() - cart_label.get_height()) / 2);
             cart_button->get_image()->set_relative_position(cart_label.get_relative_x() + (cart_label.get_string().length() * 10) + 10, (cart_button->get_height() - cart_icon.get_height_scaled()) / 2);// "(cart_label.get_string().length() * 10)" could be replaced with the entire label's width
             cart_button->draw(window.get_client_width() - cart_button->get_width() - 20, 20);//(search_bar->get_x() + (search_bar->get_width() + search_button->get_width()/* + 1*/) + 20, 20);//std::cout << "cart_button pos: " << cart_button->get_position() << std::endl;//600 + 20
             /////////////////////////////////////
@@ -1555,7 +1605,8 @@ int main() {
             color_slider_r.draw(); // temp
             color_slider_g.draw(); // temp
             color_slider_b.draw(); // temp
-            slider2->draw(slider2->get_x(), 500);// temp
+            slider2->draw();// temp
+            slider3->draw(slider2->get_x(), slider2->get_y() + 50);
             //->set_color(color_slider_r.get_value(), color_slider_g.get_value(), color_slider_b.get_value());
             cart_add_button.set_color(color_slider_r.get_value(), color_slider_g.get_value(), color_slider_b.get_value());
             ////catalog->set_width(slider2->get_value() * 10); // temp
@@ -1565,8 +1616,15 @@ int main() {
             product_stars[3]->set_outline_thickness(slider2->get_value() / 100.0f);
             product_stars[4]->set_outline_thickness(slider2->get_value() / 100.0f);
             ////std::cout << "slider2 value: " << slider2->get_value() / 100.0f << std::endl;
+            // invalid pointer error here ...
+            ////catalog->get_grid()->set_rows((int)slider2->get_value());
+            ////catalog->get_grid()->set_columns((int)slider3->get_value());
+            // adjust grid box sizes
+            ////catalog->set_box_size((int)slider2->get_value(), (int)slider3->get_value());
+            ////std::cout << "catalog box_size: " << catalog->get_grid()->get_size() << std::endl;
             /////////////////////////////////////
-            catalog->draw(50, 90);                        
+            ////catalog->center(window.get_client_width(), window.get_client_height());
+            catalog->draw(window.get_client_width() - catalog->get_width() - 50, 90);//(50, 90);
             /////////////////////////////////////
             ////search_suggestion_list->draw(search_bar->get_x(), search_bar->get_y() + search_bar->get_height());
             //std::cout << "search_bar cursor position: " << search_bar->get_cursor_position() << std::endl;

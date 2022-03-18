@@ -97,6 +97,7 @@ class GUI: public Entity
 	    static bool has_shader();
 	//protected:
 	    void set_scale(double sx, double sy);           static int set_scale(lua_State *L);
+		void set_scale(const Vector2& scale_factor);
 		Vector2 get_scale()const;                       static int get_scale(lua_State *L);
 		void set_angle(double angle);                   static int set_angle(lua_State *L);
 		double get_angle()const;                        static int get_angle(lua_State *L);

@@ -65,9 +65,9 @@ void Progressbar::draw()
 			);
 		if(!label.get()) return;// as long as label is not nullptr. Does not matter if text is empty, still need to set proper x and y positions
         // set label_position relative to progressbar_position
-		if(label->get_alignment() == "left"  ) {label->set_relative_position(0                                     , (get_height() - 10/*label->get_height()*/) / 2);} // keep label_y positioned at center of progressbar at all times
-		if(label->get_alignment() == "center") {label->set_relative_position((get_width() - label->get_width()) / 2, (get_height() - 10/*label->get_height()*/) / 2);} // keep label_y positioned at center of progressbar at all times						
-		if(label->get_alignment() == "right" ) {label->set_relative_position( get_width() - label->get_width()     , (get_height() - 10/*label->get_height()*/) / 2);} // keep label_y positioned at center of progressbar at all times	
+		if(label->get_alignment() == "left"  ) {label->set_relative_position(0                                     , (get_height() - label->get_height()) / 2);} // keep label_y positioned at center of progressbar at all times
+		if(label->get_alignment() == "center") {label->set_relative_position((get_width() - label->get_width()) / 2, (get_height() - label->get_height()) / 2);} // keep label_y positioned at center of progressbar at all times						
+		if(label->get_alignment() == "right" ) {label->set_relative_position( get_width() - label->get_width()     , (get_height() - label->get_height()) / 2);} // keep label_y positioned at center of progressbar at all times	
         if(label->get_alignment() == "none"  ) {}
         // draw label manually since there is only one
         label->draw();//Renderer::draw_label(get_text(), x, y, angle, 0.5, 0.5, get_label()->get_font()->get_data(), get_label()->get_color().x, get_label()->get_color().y, get_label()->get_color().z, get_label()->get_color().w);

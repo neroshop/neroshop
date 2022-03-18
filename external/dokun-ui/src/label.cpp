@@ -649,8 +649,10 @@ int dokun::Label::set_size(lua_State * L)
 // override (getters)
 int dokun::Label::get_width()const
 {
-	if(font) return font->get_width(this->string) * get_scale().x; // if font is set, return width of all characters combined, whether scaled or not
-	return width * get_scale().x; // return width whether scaled or not
+	/*if(font) return font->get_width(this->string) * get_scale().x; // if font is set, return width of all characters combined, whether scaled or not
+	return width * get_scale().x;*/ // return width whether scaled or not
+    // width is not accurate, so I have to use 10 as the width for each character in a monospaced font
+    return (string.length() * 10) * get_scale().x;
 }
 int dokun::Label::get_width(lua_State * L)
 {
@@ -668,8 +670,10 @@ int dokun::Label::get_width(lua_State * L)
 /////////////
 int dokun::Label::get_height()const
 {
-	if(font) return font->get_height(this->string) * get_scale().y; // if font is set, return largest glyph height, whether scaled or not
-	return height * get_scale().y; // return height whether scaled or not
+	/*if(font) return font->get_height(this->string) * get_scale().y; // if font is set, return largest glyph height, whether scaled or not
+	return height * get_scale().y;*/ // return height whether scaled or not
+    // height is not accurate, so I have to use 10 as the height for monospaced fonts
+    return 10 * get_scale().y;
 }
 int dokun::Label::get_height(lua_State * L)
 {
@@ -764,20 +768,20 @@ void dokun::Label::on_parent() {
 	// so using "set_position" on a child GUI makes no sense
 	set_position(get_parent()->get_x() + get_relative_x(), get_parent()->get_y() + get_relative_y());
 	// make sure child does not go past parent's x bounds - success!
-	if(get_relative_x() >= (get_parent()->get_width() - (string.length() * 10)/*get_width()*/)) { 
-	    set_position(get_parent()->get_x() + (get_parent()->get_width() - (string.length() * 10)/*get_width()*/), get_y()); 
+	if(get_relative_x() >= (get_parent()->get_width() - get_width())) { 
+	    set_position(get_parent()->get_x() + (get_parent()->get_width() - get_width()), get_y()); 
 	    // fix the incorrect relative x position
 	    // set the relative position to the parent_width - child_width
-	    set_relative_position(get_parent()->get_width() - (string.length() * 10)/*get_width()*/, get_relative_y());	
+	    set_relative_position(get_parent()->get_width() - get_width(), get_relative_y());	
 	}
 	if(get_x() <= get_parent()->get_x()) set_position(get_parent()->get_x(), get_y());// child_x = parent->get_x() + get_relative_x()
 	// make sure child does not go past parent's y bounds - success!
 	if(get_y() <= get_parent()->get_y()) set_position(get_x(), get_parent()->get_y());// up// child_y = parent->get_y() + get_relative_y() 
-	if(get_relative_y() >= (get_parent()->get_height() - 10/*get_height()*/)) {
-	    set_position(get_x(), get_parent()->get_y() + (get_parent()->get_height() - 10/*get_height()*/));
+	if(get_relative_y() >= (get_parent()->get_height() - get_height())) {
+	    set_position(get_x(), get_parent()->get_y() + (get_parent()->get_height() - get_height()));
 	    // fix the incorrect relative y position
 	    // set the relative position to the parent_height - child_height
-	    set_relative_position(get_relative_x(), (get_parent()->get_height() - 10/*get_height()*/));
+	    set_relative_position(get_relative_x(), (get_parent()->get_height() - get_height()));
 	}// down//{std::cout <<"child going outside parent y bounds!\n";}//{set_position(get_x(), parent->get_y());} // REMINDER: shrink size of button and retest this function again	    
 #ifdef DOKUN_DEBUG0	    
 	std::cout << "label_x: " << get_x() << std::endl;

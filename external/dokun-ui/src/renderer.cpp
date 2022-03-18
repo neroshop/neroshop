@@ -708,17 +708,17 @@ void Renderer::draw_box(int x, int y, int width, int height, float angle, float 
 	// What is drawn last should appear on top, according to openGL, but we want to HIDE the diagonal line shown by the outline, so outline should appear at the bottom
 	// Modern OpenGL defines only points, lines or triangles; there are no 4-vertex primitive types, so you can't draw a quad without triangles, which is why you see the diagonal line across the box
 	// Draw outline (first: at bottom of box, so we can hide the diagonal lines) // Think of the outline as the skeleton of a box
-	if(outline)
-	{
-	// restore gradient color (so outline does not copy gradient of close_button, in the case of close_button being the only button in the title_bar)
-	// outline, box : gradient
-	////shader->set_float("gradient.color", (gradient_color.x/255.0), (gradient_color.y/255.0), (gradient_color.z/255.0), gradient_color.w); // color1 will be a shade (bottom)
-	// outline : color
-    ////shader->set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);//glEnable(GL_LINE_SMOOTH);
-	glLineWidth(outline_width); // outline_width
-	glBindVertexArray(box_vertex_array_obj); // use same vao data as box but this time in a line loop
-        glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);	
+	if(outline) {
+	    // restore gradient color (so outline does not copy gradient of close_button, in the case of close_button being the only button in the title_bar)
+	    // outline, box : gradient
+	    ////shader->set_float("gradient.color", (gradient_color.x/255.0), (gradient_color.y/255.0), (gradient_color.z/255.0), gradient_color.w); // color1 will be a shade (bottom)
+	    // outline : color
+	    //shader->set_float("radius", radius); // set rounded_corner
+        shader->set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);//glEnable(GL_LINE_SMOOTH);
+	    glLineWidth(outline_width); // outline_width
+	    glBindVertexArray(box_vertex_array_obj); // use same vao data as box but this time in a line loop
+            glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
+	    glBindVertexArray(0);	
 	}
 	// Draw box (last: on top of outline so diagonal lines do not show up)
 	// box : size (I don't think size is even used in the shader :O)

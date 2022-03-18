@@ -12,26 +12,32 @@ public:
     ~Icon();
     static bool load_all(); // loads all images
 private:
-    static bool load_monero();
-    static bool load_settings(); // cog//settings
+    static bool load_monero(); // getmonero.org
+    // icons8    
     static bool load_cart(); // cart
     static bool load_search(); // search
     static bool load_user(); // user
     static bool load_heart(); // heart (favorite)
     static bool load_star();
-    static bool load_circle(); // circle, circle_outline
-    static bool load_speaker(); // volume_up, volume_down
-    static bool load_bookmark();
+    static bool load_circle(); // circle, circle_outline    
     static bool load_trash();
     static bool load_order();
-    static bool load_flag(); // flag, flag_outline (report)
-    static bool load_numbers();
     static bool load_upload();
-    static bool load_login();
-    static bool load_console();
+    static bool load_console(); // terminal or daemon
     static bool load_wallet();
     static bool load_door();
+    static bool load_info();
+    static bool load_bell(); // notifications
+    static bool load_config();
+    static bool load_paid(); // verified_purchase
     //static bool load_();
+    // not from icons8 yet
+    static bool load_settings(); // cog//settings
+    static bool load_speaker(); // volume_up, volume_down
+    static bool load_bookmark();    
+    static bool load_flag();  // flag, flag_outline (report)
+    static bool load_numbers();       
+    static bool load_login();
 public:    
     static std::map<std::string, std::shared_ptr<Image>> get; // a map is basically a std::vector of std::pairs // same as: static std::vector<std::pair<std::string, std::shared_ptr<Image>>> get;
 }; 

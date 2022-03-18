@@ -79,9 +79,9 @@ void Spinner::draw()
     if(!label) return;
     // Increase spinner-center size if necessary (when number gets too big and spinner is not wide enough to hold number)
     // EDIT: User must adjust the width manually
-    //if((label->get_string().length() * 10) > get_width()) {
+    //if(label->get_width() > get_width()) {
     //    std::cout << "number size has exceeded spinner width\n";
-    //    set_width(label->get_string().length() * 10);
+    //    set_width(label->get_width());
     //}
     // std::cout.precision(); // default precision is probably 6
     // format the value
@@ -89,9 +89,9 @@ void Spinner::draw()
     // Update label string (value)
     label->set_string(value_str);
     // set label_position relative to slider_position - the "10" represents each glyph's width/height in the label
-    if(label->get_alignment() == "left"  ) label->set_relative_position(0, (get_height() / 2) - (10 / 2)); // left will remain 0, y will be centered
-	if(label->get_alignment() == "center") label->set_relative_position((get_width() / 2) - ((10 * label->get_string().length()) / 2), (get_height() - 10) / 2); // both x and y will be centered; adjusted based on label string's length
-	if(label->get_alignment() == "right" ) label->set_relative_position(get_width() - (10 * label->get_string().length()), (get_height() / 2) - (10 / 2)); // right will be move to the far right (width), y will be centered; adjusted based on label string's length
+    if(label->get_alignment() == "left"  ) label->set_relative_position(0, (get_height() / 2) - (label->get_height() / 2)); // left will remain 0, y will be centered
+	if(label->get_alignment() == "center") label->set_relative_position((get_width() / 2) - (label->get_width() / 2), (get_height() - label->get_height()) / 2); // both x and y will be centered; adjusted based on label string's length
+	if(label->get_alignment() == "right" ) label->set_relative_position(get_width() - label->get_width(), (get_height() / 2) - (label->get_height() / 2)); // right will be move to the far right (width), y will be centered; adjusted based on label string's length
 	if(label->get_alignment() == "none"  ) {} // nothing is changed here 
 	// Draw label
     label->draw();

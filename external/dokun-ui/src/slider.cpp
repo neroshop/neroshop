@@ -72,9 +72,9 @@ void Slider::draw()
 	// Label
 	if(!label) return;
     // set label_position relative to progressbar_position
-    if(label->get_alignment() == "left"  ) label->set_relative_position(0, (get_height() / 2) - (10 / 2)); // left will remain 0, y will be centered
-	if(label->get_alignment() == "center") label->set_relative_position((get_width() / 2) - ((10 * label->get_string().length()) / 2), (get_height() / 2) - (10 / 2)); // both x and y will be centered; adjusted based on label string's length
-	if(label->get_alignment() == "right" ) label->set_relative_position(get_width() - (10 * label->get_string().length()), (get_height() / 2) - (10 / 2)); // right will be move to the far right (width), y will be centered; adjusted based on label string's length
+    if(label->get_alignment() == "left"  ) label->set_relative_position(0, (get_height() / 2) - (label->get_height() / 2)); // left will remain 0, y will be centered
+	if(label->get_alignment() == "center") label->set_relative_position((get_width() / 2) - (label->get_width() / 2), (get_height() / 2) - (label->get_height() / 2)); // both x and y will be centered; adjusted based on label string's length
+	if(label->get_alignment() == "right" ) label->set_relative_position(get_width() - label->get_width(), (get_height() / 2) - (label->get_height() / 2)); // right will be move to the far right (width), y will be centered; adjusted based on label string's length
 	if(label->get_alignment() == "none"  ) {} // nothing is changed here
     // update label string as the slider's value changes
     label->set_string(String::to_string_with_precision(value, decimals));

@@ -40,6 +40,7 @@ Button::Button(int x, int y, int width, int height) : Button()
 Button::Button(const std::string& text) : Button()
 {
 	label = new dokun::Label(text); // since we are creating a new button with a text, it will need an initialized label
+	label->set_parent(*this);
 	label->set_alignment("center"); // buttons should center labels by default or nah? this is assuming that the button contains only a label and no image - seems reasonable to me ¯\_(•‿•)_/¯
 }
 /////////////
@@ -47,6 +48,7 @@ Button::Button(const std::string& text, int x, int y) : Button()
 {
 	set_position(x, y);
 	label = new dokun::Label(text);
+	label->set_parent(*this);
 	label->set_alignment("center"); // buttons should center labels by default or nah?
 }
 /////////////
@@ -56,6 +58,7 @@ Button::Button(const std::string& text, int x, int y, int width, int height) : B
 	set_width(width);
 	set_height(height);
 	label = new dokun::Label(text);
+	label->set_parent(*this);
 	label->set_alignment("center"); // buttons should center labels by default or nah?
 }
 /////////////
@@ -112,11 +115,10 @@ void Button::draw()
 		// Draw text  (over button)
 		if(label != nullptr)
 		{
-		    if(label->get_alignment() == "left"  ) { label->set_relative_position(0                                     , (get_height() - 10/*label->get_height()*/) / 2); } // keep label_y centered always
-			if(label->get_alignment() == "center") { label->set_relative_position((get_width() - label->get_string().length() * 10/*label->get_width()*/) / 2, (get_height() - 10/*label->get_height()*/) / 2); } // keep label_y centered always					
-			if(label->get_alignment() == "right" ) { label->set_relative_position(get_width() - label->get_string().length() * 10/*label->get_width()*/, (get_height() - 10/*label->get_height()*/) / 2); } // keep label_y centered always	
+		    if(label->get_alignment() == "left"  ) { label->set_relative_position(0, (get_height() - label->get_height()) / 2); } // keep label_y centered always
+			if(label->get_alignment() == "center") { label->set_relative_position((get_width() - label->get_width()) / 2, (get_height() - label->get_height()) / 2); } // keep label_y centered always					
+			if(label->get_alignment() == "right" ) { label->set_relative_position(get_width() - label->get_width(), (get_height() - label->get_height()) / 2); } // keep label_y centered always	
             if(label->get_alignment() == "none"  ) {} // with this you are free to set the label's relative position to whatever you want  // default - relative_position will always be (0, 0) unless you change the alignment
-            label->set_position(get_x() + label->get_relative_x(), get_y() + label->get_relative_y()); // set actual position
 		    // draw label manually since there is only one
 		    label->draw();
 		}

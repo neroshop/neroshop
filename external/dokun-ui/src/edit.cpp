@@ -1017,7 +1017,7 @@ void Edit::on_mouse_press()
 		        int start = get_capacity() * splits_count; // increase by capacity(50) every n parts
 		        int characters_count = character_data.size() - start; // number of characters being drawn at a time      
                 // CONVERT CURSOR COORDINATES TO FULL_CHARACTER_LENGTH COORDINATES
-                // start_x = (character_data.size()*10) - (characters_count*10)
+                // start_x = (character_data.size()*label->get_height()) - (characters_count*label->get_height())
                 //std::cout << "mouse pressed at (" << (start * cursor_space) + rounded << ")(using start [of new split])" << std::endl;
                 //std::cout << "mouse pressed at (" << (character_data.size() * cursor_space) - (characters_count * cursor_space) + rounded << ")(using character_data.size - character_count)" << std::endl;
                 ////////////////////////////
@@ -1064,7 +1064,7 @@ void Edit::on_key_press()
 		//char key = static_cast<char>(dokun::Keyboard::key);
 		if(dokun::Keyboard::is_pressed(key))
 		{
-		    //if(isascii(key)) {  set_text(get_text() + std::to_string(int(key))); set_cursor_x(cursor_x + 10); return; }
+		    //if(isascii(key)) {  set_text(get_text() + std::to_string(int(key))); set_cursor_x(cursor_x + cursor_space); return; }
 			// number or letter or punctuation or space
 			if(isalnum(key) || ispunct(key) || isspace(key))
 			{
@@ -1138,7 +1138,7 @@ void Edit::on_key_press()
                     if(boundless_cursor_x >= (character_data.size() * cursor_space)) boundless_cursor_x = character_data.size() * cursor_space;
                     // make sure the cursor does not go past the edit // multiple splits 
                     ////cursor_x = fabs((get_width() * splits_count) - boundless_cursor_x);
-		            // if boundless_cursor_x exceeds (capacity*10), set cursor_x to width(500)
+		            // if boundless_cursor_x exceeds (capacity*cursor_space), set cursor_x to width(500)
 		            // if you want to insert a character in the middle of text then cursor_x must stay still and NOT move at all
 		            //////////////////////////////
 		            //std::cout << DOKUN_UI_TAG "\033[0;33mCapacity (" <<  get_capacity() << ") has been surpassed by text\033[0m" << std::endl;
@@ -1180,7 +1180,7 @@ void Edit::on_key_press()
 		            ////////////////////////////
 		            // print cursor_x and boundless_cursor_x
 		            std::cout << "cursor_x (current): " << cursor_x << std::endl;
-		            std::cout << "boundless_cursor_x (current): " << boundless_cursor_x << " (cursor_x(0) = starting_index * 10)" << std::endl;
+		            std::cout << "boundless_cursor_x (current): " << boundless_cursor_x << " (cursor_x(0) = starting_index * cursor_space)" << std::endl;
 			        return; // now secret string works :D
 			    }
 			}

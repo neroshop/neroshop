@@ -729,8 +729,8 @@ int dokun::Engine::reg(lua_State *L)
 	Script::function(L, "Grid", "new"       , Grid::grid_new);
 	Script::function(L, "Grid", "draw"      , Grid::draw);
 	Script::function(L, "Grid", "update"    , Grid::update);
-	Script::function(L, "Grid", "set_row"   , Grid::set_row);
-	Script::function(L, "Grid", "set_column", Grid::set_column);
+	Script::function(L, "Grid", "set_row"   , Grid::set_rows);
+	Script::function(L, "Grid", "set_column", Grid::set_columns);
 	//Script::function(L, "Grid", ""        , Grid::);
 	// font -----------------------------------------------------------
 	Script::table   (L, "Font"                          );

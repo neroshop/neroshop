@@ -302,9 +302,9 @@ void Box::draw_box() { // other boxes: list, grid
                 if(title_bar_label) // if "title_bar_label" is not nullptr
                 {
                     // set title_bar_label alignment and position to title_bar_position + title_bar_label_position
-			        if(title_bar_label->get_alignment() == "left"  ) { title_bar_label->set_relative_position(0 + title_bar_horizontal_padding                                                      , (get_title_bar_size().y - 10/*title_bar_label->get_height()*/) / 2); } // the 10 here, is used in place of the label's height (for more accurate results) // keep y positioned at center of titlebar at all times
-                    if(title_bar_label->get_alignment() == "center") { title_bar_label->set_relative_position((get_title_bar_size().x - title_bar_label->get_width()) / 2                           , (get_title_bar_size().y - 10/*title_bar_label->get_height()*/) / 2); } // the 10 here, is used in place of the label's height (for more accurate results) // keep y positioned at center of titlebar at all times			
-                    if(title_bar_label->get_alignment() == "right" ) { title_bar_label->set_relative_position((get_title_bar_size().x - title_bar_label->get_width()) - title_bar_horizontal_padding, (get_title_bar_size().y - 10/*title_bar_label->get_height()*/) / 2); } // the 10 here, is used in place of the label's height (for more accurate results) // keep y positioned at center of titlebar at all times
+			        if(title_bar_label->get_alignment() == "left"  ) { title_bar_label->set_relative_position(0 + title_bar_horizontal_padding                                                      , (get_title_bar_size().y - title_bar_label->get_height()) / 2); } // the 10 here, is used in place of the label's height (for more accurate results) // keep y positioned at center of titlebar at all times
+                    if(title_bar_label->get_alignment() == "center") { title_bar_label->set_relative_position((get_title_bar_size().x - title_bar_label->get_width()) / 2                           , (get_title_bar_size().y - title_bar_label->get_height()) / 2); } // the 10 here, is used in place of the label's height (for more accurate results) // keep y positioned at center of titlebar at all times			
+                    if(title_bar_label->get_alignment() == "right" ) { title_bar_label->set_relative_position((get_title_bar_size().x - title_bar_label->get_width()) - title_bar_horizontal_padding, (get_title_bar_size().y - title_bar_label->get_height()) / 2); } // the 10 here, is used in place of the label's height (for more accurate results) // keep y positioned at center of titlebar at all times
                     if(title_bar_label->get_alignment() == "none"  ) {} // default
                     title_bar_label->set_position(get_title_bar_position().x + title_bar_label->get_relative_x(), get_title_bar_position().y + title_bar_label->get_relative_y());
                     // and finally, draw the title_bar_label (be sure title_bar_label string is not empty)
@@ -352,11 +352,11 @@ void Box::draw_box() { // other boxes: list, grid
 	    for(auto guis : child_list) { 
 	        if(!guis.get()) continue; // skip nullptrs
 			// Get labels then set relative positions based on alignment
-			if(dynamic_cast<dokun::Label *>(guis.get())->is_label()) { 
-			    dokun::Label * labels = static_cast<dokun::Label *>(guis.get());//std::cout << "drawing label " << Factory::get_gui_factory()->get_location(labels) << " inside box .." << std::endl;
+			if(std::dynamic_pointer_cast<dokun::Label>(guis)->is_label()) { //if(dynamic_cast<dokun::Label *>(guis.get())->is_label()) { 
+			    std::shared_ptr<dokun::Label> labels = std::static_pointer_cast<dokun::Label>(guis);//dokun::Label * labels = static_cast<dokun::Label *>(guis.get());//std::cout << "drawing label " << Factory::get_gui_factory()->get_location(labels.get()) << " inside box .." << std::endl;
 		        if(labels->get_alignment() == "left"  ) { labels->set_relative_position(0, 0); }
-				if(labels->get_alignment() == "center") { labels->set_relative_position((get_width() - labels->get_string().length() * 10/*labels->get_width()*/) / 2, (get_height() - 10/*labels->get_height()*/) / 2); }						
-				if(labels->get_alignment() == "right" ) { labels->set_relative_position((get_width() - labels->get_string().length() * 10/*labels->get_width()*/), 0); }	
+				if(labels->get_alignment() == "center") { labels->set_relative_position((get_width() - labels->get_width()) / 2, (get_height() - labels->get_height()) / 2); }						
+				if(labels->get_alignment() == "right" ) { labels->set_relative_position((get_width() - labels->get_width()), 0); }	
                 if(labels->get_alignment() == "none"  ) {} // default - with this you are free to set the label's relative position to whatever you want // relative_position will always be (0, 0) unless you change it    
                 // No need to set the label's position manually since GUI::on_draw automatically keeps child position within parent's bounds
 			}
@@ -379,9 +379,9 @@ void Box::draw_tooltip() {
         dokun::Label * label = label_list[0].get();
         //----------------------------------
         // set label's alignment and position relative to the Tooltip (Box)                     // 10 is the space between the text and the Box's edge
-		        if(label->get_alignment() == "left"  ) { label->set_relative_position(0 + 10                                , 0 + 10); }
+		        if(label->get_alignment() == "left"  ) { label->set_relative_position(0 + 10, 0 + 10); }
 				if(label->get_alignment() == "center") { label->set_relative_position((get_width() - label->get_width()) / 2, (get_height() - label->get_height()) / 2); }
-				if(label->get_alignment() == "right" ) { label->set_relative_position((get_width() - label->get_width())    , 0 + 10); }
+				if(label->get_alignment() == "right" ) { label->set_relative_position((get_width() - label->get_width()), 0 + 10); }
                 if(label->get_alignment() == "none"  ) {} // default - with this you are free to set the label's relative position to whatever you want // relative_position will always be (0, 0) unless you change it
         label->draw();
     }
@@ -1303,6 +1303,7 @@ int Box::get_color(lua_State * L)
 }*/
 //////////////
 GUI * Box::get_gui(unsigned int index)const {
+    if(child_list.empty()) return nullptr; // if no gui, return nullptr
     if(index > (child_list.size()-1)) throw std::runtime_error("attempt to access invalid index at Box::child_list");
     return child_list[index].get();
 }
@@ -1315,6 +1316,7 @@ std::vector<std::shared_ptr<GUI>> Box::get_gui_list() const {
 //////////////
 Image * Box::get_image(int index) const
 {
+    if(image_list.empty()) return nullptr; // if no image, return nullptr
 	return image_list[index].get();
 }
 //////////////
@@ -1345,6 +1347,7 @@ int Box::get_image_list(lua_State * L)
 /////////////
 dokun::Label * Box::get_label(int index) const
 {
+    if(label_list.empty()) return nullptr; // if no label, return nullptr
 	return label_list[index].get();
 }
 int Box::get_label(lua_State * L)

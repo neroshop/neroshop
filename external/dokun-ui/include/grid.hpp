@@ -9,27 +9,49 @@ public:
     Grid();                               static int grid_new(lua_State *L);
     Grid(int row, int column);
 	~Grid();
-	
+	// normal functions
 	void draw();                               static int draw(lua_State *L);
 	void draw(double x, double y);
 	void draw(const Vector2& position);	
 	void update();                             static int update(lua_State *L);
-	
-	void set_row(int rows);                    static int set_row(lua_State *L);
-	void set_column(int columns);              static int set_column(lua_State *L);
-	void set_block(int rows, int columns);     static int set_block(lua_State *L);
+	// setters
+	void set_rows(int rows);                    static int set_rows(lua_State *L);
+	void set_columns(int columns);              static int set_columns(lua_State *L);
+	void set_gap(int gap);
+	void set_horizontal_gap(int gap_horz);
+	void set_vertical_gap(int gap_vert);
 	void set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0);
 	void set_color(const Vector3& color);
 	void set_color(const Vector4& color);	   static int set_color(lua_State *L);
-	
-	Box * get_block(int row, int column);           static int get_block(lua_State *L);
+	void set_highlight(bool highlight);
+	void set_highlight_color(unsigned int red, unsigned int green, unsigned int blue);
+	void set_highlight_color(unsigned int red, unsigned int green, unsigned int blue, double alpha);
+	void set_highlight_color(const Vector3& color);
+	void set_highlight_color(const Vector4& color);
+	void set_outline(bool outline);
+	void set_outline_color(unsigned int red, unsigned int green, unsigned int blue);
+	void set_outline_color(unsigned int red, unsigned int green, unsigned int blue, double alpha);
+	void set_outline_color(const Vector3& color);
+	void set_outline_color(const Vector4& color);
+	// getters
+	Box * get_block(int row, int column) const;           static int get_block(lua_State *L);
+	std::vector<std::vector<std::shared_ptr<Box>>> get_block_list() const;
+	Box * get_box(int row, int column) const;
+	std::vector<std::vector<std::shared_ptr<Box>>> get_box_list() const;
 	int get_row_count()const;                     static int get_row_count(lua_State *L);
-	int get_column_count()const;                  static int get_column_count(lua_State *L);	
+	int get_column_count()const;                  static int get_column_count(lua_State *L);
+	int get_box_count() const;
+	int get_full_width() const;                  static int get_full_width(lua_State *L);
+	int get_full_height() const;                 static int get_full_height(lua_State *L);
+	Vector2 get_full_size() const;               static int get_full_size(lua_State *L);		
 	Vector4 get_color()const;                     static int get_color(lua_State *L); //static int _(lua_State *L);
 private:
-	std::vector< std::vector<Box *> > block;
+    // callbacks
+    void on_highlight(int rows, int columns); // rows come first before columns
+	std::vector< std::vector<std::shared_ptr<Box>> > block_list;
     int rows, columns;
-    std::vector<Box *> trash;	
+    int gap_horz; // the horizontal gap between blocks
+    int gap_vert; // the vertical gap between blocks
 	Vector4 color;
 	// outline
 	bool outline;

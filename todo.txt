@@ -9,7 +9,7 @@
 - figure out how to turn qrcode data into png and jpeg
 - change font
 - create cart table with a user_id column [x]
--- create cart_items table
+- create cart_items table                 [x]
 - create product category table, simplify category list and create subcategories
 - create catalog with sorting by price, category, etc.
 - work on search engine
@@ -20,6 +20,7 @@
 - add auction system
 - remove login as guest option (for now, since I don't know how guest data will be stored in main database)
 - make neroshop p2p (peer-to-peer)
+- keep number of source files in "neroshop/src" at no more than 20 sources files [x]
 
 [LOW PRIORITY]
 - create neroshop domain name (.org preffered)
@@ -29,7 +30,6 @@
 - use const for function parameters, in case I end up working on neroshop with other people (https://stackoverflow.com/a/117557)
 
 [UI]
-// to-do:
 - prevent mouse press from affecting overlapped GUIs     []
 - fix on_hover [text edit]                               [x] 2022
 - make cursor follow mouse pointer on click              [x] 2021-12-14
@@ -51,6 +51,8 @@
 - add eye icon to text edit to toggle sensative text visibility []
 - work on list gui                                       []
 - work on combobox gui                                   []
+- work on scrollbar and scrollarea                       []
+- work on tab gui                                        []
 
 [Spinner][Progress:98%]
 [Edit][Progress:79%]
@@ -65,13 +67,13 @@ neroshop_user - for storing user data (accounts, settings, etc.)
 edit: actually, I will keep everything in a single database since I'm not sure how the two databases will be able to communicate with one another
 
 [LONG-TERM GOALS]
+1. Privacy and Decentralization
 2. User-friendly UI/UX
-2. Privacy (limited data storing)
 3. Scalibility
 
 [HIRING]
 - hire graphics programmer to fix and optimize rendering code in "renderer.cpp"
-- hire network programmer to implement communication between applications and servers.
+- hire network programmer to implement communication between applications and servers or implement peer-to-peer system.
 - hire web developer to help develop website
 - hire social media manager to manage social media accounts
 
@@ -102,6 +104,7 @@ pgloader: https://pgloader.io/about/
 
 For big data and scalability, I might need to use a NoSQL database like:
 MongoDB: https://docs.mongodb.com/drivers/cxx/
+edit: Postgres has built-in NoSQL with JSON/JSONB so there may not be a need for an alternative NoSQL database
           
 SkyDB:
 https://blog.sia.tech/skydb-a-mutable-database-for-the-decentralized-web-7170beeaa985

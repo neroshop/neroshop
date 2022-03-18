@@ -369,7 +369,7 @@ void Image::destroy()
 {
 #ifdef DOKUN_OPENGL	
     // check for opengl context first to prevent a crash
-    Renderer::context_check();
+    ////Renderer::context_check(); // message keeps spamming which is annoying xD
     if(glIsTexture(buffer) && buffer != 0)
 	{
         glDeleteTextures(1, static_cast<GLuint *>(&buffer)); // delete old texture buffer obj

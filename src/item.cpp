@@ -704,7 +704,7 @@ void neroshop::Item::upload() {
     	DB::Postgres::get_singleton()->add_column("image", "name", "text");
     	////DB::Postgres::get_singleton()->add_column("image", "file", "text");
     	// bytea is limited to 1GB and OID is limited to 2GB
-    	DB::Postgres::get_singleton()->add_column("image", "data", "oid");//"lo");//"bytea");//"blob");
+    	DB::Postgres::get_singleton()->add_column("image", "data", "bytea");//"oid");//"lo");//"bytea");//"blob");
     }
     // insert into table image
     std::string image_name = filename.substr(0, filename.find("."));
@@ -726,11 +726,14 @@ void neroshop::Item::upload() {
     // GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO postgres;
     // ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO postgres;
     // ALTER DEFAULT PRIVILEGES GRANT ALL ON TABLES TO postgres;
-    DB::Postgres::get_singleton()->execute_params("INSERT INTO image(name, data) VALUES($1, lo_import($2))", { image_name, image_file });
+    /*DB::Postgres::get_singleton()->execute_params("INSERT INTO image(name, data) VALUES($1, lo_import($2))", { image_name, image_file });
     // export image to
-    std::cout << DB::Postgres::get_singleton()->get_text_params("SELECT lo_export(image.data, $1) FROM image;", { "/home/sid/Downloads/tmp/" + image_name + ".png" }) << std::endl;
+    std::cout << DB::Postgres::get_singleton()->get_text_params("SELECT lo_export(image.data, $1) FROM image;", { "/home/sid/Downloads/temp/" + image_name + ".png" }) << std::endl;*/
     // errors: could not open server file "...": No such file or directory
     // fix   :  ???
+    ///////////////////////////
+    //DB::Postgres::get_singleton()->execute_params("INSERT INTO image(name, data) VALUES($1, pg_read_file($2)::bytea)", { image_name, image_file });
+    ////DB::Postgres::get_singleton()->execute_params("INSERT INTO image(name, data) VALUES($1, pg_read_binary_file($2))", { image_name, image_file });
     ///////////////////////////
     //DB::Postgres::get_singleton()->finish();
 }    
