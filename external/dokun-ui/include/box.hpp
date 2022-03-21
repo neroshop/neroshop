@@ -99,15 +99,19 @@ class Box : public GUI { // A box ui - ui element that can act as a container fo
         void set_as_tooltip(bool tooltip);                                             static int set_as_tooltip(lua_State *L);
 		// getters
 		Vector4 get_color() const;                                                     static int get_color(lua_State * L);
+		GUI * get_gui(unsigned int index)const;
+		std::vector<std::shared_ptr<GUI>> get_gui_list() const;
+		int get_gui_count() const;		
 		Image * get_image(int index = 0) const;                                                    static int get_image(lua_State * L);
 		std::vector<std::shared_ptr<Image>>	get_image_list() const;                                      static int get_image_list(lua_State * L);
+		int get_image_count() const;
 		dokun::Label * get_label(int index = 0) const;                                                     static int get_label(lua_State * L);
         std::vector<std::shared_ptr<dokun::Label>> get_label_list() const;                                       static int get_label_list(lua_State * L);
+		int get_label_count() const;
+		// ....		
 		std::string get_text(int index = 0) const;                                                  static int get_text(lua_State * L);
         std::string get_text_list(int index) const;                                    static int get_text_list(lua_State * L);
 		std::string get_alignment()const;                                              static int get_alignment(lua_State * L);
-		GUI * get_gui(unsigned int index)const;
-		std::vector<std::shared_ptr<GUI>> get_gui_list() const;
 		// title_bar
 		Vector2 get_title_bar_position()const;
 		Vector2 get_title_bar_size()const;

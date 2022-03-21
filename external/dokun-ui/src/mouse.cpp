@@ -534,16 +534,36 @@ int Mouse::get_delta(lua_State *L)
 	return 1;
 }
 /////////////
-Vector3 Mouse::get_color(int x, int y) // new function!
+Vector3i Mouse::get_color() // returns the pixel color that the mouse pointer is pointing to
 {
-	if(dokun::Window::get_active())
-	{
-	#ifdef DOKUN_WIN32
+    dokun::Window * window = dokun::Window::get_active();
+	if(!window) return Vector3i(0, 0, 0);//Vector3(-1, -1, -1);
+	int window_width = window->get_client_width();
+	int window_height = window->get_client_height();
+#ifdef DOKUN_OPENGL // requires opengl context
+    struct{ GLubyte red, green, blue; } pixel;
+    glReadPixels(get_position(* window).x, window_height - 1 - get_position(* window).y, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, &pixel);//&image);
+    return Vector3i(pixel.red, pixel.green, pixel.blue);//(image[0], image[1], image[2]);//
+#endif
+//////////////////	
+/*#ifdef DOKUN_WIN32
 	    COLORREF color = GetPixel(GetDC(dokun::Window::get_active()->get_handle()), (int)Mouse::get_position(*dokun::Window::get_active()).x, (int)Mouse::get_position(*dokun::Window::get_active()).y);
 		return Vector3(GetRValue(color), GetGValue(color), GetBValue(color));
-	#endif
-	}
-	return Vector3(0, 0, 0);
+#endif
+#ifdef DOKUN_LINUX
+    XColor color;
+    Display *d = window->get_display();//XOpenDisplay((char *) NULL);
+    int x = 0;  // Pixel x 
+    int y = 0;  // Pixel y
+
+    XImage * image = XGetImage (d, XRootWindow (d, XDefaultScreen (d)), x, y, 1, 1, AllPlanes, XYPixmap);
+    color.pixel = XGetPixel(image, 0, 0);
+    XFree(image);
+    
+    XQueryColor (d, XDefaultColormap(d, XDefaultScreen (d)), &color);
+    return Vector3(color.red / 256, color.green / 256, color.blue / 256);
+#endif*/
+	return Vector3i(0, 0, 0);//Vector3(-1, -1, -1);
 }
 /////////////
 int Mouse::get_color(lua_State *L)
@@ -552,22 +572,22 @@ int Mouse::get_color(lua_State *L)
 	luaL_checktype(L, 2, LUA_TNUMBER);
 	luaL_checktype(L, 3, LUA_TNUMBER);
 
-	lua_pushnumber(L, (int)Mouse::get_color((int)lua_tonumber(L, 2), (int)lua_tonumber(L, 3)).x);
-	lua_pushnumber(L, (int)Mouse::get_color((int)lua_tonumber(L, 2), (int)lua_tonumber(L, 3)).y);
-	lua_pushnumber(L, (int)Mouse::get_color((int)lua_tonumber(L, 2), (int)lua_tonumber(L, 3)).z);
+	lua_pushnumber(L, (int)Mouse::get_color(/*(int)lua_tonumber(L, 2), (int)lua_tonumber(L, 3)*/).x);
+	lua_pushnumber(L, (int)Mouse::get_color(/*(int)lua_tonumber(L, 2), (int)lua_tonumber(L, 3)*/).y);
+	lua_pushnumber(L, (int)Mouse::get_color(/*(int)lua_tonumber(L, 2), (int)lua_tonumber(L, 3)*/).z);
 	return 3;
 }
 /////////////
-Vector2 Mouse::get_size() //const
+Vector2i Mouse::get_size() //const
 {
 #ifdef DOKUN_WIN32
-    return Vector2(SM_CXCURSOR, SM_CYCURSOR);
+    return Vector2i(SM_CXCURSOR, SM_CYCURSOR);
 #endif
 #ifdef __gnu_linux__
 #ifdef DOKUN_X11
 #endif
 #endif
-    return Vector2(0, 0);
+    return Vector2i(0, 0);
 }
 int Mouse::get_size(lua_State * L)
 {

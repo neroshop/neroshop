@@ -30,47 +30,39 @@ namespace neroshop {
 	static bool create_config() {
         std::string user = System::get_user();
         std::string text = "-- config.lua\n"
-        "localhost = \"127.0.0.1\"\n"
-        "neroshop = {\n"
-        //"    --general = {\n"
-        "    currency = \"usd\",\n" // currency that will be displayed alongside xmr: 0.045000000000 XMR ($10 USD)
-        //"    theme = \"dark\",\n" // dark, light, default
-        //"    --}\n"
-        "    window = {\n"
-        "        width = 1280,\n"
-        "        height = 720,\n"
-        //"        x = 200,\n"
-        //"        y = 200,\n"
-        "        mode = 0, -- 0 = window_mode or 1 = fullscreen\n"
-        "    },\n"
-        "    daemon = {\n"
-        "        data_dir = \"/home/user/.bitmonero\", -- /path/to/lmdb\n" // change this
-        "        network_type = \"stagenet\",\n"
-        "        ip = localhost, --\"0.0.0.0\" means that other wallets can connect to your node\n"
-        "        port = \"38081\",\n" // 127.0.0.1:38081
-        "        confirm_external_bind = false, -- set to true if binding to 0.0.0.0 -- confirms you want to allow connections from wallets that are not on this system\n"
-        "        restricted_rpc = true, -- restricts what information can be requested from the daemon by any client\n"//"        daemon_address = \"\",--\"node.moneroworld.com:18089\", -- connect to a remote node (in case you are unable to sync the entire blockchain)\n"
-        "        remote = false, -- set this true to connect to a remote node\n"
-        "    },\n"
-        "    wallet = {\n"
-        "        file = \"\", -- include '.keys' ext\n"
-        "        restore_height = 0, -- block height or date (YYYY-MM-DD)\n"    
-        "    },\n"
-        "}\n";
-        //"    \n"
+"localhost = \"127.0.0.1\";\n"
+"neroshop = {};\n"
+"neroshop[\"currency\"] = \"usd\";\n"//\n"
+"neroshop[\"window\"] = {};\n"
+"--neroshop[\"window\"][\"x\"] = 200;\n"
+"--neroshop[\"window\"][\"y\"] = 200;\n"
+"neroshop[\"window\"][\"width\"] = 1280;\n"
+"neroshop[\"window\"][\"height\"] = 720;\n"
+"neroshop[\"window\"][\"mode\"] = 0; --0 (window_mode) or 1 (fullscreen)\n"//\n"
+"neroshop[\"daemon\"] = {};\n" // maybe change name from daemon to node or nah?
+"neroshop[\"daemon\"][\"network_type\"] = \"stagenet\"; --\"mainnet\", \"stagenet\", or \"testnet\"\n"
+"neroshop[\"daemon\"][\"ip\"] = localhost; -- set to \"0.0.0.0\" to allow other wallets to connect to your node\n"
+"neroshop[\"daemon\"][\"port\"] = \"38081\"; --\"18081\" (mainnet), \"38081\" (stagenet), or 28081 (testnet)\n"
+"neroshop[\"daemon\"][\"confirm_external_bind\"] = false; -- if true then it confirms that you want to allow connections from other wallets outside of this system, but only when ip is set to \"0.0.0.0\"\n"
+"neroshop[\"daemon\"][\"restricted_rpc\"] = true;\n"
+"neroshop[\"daemon\"][\"data_dir\"] = \"/home/<user>/.bitmonero\";\n"
+"neroshop[\"daemon\"][\"remote\"] = false; -- set to true if the node that you want to connect to is a remote node\n"//\n"
+"neroshop[\"wallet\"] = {};\n"
+"neroshop[\"wallet\"][\"file\"] = \"\"; -- include \".keys\" extension\n" // path or file
+"neroshop[\"wallet\"][\"restore_height\"] = \"2022-01-01\"; -- block height or date (YYYY-MM-DD)\n";
         // swap data_dir with user
     #ifdef __gnu_linux__ // works!    
-        text = String::swap_first_of(text, "/home/user/.bitmonero", ("/home/" + user + "/.bitmonero"));
+        text = String::swap_first_of(text, "/home/<user>/.bitmonero", ("/home/" + user + "/.bitmonero"));
     #endif    
         // "/home/<user>/.config/neroshop"
         std::string neroshop_config_path = "/home/" + user + "/.config/neroshop"; // System::get_user()
         // "/home/<user>/.config/neroshop/config.lua"
         std::string neroshop_config_name = neroshop_config_path + "/config.lua";
         // if file already exists, no need to create it again
-        if(File::exists(neroshop_config_name)) return false; // false because it will not be created
+        if(File::exists(neroshop_config_name)) return false; // false because it will not be created // if true then it will cause "PANIC: unprotected error in call to Lua API (attempt to index a nil value)" error
         // check if script works before saving
         if(luaL_dostring(lua_state, text.c_str()) != 0) {
-		    NEROSHOP_TAG_OUT std::cout << LUA_TAG << "\033[0;31m" << "invalid Lua code" << "\033[0m" << std::endl;
+		    NEROSHOP_TAG_OUT std::cout << LUA_TAG << "\033[0;91m" << "invalid Lua code" << "\033[0m" << std::endl;
 		    lua_error(lua_state);
 		    return false; // exit function so it does not save text
 	    }

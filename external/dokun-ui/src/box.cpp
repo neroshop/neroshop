@@ -138,6 +138,9 @@ Box::~Box(void)
 	    delete image; // call image destructor
 	    image = nullptr;
 	}*/
+	// I guess this is how to properly delete a smart pointer
+	for(auto labels : label_list) labels.reset();
+	for(auto images : image_list) images.reset();
 	std::cout << "box deleted\n";
 }
 /////////////
@@ -1272,6 +1275,7 @@ int Box::set_as_tooltip(lua_State *L)
 // GETTERS
 /////////////
 /////////////
+/////////////
 Vector4 Box::get_color() const
 {
     //if(String::lower(type) == "icon") return image->get_color(); // return the image's color instead if box has been converted to an icon
@@ -1304,7 +1308,7 @@ int Box::get_color(lua_State * L)
 //////////////
 GUI * Box::get_gui(unsigned int index)const {
     if(child_list.empty()) return nullptr; // if no gui, return nullptr
-    if(index > (child_list.size()-1)) throw std::runtime_error("attempt to access invalid index at Box::child_list");
+    if(index > (child_list.size() - 1)) throw std::runtime_error("attempt to access invalid index at Box::child_list");
     return child_list[index].get();
 }
 //////////////
@@ -1312,11 +1316,15 @@ std::vector<std::shared_ptr<GUI>> Box::get_gui_list() const {
     return child_list;
 }
 //////////////
+int Box::get_gui_count() const {
+    return child_list.size();
+}
 //////////////
 //////////////
 Image * Box::get_image(int index) const
 {
     if(image_list.empty()) return nullptr; // if no image, return nullptr
+	if(index > (image_list.size() - 1)) throw std::runtime_error("attempt to access invalid index at Box::image_list");
 	return image_list[index].get();
 }
 //////////////
@@ -1345,21 +1353,29 @@ int Box::get_image_list(lua_State * L)
 	return 1;	
 }
 /////////////
+int Box::get_image_count() const {
+    return image_list.size();
+}
+/////////////
 dokun::Label * Box::get_label(int index) const
 {
     if(label_list.empty()) return nullptr; // if no label, return nullptr
+	if(index > (label_list.size() - 1)) throw std::runtime_error("attempt to access invalid index at Box::label_list");
 	return label_list[index].get();
 }
+/////////////
 int Box::get_label(lua_State * L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
 	lua_getfield(L, 1, "label");
 	return 1;	
 }
+/////////////
 std::vector<std::shared_ptr<dokun::Label>> Box::get_label_list() const
 {
 	return label_list;
 }
+/////////////
 int Box::get_label_list(lua_State * L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE); // box (arg:1)
@@ -1372,6 +1388,10 @@ int Box::get_label_list(lua_State * L)
     }
     lua_pushnil(L);
 	return 1;	
+}
+/////////////
+int Box::get_label_count() const {
+    return label_list.size();
 }
 /////////////
 std::string Box::get_text(int index) const
@@ -1606,6 +1626,7 @@ void Box::on_titlebar(void)
 }
 /////////////
 void Box::on_titlebar_button_close(void) {
+    //if(!is_visible() || is_disabled() || !is_active()) return;
     if(!has_title_bar()) return; // if no titlebar, exit function
     if(!title_bar_button_close) return; // if no titlebar close button, exit function
 	// on mouse hover, change close button color
@@ -1646,6 +1667,7 @@ void Box::on_titlebar_button_iconify(void) {
 /////////////
 void Box::on_drag(void)
 {
+    if(!is_visible() || is_disabled() || !is_active()) return;
 	if(!is_draggable()) return;
 	dokun::Window * window = dokun::Window::get_active();
 	if(!window) return;
@@ -1720,6 +1742,7 @@ void Box::on_drag(void)
 }
 void Box::on_resize(void)
 {
+    if(!is_visible() || is_disabled() || !is_active()) return;
 	if(!is_resizeable())
         return;
 	dokun::Window * window = dokun::Window::get_active();

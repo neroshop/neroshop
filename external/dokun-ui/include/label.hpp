@@ -62,7 +62,7 @@ class Label : public GUI {
         // allow engine to access the default font and other private members of class Label
         friend class Engine;
 	private:
-	    void on_parent() final; // re-implementation of a callback // final means GUI::on_parent() is overridden and Label::on_parent() is the final override
+	    //void on_parent() final; // re-implementation of a callback // final means GUI::on_parent() is overridden and Label::on_parent() is the final override
 	    void generate_shader(void);
 	    static Shader * label_shader;
 	    void update(void); // updates the width of the label

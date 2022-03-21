@@ -280,6 +280,10 @@ int Combobox::get_button_height(lua_State *L)
 /////////////
 void Combobox::on_button() // show or hide list on buttonpress or buttonrelease
 {
+	if(!is_visible()) return;
+	if(is_disabled()) return;
+	if(!is_active()) return;
+	/////////////////////////
 	// if mouse over button ...
 	if(Mouse::is_over(get_button_x(), get_button_y(), get_button_width(), get_button_height())) 
 	{
@@ -323,6 +327,10 @@ void Combobox::on_button() // show or hide list on buttonpress or buttonrelease
 /////////////
 void Combobox::on_select() // what happens after selecting an item
 {
+	if(!is_visible()) return;
+	if(is_disabled()) return;
+	if(!is_active()) return;
+	/////////////////////////
     if(!list) return; // if no list, exit function
 	Box * selection = list->get_selection();
 	if(!selection) return; // if no selection, exit function

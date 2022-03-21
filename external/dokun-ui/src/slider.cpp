@@ -398,6 +398,10 @@ int Slider::is_moved(lua_State *L)
 /////////////
 /////////////
 void Slider::on_keyboard_test() {
+	if(!is_visible()) return;
+	if(is_disabled()) return;
+	if(!is_active()) return;
+	///////////////////
     if(!has_focus()) return;
     if(dokun::Keyboard::is_pressed(DOKUN_KEY_LEFT)) 
         set_value(value - step);
@@ -410,6 +414,10 @@ void Slider::on_keyboard_test() {
 /////////////
 /////////////
 void Slider::on_mouse_move_ball() { // horz slider
+	if(!is_visible()) return;
+	if(is_disabled()) return;
+	if(!is_active()) return;
+	///////////////////
     if(!has_focus()) return;
     dokun::Window * window = static_cast<dokun::Window *>(Factory::get_window_factory()->get_object(0));
     ///////////////////

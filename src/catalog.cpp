@@ -41,25 +41,7 @@ void neroshop::Catalog::initialize() {
 }
 ////////////////////
 void neroshop::Catalog::update() {
-    // update positions
-    /*for(int i = 0; i < box_list.size(); i++) {//for(auto boxes : box_list) {
-        if(box_list[i] == box_list[0]) continue; // skip first box
-        Box * prev_box = box_list[i - 1].get(); // get last box
-        box_list[i]->set_position(prev_box->get_x() + prev_box->get_width() + 1, prev_box->get_y()); // column
-        //if i == max_columns
-        //dokun::Window * window = dokun::Window::get_active();
-        // int splits_count = width / window->get_client_width() //- box_list[0]->get_x();
-        //if(splits_count > 0) start_a_new_row;
-        //box_list[i]->set_position(prev_box->get_x(), prev_box->get_y() + prev_box->get_height() + 1); // row            
-        // height / rows
-    }    
-    ////////////////////
-    for(auto boxes : box_list) {
-        // update sizes - division by 0 causes error: Floating point exception (core dumped)
-        int box_width = width / box_list.size(); // single box width (be sure box_list.size() is not zero or you'll get floating point exception error)
-        int box_height = height;//height / box_list.size(); // single box height            
-        boxes->set_size(box_width, box_height);//std::cout << "boxes heights: " << boxes->get_height() << std::endl;
-    }*/
+    if(!view.get()) throw std::runtime_error("catalog view is not initialized");
     // update box sizes on call to Catalog::set_box_width and Catalog::set_box_height
 	if(view->get_box_list().empty()) return; // 0 rows, exit function
 	for(int i = 0; i < view->get_box_list().size(); i++) // block.size() = rows
@@ -114,8 +96,9 @@ void neroshop::Catalog::fetch_inventory() {
         PQclear(result);//DB::Postgres::get_singleton()->finish();//exit(1);
         return; // exit so we don't double free "result"
     }
-    int rows = PQntuples(result);
-    for(int i = 0; i < rows; i++) {
+    int rows = PQntuples(result); // max_rows is limited to number of boxes in the grid
+    std::cout << "number of rows (items): " << rows << std::endl;
+    for(int i = 0; i < std::min<size_t>(rows, box_count); i++) {
         /*std::cout << PQgetvalue(result, i, 0) << std::endl; // inventory_id
         std::cout << PQgetvalue(result, i, 1) << std::endl; // item_id
         std::cout << PQgetvalue(result, i, 2) << std::endl; // seller_id
@@ -128,44 +111,74 @@ void neroshop::Catalog::fetch_inventory() {
         std::cout << PQgetvalue(result, i, 9) << std::endl; // discount_expiry
         std::cout << PQgetvalue(result, i, 10) << std::endl; // item_condition
         //std::cout << PQgetvalue(result, i, 11) << std::endl; //std::cout << PQgetvalue(result, i, 12) << std::endl;*/
-        ///////////////////////////////////////////////////////////////////////////
-            // HEART ICON + BUTTON (FAVORITES / WISHLIST) - add white outline to button 
-    /*Image heart_icon(Icon::get["heart"]->get_data(), 64, 64, 1, 4); // CRASHES HERE
-    heart_icon.set_color(128, 128, 128, 1.0);//(224, 93, 93, 1.0);
-    heart_icon.resize(24, 24);//(16, 16);
-    heart_icon.set_alignment("center");
-    Box favorite_button; // place at top right of box
-    favorite_button.set_size(32, 32);//(24, 24);
-    favorite_button.set_color(view->get_box(0, 0)->get_color());//(128, 128, 128, 0.5);//1.0);//(255, 255, 255, 1.0)
-    favorite_button.set_outline(true);
-    favorite_button.set_outline_color(255, 255, 255, 1.0);
-    favorite_button.set_relative_position(view->get_box(0, 0)->get_width() - favorite_button.get_width() - 10, 10);
-    favorite_button.set_image(heart_icon);
-        //view->get_box()->add_();
-    */    
-	for(int r = 0; r < view->get_box_list().size(); r++) // block.size() = rows
-	{
-		for(int c = 0; c < view->get_box_list()[r].size(); c++) { // block[r] = items in row r	
+        ///////////////////////////////////////////////////////////////////////////    
+	////for(int r = 0; r < view->get_box_list().size(); r++) // block.size() = rows
+	////{
+		////for(int c = 0; c < view->get_box_list()[r].size(); c++) { // block[r] = items in row r	
             ////std::cout << "grid_box use count: " << view->get_box_list()[r][c].use_count() << std::endl; // 2
-            Box * box = view->get_box(r, c);
+            Box * box = view->get_box(i);//(r, c);
             //------------------------------
-            Image * test_image = new Image(Icon::get["paid"]->get_data(), 64, 64, 1, 4); // image is alive outside of scope :D
+            // I guess we dont need to use smart pointers all the time, but when creating an object with "new", it should be immediately stored in a smart pointer so that it will be automatically deleted at the appropriate time: https://stackoverflow.com/questions/26473733/using-smart-pointers-as-a-class-member#comment41585405_26473733
+            Image * test_image = new Image(Icon::get["paid"]->get_data(), 64, 64, 1, 4); // image is still alive outside of scope :D
             //std::shared_ptr<Image> test_image = std::shared_ptr<Image>(new Image(Icon::get["paid"]->get_data(), 64, 64, 1, 4)); // causes "Floating point exception (core dumped)" error
             //std::shared_ptr<Image> test_image = std::make_shared<Image>(Icon::get["paid"]->get_data(), 64, 64, 1, 4); // image is dead at end of scope :( // "std::make_shared" recommended
-            test_image->resize(32, 32);//(24, 24);//
+            test_image->resize(24, 24);//(32, 32);//
+            test_image->set_color(30, 80, 155); //155 or 255
             test_image->set_relative_position(10, 10);
+            // heart icon (favorites or wishlist)
+            /*Image heart_icon(Icon::get["heart"]->get_data(), 64, 64, 1, 4); // CRASHES HERE
+            heart_icon->set_color(128, 128, 128, 1.0);//(224, 93, 93, 1.0);
+            heart_icon->resize(24, 24);//(16, 16);
+            heart_icon->set_alignment("center");
+            Box favorite_button; // place at top right of box
+            favorite_button.set_size(32, 32);
+            favorite_button.set_color(box->get_color());//(128, 128, 128, 0.5);//1.0);//(255, 255, 255, 1.0)
+            favorite_button.set_outline(true);
+            favorite_button.set_outline_color(255, 255, 255, 1.0);
+            favorite_button.set_relative_position(box->get_width() - favorite_button.get_width() - 10, 10);
+            favorite_button.set_image(heart_icon);*/
+            //////////////////////////////////////////////////
+            // item image
+            int item_id = std::stoi(PQgetvalue(result, i, 1)); //std::cout << "item_ids: " << item_id << std::endl;            
+            Item item(item_id); // temporary (will die at end of scope)
+            Image * item_image = item.get_upload_image();
+            if(!item_image) { 
+                // try replacing image with a placeholder
+                ////item_image = new Image(Icon::get["circle"]->get_data(), 64, 64, 1, 4);
+                ////continue; // if no image uploaded for this item, skip it or use a placeholder image?
+            }
+            if(item_image) {
+                //std::cout << "loaded " << item_image->get_file() << std::endl;
+                item_image->resize(128, 128);//scale_to_fit(view->get_size());
+                item_image->set_alignment("center");
+                box->add_image(*item_image);
+                // save the item_id as a component so we know which item_id belongs to which box
+                box->add_component(* new Component("item_id", static_cast<int>(item_id))); // will be stored as shared_ptr by the entity class
+                std::cout << "component item_id(" << box->get_component("item_id") << ") added to box " << i << std::endl;
+            } // image not null
+            //if(rows < (box_count - 1)) { std::cout << "number of items is less than boxes" << std::endl; break; }
+            ////} // db_rows // temp*/
             //------------------------------
-            if(!box->get_image()) box->add_image(*test_image/*.get()*/);
-        }
+            box->add_image(*test_image);
+            //box->add_gui(favorite_button);
+        ////} // grid (view) columns
     } // grid (view) rows
-    } // db_rows
     ////////////////////
-    //std::shared_ptr<Image> test_image = std::make_shared<Image>(Icon::get["paid"]->get_data(), 64, 64, 1, 4);
-    //view->get_box(0, 0)->add_image(*test_image.get());
+        /*Item item(item_ids[i]); // temporary (will die at end of scope)
+            Image * item_image = item.get_upload_image();//.get();
+            
+    std::cout << "ball file: " << item_image->get_file() << std::endl;
+    std::cout << "ball width: " << item_image->get_width() << std::endl;
+    std::cout << "ball height: " << item_image->get_height() << std::endl;
+    std::cout << "ball channels: " << item_image->get_channel() << std::endl;
+        item_image->resize(128, 128);
+        std::cout << "ball scaled_size: " << item_image->get_size_scaled() << std::endl;
+        item_image->set_alignment("center");
+        view->get_box(0, 0)->add_image(*item_image);*/
     ////////////////////
-    if(!view->get_box(0, 0)->get_image()) {
-        neroshop::print("grid box image is nullptr", 1);
-    }
+    std::cout << "box_image_count (0, 0): " << view->get_box(0, 0)->get_image_count() << std::endl;
+    std::cout << "box_label_count (0, 0): " << view->get_box(0, 0)->get_label_count() << std::endl;
+    std::cout << "box_gui_count (0, 0):   " << view->get_box(0, 0)->get_gui_count() << std::endl;
     ////////////////////
     PQclear(result); // free result
 }

@@ -23,8 +23,7 @@ neroshop::Message::Message(const std::string& text, std::string color, int label
 }
 ////////////////////
 neroshop::Message::~Message() {
-    // delete button(s)
-    // delete edit(s)
+    // delete button(s), edit(s), and label(s)
     destroy_children();
     // no need to delete box now that it is a shared_ptr
     // delete box
@@ -32,6 +31,10 @@ neroshop::Message::~Message() {
         delete box;
         box = nullptr;
     }*/
+    // I guess this is how to properly delete a smart pointer
+    box.reset();
+	// clear the bottom-level gui list
+    bottom_level_gui_list.clear();
 }
 ////////////////////
 neroshop::Message * neroshop::Message::first(nullptr);
@@ -189,8 +192,12 @@ void neroshop::Message::add_edit(int relative_x, int relative_y, int width, int 
 ////////////////////
 void neroshop::Message::destroy_children() {
     if(!box) throw std::runtime_error("message box is not initialized");
-    if(button_list.empty() && edit_list.empty()) return;
+    if(button_list.empty() && edit_list.empty() && label_list.empty()) return;
     // SHARED_PTRS ARE AUTOMATICALLY DELETED SO THEY CANNOT BE MANUALLY DELETED
+	// I guess this is how to properly delete a smart pointer
+	for(auto labels : label_list) labels.reset();
+	for(auto buttons : button_list) buttons.reset();
+	for(auto edits : edit_list) edits.reset();    
     // its ok to use normal for-loops since I am using less than 10 buttons
     // 1. remove objects from vector
     // 2. delete objects
@@ -218,7 +225,7 @@ void neroshop::Message::destroy_children() {
 ////////////////////
 void neroshop::Message::draw_children() {
     if(!box) throw std::runtime_error("message box is not initialized");
-    if(button_list.empty() && edit_list.empty()) return;
+    if(button_list.empty() && edit_list.empty() && label_list.empty()) return;
     for(auto buttons : button_list) {
         //if(buttons == nullptr) continue;
         // set position relative to box
@@ -277,7 +284,7 @@ void neroshop::Message::draw_children() {
 ////////////////////
 void neroshop::Message::hide_children() {
     if(!box) throw std::runtime_error("message box is not initialized");
-    if(button_list.empty() && edit_list.empty()) return;
+    if(button_list.empty() && edit_list.empty() && label_list.empty()) return;
     for(auto buttons : button_list) {
         //if(buttons == nullptr) continue;
         buttons->set_visible(false);
@@ -293,7 +300,7 @@ void neroshop::Message::hide_children() {
 ////////////////////
 void neroshop::Message::show_children() {
     if(!box) throw std::runtime_error("message box is not initialized");
-    if(button_list.empty() && edit_list.empty()) return;
+    if(button_list.empty() && edit_list.empty() && label_list.empty()) return;
     for(auto buttons : button_list) {
         //if(buttons == nullptr) continue;
         buttons->set_visible(true);
@@ -392,6 +399,10 @@ void neroshop::Message::set_title(const std::string& title)
 void neroshop::Message::set_position(int x, int y) {
     if(!box) throw std::runtime_error("message box is not initialized");
     box->set_position(x, y);
+}
+////////////////////
+void neroshop::Message::set_bottom_level_gui_list(const std::vector<GUI *>& bottom_level_gui_list) {
+    this->bottom_level_gui_list = bottom_level_gui_list;
 }
 ////////////////////
 ////////////////////
@@ -518,6 +529,10 @@ bool neroshop::Message::is_visible()
 }
 ////////////////////
 void neroshop::Message::on_draw() { // call this function BEFORE calling draw()
+    // deactivates all gui at the bottom-level of the top-level gui element (this) so that bottom-level gui elements may not receive any input from the user while the top-level gui element (this) is visible       
+    for(auto bottom_guis : bottom_level_gui_list) {
+        if(box->is_visible()) bottom_guis->set_active(false); else bottom_guis->set_active(true); // or use: if(box->is_collided(*bottom_guis)) but is_visible works much better since title_bar would also be applied
+    }	
 	//if(dokun::Keyboard::is_pressed(DOKUN_KEY_ESCAPE) && !Message::is_visible()) {
 	    // do you wish to exit the program
 		//window.destroy();

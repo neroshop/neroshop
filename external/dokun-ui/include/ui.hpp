@@ -11,10 +11,11 @@
 //#include "resource.hpp"
 
 #ifdef __cplusplus
+////#include <memory> // std::enable_shared_from_this, shared_from_this(),  weak_from_this()
 #include <iostream>
 #include <lua.hpp>
 
-class GUI: public Entity  
+class GUI: public Entity////, std::enable_shared_from_this<GUI> // note: public inheritance 
 {
 	public:
 	    // constructers
@@ -57,10 +58,15 @@ class GUI: public Entity
 		void set_relative_position(double x, double y);
 		void set_relative_position(const Vector2& position);
 		void set_orientation(int orientation);          static int set_orientation(lua_State *L); // 0 = horizontal, 1 = vertical, 2 diagonal
+		virtual void set_color(unsigned int red, unsigned int green, unsigned int blue);
+		virtual void set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha); static int set_color(lua_State *L);// base_color
+		virtual void set_color(const Vector3& color);
+		virtual void set_color(const Vector4& color);		
 		void set_parent(const GUI& gui);                static int set_parent(lua_State *L);
 		// state
 		void set_visible(bool visible);                 static int set_visible(lua_State *L); // visible = true, invisible = false
 		void set_active(bool active);                   static int set_active(lua_State *L); // active = true, disabled = false
+		void set_disabled(bool disabled);
 		virtual void set_focus(bool focused);                 static int set_focus(lua_State *L);
 		// interaction
 		void set_draggable (bool draggable);            static int set_draggable(lua_State *L);
@@ -68,6 +74,7 @@ class GUI: public Entity
 		void set_resizeable(bool resizeable);           static int set_resizeable(lua_State *L);
 		void set_sortable(bool sortable);               static int set_sortable(lua_State *L);
 		// getters
+		////std::shared_ptr<GUI> get_shared_ptr();// const;
 		virtual int get_width() const;                  static int get_width(lua_State *L); // label width and height is applied in a different way based on its font
 		virtual int get_height() const;                 static int get_height(lua_State *L);
 		virtual Vector2 get_size() const;               static int get_size(lua_State *L);
@@ -78,13 +85,14 @@ class GUI: public Entity
         double get_relative_x() const;                  static int get_relative_x(lua_State *L);
 		double get_relative_y() const;                  static int get_relative_y(lua_State *L);
 		int get_orientation() const;                    static int get_orientation(lua_State *L);
+		virtual Vector4 get_color()const;
 		GUI * get_parent() const;                       static int get_parent(lua_State *L);// returns the gui which self is on top of(or related to)	
 	    std::vector<GUI *> get_children();              static int get_children(lua_State *L); // returns all guis sitting on top of parent gui
 	    virtual Vector4 get_rect()const;                static int get_rect(lua_State *L); // label is a GUI that has its own version of function Vector4 get_rect()
 		// conditions (boolean)
-		bool is_visible();                              static int is_visible(lua_State *L); // returns if visible or not
-		bool is_active();                               static int is_active(lua_State *L);// returns if active or disabled
-		//bool is_focused();                              static int is_focused(lua_State *L);
+		bool is_visible() const;                              static int is_visible(lua_State *L); // returns if visible or not
+		bool is_disabled() const;
+		bool is_active() const;                               static int is_active(lua_State *L);// returns if active or disabled
 		bool is_draggable();                            static int is_draggable(lua_State * L);
 		bool is_droppable();                            static int is_droppable(lua_State * L);
 		bool is_resizeable();                           static int is_resizeable(lua_State * L);
@@ -95,6 +103,10 @@ class GUI: public Entity
 	    bool is_parent_of(const GUI& gui);              static int is_parent_of(lua_State *L);
 	    static bool is_shader_generated();
 	    static bool has_shader();
+        // checking for collisions and overlapping
+		bool is_collided(const GUI& gui) const; // checks if gui element has collided with another gui element
+		static bool collision(const GUI& a, const GUI& b); // checks for collision b/t two gui elements
+		void on_overlapped(const GUI& gui_top); // checks if gui element is overlapped by another gui element
 	//protected:
 	    void set_scale(double sx, double sy);           static int set_scale(lua_State *L);
 		void set_scale(const Vector2& scale_factor);
@@ -107,6 +119,7 @@ class GUI: public Entity
 		virtual void on_draw_no_focus(); // specifically for edit
         virtual void on_focus();
         virtual void on_parent(); // label has its own implementation of on_parent() so this function must be virtual
+		virtual void on_disable();
 		// interaction checks
 	    bool is_hovered(); static int is_hovered(lua_State * L);// mouse over
 	    bool is_pressed(); static int is_pressed(lua_State * L); // executes many times in loop
@@ -127,14 +140,16 @@ class GUI: public Entity
         int height;	
 		double x, y;
 		int orientation; // hor=0, vert=1, diag=2
+		Vector4 color;
 		GUI * parent; // might need to be a shared_ptr
 		double scale_x, scale_y;
 		double angle;
 		Vector2 relative; // position relative to parent
 		////////////////
 		// states
-		bool visible; // if gui is visible or not
-		bool active; // if gui is disabled or not
+		bool visible; // if gui is visible or not // remove this since entity has declared "bool visible" already ... actually nevermind that
+		bool disabled; // disabled means its grayed out and cannot receive any input
+		bool active; // if gui is currently running or not
 		static GUI * focused; // if gui has main focus
 		////////////////
 		// interaction

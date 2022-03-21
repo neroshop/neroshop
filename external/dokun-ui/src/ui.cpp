@@ -1,7 +1,7 @@
 #include "../include/ui.hpp"
 
 /////////////
-GUI::GUI (void) : x (0), y (0), angle(0), scale_x(1), scale_y(1), width (0), height (0), orientation(0), relative(0, 0), parent(nullptr),    visible(true), active(true),    draggable(false), droppable(false), resizeable(false), sortable(false)
+GUI::GUI (void) : x (0), y (0), angle(0), scale_x(1), scale_y(1), width (0), height (0), orientation(0), relative(0, 0), parent(nullptr), visible(true), active(true), disabled(false), draggable(false), droppable(false), resizeable(false), sortable(false)
 {
 	Factory::get_gui_factory()->store(this);
 #ifdef DOKUN_DEBUG 	
@@ -473,6 +473,22 @@ int GUI::set_orientation(lua_State *L)
 	return 0;
 }
 ///////////// 
+void GUI::set_color(unsigned int red, unsigned int green, unsigned int blue) {
+    color = Vector4(red, green, blue, color.w);
+}
+/////////////
+void GUI::set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha) {
+    color = Vector4(red, green, blue, alpha);
+}
+/////////////
+void GUI::set_color(const Vector3& color) {
+    set_color(color.x, color.y, color.z);
+}
+/////////////
+void GUI::set_color(const Vector4& color) {
+    set_color(color.x, color.y, color.z, color.w);
+}
+///////////// 
 void GUI::set_parent(const GUI& parent)
 {
 	this->parent = &const_cast<GUI&>(parent);
@@ -515,6 +531,38 @@ int GUI::set_parent(lua_State *L)
 	return 0;	
 }	 
 ///////////// 
+void GUI:: set_visible(bool visible) // shown or hidden
+{ 
+	this->visible = visible;
+	////////////////////////
+	std::vector<GUI *> children = get_children();
+	for(auto guis : children) {
+		GUI * child = static_cast<GUI *>(guis);
+		child->set_visible(visible); // set child visibility to the same as parent
+	}
+}
+///////////// 
+int GUI::set_visible(lua_State *L)
+{
+	luaL_checktype(L, 1, LUA_TTABLE);
+	luaL_checktype(L, 2, LUA_TBOOLEAN);	
+	lua_getfield(L, 1, "udata");
+	if(lua_isuserdata(L, -1))
+	{
+		GUI * gui = *static_cast<GUI **>(lua_touserdata(L, -1));
+		gui->set_visible((lua_toboolean(L, 2) != 0));
+		// set in lua as well ...
+		lua_pushvalue(L, 2);
+		lua_setfield(L, 1, "visible");		
+	}	
+	return 0;
+}
+///////////// 
+void GUI::set_disabled(bool disabled) {
+    this->disabled = disabled;
+}
+///////////// 
+///////////// 
 void GUI:: set_active(bool active) // active or disabled
 {
 	this->active = active;
@@ -536,31 +584,6 @@ int GUI:: set_active(lua_State *L)
 	return 0;
 }
 ///////////// 
-void GUI:: set_visible(bool visible) // shown or hidden
-{ 
-	this->visible = visible;
-	for(int i = 0; i < get_children().size(); i++)
-	{
-		GUI * child = get_children()[i];
-		child->set_visible (visible); // set child visibility to the same as parent
-	}
-}
-///////////// 
-int GUI::set_visible(lua_State *L)
-{
-	luaL_checktype(L, 1, LUA_TTABLE);
-	luaL_checktype(L, 2, LUA_TBOOLEAN);	
-	lua_getfield(L, 1, "udata");
-	if(lua_isuserdata(L, -1))
-	{
-		GUI * gui = *static_cast<GUI **>(lua_touserdata(L, -1));
-		gui->set_visible((lua_toboolean(L, 2) != 0));
-		// set in lua as well ...
-		lua_pushvalue(L, 2);
-		lua_setfield(L, 1, "visible");		
-	}	
-	return 0;
-}
 ///////////// 
 void GUI::set_focus(bool focused)
 {
@@ -675,6 +698,11 @@ int GUI::set_sortable(lua_State *L)
 /////////////  
 ///////////// 
 // GETTERS 
+///////////// 
+/////////////
+/*std::shared_ptr<GUI> get_shared_ptr() {//const {
+    return shared_from_this(); // returns this as a shared_ptr // causes "error: ‘shared_from_this’ was not declared in this scope" for some reason :(
+}*/
 ///////////// 
 int GUI::get_width() const
 {
@@ -919,6 +947,10 @@ int GUI::get_orientation(lua_State *L)
 	return 1;	
 }
 /////////////
+Vector4 GUI::get_color() const {
+    return color;
+}
+/////////////
 GUI * GUI::get_parent() const
 {
 	return parent;
@@ -944,11 +976,11 @@ int GUI::get_parent(lua_State *L)
 std::vector<GUI *> GUI::get_children()
 {
 	std::vector<GUI *> children;
-	for(int i = 0; i < Factory::get_gui_factory()->get_size(); i++)
+	for(auto guis : Factory::get_gui_factory()->get_storage())
 	{
-		GUI * gui = static_cast<GUI *>(Factory::get_gui_factory()->get_object(i));
-		if(gui->get_parent() == this)
-		{
+		GUI * gui = static_cast<GUI *>(guis);
+		if(!gui) continue; // skip nullptr guis
+		if(gui->get_parent() == this) {
 			children.push_back(gui);
 		}
 	}
@@ -987,7 +1019,7 @@ int GUI::get_rect(lua_State *L)
 ///////////// 
 // BOOLEAN
 ///////////// 
-bool GUI::is_visible() // checks if shown or hidden
+bool GUI::is_visible() const// checks if shown or hidden
 {
 	return visible;
 }
@@ -1006,9 +1038,14 @@ int GUI::is_visible(lua_State *L)
 	return 1;
 }
 /////////////
-bool GUI::is_active() // checks if active or disabled
+bool GUI::is_disabled() const {
+    return disabled;
+}
+/////////////
+/////////////
+bool GUI::is_active() const // checks if active or not
 {
-	return (active == true);
+	return active;
 } 
 ///////////// 
 int GUI::is_active(lua_State *L)
@@ -1194,6 +1231,52 @@ bool GUI::has_focus() {
     return (this == focused);
 }
 /////////////
+bool GUI::is_collided(const GUI& gui) const { 
+    // 1. both guis must first be visible
+    if(!visible) return false;
+    if(!gui.visible) return false;
+    bool x_collided = get_x() + get_width() >= gui.get_x() && gui.get_x() + gui.get_width() >= get_x();
+    bool y_collided = get_y() + get_height() >= gui.get_y() && gui.get_y() + gui.get_height() >= get_y();
+    return (x_collided && y_collided);
+}
+/////////////
+bool GUI::collision(const GUI& a, const GUI& b) {
+    // 1. both guis must first be visible
+    if(!a.visible) return false;
+    if(!b.visible) return false;
+    // AABB - AABB (axis-aligned bounding box) collisions
+    bool x_collided = a.get_x() + a.get_width() >= b.get_x() && b.get_x() + b.get_width() >= a.get_x();
+    bool y_collided = a.get_y() + a.get_height() >= b.get_y() && b.get_y() + b.get_height() >= a.get_y();
+    return (x_collided && y_collided);
+}
+/////////////
+// if gui element is overlapped by another gui element then set bottom gui element to inactive
+void GUI::on_overlapped(const GUI& gui_top) {
+    /*//if(parent == &const_cast<GUI&>(gui_top)) return; // ??
+    // 0. by default all gui elements are active
+    ////set_active(true);
+    // 1. gui elements have collided
+    if(!collision(* this, gui_top)) return;
+    // 2. the color the mouse is pointing to matches the top gui element's color (the overlapping gui must be at the top of all guis for this to work)
+    Vector3 mouse_color = Vector3(Mouse::get_color().x, Mouse::get_color().y, Mouse::get_color().z);//Mouse::get_color();
+    Vector3 gui_top_color = gui_top.get_color().xyz;//Vector3i(gui_top.get_color().x, gui_top.get_color().y, gui_top.get_color().z);
+    if(mouse_color.x != gui_top_color.x && mouse_color.y != gui_top_color.y && mouse_color.z != gui_top_color.z) {
+        return;
+    }
+    //std::cout << "(mouse_color = gui_color): " << (gui_top_color.x == mouse_color.x) << std::endl;
+    //std::cout << "mouse_color: " << mouse_color << std::endl;
+    //std::cout << "gui_top_color: " << gui_top_color << std::endl;
+        // check if gui_top's children's color too
+    set_active(true);
+    if(Mouse::is_over(gui_top.get_x(), gui_top.get_y(), gui_top.get_width(), gui_top.get_height())) {
+            std::cout << "Mouse is pointing at top GUI(" << String(&const_cast<GUI&>(gui_top)) << ") with rgb(" << mouse_color << ")" << std::endl;
+            // 3. make overlapped gui (bottom gui) inactive, meaning it cannot receive any user input
+            set_active(false);
+    }
+    std::cout << "this active: " << active << std::endl;*/
+}
+/////////////
+/////////////
 /////////////
 // CALLBACK
 /////////////
@@ -1206,11 +1289,13 @@ void GUI::on_draw() // NOTE: position can be set regardless of whether gui is vi
     generate_shader(); // generate shaders before drawing
     on_parent(); // set child's position relative to its parent, regardless of whether it is visible or not
     on_focus();  // set the GUI's focus, but only if it is visible!
+    on_disable(); // set color to gray on disabling GUI
 }
 /////////////
 void GUI::on_draw_no_focus() {
     generate_shader(); // generate shaders before drawing
     on_parent(); // set child's position relative to its parent, regardless of whether it is visible or not
+    on_disable(); // set color to gray on disabling GUI
 }
 /////////////
 void GUI::on_parent() // call this before drawing self
@@ -1248,6 +1333,8 @@ void GUI::on_parent() // call this before drawing self
 void GUI::on_focus() {
     // if self is not visible then exit the function
 	if(!visible) return; // ONLY if self is visible (child GUI can also have their own visibility)
+	if(disabled) return; // disabled GUI cannot receive focus
+	if(!active) return;
 	// if self is pressed, set it as the current "focused" GUI
 	if(Mouse::is_over(get_rect()) && Mouse::is_pressed(1)) set_focus(true);////if(is_pressed()) set_focus  (true);
 	// if mouse is pressed elsewhere (does NOT work - will only work on one GUI of a certain class)
@@ -1256,6 +1343,11 @@ void GUI::on_focus() {
 	    if(GUI::focused) std::cout << String(String::no_digit( typeid(*this).name()) ).str() << ": " << String(GUI::focused) << " gained focus" << std::endl; // #include <typeinfo>
 		if(GUI::focused == nullptr) std::cout << "focus lost" << std::endl;  
 	#endif
+}
+/////////////
+void GUI::on_disable() {
+    if(!disabled) return;
+    set_color(128, 128, 128, 1.0);
 }
 /////////////
 // this is for drawing GUI children, but its best to draw the children manually
@@ -1307,8 +1399,8 @@ bool GUI::is_pressed() // executes multiple times
 	
 	#ifdef __gnu_linux__
 	#endif
-	//if(!active) return false; // gui must not be disabled
 	if(!visible) return false; // gui must be visible first
+	if(!active) return false; // gui must not be disabled	
 	return (Mouse::is_over(get_rect()) && Mouse::is_pressed(1));
 }
 ///////////// 

@@ -375,6 +375,9 @@ int Toggle::new_(lua_State *L)
 /////////////
 void Toggle::on_mouse_press() {
 	    // mouse is over toggle
+	if(!is_visible()) return;
+	if(is_disabled()) return;
+	if(!is_active()) return;
     if(Mouse::is_over(get_x(), get_y(), get_width(), get_height()) ) {
 	    if(Mouse::is_pressed(1) && value == 0) {
 			set_value(1);//( (value == 0) ? 1 : 0 );// find a way to detect when the value has changed, then trigger an event when we get a specific value

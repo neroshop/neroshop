@@ -153,7 +153,8 @@ private:
 	unsigned int  width;
 	unsigned int height;
 	unsigned int depth;
-	void *data, *data_p;
+	unsigned char * data;//std::vector<unsigned char *> data;//void*data
+	void *data_p;
 	unsigned int channel;
 	std::string    file;
 	Vector4 color;

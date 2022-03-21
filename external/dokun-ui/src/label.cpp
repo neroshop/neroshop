@@ -759,8 +759,9 @@ int dokun::Label::is_label(lua_State *L)
 }
 /////////////
 /////////////
+// This function is no longer needed
 // label's width and height is different from other gui elements' size which is why it needed its own implementation of GUI::on_parent()
-void dokun::Label::on_parent() {
+/*void dokun::Label::on_parent() {
     // if self has no parent, exit function
 	if(!get_parent()) return;
 	// set position of child
@@ -789,7 +790,7 @@ void dokun::Label::on_parent() {
 	std::cout << "label_rel_x: " << get_relative_x() << std::endl;
 	std::cout << "label_rel_y: " << get_relative_y() << std::endl; // bug: relative position goes out of bound [fixed]
 #endif
-}
+}*/
 /////////////
 /////////////
 /*  

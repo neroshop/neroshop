@@ -81,11 +81,11 @@ void Button::draw()
 {
     on_draw(); // sets position relative to parent, regardless of visibility
 	if(!is_visible()) return;
-		//on_hover();
-		//on_press();
-		on_mouse_interact();
-        // Draw button
-	    Renderer::draw_button(get_x(), get_y(), get_width(), get_height(), 
+	//on_press();
+	//on_hover();
+	on_mouse_interact(); // does both on_hover and on_press but more efficient than calling them separately
+    // Draw button
+	Renderer::draw_button(get_x(), get_y(), get_width(), get_height(), 
 		    get_angle(), get_scale().x, get_scale().y, 
 			get_color().x, get_color().y, get_color().z, get_color().w,
             // shader
@@ -540,12 +540,45 @@ bool Button::is_image()const
 /////////////
 /////////////
 void Button::on_hover()
-{}
+{
+    if(!is_active()) return; // if inactive, exit function
+    if(Mouse::is_over(get_x(), get_y(), get_width(), get_height()))
+	{
+		// add a tint to color (on hover)
+		hover_color.x = color.x + (255 - color.x) * tint_factor; //  255 = white
+		hover_color.y = color.y + (255 - color.y) * tint_factor;
+		hover_color.z = color.z + (255 - color.z) * tint_factor;
+        hover_color.w = color.w;
+        //std::cout << "hover_color: " << hover_color << std::endl;
+		color = hover_color;
+	} 
+	else color = old_color; // revert back to original color
+}
+/////////////
 void Button::on_press()
-{}
+{
+    if(!is_active()) return; // if inactive, exit function
+    if(Mouse::is_over(get_x(), get_y(), get_width(), get_height()))
+	{
+		if(Mouse::is_pressed(1)) {
+			// add a shade to color (on press)
+		    press_color.x = color.x * (1 - shade_factor); // 1 = black
+		    press_color.y = color.y * (1 - shade_factor);
+		    press_color.z = color.z * (1 - shade_factor);	
+		    press_color.w = color.w;
+            //std::cout << "press_color: " << press_color << std::endl;
+		    color = press_color;
+		}
+		else color = old_color;//set_color(old_color); // set to hover_color	
+	}    
+}
 /////////////
 void Button::on_mouse_interact()
 {
+	if(!is_visible()) return;
+	if(is_disabled()) return;
+	if(!is_active()) return;
+	/////////////////////////
 	if(Mouse::is_over(get_position(), get_size()))
 	{
 		if(Mouse::is_pressed(1)) {

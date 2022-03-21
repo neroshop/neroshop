@@ -39,6 +39,7 @@ public:
     void set_width(int width);
     void set_height(int height);
     void set_size(int width, int height);
+    void set_bottom_level_gui_list(const std::vector<GUI *>& bottom_level_gui_list);    
     // getters
     std::string get_text(int label_index = 0) const;
     std::string get_title_text() const;
@@ -72,6 +73,7 @@ private: // https://codereview.stackexchange.com/questions/160053/c-erasing-an-o
     std::vector<std::shared_ptr<dokun::Label>> label_list; // since I can't do multi-lined labels :/
     std::vector<std::shared_ptr<Button>> button_list;//std::vector<Button*> button_list;   
     std::vector<std::shared_ptr<Edit>> edit_list;//std::vector<Edit*> edit_list;
+    std::vector<GUI *> bottom_level_gui_list;
     void on_draw();
     void destroy_children(); // No longer a need for this now that I'm using shared pointers
     void draw_children();

@@ -407,9 +407,18 @@ bool Menubar::has_sub(int menu_index)
 	return (sub_list.size() > menu_index);
 }
 void Menubar::on_hover(void)
-{}
+{
+	if(!is_visible()) return;
+	if(is_disabled()) return;
+	if(!is_active()) return;
+	/////////////////////////
+}
 void Menubar::on_menu_press(Box * menu, int index)
 {
+	if(!is_visible()) return;
+	if(is_disabled()) return;
+	if(!is_active()) return;
+	/////////////////////////
 	if(Mouse::is_over(menu->get_rect()))
 	{
 		//if(Mouse::is_pressed(1)) {sub->set_visible(true);} 

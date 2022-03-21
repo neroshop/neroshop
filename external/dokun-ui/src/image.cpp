@@ -62,7 +62,7 @@ bool Image::load(const std::string& file_name) // from file
 /////////////
 bool Image::load(void * data , int width, int height, int depth, int channel) // from data
 {
-	this->data    = data;
+	this->data    = static_cast<unsigned char *>(data);
 	this->width   = width;
 	this->height  = height;
 	this->depth   = depth;
@@ -169,7 +169,7 @@ int Image::save(lua_State *L)
 /////////////
 void Image::copy(const Image& image) // copies another image's texture pixels - no need to copy the position, angle, scale, color, relative_position, nor alignment - or it will just mess up everything
 {
-    data    = image.get_data   (); // copy the pixel data as well
+    data    = static_cast<unsigned char *>(image.get_data   ()); // copy the pixel data as well
 	width   = image.get_width  ();
 	height  = image.get_height ();
 	depth   = image.get_depth  ();
@@ -204,7 +204,7 @@ void Image::copy(const Image& image) // copies another image's texture pixels - 
 /////////////
 void Image::copy(const Texture& texture) // same as Image:copy_texture in Lua
 {
-    data    = texture.get_data   (); // copy the pixel data as well
+    data    = static_cast<unsigned char *>(texture.get_data   ()); // copy the pixel data as well
     width   = texture.get_width  ();
 	height  = texture.get_height ();
 	depth   = texture.get_depth  ();

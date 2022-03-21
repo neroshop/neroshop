@@ -19,8 +19,8 @@ struct Vector2 {
 	//////////////////
     Vector2(double x, double y) 
     {
-	    (this)->x = x;
-	    (this)->y = y;
+	    this->x = x;
+	    this->y = y;
     }
 	//////////////////
 	Vector2(const Vector2& vector)
@@ -34,14 +34,14 @@ struct Vector2 {
 	//////////////////
 	void set(double x, double y)
 	{
-		(this)->x = x;
-		(this)->y = y;
+		this->x = x;
+		this->y = y;
 	}
 	//////////////////
 	void set(const Vector2& vector)
 	{
-		(this)->x = vector.x;
-		(this)->y = vector.y;
+		this->x = vector.x;
+		this->y = vector.y;
 	}
 	//////////////////
 	Vector2 get()
@@ -98,7 +98,7 @@ struct Vector2 {
 	//////////////////
 	double dot(double x, double y) 
 	{
-		return ((this)->x * x) + ((this)->y * y);
+		return (this->x * x) + (this->y * y);
 	}
 	//////////////////
 	double cross(const Vector2 &vector) 
@@ -109,8 +109,8 @@ struct Vector2 {
 	// Transformations
 	void translate(double x, double y) // tested!
 	{
-		(this)->x = (this)->x + (x);
-		(this)->y = (this)->y + (y);  
+		this->x = this->x + (x);
+		this->y = this->y + (y);  
 	}
 	static Vector2 translate(Vector2 &vector, double x, double y){vector.translate(x, y);return vector;}
 	//////////////////
@@ -121,18 +121,18 @@ struct Vector2 {
 		// convert degrees to radians
 		double angle = (double)degrees * (3.14 / 180); 	
 		// calculate rotation
-		double x = (this)->x * cos(angle) - (this)->y * sin(angle); 
-		double y = (this)->x * sin(angle) + (this)->y * cos(angle);
+		double x = this->x * cos(angle) - this->y * sin(angle); 
+		double y = this->x * sin(angle) + this->y * cos(angle);
 		// apply rotation
-		(this)->x = (x);
-		(this)->y = (y); 
+		this->x = (x);
+		this->y = (y); 
 	}
 	static Vector2 rotate(Vector2 &vector, double degrees){vector.rotate(degrees);return vector;}
 	//////////////////
 	void scale(double sx, double sy) // tested!
 	{
-		(this)->x = (this)->x * (sx);
-		(this)->y = (this)->y * (sy);
+		this->x = this->x * (sx);
+		this->y = this->y * (sy);
 	} 
 	static Vector2 scale(Vector2 &vector, double sx, double sy) {vector.scale(sx, sy);return vector;}
 	//////////////////
@@ -140,12 +140,12 @@ struct Vector2 {
 	{
 			// calculate shear
 			if(shx > 0)
-			double x = (this)->x + (shx * (this)->y);
+			double x = this->x + (shx * this->y);
             if(shy > 0)
-			double y = (this)->x * (shy + (this)->y); // just the opposite of shearing x			
+			double y = this->x * (shy + this->y); // just the opposite of shearing x			
 			// apply shear
-			(this)->x = (x);
-			(this)->y = (y);		
+			this->x = (x);
+			this->y = (y);		
 			// return 
 			return (*this);
 	} 
@@ -636,9 +636,9 @@ struct Vector3
 	//////////////////
 	Vector3(double x, double y, double z) // from multiple numbers 
     {
-		(this)->x = x;
-		(this)->y = y;
-	    (this)->z = z;
+		this->x = x;
+		this->y = y;
+	    this->z = z;
 		
 		xy = Vector2(x, y);
     }
@@ -656,14 +656,14 @@ struct Vector3
 	{
 		x = vector.x;
 		y = vector.y;
-		(this)->z = z;
+		this->z = z;
 		
 		xy = Vector2(x, y);
 	}	
 	//////////////////
 	Vector3(double x, const Vector2 & vector) // from a Vector2
 	{
-		(this)->x = x;
+		this->x = x;
 		y = vector.x;
 		z = vector.y;
 		
@@ -683,15 +683,15 @@ struct Vector3
 	//////////////////
 	void set(double x, double y, double z)
 	{
-		(this)->x = x;
-		(this)->y = y;
-		(this)->z = z;
+		this->x = x;
+		this->y = y;
+		this->z = z;
 	}
 	void set(const Vector2& vector) // set to another vector's values
 	{
 		x = vector.x;
 		y = vector.y;
-		z = (this)->z;
+		z = this->z;
 	}	
 	void set(const Vector3& vector) // set to another vector's values
 	{
@@ -853,9 +853,9 @@ struct Vector3
 	Vector3 translate(double x, double y, double z)
 	{
 		// calculate translation
-		(this)->x = (this)->x + x;
-		(this)->y = (this)->y + y;
-		(this)->z = (this)->z + z;
+		this->x = this->x + x;
+		this->y = this->y + y;
+		this->z = this->z + z;
 		xy = Vector2(this->x, this->y);
 		// return translated vector
 		return (*this);
@@ -881,35 +881,35 @@ struct Vector3
 		if(x == 1)
 		{
 			// calculate x-axis rotation
-			double x = (this)->x;
-			double y = (this)->y * cos(angle) - (this)->z * sin(angle);
-			double z = (this)->x * sin(angle) + (this)->z * cos(angle);
+			double x = this->x;
+			double y = this->y * cos(angle) - this->z * sin(angle);
+			double z = this->x * sin(angle) + this->z * cos(angle);
 			// apply rotation
-			(this)->x = (x);
-			(this)->y = (y);
-			(this)->z = (z);
+			this->x = (x);
+			this->y = (y);
+			this->z = (z);
 		}
 	    if(y == 1)
 		{
 			// calculate y-axis rotation
-			double x = (this)->x * cos(angle) + (this)->z * sin(angle);
-			double y = (this)->y;
-			double z = (this)->x * sin(angle) - (this)->z * cos(angle);
+			double x = this->x * cos(angle) + this->z * sin(angle);
+			double y = this->y;
+			double z = this->x * sin(angle) - this->z * cos(angle);
 			// apply rotation
-			(this)->x = (x);
-			(this)->y = (y);
-			(this)->z = (z);
+			this->x = (x);
+			this->y = (y);
+			this->z = (z);
 		}
 	    if(z == 1)
 		{
 			// calculate z-axis rotation
-			double x = (this)->x * cos(angle) - (this)->y * sin(angle);
-			double y = (this)->x * sin(angle) + (this)->y * cos(angle);
-			double z = (this)->z;
+			double x = this->x * cos(angle) - this->y * sin(angle);
+			double y = this->x * sin(angle) + this->y * cos(angle);
+			double z = this->z;
 			// apply rotation
-			(this)->x = (x);
-			(this)->y = (y);
-			(this)->z = (z);
+			this->x = (x);
+			this->y = (y);
+			this->z = (z);
 		}
 		xy = Vector2(this->x, this->y);
 		// return rotated vector
@@ -937,9 +937,9 @@ struct Vector3
 	Vector3 scale(double sx, double sy, double sz) // 1 = no shear
 	{
 		// calculate scale
-	    (this)->x = (this)->x * (sx);
-		(this)->y = (this)->y * (sy);
-		(this)->z = (this)->z * (sz);
+	    this->x = this->x * (sx);
+		this->y = this->y * (sy);
+		this->z = this->z * (sz);
 		xy = Vector2(this->x, this->y);
 		// return scaled vector
 		return (*this);
@@ -959,35 +959,35 @@ struct Vector3
 		if(shx > 0) // if not 0, but can be 0.1+
 		{
 			// calculate scale x
-			double x = (this)->x + (shx * (this)->y);
-            double y = (this)->y;
-			double z = (this)->z;	
+			double x = this->x + (shx * this->y);
+            double y = this->y;
+			double z = this->z;	
 			// apply scale
-			(this)->x = (x);
-			(this)->y = (y);
-			(this)->z = (z); 		
+			this->x = (x);
+			this->y = (y);
+			this->z = (z); 		
 		}
 		if(shy > 0)
 		{
 			// calculate scale y
-			double x = (this)->x;
-			double y = (this)->y + (shy * (this)->x);
-			double z = (this)->z;
+			double x = this->x;
+			double y = this->y + (shy * this->x);
+			double z = this->z;
 			// apply scale
-			(this)->x = (x);
-			(this)->y = (y);
-			(this)->z = (z);   	
+			this->x = (x);
+			this->y = (y);
+			this->z = (z);   	
 		}
 		if(shz > 0)
 		{
 			// calculate scale z
-			double x = (this)->x + (shx * (this)->z);
-            double y = (this)->y + (shy * (this)->z);	
-            double z = (this)->z;	
+			double x = this->x + (shx * this->z);
+            double y = this->y + (shy * this->z);	
+            double z = this->z;	
 			// apply scale
-			(this)->x = (x);
-			(this)->y = (y);
-			(this)->z = (z);    			
+			this->x = (x);
+			this->y = (y);
+			this->z = (z);    			
 		}	
 		xy = Vector2(x, y);
 		// return sheared vector
@@ -1457,7 +1457,7 @@ struct Vector3
 	//////////////////
 	Vector3 operator - (const Vector2 &vector) const
 	{		
-	    return Vector3(x - vector.x, y - vector.y, (this)->z);
+	    return Vector3(x - vector.x, y - vector.y, this->z);
 	}	
 	//////////////////
 	Vector3 operator - (double number) const
@@ -1472,7 +1472,7 @@ struct Vector3
 	//////////////////
 	Vector3 operator * (const Vector2 &vector) const
 	{
-	    return Vector3(x * vector.x, y * vector.y, (this)->z);
+	    return Vector3(x * vector.x, y * vector.y, this->z);
 	}	
 	//////////////////
 	Vector3 operator * (double number) const
@@ -1487,7 +1487,7 @@ struct Vector3
 	//////////////////
 	Vector3 operator / (const Vector2 &vector) const
 	{
-	    return Vector3(x / vector.x, y / vector.y, (this)->z);
+	    return Vector3(x / vector.x, y / vector.y, this->z);
 	}	
 	//////////////////
 	Vector3 operator / (double number) const
@@ -1512,7 +1512,7 @@ struct Vector3
 	{
         x = vector.x;
 		y = vector.y;
-		z = (this)->z;
+		z = this->z;
 		return (*this);
 	}
 	//////////////////
@@ -1536,7 +1536,7 @@ struct Vector3
 	{
 		x += vector.x;
 		y += vector.y;
-		z = (this)->z;
+		z = this->z;
 		return (*this);
 	}	
 	//////////////////
@@ -1560,7 +1560,7 @@ struct Vector3
 	{
 		x -= vector.x;
 		y -= vector.y;
-		z = (this)->z;
+		z = this->z;
 		return (*this);		
 	}		
 	//////////////////
@@ -1584,7 +1584,7 @@ struct Vector3
 	{
 		x *= vector.x;
 		y *= vector.y;
-		z *= (this)->z;
+		z *= this->z;
 		return (*this);		
 	}	
 	//////////////////
@@ -1608,7 +1608,7 @@ struct Vector3
 	{
 		x /= vector.x;
 		y /= vector.y;
-		z /= (this)->z;
+		z /= this->z;
 		return (*this);		
 	}	
 	//////////////////
@@ -1729,10 +1729,10 @@ struct Vector4 {
 	//////////////////
 	Vector4(double x, double y, double z, double w) 
     {
-		(this)->x = x;
-		(this)->y = y;
-	    (this)->z = z;
-		(this)->w = w;
+		this->x = x;
+		this->y = y;
+	    this->z = z;
+		this->w = w;
 		
 		xy  = Vector2(x, y);
 		zw  = Vector2(z, w);
@@ -1767,8 +1767,8 @@ struct Vector4 {
 	{
 		x = vector.x;
 		y = vector.y;
-		(this)->z = z;
-		(this)->w = w;
+		this->z = z;
+		this->w = w;
 		
 		xy  = Vector2(x, y);
 		zw  = Vector2(z, w);
@@ -1777,8 +1777,8 @@ struct Vector4 {
 	//////////////////
 	Vector4(double x, double y, const Vector2& vector) 
 	{
-		(this)->x = x;
-		(this)->y = y;
+		this->x = x;
+		this->y = y;
 		z = vector.x;
 		w = vector.y;
 		
@@ -1789,10 +1789,10 @@ struct Vector4 {
 	//////////////////
 	Vector4(double x, const Vector2 &vector, double w) 
 	{
-		(this)->x = x;
+		this->x = x;
 		y = vector.x;
 		z = vector.y;
-		(this)->w = w;
+		this->w = w;
 		
 		xy  = Vector2(x, y);
 		zw  = Vector2(z, w);
@@ -1816,7 +1816,7 @@ struct Vector4 {
 		x = vector.x;
 		y = vector.y;
 		z = vector.z;
-		(this)->w = w;
+		this->w = w;
 		
 		xy  = Vector2(x, y);
 		zw  = Vector2(z, w);
@@ -1825,7 +1825,7 @@ struct Vector4 {
 	//////////////////
 	Vector4(double x, const Vector3 &vector)
 	{
-		(this)->x = x;
+		this->x = x;
 		y = vector.x;
 		z = vector.y;
 		w = vector.z;
@@ -1908,7 +1908,7 @@ struct Vector4 {
 	//////////////////	
 	double dot(double x, double y, double z, double w) // getter
 	{
-		return (((this)->x * x) + ((this)->y * y) + ((this)->z * z) + (this->w * w));
+		return ((this->x * x) + (this->y * y) + (this->z * z) + (this->w * w));
 	}	
 	//////////////////
 	double dot(Vector4 vector)  
@@ -1963,7 +1963,7 @@ struct Vector4 {
 	void translate(double x, double y, double z)
 	{
 		// copy values from self
-		Vector3 vec3((this)->x, (this)->y, (this)->z);
+		Vector3 vec3(this->x, this->y, this->z);
 		// shear vector3
 		vec3.translate(x, y, z);
 		// save translated vector
@@ -1972,7 +1972,7 @@ struct Vector4 {
 	void rotate(double degrees, int x, int y, int z)
 	{
 		// copy values from self
-		Vector3 vec3((this)->x, (this)->y, (this)->z);
+		Vector3 vec3(this->x, this->y, this->z);
 		// shear vector3
 		vec3.rotate(degrees, x, y, z);
 		// save rotated vector
@@ -1981,7 +1981,7 @@ struct Vector4 {
 	void scale(double sx, double sy, double sz)
 	{
 		// copy values from self
-		Vector3 vec3((this)->x, (this)->y, (this)->z);
+		Vector3 vec3(this->x, this->y, this->z);
 		// shear vector3
 		vec3.scale(sx, sy, sz);
 		// save scaled vector
@@ -1990,7 +1990,7 @@ struct Vector4 {
 	void shear(double shx, double shy, double shz)
 	{
 		// copy values from self
-		Vector3 vec3((this)->x, (this)->y, (this)->z);
+		Vector3 vec3(this->x, this->y, this->z);
 		// shear vector3
 		vec3.shear(shx, shy, shz);
 		// save sheared vector
@@ -2096,7 +2096,7 @@ struct Vector4 {
         x = vector.x;
 		y = vector.y;
 		z = vector.z;
-		w = (this)->w;
+		w = this->w;
 		return (*this);
 	}
 	//////////////////
@@ -2104,8 +2104,8 @@ struct Vector4 {
 	{
         x = vector.x;
 		y = vector.y;
-		z = (this)->z;
-		w = (this)->w;
+		z = this->z;
+		w = this->w;
 		return (*this);
 	}
 	//////////////////
@@ -2203,8 +2203,8 @@ struct Vector2f
 	}
     Vector2f(float x, float y) 
     {
-	    (this)->x = x;
-	    (this)->y = y;
+	    this->x = x;
+	    this->y = y;
     }
 	Vector2f(const Vector2f& vector)
 	{
@@ -2262,9 +2262,9 @@ struct Vector3f
 	}
 	Vector3f(float x, float y, float z)
     {
-		(this)->x = x;
-		(this)->y = y;
-	    (this)->z = z;
+		this->x = x;
+		this->y = y;
+	    this->z = z;
 		
 		xy = Vector2f(x, y);
     }
@@ -2280,13 +2280,13 @@ struct Vector3f
 	{
 		x = vector.x;
 		y = vector.y;
-		(this)->z = z;
+		this->z = z;
 		
 		xy = Vector2f(x, y);
 	}	
 	Vector3f(float x, const Vector2f & vector)
 	{
-		(this)->x = x;
+		this->x = x;
 		y = vector.x;
 		z = vector.y;
 		
@@ -2351,7 +2351,7 @@ struct Vector3f
 	//////////////////
 	float dot(float x, float y, float z) const
 	{
-		return (((this)->x * x) + ((this)->y * y) + ((this)->z * z));
+		return ((this->x * x) + (this->y * y) + (this->z * z));
 	}
 	float dot(const Vector3f& vector) const
 	{		
@@ -2418,7 +2418,7 @@ struct Vector3f
 	//////////////////
 	Vector3f operator - (const Vector2f &vector) const
 	{		
-	    return Vector3f(x - vector.x, y - vector.y, (this)->z);
+	    return Vector3f(x - vector.x, y - vector.y, this->z);
 	}	
 	//////////////////
 	Vector3f operator - (float number) const
@@ -2433,7 +2433,7 @@ struct Vector3f
 	//////////////////
 	Vector3f operator * (const Vector2f &vector) const
 	{
-	    return Vector3f(x * vector.x, y * vector.y, (this)->z);
+	    return Vector3f(x * vector.x, y * vector.y, this->z);
 	}	
 	//////////////////
 	Vector3f operator * (float number) const
@@ -2448,7 +2448,7 @@ struct Vector3f
 	//////////////////
 	Vector3f operator / (const Vector2f &vector) const
 	{
-	    return Vector3f(x / vector.x, y / vector.y, (this)->z);
+	    return Vector3f(x / vector.x, y / vector.y, this->z);
 	}	
 	//////////////////
 	Vector3f operator / (float number) const
@@ -2473,7 +2473,7 @@ struct Vector3f
 	{
         x = vector.x;
 		y = vector.y;
-		z = (this)->z;
+		z = this->z;
 		return (*this);
 	}
 	//////////////////
@@ -2497,7 +2497,7 @@ struct Vector3f
 	{
 		x += vector.x;
 		y += vector.y;
-		z = (this)->z;
+		z = this->z;
 		return (*this);
 	}	
 	//////////////////
@@ -2521,7 +2521,7 @@ struct Vector3f
 	{
 		x -= vector.x;
 		y -= vector.y;
-		z = (this)->z;
+		z = this->z;
 		return (*this);		
 	}		
 	//////////////////
@@ -2545,7 +2545,7 @@ struct Vector3f
 	{
 		x *= vector.x;
 		y *= vector.y;
-		z *= (this)->z;
+		z *= this->z;
 		return (*this);		
 	}	
 	//////////////////
@@ -2569,7 +2569,7 @@ struct Vector3f
 	{
 		x /= vector.x;
 		y /= vector.y;
-		z /= (this)->z;
+		z /= this->z;
 		return (*this);		
 	}	
 	//////////////////
@@ -2666,10 +2666,10 @@ struct Vector4f
 	//////////////////
 	Vector4f(float x, float y, float z, float w) 
     {
-		(this)->x = x;
-		(this)->y = y;
-	    (this)->z = z;
-		(this)->w = w;
+		this->x = x;
+		this->y = y;
+	    this->z = z;
+		this->w = w;
 		
 		xy  = Vector2f(x, y);
 		xyz = Vector3f(x, y, z);
@@ -2701,8 +2701,8 @@ struct Vector4f
 	{
 		x = vector.x;
 		y = vector.y;
-		(this)->z = z;
-		(this)->w = w;
+		this->z = z;
+		this->w = w;
 		
 		xy  = Vector2f(x, y);
 		xyz = Vector3f(x, y, z);
@@ -2710,8 +2710,8 @@ struct Vector4f
 	//////////////////
 	Vector4f(float x, float y, const Vector2f& vector) 
 	{
-		(this)->x = x;
-		(this)->y = y;
+		this->x = x;
+		this->y = y;
 		z = vector.x;
 		w = vector.y;
 		
@@ -2721,10 +2721,10 @@ struct Vector4f
 	//////////////////
 	Vector4f(float x, const Vector2f &vector, float w) 
 	{
-		(this)->x = x;
+		this->x = x;
 		y = vector.x;
 		z = vector.y;
-		(this)->w = w;
+		this->w = w;
 		
 		xy  = Vector2f(x, y);
 		xyz = Vector3f(x, y, z);
@@ -2746,7 +2746,7 @@ struct Vector4f
 		x = vector.x;
 		y = vector.y;
 		z = vector.z;
-		(this)->w = w;
+		this->w = w;
 		
 		xy  = Vector2f(x, y);
 		xyz = Vector3f(x, y, z);
@@ -2754,7 +2754,7 @@ struct Vector4f
 	//////////////////
 	Vector4f(float x, const Vector3f &vector)
 	{
-		(this)->x = x;
+		this->x = x;
 		y = vector.x;
 		z = vector.y;
 		w = vector.z;
@@ -2827,8 +2827,8 @@ struct Vector2i
 	//////////////////
     Vector2i(int x, int y) 
     {
-	    (this)->x = x;
-	    (this)->y = y;
+	    this->x = x;
+	    this->y = y;
     }
 	//////////////////
 	Vector2i(const Vector2i& vector)
@@ -2842,14 +2842,14 @@ struct Vector2i
 	//////////////////
 	void set(int x, int y)
 	{
-		(this)->x = x;
-		(this)->y = y;
+		this->x = x;
+		this->y = y;
 	}
 	//////////////////
 	void set(const Vector2i& vector)
 	{
-		(this)->x = vector.x;
-		(this)->y = vector.y;
+		this->x = vector.x;
+		this->y = vector.y;
 	}
 	//////////////////
 	Vector2i get()
@@ -2901,7 +2901,7 @@ struct Vector2i
 	//////////////////
 	double dot(int x, int y) const
 	{
-		return ((this)->x * x) + ((this)->y * y);
+		return (this->x * x) + (this->y * y);
 	}
 	//////////////////
 	double cross(const Vector2i &vector) const
@@ -3093,7 +3093,353 @@ struct Vector2i
 /////////////////////
 /////////////////////
 struct Vector3i
-{};
+{
+	//////////////////
+	// Constructor(s)
+    Vector3i() : x(0), y(0), z(0) {}
+	//////////////////
+	Vector3i(int number)
+	{
+		x = number;
+		y = number;
+		z = number;
+		
+		xy = Vector2i(x, y);
+		//rgb = Vector3i(x, y, z);
+	}
+	//////////////////
+    Vector3i(int x, int y, int z) 
+    {
+	    this->x = x;
+	    this->y = y;
+	    this->z = z;
+	    
+		xy = Vector2i(x, y);
+		//rgb = Vector3i(x, y, z);	    
+    }    
+	//////////////////
+	Vector3i(const Vector2i& vector)
+	{
+		x = vector.x;
+		y = vector.y;
+		// z stays the same
+		
+		xy = Vector2i(x, y);
+		//rgb = Vector3i(x, y, z);		
+	}
+	//////////////////
+	Vector3i(const Vector3i& vector)
+	{
+		x = vector.x;
+		y = vector.y;
+		z = vector.z;
+		
+		xy = Vector2i(x, y);
+		//rgb = Vector3i(x, y, z);		
+	}	
+	//////////////////
+	// Destructor
+	~Vector3i(void) {}
+	//////////////////
+	void set(int number) 
+	{
+		x = number;
+		y = number;
+		z = number;
+		
+		xy = Vector2i(x, y);
+		//rgb = Vector3i(x, y, z);
+	}
+	//////////////////	
+	void set(int x, int y, int z)
+	{
+		this->x = x;
+		this->y = y;
+		this->z = z;
+
+		xy = Vector2i(x, y);
+		//rgb = Vector3i(x, y, z);		
+	}
+	//////////////////
+	void set(const Vector2i& vector)
+	{
+		this->x = vector.x;
+		this->y = vector.y;
+		// z stays the same
+		
+		xy = Vector2i(x, y);
+		//rgb = Vector3i(x, y, z);		
+	}
+	//////////////////
+	void set(const Vector3i& vector)
+	{
+		this->x = vector.x;
+		this->y = vector.y;
+		this->z = vector.z;
+		
+		xy = Vector2i(x, y);
+		//rgb = Vector3i(x, y, z);		
+	}	
+	//////////////////
+	Vector3i get()
+	{
+		return (*this);
+	}
+	//////////////////
+	/*double length() const
+	{
+		return sqrt(x * x + y * y);
+	}
+	//////////////////
+	static double length(Vector2i& vector)
+	{
+		return vector.length();
+	}	
+	//////////////////
+	Vector2i radians() const
+	{
+		return Vector2i(x * (3.14/180), y * (3.14/180));
+	}
+	//////////////////
+    Vector2i normalize() 
+	{
+		double len = length();
+		if(len != 0) 
+		{
+			x = x / len;
+			y = y / len;
+		}
+		return (*this);
+	}
+    //////////////////
+    Vector2i normal() const
+	{
+		Vector2i vector;
+		if(length() != 0)
+		{
+		    vector.x = x / length();
+		    vector.y = y / length();
+		}
+		return vector;
+	}	
+	//////////////////
+	double dot(const Vector3i &vector) const
+	{
+		return (x * vector.x) + (y * vector.y);
+	}
+	//////////////////
+	double dot(int x, int y) const
+	{
+		return (this->x * x) + (this->y * y);
+	}
+	//////////////////
+	double cross(const Vector3i &vector) const
+	{
+		return (x * vector.y) - (y * vector.x);  
+	}*/
+	//////////////////	
+	//////////////////
+	// Opertator overloading
+	//////////////////
+	/*Vector3i operator + (const Vector2i &vector) const
+	{
+		return Vector2i(x + vector.x, y + vector.y);
+	}
+	//////////////////
+	Vector3i operator + (int number) const 
+	{
+		return Vector2i(x + number, y + number);
+	}	
+	//////////////////
+	Vector3i operator - (const Vector2i &vector) const
+	{
+		return Vector2i(x - vector.x, y - vector.y);
+	}
+	//////////////////
+	Vector3i operator - (int number) const 
+	{
+		return Vector2i(x - number, y - number);
+	}	
+	//////////////////
+	Vector3i operator * (const Vector2i &vector) const
+	{
+		return Vector2i(x * vector.x, y * vector.y);
+	}
+	//////////////////
+	Vector3i operator * (int number) const 
+	{
+		return Vector2i(x * number, y * number);
+	}	
+	//////////////////
+	Vector3i operator / (const Vector2i &vector) const
+	{
+		return Vector2i(x / vector.x, y / vector.y);
+	}
+	//////////////////
+	Vector3i operator / (int number) const 
+	{
+		return Vector2i(x / number, y / number);
+	}	
+	//////////////////
+	Vector3i operator -(void) const // negate
+    {
+        return Vector2i(-x, -y);
+    }*/	
+	//////////////////
+	Vector3i operator = (const Vector3i &vector)
+	{
+        x = vector.x;
+		y = vector.y;
+		z = vector.z;
+		return (*this);
+	}	
+	//////////////////
+	Vector3i operator = (int number)
+	{
+		x = number;
+		y = number;
+		z = number;
+		return (*this);
+	}	
+	//////////////////
+	Vector3i operator += (const Vector3i &vector)
+	{
+		x += vector.x;
+		y += vector.y;
+		z += vector.z;
+		return (*this);
+	}	
+	//////////////////
+	Vector3i operator += (int number)
+	{
+		x += number; 
+		y += number;
+		z += number;
+		return (*this);
+	}
+	//////////////////
+	Vector3i operator -= (const Vector3i &vector)
+	{
+		x -= vector.x;
+		y -= vector.y;
+		z -= vector.z;
+		return (*this);
+	}	
+	//////////////////
+	Vector3i operator -= (int number)
+	{
+		x -= number; 
+		y -= number;
+		z -= number;
+		return (*this);
+	}
+	//////////////////
+	Vector3i operator *= (const Vector3i &vector)
+	{
+		x *= vector.x;
+		y *= vector.y;
+		z *= vector.z;
+		return (*this);
+	}	
+	//////////////////
+	Vector3i operator *= (int number)
+	{
+		x *= number; 
+		y *= number;
+		z *= number;
+		return (*this);
+	}
+	//////////////////
+	Vector3i operator /= (const Vector3i &vector)
+	{
+		x /= vector.x;
+		y /= vector.y;
+		z /= vector.z;
+		return (*this);
+	}	
+	//////////////////
+	Vector3i operator /= (int number)
+	{
+		x /= number; 
+		y /= number;
+		z /= number;
+		return (*this);
+	}	
+	//////////////////
+    bool operator < (const Vector3i &vector) const
+	{
+		return ((x < vector.x) || (y < vector.y) || (z < vector.z)) ? true : false;
+	}	
+	//////////////////
+    bool operator > (const Vector3i &vector) const
+	{
+		return ((x > vector.x) || (y > vector.y) || (z > vector.z)) ? true : false;
+	}		
+	//////////////////
+    bool operator <= (const Vector3i &vector) const
+	{
+		return ((x <= vector.x) || (y <= vector.y) || (z <= vector.z)) ? true : false;
+	}	
+	//////////////////
+    bool operator >= (const Vector3i &vector) const
+	{
+		return ((x >= vector.x) || (y >= vector.y) || (z >= vector.z)) ? true : false;
+	}
+	//////////////////
+    bool operator == (const Vector3i &vector) const
+	{
+		return ((x == vector.x) && (y == vector.y) && (z == vector.z)) ? true : false;
+	}		
+	//////////////////
+    bool operator == (const Vector3 &vector) const // bonus
+	{
+		return ((x == static_cast<int>(vector.x)) && (y == static_cast<int>(vector.y)) && (z == static_cast<int>(vector.z))) ? true : false;
+	}	
+	//////////////////
+    bool operator != (const Vector3i &vector) const
+	{
+		return ((x != vector.x) || (y != vector.y) || (z != vector.z)) ? true : false;
+	}
+	//////////////////
+    bool operator != (const Vector3 &vector) const // bonus
+	{
+		return ((x != static_cast<int>(vector.x)) || (y != static_cast<int>(vector.y)) || (z != static_cast<int>(vector.z))) ? true : false;
+	}		
+	//////////////////
+	int& operator [] (unsigned int number) 
+	{
+		switch(number)
+		{
+			case 0: return x; break;
+			case 1: return y; break;
+			case 2: return z; break;
+		}
+		return x;
+	}
+	//////////////////
+	const int& operator [] (unsigned int number) const 
+	{
+		switch(number)
+		{
+			case 0: return x; break;
+			case 1: return y; break;
+			case 2: return z; break;
+		}		
+		return x;
+	}	
+	//////////////////
+	friend std::ostream& operator << (std::ostream& os, const Vector3i & vector)
+	{
+		os << vector.x << " " << vector.y << " " << vector.z;
+		return os;		
+	}	
+    // properties
+	int x;
+    int y;
+    int z;
+    Vector2i xy;
+	// no need for xyz (the whole Vector3i can be used)
+};
 /////////////////////
 /////////////////////
 /////////////////////

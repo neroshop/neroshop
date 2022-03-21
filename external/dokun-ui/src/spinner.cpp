@@ -1,6 +1,6 @@
 #include "../include/spinner.hpp"
 
-Spinner::Spinner() : value(0), range(0, 100), step(1), decimal_places(0), color(160, 160, 160, 1.0), disabled(false), style(1),
+Spinner::Spinner() : value(0), range(0, 100), step(1), decimal_places(0), color(160, 160, 160, 1.0), style(1),
 // label
 label(nullptr),
 // button
@@ -189,14 +189,14 @@ int Spinner::set_label(lua_State * L)
     return 0;
 }
 ////////////////
-void Spinner::set_disabled(bool disabled) {
+/*void Spinner::set_disabled(bool disabled) {
     this->disabled = disabled;
     if(disabled) {
         color = Vector4(160, 160, 160, 1.0);
         button_color = Vector4(64, 64, 64, 1.0);
         //shape_color = // keep the same
     }
-}
+}*/
 /////////////
 void Spinner::set_style(int style) {
     this->style = style;
@@ -455,7 +455,10 @@ void Spinner::on_parent() // call this before drawing self
 /////////////
 void Spinner::on_button_press() 
 {
-    if(disabled) return; // disabled GUI cannot interact with user
+	if(!is_visible()) return;
+	if(is_disabled()) return;
+	if(!is_active()) return;
+	///////////////////
 	// Mouse
 	// old spinner (arrows = <, >)
 	if(style == 0) {

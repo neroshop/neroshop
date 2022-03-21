@@ -10,6 +10,7 @@
 #include "db.hpp"
 // temporary
 #include "image.hpp"
+#include <file.hpp> // for checking export file directory
 
 namespace neroshop {
 class Item { // or Product or whatever you want to call it
@@ -24,7 +25,8 @@ public:
         const std::string& condition, const std::string& product_code); // quantity is set by cart; discount is 0 by default      
     ~Item();
     void show_info();
-    void upload();
+    void upload(const std::string& filename);
+    Image * get_upload_image() const;
     // getters
  	unsigned int get_quantity() const;
 	static unsigned int get_quantity(unsigned int item_id);

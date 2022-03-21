@@ -236,7 +236,8 @@ int main() {
     // Seller will list some items
     // which users will be able to add to cart
     //Cart::get_singleton()->add(ball, 1);
-    ////ball.upload();
+    // uploading item images to database
+    ////ball.upload(File::get_current_dir() + "/res/monero-symbol-on-white-480.png");//Image * ball_image = ball.get_upload_image(); // segfault when allocating on stack -.-
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////	
     // Monero	
     // get config: network_type, ip, port, data_dir, etc.
@@ -367,7 +368,7 @@ int main() {
     wallet_message_box.add_label();   
     // -------------------------------- login -------------------------------------------
     // user_edit ***************************************
-    Edit * user_edit = new Edit();
+    std::shared_ptr<Edit> user_edit = std::make_shared<Edit>();//std::shared_ptr<Edit> user_edit = std::make_shared<Edit>();
     user_edit->set_size(500, 30); // try using an odd number for width=511
     user_edit->set_character_limit(500);//(32);//(64);//(500);//temp - 500 for testing//(user_edit->get_width() / 10); // 50 characters MAX (width / space_cursor_takes_up_each_increment)
     user_edit->set_position((window.get_width() / 2) - (user_edit->get_width() / 2), (window.get_height() / 2) - (user_edit->get_height() / 2));
@@ -382,7 +383,7 @@ int main() {
     //user_edit->set_cursor_advance(9);
     //mecha_font->set_width(18);
     // password_edit ***********************************
-    Edit * pw_edit = new Edit();
+    std::shared_ptr<Edit> pw_edit = std::make_shared<Edit>();
     pw_edit->set_size(user_edit->get_width(), user_edit->get_height());
     pw_edit->set_character_limit(128);//(256);//(pw_edit->get_width() / 10);
     pw_edit->set_position(user_edit->get_x(), user_edit->get_y() + user_edit->get_height() + 5);
@@ -499,7 +500,7 @@ int main() {
     wallet_button->set_position(daemon_button->get_x() + daemon_button->get_width() + 10, daemon_button->get_y());
     //wallet_button->hide();	
     // wallet_edit
-    Edit * wallet_edit = new Edit();
+    std::shared_ptr<Edit> wallet_edit = std::make_shared<Edit>();
     wallet_edit->set_readonly(true);
     wallet_edit->set_size(1000, pw_edit->get_height()); //pw_edit->get_width() //2560=width for 256 chars
     wallet_edit->set_character_limit(wallet_edit->get_width() / 10);
@@ -528,11 +529,12 @@ int main() {
     Box * sync_box = new Box();//Image sync_ball(Icon::get["circle"]->get_data(), 64, 64, 1, 4);//sync_box->set_image(sync_ball); //sync_box->set_label(sync_label);
     sync_box->set_size(12, 12); //sync_box->get_image()->set_size(16, 16);
     sync_box->set_color(255, 0, 0);//->get_image()->set_color(255, 0, 0);
-    sync_box->set_position(sync_label.get_x() + sync_label.get_width(), sync_label.get_y());
+    ////sync_box->set_radius(100);
+    sync_box->set_position(sync_label.get_x() + sync_label.get_width() + 5, sync_label.get_y());
     
     // --------------------------------- registration --------------------------------
     // user edit - registration
-    Edit * user_edit_r = new Edit();
+    std::shared_ptr<Edit> user_edit_r = std::make_shared<Edit>();
     user_edit_r->set_size(500, 30);
     user_edit_r->set_character_limit(user_edit_r->get_width() / 10);
     Label user_edit_label_r; // = new Label();
@@ -543,7 +545,7 @@ int main() {
     user_edit_r->set_placeholder_text("Username *"); // doesn't really do anything
     //user_edit_r->hide();	
     // pw_edit - registration
-    Edit * pw_edit_r = new Edit();
+    std::shared_ptr<Edit> pw_edit_r = std::make_shared<Edit>();
     pw_edit_r->set_size(250 - 5, 30); // added a gap (+5) between pw_edit_r and pw_confirm_edit
     pw_edit_r->set_character_limit(128);//(pw_edit_r->get_width() / 10);
     Label pw_edit_label_r; // = new Label();
@@ -553,7 +555,7 @@ int main() {
     pw_edit_r->set_placeholder_text("Password *");
     pw_edit_r->set_sensative(true);
     // pw_confirm_edit - registration
-    Edit * pw_confirm_edit = new Edit();
+    std::shared_ptr<Edit> pw_confirm_edit = std::make_shared<Edit>();
     pw_confirm_edit->set_size(250, 30);
     pw_confirm_edit->set_character_limit(pw_edit_r->get_character_limit());//(pw_confirm_edit->get_width() / 10); //(pw_edit_r->get_character_limit());
     Label pw_confirm_edit_label; // = new Label();
@@ -563,7 +565,7 @@ int main() {
     pw_confirm_edit->set_placeholder_text("Confirm password *");
     pw_confirm_edit->set_sensative(true);
     // opt_email edit - registration
-    Edit * opt_email_edit = new Edit();
+    std::shared_ptr<Edit> opt_email_edit = std::make_shared<Edit>();
     opt_email_edit->set_size(500, 30);
     opt_email_edit->set_character_limit(opt_email_edit->get_width() / 10);
     Label opt_email_edit_label; // = new Label();
@@ -736,7 +738,7 @@ int main() {
     catalog->fetch_inventory();
     // -----------------------------
     // search_bar
-    Edit * search_bar = new Edit(); // crashes when drawn for some reason
+    std::shared_ptr<Edit> search_bar = std::make_shared<Edit>(); // crashes when drawn for some reason
     search_bar->set_size(400, 40);//((window.get_client_width() / 4) * 2 , 30); //620 , 30);
     search_bar->set_color(5,5,6);//(177, 190, 195);
     search_bar->set_cursor_color(255, 255, 255);
@@ -1045,13 +1047,13 @@ int main() {
             window.clear(32, 32, 32);
             /////////////////////
             // On enter pressed with focus on pw_edit
-            if(pw_edit->has_focus() && Keyboard::is_pressed(DOKUN_KEY_RETURN)) {
+            if(pw_edit->is_active() && pw_edit->has_focus() && Keyboard::is_pressed(DOKUN_KEY_RETURN)) {
                 pw_edit->set_focus(false);
                 // attempt a login
                 std::cout << "login anaa?\n";
             }            
             // On enter pressed with focus on user_edit
-            if(user_edit->has_focus() && Keyboard::is_pressed(DOKUN_KEY_RETURN)) {
+            if(user_edit->is_active() && user_edit->has_focus() && Keyboard::is_pressed(DOKUN_KEY_RETURN)) {
                 user_edit->set_focus(false);
                 //if(!pw_edit.empty()) { login(); return; }
                 pw_edit->set_focus(true);
@@ -1059,7 +1061,7 @@ int main() {
             }
             /////////////////////////
             // login_button
-            if(login_button->is_pressed() && !message_box.is_visible()) {
+            if(login_button->is_pressed()) {
                 bool logged = false;
                 // try to login user after connecting to server (daemon)
                 if(client->is_connected()) {
@@ -1196,7 +1198,7 @@ int main() {
                 }
             }
             // guest_button
-            if(guest_button->is_pressed() && !message_box.is_visible()) {
+            if(guest_button->is_pressed()) {
                 // create user		        
                 if(!user) user = new Buyer("Guest");
                 std::cout << "Hello, " << user->get_name() << std::endl;
@@ -1214,7 +1216,7 @@ int main() {
             }
             /////////////////////
             // register_button
-            if(register_button->is_pressed() && !message_box.is_visible()) {
+            if(register_button->is_pressed()) {
                 // clear all GUI focus
                 GUI::clear_all();
                 // set focus to registration username edit
@@ -1227,14 +1229,14 @@ int main() {
                 goto register_men;
             }
             // settings_button		    
-            if(settings_button->is_pressed() && !message_box.is_visible()) {
+            if(settings_button->is_pressed()) {
                 std::string cfg_file = "/home/" + System::get_user() + "/.config/neroshop/config.lua";
                 NEROSHOP_TAG_OUT std::cout << "opening: " << cfg_file << std::endl;
                 std::system(std::string("gedit " + cfg_file).c_str()); // ubuntu
             }
             /////////////////////
             // daemon_button
-            if(daemon_button->is_pressed() && !message_box.is_visible()) { // && !msg_box.is_visible()
+            if(daemon_button->is_pressed()) { // && !msg_box.is_visible()
                 if(!wallet_opened  ) {//wallet->get_monero_wallet() == nullptr ) {
                     message_box.set_text("wallet has not been uploaded"); //msg_box.get_label()->set_string("  wallet has not been opened");//msg_box.set_width(msg_box.get_label()->get_width()); // update msg_box width based on label's width//message_box.center(window.get_client_width(), window.get_client_height());//msg_box.set_position((window.get_width() / 2) - (msg_box.get_width() / 2), (window.get_height() / 2) - (msg_box.get_height() / 2)); // update msg_box pos since width changed
                     // box text (label)
@@ -1267,7 +1269,7 @@ int main() {
             }
             /////////////////////
             // upload button
-            if(upload_button->is_pressed() && !message_box.is_visible() && !wallet_opened) {
+            if(upload_button->is_pressed() && !wallet_opened) {
                 // upload just the filename, but do not open it
                 std::cout << "wallet upload_button is pressed\n";
                 std::string wallet_file = wallet->upload(false);
@@ -1326,7 +1328,7 @@ int main() {
             // while the wallet is not opened, clear the wallet_edit
             if(!wallet_opened && !message_box.is_visible()) wallet_edit->clear_all();            
             /////////////////////
-            if(wallet_button->is_pressed() && !message_box.is_visible() && !wallet_opened) {
+            if(wallet_button->is_pressed() && !wallet_opened) {
                 message_box.set_text("Enter wallet name:");
                 message_box.show();
                 message_box.set_text("Enter password:");
@@ -1386,31 +1388,23 @@ int main() {
                     message_box.get_button(1)->show();
                     message_box.show();*/
             }
-            // update ui positions (in case window is resized)
-            wallet_edit->set_width(window.get_client_width() - (wallet_button->get_x() + wallet_button->get_width() + 5) - (upload_button->get_width() + 5) - 20); // 5 is space b/t upload_button and wallet_edit // 5 is space b/t wallet_button and wallet_edit		    
-            wallet_edit->set_position(wallet_button->get_x() + wallet_button->get_width() + 5, wallet_button->get_y() - ((wallet_edit->get_height() / 2) - (wallet_button->get_height() / 2))); //wallet_edit->set_position(pw_edit->get_x() - pw_edit->get_width() / 2, pw_edit->get_y() + pw_edit->get_height() + 5);
-            user_edit->set_position((window.get_client_width() / 2) - (user_edit->get_width() / 2), (window.get_client_height() / 2) - (user_edit->get_height() / 2) - 60);
-            pw_edit->set_position(user_edit->get_x(), user_edit->get_y() + user_edit->get_height() + 10);
-            upload_button->set_position(wallet_edit->get_x() + wallet_edit->get_width() + 5, wallet_edit->get_y()); //upload_button->set_position(wallet_edit->get_x() - upload_button->get_width() - 5, wallet_edit->get_y());
-            //int button_horz_spacing = 5;
-            login_button->set_position(pw_edit->get_x() + ((login_button->get_width() / 2) - (pw_edit->get_width() / 2)), pw_edit->get_y() + pw_edit->get_height() + 70);//10);//set_position(pw_edit->get_x() - (((login_button->get_width() + register_button->get_width() + 5) / 2) - (pw_edit->get_width() / 2)), pw_edit->get_y() + pw_edit->get_height() + 10); //register_button->set_position(login_button->get_x() + login_button->get_width() + 5, login_button->get_y()); // => register and login on same line
-            guest_button->set_position(pw_edit->get_x(), login_button->get_y() + login_button->get_height() + 10); //guest_button->set_position(login_button->get_x(), login_button->get_y() + login_button->get_height() + 5);
-            register_button->set_position(guest_button->get_x() + guest_button->get_width() + 5, guest_button->get_y());
+            // update ui sizes (in case window is resized)
+            wallet_edit->set_width(window.get_client_width() - (wallet_button->get_x() + wallet_button->get_width() + 5) - (upload_button->get_width() + 5) - 20); // 5 is space b/t upload_button and wallet_edit // 5 is space b/t wallet_button and wallet_edit
             // draw ui
-            if(!message_box.is_visible()) { // just so you don't enter keys into the pw and username edits (temporary - until I fix the GUI::focus thing)
-                user_edit->draw(); //
-                pw_edit->draw(); //std::cout << "pw_edit->get_text: " << pw_edit->get_text() << std::endl;
-            }
+            //if(!message_box.is_visible()) { // just so you don't enter keys into the pw and username edits (temporary - until I fix the GUI::focus thing)
+                user_edit->draw((window.get_client_width() / 2) - (user_edit->get_width() / 2), (window.get_client_height() / 2) - (user_edit->get_height() / 2) - 60); //
+                pw_edit->draw(user_edit->get_x(), user_edit->get_y() + user_edit->get_height() + 10); //std::cout << "pw_edit->get_text: " << pw_edit->get_text() << std::endl;
+            //}
             // upper options
-            settings_button->draw();
-            daemon_button->draw();
-            wallet_button->draw();
-            wallet_edit->draw();
-            upload_button->draw();
+            settings_button->draw(20, 20);
+            daemon_button->draw(settings_button->get_x() + settings_button->get_width() + 10, settings_button->get_y());
+            wallet_button->draw(daemon_button->get_x() + daemon_button->get_width() + 10, daemon_button->get_y());
+            wallet_edit->draw(wallet_button->get_x() + wallet_button->get_width() + 5, wallet_button->get_y() - ((wallet_edit->get_height() / 2) - (wallet_button->get_height() / 2))); //wallet_edit->set_position(pw_edit->get_x() - pw_edit->get_width() / 2, pw_edit->get_y() + pw_edit->get_height() + 5);
+            upload_button->draw(wallet_edit->get_x() + wallet_edit->get_width() + 5, wallet_edit->get_y()); //upload_button->set_position(wallet_edit->get_x() - upload_button->get_width() - 5, wallet_edit->get_y());
             // login            
-            login_button->draw();
-            guest_button->draw();
-            register_button->draw();
+            login_button->draw(pw_edit->get_x() + ((login_button->get_width() / 2) - (pw_edit->get_width() / 2)), pw_edit->get_y() + pw_edit->get_height() + 70);//10);//set_position(pw_edit->get_x() - (((login_button->get_width() + register_button->get_width() + 5) / 2) - (pw_edit->get_width() / 2)), pw_edit->get_y() + pw_edit->get_height() + 10); //register_button->set_position(login_button->get_x() + login_button->get_width() + 5, login_button->get_y()); // => register and login on same line
+            guest_button->draw(pw_edit->get_x(), login_button->get_y() + login_button->get_height() + 10); //guest_button->set_position(login_button->get_x(), login_button->get_y() + login_button->get_height() + 5);
+            register_button->draw(guest_button->get_x() + guest_button->get_width() + 5, guest_button->get_y());
             // save user
             save_toggle->draw(pw_edit->get_x(), pw_edit->get_y() + 70);
             save_user_label.draw(save_toggle->get_x() + save_toggle->get_width() + 5, save_toggle->get_y() + (save_toggle->get_height() / 4));
@@ -1460,15 +1454,25 @@ int main() {
             //if(Keyboard::is_pressed(DOKUN_KEY_H)) message_box.get_button(0)->hide();
             //if(Keyboard::is_pressed(DOKUN_KEY_S)) message_box.get_button(0)->show();
             //------------------------------------------------------
+            // to-do: make more user-customizable GUI callback functions
+            // deactivates all gui at the bottom-level of the top-level gui element (this) so that bottom-level guis may not receive any input from the user while the top-level gui is visible
+            message_box.set_bottom_level_gui_list({ user_edit.get(), pw_edit.get(), login_button, guest_button, register_button, save_toggle, settings_button, daemon_button, wallet_button, wallet_edit.get(), upload_button }); // wallet_edit is readonly so it does not receive user input, but lets add it regardless
+            ////wallet_message_box.set_bottom_level_gui_list({ user_edit.get(), pw_edit.get(), login_button, guest_button, register_button, save_toggle, settings_button, daemon_button, wallet_button, wallet_edit.get(), upload_button, message_box.get_box() }); // wallet_edit is readonly so it does not receive user input, but lets add it regardless
+            //------------------------------------------------------
             // draw first message box - for general notifications
             message_box.center(window.get_client_width(), window.get_client_height());
             message_box.draw();
             // draw second message box - for wallet notifications
             // if there are other msgboxs overlapped by this msgbox, move the y position elsewhere
-            if(message_box.is_visible()) wallet_message_box.set_position(message_box.get_x() + 30, message_box.get_y() + message_box.get_box()->get_title_bar_size().y + 1);//window.get_client_height());
+            if(message_box.is_visible()) { 
+                wallet_message_box.set_position(message_box.get_x() + 30, message_box.get_y() + message_box.get_box()->get_title_bar_size().y + 1);//window.get_client_height());
+            }
+            //std::cout << "mouse color: " << Mouse::get_color(/*message_box.get_box()->get_width(), message_box.get_box()->get_height()*/) << "\n";
+            //std::cout << "msg_box color: " << message_box.get_box()->get_color() << "\n";
+            //std::cout << "msg_box id: " << Factory::get_gui_factory()->get_location(message_box.get_box()) << "\n";
             // if no other msgbox is being shown, center position
             if(!message_box.is_visible()) wallet_message_box.center(window.get_client_width(), window.get_client_height());
-            wallet_message_box.draw();
+            wallet_message_box.draw(); // wallet_message_box's bottom-level guis should include the default message_box [x]
             // update window
             window.update();
         }
@@ -1575,8 +1579,7 @@ int main() {
             /////////////////////////////////////
             // DON'T open database in loop!!!
             // each time an item is added or removed or qty_changed from the cart, update this string 
-            // causes crash
-            //cart_button->get_label()->set_string(std::to_string(Cart::get_singleton()->get_total_quantity()));
+            //cart_button->get_label()->set_string(std::to_string(Cart::get_singleton()->get_total_quantity())); // causes crash
             if(user->is_registered()) cart_button->get_label()->set_string(std::to_string(Cart::get_singleton()->get_total_quantity(user->get_id())));
             //cart_button->get_label()->set_color(); // (cart_qty >= 100) = red(255, 0, 0), (cart_qty >= (100 / 2)) = yellow(255,191,0), (cart_qty <= ((100 / 2) - 1)) = white);
             cart_button->get_label()->set_relative_position(20, (cart_button->get_height() - cart_label.get_height()) / 2);
@@ -1599,6 +1602,9 @@ int main() {
             }
             logout_button->draw(order_button->get_x() - logout_button->get_width() - 1, 20);
             /////////////////////////////////////
+            /////////////////////////////////////
+            daemon_button->draw(search_button->get_x() + search_button->get_width() + 10, search_button->get_y());
+            //wallet_button->draw(daemon_button->get_x() + daemon_button->get_width(), daemon_button->get_y());
             /////////////////////////////////////
             /////////////////////////////////////
             // TEMPORARY TESTING CODE
@@ -1665,7 +1671,7 @@ int main() {
             ////////////////
             // sync status
             sync_label.draw(0 + 20, window.get_client_height() - 20);
-            sync_box->draw(sync_label.get_x() + sync_label.get_width(), sync_label.get_y());
+            sync_box->draw(sync_label.get_x() + sync_label.get_width() + 5, sync_label.get_y());
             ////////////////
             // temporary
             //if(Keyboard::is_pressed(DOKUN_KEY_G)) wallet->address_unused();            

@@ -44,8 +44,8 @@ class Mouse {
 		static Vector3 get_normalized_position(const dokun::Window& window);
 		
 		static int get_delta();                                     static int get_delta(lua_State *L); // returns mouse wheel delta
-		static Vector3 get_color(int x, int y);                     static int get_color(lua_State *L); // returns rgb color in a position in the active window	
-		static Vector2 get_size() /*const*/;                            static int get_size(lua_State * L);
+		static Vector3i get_color();                     static int get_color(lua_State *L); // returns rgb color in a position in the active window	
+		static Vector2i get_size() /*const*/;                            static int get_size(lua_State * L);
 		// boolean
 		static bool is_moved();                                     static int is_moved(lua_State *L);
 		static bool is_scrolled();                                  static int is_scrolled(lua_State *L);        

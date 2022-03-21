@@ -242,7 +242,7 @@ void Grid::set_highlight_color(unsigned int red, unsigned int green, unsigned in
 }
 ////////////////////
 void Grid::set_highlight_color(const Vector3& color) {
-    set_highlight_color(color.x, color.y, color.z, highlight_color.w);
+    set_highlight_color(color.x, color.y, color.z);
 }
 ////////////////////
 void Grid::set_highlight_color(const Vector4& color) {
@@ -262,7 +262,7 @@ void Grid::set_outline_color(unsigned int red, unsigned int green, unsigned int 
 }
 ////////////////////
 void Grid::set_outline_color(const Vector3& color) {
-    set_outline_color(color.x, color.y, color.z, outline_color.w);
+    set_outline_color(color.x, color.y, color.z);
 }
 ////////////////////
 void Grid::set_outline_color(const Vector4& color) {
@@ -288,6 +288,18 @@ std::vector<std::vector<std::shared_ptr<Box>>> Grid::get_block_list() const {
 ////////////////////
 Box * Grid::get_box(int row, int column) const {
     return get_block(row, column);
+}
+////////////////////
+Box * Grid::get_box(int index) const {
+    std::vector<Box *> box_1d = {};
+    for(int r = 0; r < this->rows/*or block_list.size()*/; r++) // block.size() = rows
+	{
+		for(int c = 0; c < this->columns/*or block_list[r].size()*/; c++) { // block[r] = items in row r	
+            box_1d.push_back( block_list[r][c].get() );  
+        }
+    }
+    //std::cout << "box_1d size: " << box_1d.size() << std::endl;
+    return box_1d[index];
 }
 ////////////////////
 std::vector<std::vector<std::shared_ptr<Box>>> Grid::get_box_list() const {
@@ -346,6 +358,10 @@ int Grid::get_color(lua_State *L)
 */
 ////////////////////
 void Grid::on_highlight(int rows, int cols) {
+	if(!is_visible()) return;
+	if(is_disabled()) return;
+	if(!is_active()) return;
+	///////////////////
 	if(!highlight) return;
 	// on hover
     if(Mouse::is_over(block_list[rows][cols]->get_position().x + cols, block_list[rows][cols]->get_position().y + rows, get_width(), get_height()))

@@ -215,6 +215,10 @@ void List::set_outline_antialiased(bool antialiased)
 //////////////////
 void List::on_item(Box* item, int index) // will not work under list->is_visible
 {
+	if(!is_visible()) return;
+	if(is_disabled()) return;
+	if(!is_active()) return;
+	/////////////////////////
     if(Mouse::is_over(item->get_rect()))
 	{
 		// highlight item on hover

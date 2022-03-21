@@ -66,11 +66,12 @@ std::string neroshop::Wallet::upload(bool open, std::string password, monero_net
     //           then call neroshop::Wallet::open when user presses a "submit" button.
 #ifdef __gnu_linux__
     char file[1024];
-    FILE *f = popen("zenity --file-selection", "r");
+    FILE *f = popen("zenity --file-selection --title \"Select Wallet\"", "r");//--filename "/home/${USER}/"
     fgets(file, 1024, f);
+    // consider https://github.com/AndrewBelt/osdialog/blob/master/osdialog_zenity.c
 #endif
     std::string filename(file); // "wallet.keys" file
-    filename = filename.substr(0, filename.find(".")); // remove ext
+    filename = filename.substr(0, filename.find(".")); // remove ".keys" extension
     if(!File::exists(filename + ".keys")) {std::cout << "\033[1;31;49m" << "wallet not found" << "\033[0m" << std::endl; return "";}// check if wallet file is valid (or exists)
     if(open == true) neroshop::Wallet::open(filename, password, network_type);// will re-apply ".keys" ext to the wallet file // check if wallet exists first//monero::monero_wallet_full::wallet_exists	(	const std::string & 	path	)	
     return std::string(filename + ".keys");

@@ -81,7 +81,6 @@ private:
 	Vector4 color;
 	double step; // how much the value can go up or down
 	unsigned int decimal_places;
-	bool disabled;
 	unsigned int style;
 	// button
 	int button_width;

@@ -952,6 +952,7 @@ int Edit::is_edit(lua_State *L)
 void Edit::on_hover()
 {
     if(readonly) return;
+    if(is_disabled() || !is_active()) return;
     if(!has_focus()) return;
 	dokun::Window * window = static_cast<dokun::Window *>(Factory::get_window_factory()->get_object(0));//dokun::Window * window = dokun::Window::get_active();
 	//if(window == nullptr) return;    
@@ -987,6 +988,8 @@ void Edit::on_hover()
 void Edit::on_mouse_press()
 {
     if(readonly) return;
+    if(is_disabled()) return;
+    if(!is_active()) return;
     unsigned int string_length = label->get_string().length();//character_data.size()
     dokun::Window * window = static_cast<dokun::Window *>(Factory::get_window_factory()->get_object(0));
     //Vector4 old_color = label->get_color(); // save original color
@@ -1054,6 +1057,7 @@ void Edit::on_mouse_press()
 /////////////
 void Edit::on_key_press()
 {
+    if(!is_visible() || is_disabled() || !is_active()) return;
     if(readonly) return;
     if(!has_focus()) return;
     if(!label) throw std::runtime_error("label is not initialized");
@@ -1190,6 +1194,7 @@ void Edit::on_key_press()
 /////////////
 void Edit::on_backspace() // bug: crashes everytime backspace is used when cursor position is not at the end of text
 {
+    if(!is_visible() || is_disabled() || !is_active()) return;
     if(readonly) return;
     if(!has_focus()) return;
     if(character_data.empty()) return; // if there are no characters then there is nothing to erase, so return (so it does not crash engine)
@@ -1324,6 +1329,7 @@ void Edit::on_backspace() // bug: crashes everytime backspace is used when curso
 /////////////
 void Edit::on_enter()
 {
+    if(!is_visible() || is_disabled() || !is_active()) return;
     if(readonly) return;
     if(!has_focus()) return;    
 #ifdef DOKUN_WIN32
@@ -1352,6 +1358,7 @@ void Edit::on_enter()
 // mouse stays within edit's bounds, but keyboard can go past edit's bounds
 void Edit::on_arrow_keys() // will shift the text via "start_index"
 {
+    if(!is_visible() || is_disabled() || !is_active()) return;
     if(readonly) return;
     if(!has_focus()) return;
     if(dokun::Keyboard::is_pressed(DOKUN_KEY_LEFT )) {

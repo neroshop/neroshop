@@ -83,7 +83,7 @@ class Entity // or GameObject; base abtract class that acts as parent for Sprite
 		virtual int get_id();
 		// boolean_
 		bool is_entity()const;                              static int is_entity(lua_State *L);
-		bool is_visible()const;                             static int is_visible(lua_State *L);
+		virtual bool is_visible()const;                             static int is_visible(lua_State *L);
 		bool has_component(const std::string& name)const;          static int has_component(lua_State *L);
 		bool has_component(const Component& component)const;
 	protected:

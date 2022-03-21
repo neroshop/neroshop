@@ -675,69 +675,181 @@ void neroshop::Item::register_item(const neroshop::Item& item) {
 }
 ////////////////////
 // seller should have the option to upload videos too (when videos are supported)
-void neroshop::Item::upload() { 
-#ifdef __gnu_linux__
+void neroshop::Item::upload(const std::string& filename) { 
+/*#ifdef __gnu_linux__
     char file[1024];
-    FILE *f = popen("zenity --file-selection", "r");
+    FILE * f = popen("zenity --file-selection", "r");
     fgets(file, 1024, f);
+    int pid = pclose(f);//if(f) pclose(f);
 #endif
-    std::string filename(file);
-    // create image
-    Image image;//dokun::Image image;
-    if(image.load(filename)) {
-        std::cout << "failed to load image: " << filename << "\n";
-        return;
-    }
-    //image.get_data();
-    //image.get_file();
-    // image should not exceed n pixels in width and/or height
-    //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
-    // store data as bytea or blob
-    // do one image for now ...
-    //DB::Postgres::get_singleton()->execute_params("UPDATE item SET image_data = $1 WHERE id = $2",
-    //    { image.get_data()??, std::to_string(this->id) });
+    //Process process("zenity", "--file-selection");
+    std::string filename(file);*/
     ///////////////////////////
     // create table
     if(!DB::Postgres::get_singleton()->table_exists("image")) {
         DB::Postgres::get_singleton()->create_table("image");
-        //DB::Postgres::get_singleton()->add_column("image", "item_id", "integer REFERENCES item(id)");
-    	DB::Postgres::get_singleton()->add_column("image", "name", "text");
-    	////DB::Postgres::get_singleton()->add_column("image", "file", "text");
+        DB::Postgres::get_singleton()->add_column("image", "item_id", "integer REFERENCES item(id)");
+    	DB::Postgres::get_singleton()->add_column("image", "name", "text");////DB::Postgres::get_singleton()->add_column("image", "file", "text");
     	// bytea is limited to 1GB and OID is limited to 2GB
-    	DB::Postgres::get_singleton()->add_column("image", "data", "bytea");//"oid");//"lo");//"bytea");//"blob");
+    	// The oid type is currently implemented as an unsigned four-byte integer: https://www.postgresql.org/docs/current/datatype-oid.html
+    	DB::Postgres::get_singleton()->execute("ALTER TABLE image ADD COLUMN IF NOT EXISTS data oid;");//"bytea");//"blob");//"lo");
+        DB::Postgres::get_singleton()->add_column("image", "ext", "text");
     }
-    // insert into table image
-    std::string image_name = filename.substr(0, filename.find("."));
-    image_name = image_name.substr(image_name.find_last_of("\\/") + 1);
+    //////////////////////////
     std::string image_file = filename;
+    std::string image_name = ( image_file.substr(0, image_file.find(".")) ).substr(( image_file.substr(0, image_file.find(".")) ).find_last_of("\\/") + 1);
+    std::string image_ext = image_file.substr(image_file.find_last_of(".") + 1);
     std::cout << "image name: " << image_name << std::endl;
     std::cout << "image file: " << image_file << std::endl;
-    //unsigned char * image_data = image.get_data();
+    std::cout << "image extension: " << image_ext << std::endl;    
     ///////////////////////////
     /*// bytea
     // insert the image elephant.png
-    DB::Postgres::get_singleton()->execute_params("INSERT INTO image(name, data) VALUES($1, bytea_import($2))", { image_name, image_file });
+    DB::Postgres::get_singleton()->execute_params("INSERT INTO image(name, data) VALUES($1, bytea_import($2))", { image_name, image_file }); // pg_read_binary_file($2) // pg_read_file($2)::bytea
     // select data
     std::cout << DB::Postgres::get_singleton()->get_text("SELECT name, data FROM image;") << std::endl;*/ //;//DB::Postgres::get_singleton()->execute_params("", {});
     ///////////////////////////
-    // oid
-    // insert image into
-    // GRANT ALL PRIVILEGES ON DATABASE neroshoptest TO postgres;
-    // GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO postgres;
-    // ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO postgres;
-    // ALTER DEFAULT PRIVILEGES GRANT ALL ON TABLES TO postgres;
-    /*DB::Postgres::get_singleton()->execute_params("INSERT INTO image(name, data) VALUES($1, lo_import($2))", { image_name, image_file });
-    // export image to
-    std::cout << DB::Postgres::get_singleton()->get_text_params("SELECT lo_export(image.data, $1) FROM image;", { "/home/sid/Downloads/temp/" + image_name + ".png" }) << std::endl;*/
-    // errors: could not open server file "...": No such file or directory
-    // fix   :  ???
+    // https://www.postgresql.org/docs/current/lo-interfaces.html
+    DB::Postgres::get_singleton()->execute("BEGIN;");
+    // Before we start anything, lets make sure number of images do not exceed MAX_IMAGES_PER_ITEM
+    int image_count = DB::Postgres::get_singleton()->get_integer_params("SELECT COUNT(*) FROM image WHERE item_id = $1", { std::to_string(this->id) });
+    int MAX_IMAGES_PER_ITEM = 1;//6;// for now lets keep the max_images to 1. Will increase later on
+    if(image_count >= MAX_IMAGES_PER_ITEM) {
+        neroshop::print("MAX_IMAGES_PER_ITEM has been exceeded! Items can only have up to " + std::to_string(MAX_IMAGES_PER_ITEM) + " image(s)", 1);
+        DB::Postgres::get_singleton()->execute("ROLLBACK;"); // abort transaction
+        return; // exit function
+    }
+    // NOTE: Client applications cannot use these functions while a libpq connection is in pipeline mode // https://www.postgresql.org/docs/current/libpq-pipeline-mode.html
+    // create a new large object
+    Oid image_oid = lo_creat(DB::Postgres::get_singleton()->get_handle(), INV_READ|INV_WRITE);
+    if(image_oid == InvalidOid) { std::cout << NEROSHOP_TAG POSTGRESQL_TAG_ERROR "failed to create OID " << image_oid << "\033[0m" << std::endl; DB::Postgres::get_singleton()->execute("ROLLBACK;"); return; }
+    std::cout << image_oid << std::endl; // 81944, 81963 // make sure oid is not InvalidOid (zero)
     ///////////////////////////
-    //DB::Postgres::get_singleton()->execute_params("INSERT INTO image(name, data) VALUES($1, pg_read_file($2)::bytea)", { image_name, image_file });
-    ////DB::Postgres::get_singleton()->execute_params("INSERT INTO image(name, data) VALUES($1, pg_read_binary_file($2))", { image_name, image_file });
+    // open the existing large object descriptor (for writing)
+    int image_fd = lo_open(DB::Postgres::get_singleton()->get_handle(), image_oid, INV_WRITE); // write only
+    if(image_fd == -1) {
+        std::cout << NEROSHOP_TAG POSTGRESQL_TAG_ERROR "failed to open OID " << image_oid << "\033[0m" << std::endl;
+        DB::Postgres::get_singleton()->execute("ROLLBACK;"); // abort transaction
+        return; // exit function
+    }    
+    //////////////////////////
+    //static char lo_content[] = "Lorem ipsum dolor sit amet, fabulas conclusionemque ius ad.";//std::cout << "lo_content size: " << sizeof(lo_content) << std::endl;//60
+    std::ifstream image_file_r(image_file, std::ios::binary); // std::ios::binary is the same as std::ifstream::binary
+    if(!image_file_r.good()) {
+        std::cout << NEROSHOP_TAG "failed to load " << image_file << std::endl; DB::Postgres::get_singleton()->execute("ROLLBACK;"); return;
+    }
+    image_file_r.seekg(0, std::ios::end); // std::ios::end is the same as image_file_r.end
+    size_t file_size = static_cast<int>(image_file_r.tellg()); // .tellg() is a std::streampos
+    image_file_r.seekg(0); // image_file_r.seekg(0, image_file_r.beg);
+    std::vector<unsigned char> buffer(file_size); // or unsigned char buffer[file_size];// or unsigned char * buffer = new unsigned char[file_size];
+    if(!image_file_r.read(reinterpret_cast<char *>(&buffer[0]), file_size)) {// read data as a block
+        std::cout << NEROSHOP_TAG "error: only " << image_file_r.gcount() << " could be read";
+        DB::Postgres::get_singleton()->execute("ROLLBACK;"); // abort transaction
+        return; // exit function
+    }    
+    ////for(auto content : buffer) std::cout << content << std::endl; // temp
+    image_file_r.close();
     ///////////////////////////
+    // write image data to the large object descriptor
+    if(lo_write(DB::Postgres::get_singleton()->get_handle(), image_fd, reinterpret_cast<const char *>(buffer.data())/*lo_content*/, file_size/*sizeof(lo_content)*/) == -1) {//image_write, (image.get_width() * image.get_height() * image.get_channel())) == -1) {
+        std::cout << NEROSHOP_TAG POSTGRESQL_TAG_ERROR "failed to write to large object file descriptor " << image_fd << "\033[0m" << std::endl;
+    }
+    // close large object descriptor
+    if(lo_close(DB::Postgres::get_singleton()->get_handle(), image_fd) == -1) {
+        std::cout << NEROSHOP_TAG POSTGRESQL_TAG_ERROR "failed to close large object file descriptor " << image_fd << "\033[0m" << std::endl;
+        DB::Postgres::get_singleton()->execute("ROLLBACK;"); // abort transaction
+        return; // exit function if file fails to both write and close
+    }
+    // buffer.clear(); // use "delete [] buffer;" only if char * was allocated with new // buffer contains the entire file (its content)
+    ///////////////////////////
+    // insert into table
+    DB::Postgres::get_singleton()->execute_params("INSERT INTO image(item_id, name, data, ext) VALUES($1, $2, $3::oid, $4)", { std::to_string(this->id), image_name, std::to_string(image_oid), image_ext });
+    ///////////////////////////
+    // check to see if image data is correct by exporting large object (optional)
+    // 
+    /*if(lo_export(DB::Postgres::get_singleton()->get_handle(), image_oid, ("/tmp/" + image_name + ".png").c_str()) == -1) { // Returns 1 on success, -1 on failure
+        std::cout << POSTGRESQL_TAG_ERROR "failed to import file to " << ("/tmp/" + image_name + ".png").c_str() << "\033[0m" << std::endl;
+    }*/
+    // import the image file
+    ////std::cout << lo_import_with_oid(DB::Postgres::get_singleton()->get_handle(), image_file.c_str(), image_oid) << std::endl; // 0 InvalidOid (zero)//lo_import(DB::Postgres::get_singleton()->get_handle(), image_file.c_str()); // returns InvalidOid (zero)    
+    ///////////////////////////
+    DB::Postgres::get_singleton()->execute("COMMIT;");    
     //DB::Postgres::get_singleton()->finish();
 }    
 ////////////////////
+// the first image of an item will be used as the thumbnail
+Image * neroshop::Item::get_upload_image() const {
+    // begin transaction
+    DB::Postgres::get_singleton()->execute("BEGIN;");
+    // savepoint////DB::Postgres::get_singleton()->execute("SAVEPOINT before_image_export_savepoint;");
+    // open the existing large object (for reading)
+    Oid image_oid = DB::Postgres::get_singleton()->get_integer_params("SELECT data FROM image WHERE item_id = $1;", { std::to_string(this->id) });//std::cout << image_oid << std::endl;
+    if(image_oid == InvalidOid) { std::cout << NEROSHOP_TAG POSTGRESQL_TAG_ERROR "OID not found for this particular image (No image(s) uploaded for this item) " << "\033[0m" << std::endl; DB::Postgres::get_singleton()->execute("ROLLBACK;"); return nullptr; } // ABORT; is the same as ROLLBACK;
+    // get image name
+    std::string image_name = DB::Postgres::get_singleton()->get_text_params("SELECT name FROM image WHERE item_id = $1;", { std::to_string(this->id) });//std::cout << image_name << std::endl;
+    // get image file extension
+    std::string image_ext = DB::Postgres::get_singleton()->get_text_params("SELECT ext FROM image WHERE item_id = $1;", { std::to_string(this->id) });//std::cout << image_ext << std::endl;
+    bool has_ext = !image_ext.empty();//std::cout << "has_extension: " << has_ext << std::endl;
+    ///////////////////////////
+    // open the existing large object (for reading)
+    /*int image_fd = lo_open(DB::Postgres::get_singleton()->get_handle(), image_oid, INV_READ);
+    if(image_fd == -1) {
+        std::cout << NEROSHOP_TAG POSTGRESQL_TAG_ERROR "failed to open OID " << image_oid << "\033[0m" << std::endl;
+        DB::Postgres::get_singleton()->execute("ROLLBACK;"); // abort transaction
+        return nullptr; // exit function
+    }    
+    // read image data from the large object descriptor
+    if(lo_lseek(DB::Postgres::get_singleton()->get_handle(), image_fd, 0, SEEK_SET) == -1) { // lo_lseek64 can accept an offset larger than 2GB and/or deliver a result larger than 2GB
+        std::cout << NEROSHOP_TAG POSTGRESQL_TAG_ERROR "new location pointer is greater than 2GB or an error occured: " << PQerrorMessage(DB::Postgres::get_singleton()->get_handle()) << std::endl;
+    }
+    std::vector<unsigned char> input = {};
+    size_t input_size = 0; // len
+    unsigned char * image_read = new unsigned char [image.get_width() * image.get_height() * image.get_channel()];//4];
+    if(lo_read(DB::Postgres::get_singleton()->get_handle(), image_fd, reinterpret_cast<char *>(image.get_data()), image.get_width() * image.get_height() * image.get_channel()) == -1) {//image_read, (image.get_width() * image.get_height() * image.get_channel())) == -1) {
+        std::cout << NEROSHOP_TAG POSTGRESQL_TAG_ERROR "failed to read from large object file descriptor " << image_fd << PQerrorMessage(DB::Postgres::get_singleton()->get_handle()) << "\033[0m" << std::endl;
+    }
+    // close large object descriptor
+    if(lo_close(DB::Postgres::get_singleton()->get_handle(), image_fd) == -1) {
+        std::cout << NEROSHOP_TAG POSTGRESQL_TAG_ERROR "failed to close large object file descriptor " << image_fd << PQerrorMessage(DB::Postgres::get_singleton()->get_handle()) << "\033[0m" << std::endl;
+        DB::Postgres::get_singleton()->execute("ROLLBACK;"); // abort transaction
+        return nullptr;
+    }*/
+    ///////////////////////////
+    ////std::cout << lo_import_with_oid(DB::Postgres::get_singleton()->get_handle(), "/tmp/random.png", image_oid) << std::endl;
+    // get neroshop directory
+    // place in cache folder within the neroshop directory instead
+    std::string user = System::get_user();
+#ifdef DOKUN_LINUX    
+    std::string neroshop_path = "/home/" + user + "/.config/neroshop";
+#endif    
+    if(!File::is_directory(neroshop_path)) { neroshop::print("directory \"" + neroshop_path + "\" not found", 1); DB::Postgres::get_singleton()->execute("ROLLBACK;"); return nullptr; }
+    std::string neroshop_cache_path = neroshop_path + "/cache";
+    if(!File::is_directory(neroshop_cache_path)) { 
+        neroshop::print("directory \"" + neroshop_cache_path + "\" does not exist, but I will create the path for you (^_^)", 2);
+        if(!File::make_dir(neroshop_cache_path)) {
+            neroshop::print("I could not create folder \"" + neroshop_cache_path + "\". Forgive me senpai (ᵕ人ᵕ)! ", 1);
+            DB::Postgres::get_singleton()->execute("ROLLBACK;"); // abort transaction
+            return nullptr;
+        }
+        neroshop::print("\033[1;97;49mcreated path \"" + neroshop_cache_path + "\""); // bold bright white
+    }
+    // export large object to an external file
+    std::string image_export_path = neroshop_cache_path + "/" + image_name + "." + image_ext;//std::cout << "image_export_path: " << image_export_path << std::endl;
+    if(lo_export(DB::Postgres::get_singleton()->get_handle(), image_oid, image_export_path.c_str()) == -1) { // Returns 1 on success, -1 on failure
+        std::cout << NEROSHOP_TAG POSTGRESQL_TAG_ERROR "failed to import file to " << image_export_path.c_str() << "\033[0m" << std::endl;
+        DB::Postgres::get_singleton()->execute("ROLLBACK;"); // abort transaction
+        return nullptr;
+    }
+    neroshop::print("exported \"" + (image_name + "." + image_ext) + "\" to \"" + neroshop_cache_path + "\"", 3);
+    ///////////////////////////
+    // end transaction
+    DB::Postgres::get_singleton()->execute("COMMIT;");
+    ///////////////////////////
+    // create an image object, load the image then return the image object
+    Image * image = new Image(image_export_path); // can't use shared_ptr here since it dies at the end of the scope :/
+    return image;//->get_data();
+    ///////////////////////////
+}
 ////////////////////
 ////////////////////
 void neroshop::Item::set_id(unsigned int id) {

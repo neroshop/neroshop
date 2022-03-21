@@ -34,12 +34,19 @@ public:
 		return std::string(username);
 	#endif
 	#ifdef __gnu_linux__ // works!
-		/*register */struct passwd *pw;
-        /*register */uid_t uid;
-        uid = geteuid ();
-        pw = getpwuid (uid);
-        if (pw == 0)
-			std::cerr << "Failure to get username" << std::endl;
+	    uid_t uid = geteuid();
+		struct passwd * pw = getpwuid(uid);
+        if(!pw) {
+			// try a different function if getpwuid() fails
+			std::string username = getlogin();
+			if(username.empty()) { std::cerr << "Failure to get username" << std::endl; return ""; } // return empty string
+			return username;
+			// or
+			//char username_r[256];
+            //getlogin_r(username_r, sizeof(username_r) - 1); // defined in unistd.h
+	        //return username_r;
+	        // refer to https://manpages.ubuntu.com/manpages/trusty/man3/getlogin.3posix.html
+	    }
         return std::string(pw->pw_name);
 	#endif
 	    return std::string("");
