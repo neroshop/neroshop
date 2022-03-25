@@ -1488,8 +1488,9 @@ int Image::is_generated(lua_State *L)
 /////////////
 bool Image::is_visible()const
 {
-	return (visible == true);
+	return visible;
 }
+/////////////
 int Image::is_visible(lua_State *L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);

@@ -6,6 +6,13 @@
 #define NEROSHOP_TAG_OUT neroshop::io_write("");
 #define NEROSHOP_TAG_IN std::string("\033[1;35;49m[neroshop]: \033[0m") +
 #define NEROSHOP_TAG NEROSHOP_TAG_IN
+// path
+#ifdef _WIN32
+#define NEROSHOP_PATH "" // haven't used windows in ages lol
+#endif
+#ifdef __gnu_linux__
+#define NEROSHOP_PATH "/home/" + System::get_user() + "/.config/neroshop"
+#endif
 #include <iostream> // String(
 
 namespace neroshop {

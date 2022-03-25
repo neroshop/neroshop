@@ -534,10 +534,11 @@ int Mouse::get_delta(lua_State *L)
 	return 1;
 }
 /////////////
+// This function seems to only work in certain parts of the code like after the draw() call
 Vector3i Mouse::get_color() // returns the pixel color that the mouse pointer is pointing to
 {
-    dokun::Window * window = dokun::Window::get_active();
-	if(!window) return Vector3i(0, 0, 0);//Vector3(-1, -1, -1);
+    dokun::Window * window = static_cast<dokun::Window *>(Factory::get_window_factory()->get_object(0));//dokun::Window::get_active();
+	//if(!window) return Vector3i(0, 0, 0);//Vector3(-1, -1, -1);
 	int window_width = window->get_client_width();
 	int window_height = window->get_client_height();
 #ifdef DOKUN_OPENGL // requires opengl context

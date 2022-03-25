@@ -317,7 +317,7 @@ std::string File::file_from_directory(const std::string& path) // ex. res/player
 /////////////
 std::string File::no_extension(const std::string& file_name) // ex. player.png => player    get filename without ext
 {
-	std::string no_extension = file_name.substr(0, file_name.find("."));
+	std::string no_extension = file_name.substr(0, file_name.find_last_of("."));
 	return no_extension;
 }
 /////////////

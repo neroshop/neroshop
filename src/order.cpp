@@ -415,9 +415,9 @@ void neroshop::Order::create_user_order(unsigned int user_id, const std::string&
         unsigned int item_qty = DB::Postgres::get_singleton()->get_integer_params("SELECT item_qty FROM cart_item WHERE cart_id = $1 AND item_id = $2", { std::to_string(cart->get_id()), std::to_string(item_id) });
         // if seller_id is not specified (0), then choose a random seller who is selling the same product, but it MUST be in stock!!
         int seller_id = DB::Postgres::get_singleton()->get_integer_params("SELECT seller_id FROM inventory WHERE item_id = $1 AND stock_qty > 0", { std::to_string(item_id) });
-        if(seller_id == 0) { std::cout << "item seller not found"; DB::Postgres::get_singleton()->execute("ROLLBACK TO before_order_creation_savepoint;"); return; }//DB::Postgres::get_singleton()->finish(); return; }
+        if(seller_id == 0) { std::cout << "item seller not found"; DB::Postgres::get_singleton()->execute("ROLLBACK;"); return; }//DB::Postgres::get_singleton()->finish(); return; }
         // if the buyer is also the seller XD
-        if(user_id == seller_id) {neroshop::print("You cannot buy from yourself", 1); DB::Postgres::get_singleton()->execute("ROLLBACK TO before_order_creation_savepoint;"); return;}//DB::Postgres::get_singleton()->finish(); return;} // go back to savepoint, before the order was even create to prevent us from inserting a new order
+        if(user_id == seller_id) {neroshop::print("You cannot buy from yourself", 1); DB::Postgres::get_singleton()->execute("ROLLBACK;"); return;}//DB::Postgres::get_singleton()->finish(); return;} // go back to savepoint, before the order was even create to prevent us from inserting a new order
         // get the currency that item is priced in
         seller_currency = DB::Postgres::get_singleton()->get_text_params("SELECT currency FROM inventory WHERE item_id = $1 AND seller_id = $2", { std::to_string(item_id), std::to_string(seller_id) });
         // get seller_price
@@ -467,7 +467,7 @@ void neroshop::Order::create_user_order(unsigned int user_id, const std::string&
             DB::Postgres::get_singleton()->execute_params("UPDATE orders SET status = $1 WHERE id = $2", { get_status_string(), std::to_string(order_id) });
             // revert everything to the point before we created the order
             neroshop::print("reverting order creation ...", 3);
-            DB::Postgres::get_singleton()->execute("ROLLBACK TO before_order_creation_savepoint;");
+            DB::Postgres::get_singleton()->execute("ROLLBACK;");
             //DB::Postgres::get_singleton()->finish();
             return; // exit function //continue; // skip this item
         }

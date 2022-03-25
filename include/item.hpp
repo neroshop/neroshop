@@ -26,7 +26,9 @@ public:
     ~Item();
     void show_info();
     void upload(const std::string& filename);
-    Image * get_upload_image() const;
+    void delete_upload_image(int index);
+    void delete_all_upload_images();
+    Image * get_upload_image(int index) const;
     // getters
  	unsigned int get_quantity() const;
 	static unsigned int get_quantity(unsigned int item_id);
@@ -108,7 +110,8 @@ private:
     void register_item(const std::string& name, const std::string& desc, 
         double price, double weight, double length, double width, double height,
         const std::string& condition, const std::string& product_code);
-    //static void register_item();
+    void deregister_item();
+    //static void deregister_item();
     unsigned int id; // unique id that must be obtained from the database
     std::string category;
     std::string SKU_code; // sellers can generate an SKU for items they are selling (NSKU - neroshop stocking unit)

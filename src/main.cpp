@@ -111,7 +111,7 @@ void create_local_database() {
     /////////////////////////////////////////
     // cache.db
     //#ifdef DOKUN_LINUX
-    std::string cache_file_name = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cache.db";
+    std::string cache_file_name = std::string(NEROSHOP_PATH) + "/cache.db";
     if(!File::exists(cache_file_name)) {
         // create "cache.db" if it does not yet exist
         DB::Sqlite3 db;if(db.open(cache_file_name)) {
@@ -222,7 +222,7 @@ int main() {
         exit(0);
     }
     std::atexit(neroshop::close); // call neroshop::close when program is exited
-    // /home/dude/.config/neroshop    <- where config files, cart files (temp) will be stored for guests (sellers' cart data will be stored in the db)
+    // NEROSHOP_PATH = /home/$USER/.config/neroshop    <- where config files, cart files (temp) will be stored for guests (sellers' cart data will be stored in the db)
     ////////////////////////////////////////////////
     connect_database();
     ////////////////////////////////////////////////
@@ -232,12 +232,15 @@ int main() {
     Item ball("Ball", "A round and bouncy play-thing", 10, 0.5, std::make_tuple(0, 0, 0), "new", "0000-0000-0001");
     Item candy("Candy", "O' so sweet and dee-lish!", 2, 0.01, std::make_tuple(0, 0, 0), "", "0000-0000-0002");
     Item ring("Ring", "One ring to rule them all", 99, 0.5, std::make_tuple(0, 0, 0), "new", "0000-0000-0003");
-    Item sid_ball("Sid's ball", "Sid's bouncy play-thing", 10, 0.5, std::make_tuple(0, 0, 0), "new", "0000-0000-0011");
+    Item sid_game("Sid's 3DS", "A really awesome portable game console", 10, 0.5, std::make_tuple(0, 0, 0), "new", "0000-0000-0011");
     // Seller will list some items
     // which users will be able to add to cart
     //Cart::get_singleton()->add(ball, 1);
     // uploading item images to database
-    ////ball.upload(File::get_current_dir() + "/res/monero-symbol-on-white-480.png");//Image * ball_image = ball.get_upload_image(); // segfault when allocating on stack -.-
+    //ball.upload(File::get_current_dir() + "/res/monero-symbol-on-white-480.png");//ball.upload(File::get_current_dir() + "/res/icons/Flag-Japan.jpg");//Image * ball_image = ball.get_upload_image(); // segfault when allocating on stack -.-    
+    //candy.upload(File::get_current_dir() + "/res/icons/candy-clipart-animated-2.png");
+    //ring.upload(File::get_current_dir() + "/res/icons/ring-309550_960_720.png");
+    //ball.delete_upload_image(1);
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////	
     // Monero	
     // get config: network_type, ip, port, data_dir, etc.
@@ -426,7 +429,7 @@ int main() {
     //pw_edit_icon->hide();
     // get "save" value from config file or database then set it
     // use sqlite instead of lua to save this.
-    std::string cache_file_name = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cache.db";
+    std::string cache_file_name = std::string(NEROSHOP_PATH) + "/cache.db";
     DB::Sqlite3 db(cache_file_name);
     bool cached_save = db.get_column_integer("account", "save", "id = 1"); // returns zero (false) by default
     std::string cached_username = db.get_column_text("account", "username", "id = 1"); // returns empty string by default
@@ -947,7 +950,7 @@ int main() {
         window.clear(32, 32, 32);
 //std::cout << window.get_client_size() << std::endl;
         //////////////////////////////////registration_menu//////////////////////////////////////////
-        register_men:while (register_menu) { // placing this before login_menu, hides the main_application
+        while (register_menu) { // placing this before login_menu, hides the main_application
             window.poll_events(); // check for events
             window.set_viewport(window.get_client_width(), window.get_client_height());
             window.clear(32, 32, 32);
@@ -1045,6 +1048,7 @@ int main() {
             // update viewport (in case window is resized) and clear window
             window.set_viewport(window.get_client_width(), window.get_client_height());
             window.clear(32, 32, 32);
+            //std::cout << Mouse::get_color() << std::endl; // doesnt work here
             /////////////////////
             // On enter pressed with focus on pw_edit
             if(pw_edit->is_active() && pw_edit->has_focus() && Keyboard::is_pressed(DOKUN_KEY_RETURN)) {
@@ -1068,7 +1072,7 @@ int main() {
                     logged = Validator::login(user_edit->get_text(), pw_edit->get_text());
                 }
                 if(!client->is_connected()) {
-                    message_box.set_text("Server is offline (Please, launch neromon then restart neroshop)");//("Connection to server has been lost"); 
+                    message_box.set_text("Server is offline (Please, launch neromon or restart neroshop)");//("Connection to server has been lost"); 
                     message_box.show();
                     logged = false;
                 }                
@@ -1089,7 +1093,7 @@ int main() {
                 {
                     // use sql instead of lua for storing the save_user
                     // upon login, update the save_toggle value to whatever the value was set to at the time the user logged in
-                    std::string cache_file_name = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cache.db";
+                    std::string cache_file_name = std::string(NEROSHOP_PATH) + "/cache.db";
                     DB::Sqlite3 db(cache_file_name);
                     db.update("account", "save", std::to_string(save_toggle->get_value()), "id = 1");
                     db.update("account", "username", (save_toggle->get_value()) ? DB::Sqlite3::to_sql_string(user_edit->get_text()) : "''", "id = 1");
@@ -1226,11 +1230,11 @@ int main() {
                 // take user to the register_menu ...
                 register_menu = true;
                 // go to register_menu loop (which comes before this loop), so it does not exit the app
-                goto register_men;
+                //goto register_men;
             }
             // settings_button		    
             if(settings_button->is_pressed()) {
-                std::string cfg_file = "/home/" + System::get_user() + "/.config/neroshop/config.lua";
+                std::string cfg_file = NEROSHOP_PATH + "/config.lua";
                 NEROSHOP_TAG_OUT std::cout << "opening: " << cfg_file << std::endl;
                 std::system(std::string("gedit " + cfg_file).c_str()); // ubuntu
             }
@@ -1462,6 +1466,7 @@ int main() {
             // draw first message box - for general notifications
             message_box.center(window.get_client_width(), window.get_client_height());
             message_box.draw();
+            ////if(message_box.get_box()->is_pressed() && (Mouse::get_color() == message_box.get_box()->get_color().xyz)) std::cout << "message_box pressed\n";
             // draw second message box - for wallet notifications
             // if there are other msgboxs overlapped by this msgbox, move the y position elsewhere
             if(message_box.is_visible()) { 

@@ -1743,8 +1743,8 @@ struct Vector4 {
 	{
 		x = vector.x;
 		y = vector.y;
-		z = (0.0);
-		w = (0.0);
+		z = 0.0;
+		w = 1.0;//0.0;
 		
 		xy  = Vector2(x, y);
 		zw  = Vector2(z, w);
@@ -1804,7 +1804,7 @@ struct Vector4 {
 		x = vector.x;
 		y = vector.y;
 		z = vector.z;
-		w = (0.0);
+		w = 1.0;//0.0;
 		
 		xy  = Vector2(x, y);
 		zw  = Vector2(z, w);
@@ -2680,7 +2680,7 @@ struct Vector4f
 		x = vector.x;
 		y = vector.y;
 		z = 0.0;
-		w = 0.0;
+		w = 1.0;//0.0;
 		
 		xy  = Vector2f(x, y);
 		xyz = Vector3f(x, y, z);
@@ -2735,7 +2735,7 @@ struct Vector4f
 		x = vector.x;
 		y = vector.y;
 		z = vector.z;
-		w = 0.0;
+		w = 1.0;//0.0;
 		
 		xy  = Vector2f(x, y);
 		xyz = Vector3f(x, y, z);
@@ -3096,7 +3096,7 @@ struct Vector3i
 {
 	//////////////////
 	// Constructor(s)
-    Vector3i() : x(0), y(0), z(0) {}
+    Vector3i() : x(0), y(0), z(0), xy(0, 0) {}
 	//////////////////
 	Vector3i(int number)
 	{
@@ -3388,7 +3388,7 @@ struct Vector3i
 	//////////////////
     bool operator == (const Vector3i &vector) const
 	{
-		return ((x == vector.x) && (y == vector.y) && (z == vector.z)) ? true : false;
+		return ((x == vector.x) && (y == vector.y) && (z == vector.z));// ? true : false;
 	}		
 	//////////////////
     bool operator == (const Vector3 &vector) const // bonus

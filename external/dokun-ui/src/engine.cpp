@@ -58,7 +58,7 @@ bool dokun::Engine::on_open()
     // set "user-defined" global locale (utf-8, etc.) - std::setlocale(LC_ALL, ""); // for C and C++ where synced with stdio // (#include <clocale>) //std::locale::global(std::locale("")); // for C++ (#include <locale>)  // wstring + wcout works, string + cout does not  (use L"str")//std::wcout << "User-preferred locale setting is " << std::locale("").name().c_str() << '\n';
     //std::locale::global(std::locale(""));
     // start session
-    Logger::open();
+    ////Logger::open();
 	/////////////////////////////////////////
 #ifdef DOKUN_GLFW	   
     // Setup glfw (initialize glfw)
@@ -594,7 +594,7 @@ int dokun::Engine::reg(lua_State *L)
 	Script::function(L, "Box", "set_label", Box::set_label);
 	Script::function(L, "Box", "set_text", Box::set_text);
     Script::function(L, "Box", "set_image_list", Box::set_image_list);
-    Script::function(L, "Box", "set_label_list", Box::set_label_list);
+    //Script::function(L, "Box", "set_gui_list", Box::set_gui_list); // or child_list
 	//Script::function(L, "Box", "set_", Box::set_);
 	//Script::function(L, "Box", "", Box::);
 	Script::function(L, "Box", "get_color", Box::get_color);

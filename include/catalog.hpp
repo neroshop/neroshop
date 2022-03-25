@@ -7,7 +7,8 @@
 #include "debug.hpp"
 #include "db.hpp"
 #include "icon.hpp"
-#include "item.hpp"
+#include "item.hpp" // item price, details, and upload images
+#include "converter.hpp" // currency conversion
 // dokun-ui
 #include <grid.hpp>
 // STL
@@ -34,6 +35,7 @@ public:
     // getters
     Grid * get_grid() const; // contains all the boxes
     Box * get_box(int row, int column) const;
+    Box * get_box(int index) const;
     Box * get_current() const; // returns current page
     int get_x() const;
     int get_y() const;

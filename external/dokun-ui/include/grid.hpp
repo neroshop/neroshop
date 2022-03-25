@@ -35,21 +35,23 @@ public:
 	void set_outline_color(const Vector4& color);
 	// getters
 	Box * get_block(int row, int column) const;           static int get_block(lua_State *L);
-	std::vector<std::vector<std::shared_ptr<Box>>> get_block_list() const;
 	Box * get_box(int row, int column) const;
 	Box * get_box(int index) const; // for 1D index positions of grid boxes
-	std::vector<std::vector<std::shared_ptr<Box>>> get_box_list() const;
+	std::vector<std::vector<std::shared_ptr<Box>>> get_box_list_2d() const;
+	std::vector<std::shared_ptr<Box>> get_box_list_1d() const;
 	int get_row_count()const;                     static int get_row_count(lua_State *L);
 	int get_column_count()const;                  static int get_column_count(lua_State *L);
 	int get_box_count() const;
 	int get_full_width() const;                  static int get_full_width(lua_State *L);
 	int get_full_height() const;                 static int get_full_height(lua_State *L);
+	int get_horizontal_gap() const;
+	int get_vertical_gap() const;
 	Vector2 get_full_size() const;               static int get_full_size(lua_State *L);		
 	Vector4 get_color()const;                     static int get_color(lua_State *L); //static int _(lua_State *L);
 private:
     // callbacks
     void on_highlight(int rows, int columns); // rows come first before columns
-	std::vector< std::vector<std::shared_ptr<Box>> > block_list;
+	std::vector< std::vector<std::shared_ptr<Box>> > box_list;
     int rows, columns;
     int gap_horz; // the horizontal gap between blocks
     int gap_vert; // the vertical gap between blocks

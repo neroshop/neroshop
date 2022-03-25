@@ -30,6 +30,7 @@ private:
     static bool load_bell(); // notifications
     static bool load_config();
     static bool load_paid(); // verified_purchase
+    static bool load_image(); // image_placeholder
     //static bool load_();
     // not from icons8 yet
     static bool load_settings(); // cog//settings

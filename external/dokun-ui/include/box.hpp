@@ -94,7 +94,6 @@ class Box : public GUI { // A box ui - ui element that can act as a container fo
 		void set_text(const std::string& text, int index = 0);                                        static int set_text(lua_State * L);
         void set_text_list(const std::string& text, int index);                        static int set_text_list(lua_State * L);
 		void set_label(const dokun::Label& label, int index = 0);                                            static int set_label(lua_State * L);
-        void set_label_list(const std::vector<std::shared_ptr<dokun::Label>>& label_list);                                       static int set_label_list(lua_State * L);
         // tooltip
         void set_as_tooltip(bool tooltip);                                             static int set_as_tooltip(lua_State *L);
 		// getters
@@ -194,7 +193,6 @@ class Box : public GUI { // A box ui - ui element that can act as a container fo
 		// Box : contents
 		//std::vector<GUI *> box; // can store lists
         // NEW! 2019-07-27. Boxs can now have multiple labels and images. The default label and image will be push_back to 0 index.
-        std::vector<std::shared_ptr<dokun::Label>> label_list; // DELETE THIS AS LABELS ARE ALSO CHILD GUI
         std::vector<std::shared_ptr<Image>> image_list;
         std::vector<std::shared_ptr<GUI>> child_list; // 2021-10-17
 		// Box : title_bar

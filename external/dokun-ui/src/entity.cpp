@@ -353,18 +353,23 @@ int Entity::set_polygon_mode(lua_State *L)
 ///////////
 Component * Entity::get_component(int index)const
 {
+    if(component_list.empty()) return nullptr;
+    if(index > (component_list.size() - 1)) throw std::out_of_range("invalid or out of range container index");
+    //////////////////////////
     return component_list[index].get();
 }
 ///////////
 Component * Entity::get_component(const std::string& name)const
 {
+    if(component_list.empty()) return nullptr;
+    //////////////////////////
 	for(int i = 0; i < component_list.size(); i++) 
 	{
 		if(component_list[i]->get_name() == name) {
 			return component_list[i].get();
 		}
 	}
-    return (nullptr);	
+    return nullptr;	
 }
 ///////////
 int Entity::get_component(lua_State *L)

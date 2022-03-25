@@ -1401,7 +1401,11 @@ bool GUI::is_pressed() // executes multiple times
 	#endif
 	if(!visible) return false; // gui must be visible first
 	if(!active) return false; // gui must not be disabled	
-	return (Mouse::is_over(get_rect()) && Mouse::is_pressed(1));
+	//////////////////////////
+	// Mouse::get_color does not work unless it is called after the draw function :/
+    //std::cout << "mouse_color: " << Mouse::get_color() << std::endl;
+	//////////////////////////
+	return (Mouse::is_over(get_rect()) && Mouse::is_pressed(1)/* && (Mouse::get_color() == get_color().xyz)*/);//return (Mouse::is_over(get_rect()) && Mouse::is_pressed(1));
 }
 ///////////// 
 int GUI::is_pressed(lua_State * L)

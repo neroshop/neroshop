@@ -1,6 +1,6 @@
 #include "../include/box.hpp"
 
-Box::Box() : radius(0.0), color(160, 160, 160, 1.0)/*(64, 64, 64, 1.0)*/, fill(true), child_list({}), label_list({}), image_list({}), type("box"),
+Box::Box() : radius(0.0), color(160, 160, 160, 1.0)/*(64, 64, 64, 1.0)*/, fill(true), child_list({}), image_list({}), type("box"),
 iconified(false),
 maximized(false),
 restored(true),
@@ -139,7 +139,7 @@ Box::~Box(void)
 	    image = nullptr;
 	}*/
 	// I guess this is how to properly delete a smart pointer
-	for(auto labels : label_list) labels.reset();
+	for(auto guis : child_list) guis.reset(); // labels included
 	for(auto images : image_list) images.reset();
 	std::cout << "box deleted\n";
 }
@@ -165,9 +165,21 @@ int Box::widget_new(lua_State *L)
 /////////////
 void Box::add_gui(const GUI& gui) // for box widgets only
 {
-    std::shared_ptr<GUI> box_child (&const_cast<GUI&>(gui));
-	box_child->set_parent(*this);
-	child_list.push_back(box_child);
+    std::shared_ptr<GUI> box_gui (&const_cast<GUI&>(gui));
+	box_gui->set_parent(*this);
+	child_list.push_back(box_gui);
+}
+/////////////
+void Box::add_label(const dokun::Label& label) { 
+    std::shared_ptr<dokun::Label> box_label(&const_cast<dokun::Label&>(label));
+    box_label->set_parent(*this); // set parent to Box
+    child_list.push_back(box_label);
+}
+/////////////
+void Box::add_image(const Image& image) {
+    // convert raw_ptr to shared_ptr
+    std::shared_ptr<Image> box_image (&const_cast<Image&>(image));
+    image_list.push_back(box_image);
 }
 /////////////
 int Box::add(lua_State *L)
@@ -186,21 +198,6 @@ int Box::add(lua_State *L)
 	    }
 	}		
 	return 0;
-}
-/////////////
-void Box::add_label(const dokun::Label& label) { 
-    std::shared_ptr<dokun::Label> box_label(&const_cast<dokun::Label&>(label));
-    box_label->set_parent(*this);
-    label_list.push_back(box_label); // for tooltips
-    //------------------------------
-    std::shared_ptr<GUI> box_gui(&const_cast<dokun::Label&>(label));
-    child_list.push_back(box_gui); // for boxes
-}
-/////////////
-void Box::add_image(const Image& image) {
-    // convert raw_ptr to shared_ptr
-    std::shared_ptr<Image> box_image (&const_cast<Image&>(image));
-    image_list.push_back(box_image);
 }
 /////////////
 void Box::remove_gui(const GUI& gui) // for box widgets only
@@ -377,9 +374,9 @@ void Box::draw_tooltip() {
     // Draw tooltip
 	Renderer::draw_tooltip("Hello", get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y, get_color().x, get_color().y, get_color().z, get_color().w, GUI::gui_shader, radius, tooltip_arrow_direction, tooltip_arrow_width, tooltip_arrow_height, tooltip_arrow_position/*, tooltip_arrow_color*/);
     // Draw label (goes inside box) **********************************************************
-    if(!label_list.empty()) // make sure Box has an "initialized" label beforehand (or else engine will crash)
+    if(!get_label_list().empty()) // make sure Box has an "initialized" label beforehand (or else engine will crash)
     {   
-        dokun::Label * label = label_list[0].get();
+        dokun::Label * label = get_label(0);//label_list[0].get();
         //----------------------------------
         // set label's alignment and position relative to the Tooltip (Box)                     // 10 is the space between the text and the Box's edge
 		        if(label->get_alignment() == "left"  ) { label->set_relative_position(0 + 10, 0 + 10); }
@@ -447,8 +444,8 @@ void Box::iconify(void) // if maximized, keep maximized while iconified at the s
 	    if(!image_list.empty()) { // if image_list is not empty
 	        for(auto images : image_list) images->set_visible(false); // hide all the images in image_list
 	    }
-	    if(!label_list.empty()) { 
-	        for(auto labels : label_list) labels->set_visible(false);
+	    if(!child_list.empty()) { 
+	        for(auto guis : child_list) guis->set_visible(false);
 	    }
 	    // set iconify to true
 	    restored = false; // not restored to default size
@@ -469,8 +466,8 @@ void Box::restore(void)
 	        if(!image_list.empty()) { // if image_list is not empty
 	            for(auto images : image_list) images->set_visible(true); // show all the images in image_list
 	        }
-	        if(!label_list.empty()) { 
-	            for(auto labels : label_list) labels->set_visible(true);
+	        if(!child_list.empty()) { 
+	            for(auto guis : child_list) guis->set_visible(true);
 	        }
 	        iconified = false; // set iconified to false in order to restore
 	        if(is_maximized()) {return;} // restore but in maximized mode
@@ -1142,9 +1139,11 @@ int Box::set_image_list(lua_State *L)
 // label		
 void Box::set_text(const std::string& text, int index)
 {
-    if(label_list.empty()) throw std::runtime_error("label list is empty");
-	label_list[index]->set_string(text);
+    auto label = get_label(index);//auto label_list = get_label_list();
+	if(!label) throw std::runtime_error("label is not initialized");//if(index > (label_list.size() - 1)) throw std::out_of_range("attempt to access invalid index");
+	label->set_string(text);//label_list[index]->set_string(text);
 }
+/////////////
 int Box::set_text(lua_State * L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
@@ -1160,12 +1159,9 @@ int Box::set_text(lua_State * L)
 /////////////
 void Box::set_label(const dokun::Label& label, int index) // Labels are GUI elements so they are drawn automatically once a parent is set
 {
-	std::shared_ptr<dokun::Label> box_label(&const_cast<dokun::Label&>(label));
+    std::shared_ptr<dokun::Label> box_label(&const_cast<dokun::Label&>(label));
     box_label->set_parent(*this); // set parent to Box
-    label_list.insert(label_list.begin() + index, box_label); // for tooltips
-    //-------------------------------------------------------
-    std::shared_ptr<GUI> box_gui(&const_cast<dokun::Label&>(label));
-    child_list.insert(child_list.begin() + index, box_gui); // for boxes
+    child_list.insert(child_list.begin() + index, box_label);
 } 
 int Box::set_label(lua_State * L)	
 {
@@ -1189,55 +1185,6 @@ int Box::set_label(lua_State * L)
 	    }
 	}
     return 0;	
-}	
-void Box::set_label_list(const std::vector<std::shared_ptr<dokun::Label>>& label_list) // Labels are GUI elements so they are drawn automatically once a parent is set
-{
-    this->label_list = label_list;
-}
-int Box::set_label_list(lua_State *L)
-{/*
-	luaL_checktype(L, 1, LUA_TTABLE); // box
-	luaL_checktype(L, 2, LUA_TTABLE); // label
-	lua_getfield(L, 2, "udata");
-	if(lua_isuserdata(L, -1))
-	{
-		dokun::Label * label = *static_cast<dokun::Label **>(lua_touserdata(L, -1));
-        lua_getfield(L, 1, "udata");
-	    if(lua_isuserdata(L, -1))
-	    {
-		    Box * widget = *static_cast<Box **>(lua_touserdata(L, -1));
-		    widget->set_label_list(*label);
-            // set in Lua
-            lua_pushvalue(L, 2);
-            lua_setfield(L, 1, std::string( std::string("label") + std::to_string((int)widget->label_list.size()) ).c_str()); // box.label1, box.label2, box.label3, and so on ...        // lua_getfield(L, 1, "label_list");if(!lua_istable(L, -1)){lua_newtable(L); lua_setfield(L, 1, "label_list");} // check is box.label_list exists. If not create it
-            // also create a table of labels
-            // get global label_list
-            lua_getglobal (L, "label_list");
-            if(lua_istable(L, -1)) {
-            	#ifdef DOKUN_LUA51
-			    int size = lua_objlen(L, -1);
-			    #endif
-			    #ifndef DOKUN_LUA51
-			    int size = luaL_len(L, -1);
-			    #endif
-			    lua_pushvalue(L, 2); // push label
-			    lua_rawseti (L, -2, size + 1); // store label in label_list
-			    return 0;
-            }
-            if(lua_isnil(L, -1)) // if label_list is nil
-            {
-                lua_pop(L, 1); // pop nil value
-                lua_newtable (L); // create it
-                lua_pushvalue(L, 2); // push label
-                lua_rawseti (L, -2, 1); // store label in label_list
-                lua_setglobal (L, "label_list"); // set the global name
-                lua_getglobal(L, "label_list");
-                lua_setfield(L, 1, "label_list");
-                return 0;
-            }
-        }
-    }    */
-    return 0;
 }
 /////////////
 /////////////
@@ -1308,7 +1255,7 @@ int Box::get_color(lua_State * L)
 //////////////
 GUI * Box::get_gui(unsigned int index)const {
     if(child_list.empty()) return nullptr; // if no gui, return nullptr
-    if(index > (child_list.size() - 1)) throw std::runtime_error("attempt to access invalid index at Box::child_list");
+    if(index > (child_list.size() - 1)) throw std::out_of_range("attempt to access invalid index at Box::child_list");
     return child_list[index].get();
 }
 //////////////
@@ -1324,7 +1271,7 @@ int Box::get_gui_count() const {
 Image * Box::get_image(int index) const
 {
     if(image_list.empty()) return nullptr; // if no image, return nullptr
-	if(index > (image_list.size() - 1)) throw std::runtime_error("attempt to access invalid index at Box::image_list");
+	if(index > (image_list.size() - 1)) throw std::out_of_range("attempt to access invalid index at Box::image_list");
 	return image_list[index].get();
 }
 //////////////
@@ -1359,9 +1306,18 @@ int Box::get_image_count() const {
 /////////////
 dokun::Label * Box::get_label(int index) const
 {
-    if(label_list.empty()) return nullptr; // if no label, return nullptr
-	if(index > (label_list.size() - 1)) throw std::runtime_error("attempt to access invalid index at Box::label_list");
-	return label_list[index].get();
+    if(child_list.empty()) return nullptr;
+	// create temporary vector for storing labels
+	std::vector<dokun::Label *> label_list = {};
+	for(auto guis : child_list) { 
+		// Get labels from child_list vector
+		if(std::dynamic_pointer_cast<dokun::Label>(guis)->is_label()) { //if(dynamic_cast<dokun::Label *>(guis.get())->is_label()) { 
+			std::shared_ptr<dokun::Label> labels = std::static_pointer_cast<dokun::Label>(guis);
+			label_list.push_back(labels.get()); // store all labels in label_list
+        }
+    }
+    if(index > (label_list.size() - 1)) throw std::out_of_range("attempt to access invalid index at Box::label_list");
+    return label_list[index];
 }
 /////////////
 int Box::get_label(lua_State * L)
@@ -1373,7 +1329,16 @@ int Box::get_label(lua_State * L)
 /////////////
 std::vector<std::shared_ptr<dokun::Label>> Box::get_label_list() const
 {
-	return label_list;
+	// create temporary vector for storing labels
+	std::vector<std::shared_ptr<dokun::Label>> label_list = {};
+	for(auto guis : child_list) { 
+		// Get labels from child_list vector
+		if(std::dynamic_pointer_cast<dokun::Label>(guis)->is_label()) { //if(dynamic_cast<dokun::Label *>(guis.get())->is_label()) { 
+			std::shared_ptr<dokun::Label> labels = std::static_pointer_cast<dokun::Label>(guis);
+			label_list.push_back(labels); // store all labels in label_list
+        }
+    }
+    return label_list; // return label_list containing labels
 }
 /////////////
 int Box::get_label_list(lua_State * L)
@@ -1391,13 +1356,24 @@ int Box::get_label_list(lua_State * L)
 }
 /////////////
 int Box::get_label_count() const {
-    return label_list.size();
+	// create temporary vector for storing labels
+	std::vector<std::shared_ptr<dokun::Label>> label_list = {};
+	for(auto guis : child_list) { 
+		// Get labels from child_list vector
+		if(std::dynamic_pointer_cast<dokun::Label>(guis)->is_label()) { //if(dynamic_cast<dokun::Label *>(guis.get())->is_label()) { 
+			std::shared_ptr<dokun::Label> labels = std::static_pointer_cast<dokun::Label>(guis);
+			label_list.push_back(labels); // store all labels in label_list
+        }
+    }
+    return label_list.size(); // return label_list size
 }
 /////////////
 std::string Box::get_text(int index) const
 {
-    if(label_list.empty()) throw std::runtime_error("label list is empty");
-	return label_list[index]->get_string();
+    auto label_list = get_label_list();//auto label = get_label(index);
+    if(label_list.empty()) return "";
+    if(index > (label_list.size() - 1)) throw std::out_of_range("attempt to access invalid index");//if(!label) throw std::runtime_error("label is not initialized");//or return "";
+	return label_list[index]->get_string();//label->get_string();
 }
 /////////////
 Vector2 Box::get_title_bar_position() const

@@ -5,6 +5,7 @@
 - use delegating constructor for every class                     []
 
 [MID PRIORITY]
+- improve currency conversion and use multiple sources to retrieve currency rates []
 - rewrite renderer.cpp from scratch (if I can't find an experienced graphics programmer)
 - figure out how to turn qrcode data into png and jpeg
 - change font
@@ -28,6 +29,7 @@
 - neroshop matrix server [-]
 - tor integration
 - use const for function parameters, in case I end up working on neroshop with other people (https://stackoverflow.com/a/117557)
+- create avatar table for user avatars []
 
 [UI]
 - prevent mouse press from affecting overlapped GUIs     []
@@ -58,6 +60,8 @@
 [Edit][Progress:79%]
 [Slider][Progress:88%]
 
+[ISSUES]
+Font crashes when loading (only a small few fonts are immune from this)
 
 [DATABASE DESIGN]
 neroshop - for storing application data and transactions

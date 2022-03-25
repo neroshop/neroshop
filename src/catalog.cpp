@@ -25,12 +25,12 @@ void neroshop::Catalog::initialize() {
     view = std::make_shared<Grid>();
     std::cout << "catalog view initialized\n";
     // set initial values // size=400,300;rows=2;columns=3 OR 
-    view->set_rows(2);//(6)//(1); // we cannot have columns without rows
+    view->set_rows(2/*3*/);//(6)//(1); // we cannot have columns without rows
     view->set_columns(3);//(5)//(1);
     view->set_gap(5);//view->set_horizontal_gap(5);//view->set_vertical_gap(50);
     view->set_color(160, 160, 160, 1.0);
     view->set_highlight(true); // for testing purposes ////view->set_outline(false);
-    view->set_size(215, 210/*240, 280*/);////297, 305//smaller: 231 157//247, 223=4x4////view->set_width(200, 100);
+    set_box_size(250, 300);// also applies size to grid (view) boxes //view->set_size(215, 210/*240, 280*/);////297, 305//smaller: 231 157//247, 223=4x4////view->set_width(200, 100);
     ////////////////////
     // initialize current page (product page)
     if(current.get()) {neroshop::print("catalog is already initialized", 2);return;}
@@ -42,18 +42,60 @@ void neroshop::Catalog::initialize() {
 ////////////////////
 void neroshop::Catalog::update() {
     if(!view.get()) throw std::runtime_error("catalog view is not initialized");
-    // update box sizes on call to Catalog::set_box_width and Catalog::set_box_height
-	if(view->get_box_list().empty()) return; // 0 rows, exit function
-	for(int i = 0; i < view->get_box_list().size(); i++) // block.size() = rows
-	{
-		for(int j = 0; j < view->get_box_list()[i].size(); j++) {// block[i] = items in block i	
-		    view->get_box(i, j)->set_size(view->get_width(), view->get_height());//view->get_box_list()[i][j]->set_(get_());
-		}
-	}    
+    // update box sizes on call to Catalog::set_box_width and Catalog::set_box_height and Catalog::set_box_size
+	std::vector<std::vector<std::shared_ptr<Box>>> box_list = view->get_box_list_2d();
+	if(box_list.empty()) return;// if no rows, exit function
+	for(auto rows : box_list) {
+	    for(auto boxes : rows) {
+	        boxes->set_size(view->get_width(), view->get_height());
+	    }
+	}
 }
 ////////////////////
 void neroshop::Catalog::draw() {
     //std::cout << "view_pos: " << view->get_position() << std::endl;
+    // put this in "on_draw" function
+	std::vector<std::vector<std::shared_ptr<Box>>> box_list = view->get_box_list_2d();
+	if(box_list.empty()) return;// if no rows, exit function
+	for(auto rows : box_list) {
+	    for(auto boxes : rows) {
+	        // update relative positions of box contents
+	        // images
+	        if(boxes->get_image_count() < 9) continue; // skip boxes with less than 3 image(s)
+	        //std::cout << "box image count: " << boxes->get_image_count() << std::endl;
+	        ////Image * heart_icon = boxes->get_image(1); // image 2
+	        ////Image * product_image = boxes->get_image(2); // image 3
+	        ////Image * product_star_0 = boxes->get_image(3); // image 4
+	        ////Image * monero_ticker = boxes->get_image(8); // image 9
+	        // gui elements (labels included)
+	        if(boxes->get_gui_count() < 4) continue; // skip boxes with less than 2 gui(s)
+	        //std::cout << "box gui count: " << boxes->get_gui_count() << std::endl;
+	        // product name label
+	        ////GUI * product_name_label = boxes->get_gui(0);
+	        ////product_name_label->set_relative_position(10, product_image->get_relative_y() + product_image->get_height_scaled() + 10);
+	        // ratings / reviews label (index 1)
+	        ////GUI * ratings_count_label = boxes->get_gui(1);
+	        // price label
+	        ////GUI * price_label = boxes->get_gui(2);
+	        ////price_label->set_relative_position(10, product_star_0->get_relative_y() + product_star_0->get_height_scaled() + 10);
+	        // monero ticker
+	        ////monero_ticker->set_relative_position(10, price_label->get_relative_y() + price_label->get_height() + 8);
+	        // price label xmr
+	        ////GUI * price_label_xmr = boxes->get_gui(2); // third gui
+	        ////price_label_xmr->set_relative_position();
+	        // if favorite button pressed, add item to favorites ...
+	        // ...
+	        // if item was previously purchased, change verified_purchase icon color
+	        // ...
+	        // on box press, show current page
+	        /*if(boxes->is_pressed()) {
+	            // populate page with box item details before we show it
+	            int item_id = boxes->get_component("item_id");
+	            current->show();
+	        }*/
+	    }
+	}    
+    ////////////////
     view->draw();
     current->draw();
 }
@@ -82,6 +124,7 @@ void neroshop::Catalog::add_contents(int box_index) {
     }*/
 }
 ////////////////////
+// This function will change overtime and will populate the catalog with products such as best sellers, most wished for, etc.
 void neroshop::Catalog::populate() {
 
 }
@@ -96,8 +139,7 @@ void neroshop::Catalog::fetch_inventory() {
         PQclear(result);//DB::Postgres::get_singleton()->finish();//exit(1);
         return; // exit so we don't double free "result"
     }
-    int rows = PQntuples(result); // max_rows is limited to number of boxes in the grid
-    std::cout << "number of rows (items): " << rows << std::endl;
+    int rows = PQntuples(result); // max_rows is limited to number of boxes in the grid//std::cout << "number of rows (items): " << rows << std::endl;
     for(int i = 0; i < std::min<size_t>(rows, box_count); i++) {
         /*std::cout << PQgetvalue(result, i, 0) << std::endl; // inventory_id
         std::cout << PQgetvalue(result, i, 1) << std::endl; // item_id
@@ -112,73 +154,117 @@ void neroshop::Catalog::fetch_inventory() {
         std::cout << PQgetvalue(result, i, 10) << std::endl; // item_condition
         //std::cout << PQgetvalue(result, i, 11) << std::endl; //std::cout << PQgetvalue(result, i, 12) << std::endl;*/
         ///////////////////////////////////////////////////////////////////////////    
-	////for(int r = 0; r < view->get_box_list().size(); r++) // block.size() = rows
+	////for(int r = 0; r < view->get_box_list_2d().size(); r++) // block.size() = rows
 	////{
-		////for(int c = 0; c < view->get_box_list()[r].size(); c++) { // block[r] = items in row r	
-            ////std::cout << "grid_box use count: " << view->get_box_list()[r][c].use_count() << std::endl; // 2
+		////for(int c = 0; c < view->get_box_list_2d()[r].size(); c++) { // block[r] = items in row r	
             Box * box = view->get_box(i);//(r, c);
-            //------------------------------
+            int item_id = std::stoi(PQgetvalue(result, i, 1)); //std::cout << "item_ids: " << item_id << std::endl;       
             // I guess we dont need to use smart pointers all the time, but when creating an object with "new", it should be immediately stored in a smart pointer so that it will be automatically deleted at the appropriate time: https://stackoverflow.com/questions/26473733/using-smart-pointers-as-a-class-member#comment41585405_26473733
-            Image * test_image = new Image(Icon::get["paid"]->get_data(), 64, 64, 1, 4); // image is still alive outside of scope :D
-            //std::shared_ptr<Image> test_image = std::shared_ptr<Image>(new Image(Icon::get["paid"]->get_data(), 64, 64, 1, 4)); // causes "Floating point exception (core dumped)" error
-            //std::shared_ptr<Image> test_image = std::make_shared<Image>(Icon::get["paid"]->get_data(), 64, 64, 1, 4); // image is dead at end of scope :( // "std::make_shared" recommended
-            test_image->resize(24, 24);//(32, 32);//
-            test_image->set_color(30, 80, 155); //155 or 255
-            test_image->set_relative_position(10, 10);
-            // heart icon (favorites or wishlist)
-            /*Image heart_icon(Icon::get["heart"]->get_data(), 64, 64, 1, 4); // CRASHES HERE
+            // verified_purchase_icon - maybe replace this with tickers (e.g "recommended", "new", "best seller"), etc.
+            Image * verified_purchase_icon = new Image(Icon::get["paid"]->get_data(), 64, 64, 1, 4); // image is still alive outside of scope :D
+            //std::shared_ptr<Image> verified_purchase_icon = std::shared_ptr<Image>(new Image(Icon::get["paid"]->get_data(), 64, 64, 1, 4)); // causes "Floating point exception (core dumped)" error
+            //std::shared_ptr<Image> verified_purchase_icon = std::make_shared<Image>(Icon::get["paid"]->get_data(), 64, 64, 1, 4); // image is dead at end of scope :( // "std::make_shared" recommended
+            verified_purchase_icon->resize(24, 24);//(32, 32);//
+            // check if user has previously purchased this item
+            // ...
+            verified_purchase_icon->set_color(128, 128, 128, 1.0);//(30, 80, 155); //155 or 255
+            verified_purchase_icon->set_relative_position(10, 10);
+            box->add_image(*verified_purchase_icon);
+            // heart_icon (favorites or wishlist)
+            Image * heart_icon = new Image(Icon::get["heart"]->get_data(), 64, 64, 1, 4); // CRASHES HERE
+            // check if this item is in user's favorites list
+            // ...
             heart_icon->set_color(128, 128, 128, 1.0);//(224, 93, 93, 1.0);
             heart_icon->resize(24, 24);//(16, 16);
-            heart_icon->set_alignment("center");
-            Box favorite_button; // place at top right of box
-            favorite_button.set_size(32, 32);
-            favorite_button.set_color(box->get_color());//(128, 128, 128, 0.5);//1.0);//(255, 255, 255, 1.0)
-            favorite_button.set_outline(true);
-            favorite_button.set_outline_color(255, 255, 255, 1.0);
-            favorite_button.set_relative_position(box->get_width() - favorite_button.get_width() - 10, 10);
-            favorite_button.set_image(heart_icon);*/
-            //////////////////////////////////////////////////
-            // item image
-            int item_id = std::stoi(PQgetvalue(result, i, 1)); //std::cout << "item_ids: " << item_id << std::endl;            
+            heart_icon->set_relative_position(box->get_width() - heart_icon->get_width_scaled() - 10, 10);
+            box->add_image(*heart_icon);
+            // product_image (thumbnail)     
             Item item(item_id); // temporary (will die at end of scope)
-            Image * item_image = item.get_upload_image();
-            if(!item_image) { 
-                // try replacing image with a placeholder
-                ////item_image = new Image(Icon::get["circle"]->get_data(), 64, 64, 1, 4);
-                ////continue; // if no image uploaded for this item, skip it or use a placeholder image?
-            }
-            if(item_image) {
-                //std::cout << "loaded " << item_image->get_file() << std::endl;
-                item_image->resize(128, 128);//scale_to_fit(view->get_size());
-                item_image->set_alignment("center");
-                box->add_image(*item_image);
-                // save the item_id as a component so we know which item_id belongs to which box
-                box->add_component(* new Component("item_id", static_cast<int>(item_id))); // will be stored as shared_ptr by the entity class
-                std::cout << "component item_id(" << box->get_component("item_id") << ") added to box " << i << std::endl;
-            } // image not null
-            //if(rows < (box_count - 1)) { std::cout << "number of items is less than boxes" << std::endl; break; }
-            ////} // db_rows // temp*/
-            //------------------------------
-            box->add_image(*test_image);
-            //box->add_gui(favorite_button);
+            Image * product_image = item.get_upload_image(1); // first image is thumbnail
+            if(!product_image) product_image = new Image(Icon::get["image_gallery"]->get_data(), 64, 64, 1, 4); // if no image uploaded for this item, use a placeholder image instead
+            product_image->resize(128, 128);//scale_to_fit(view->get_size());
+            product_image->set_relative_position(box->get_x() + (box->get_width() - product_image->get_width_scaled()) / 2, 50);//box->get_y() + (box->get_height() - product_image->get_height_scaled()) / 2);//set_alignment("center"); // actual relative position is set in the draw call
+            box->add_image(*product_image);
+            // save the item_id as a component so we know which item_id belongs to which box
+            box->add_component(* new Component("item_id", static_cast<int>(item_id))); // will be stored as shared_ptr by the entity class
+            std::cout << "component item_id(" << box->get_component("item_id") << ") added to box " << i << std::endl;
+            //////////////////////////////////////////////////
+            // product name
+            std::string product_name = DB::Postgres::get_singleton()->get_text_params("SELECT name FROM item WHERE id = $1;", { std::to_string(item_id) });//std::cout << "product_name: " << product_name << std::endl;
+            dokun::Label * product_name_label = new dokun::Label(product_name);
+            product_name_label->set_color(32, 32, 32, 1.0);
+            product_name_label->set_relative_position(10, product_image->get_relative_y() + product_image->get_height_scaled() + 10);
+            box->add_gui(*product_name_label);
+            //////////////////////////////////////////////////
+            // stars
+            int average_stars = item.get_average_stars();
+            //std::cout << "average_stars for item(id: " << item_id << "): " << average_stars << std::endl;
+            std::vector<Image *> product_stars; // size will be 5    //std::cout << "number of stars: " << product_stars.size() << std::endl;
+            for(int i = 0; i < 5; i++) {
+                product_stars.push_back(new Image());
+                product_stars[i]->load(Icon::get["star"]->get_data(), 64, 64, 1, 4);//"star_half"
+                product_stars[i]->resize(20, 20);//(16, 16);
+                product_stars[i]->set_color((average_stars > 0) ? 255, 179, 68, 1.0 : 255, 255, 255, 1.0);
+                ////product_stars[i]->set_outline(true); // gives the star an illusion of depth
+                ////product_stars[i]->set_outline_thickness(0.6);//(1.0);
+                product_stars[i]->set_outline_color(230, 136, 0);// shades = rgb(230, 136, 0) = THE perfect outline color, rgb(179, 106, 0) = looks really bad//product_stars[i]->set_outline_threshold(0.0);
+                box->add_image(*product_stars[i]);// same as: catalog->get_current()->set_image(*product_stars[0].get(), i); // except that Box::set_image uses insert() rather than push_back(). This is the only difference between Box::add_image and Box::set_image
+                if(i == 0) { 
+                    product_stars[0]->set_relative_position(10, product_name_label->get_relative_y() + product_name_label->get_height() + 10);//(box->get_width() - (product_stars[0]->get_width_scaled() * 5) - 10, product_name_label->get_relative_y() + (product_name_label->get_height() - product_stars[0]->get_height_scaled()) / 2); // set position of the first star (other stars will follow it)
+                    continue; // skip the first star for now
+                }
+                // update positions of stars
+                product_stars[i]->set_relative_position(product_stars[i - 1]->get_relative_x() + product_stars[i - 1]->get_width_scaled() + 1, product_stars[0]->get_relative_y()); // same y_rel_pos as first star
+            }            
+            // product review label
+            int product_ratings_count = DB::Postgres::get_singleton()->get_integer_params("SELECT COUNT(*) FROM item_ratings WHERE item_id = $1", { std::to_string(item_id) });//item.get_ratings_count();
+            dokun::Label * product_reviews_label = new dokun::Label("("+std::to_string(product_ratings_count)+")");//(star_ratings > 0) ? std::to_string(star_ratings)+" ratings" : "No ratings yet");
+            product_reviews_label->set_color(16, 16, 16, 1.0);
+            product_reviews_label->set_relative_position(product_stars[product_stars.size() - 1]->get_relative_x() + product_stars[product_stars.size() - 1]->get_width_scaled() + 1, product_stars[product_stars.size() - 1]->get_relative_y() + (product_stars[0]->get_height_scaled() - product_reviews_label->get_height()) / 2);
+            box->add_gui(*product_reviews_label);            
+            //////////////////////////////////////////////////
+            // price display
+            double sales_price = std::stod(PQgetvalue(result, i, 4));//std::cout << "product_price: " << sales_price << std::endl;
+            std::string currency = PQgetvalue(result, i, 5);//std::cout << "seller currency: " << currency << std::endl;
+            std::string currency_symbol = Converter::get_currency_symbol(currency);
+            double sales_price_xmr = Converter::to_xmr(sales_price, currency); // requires libcurl + internet connection (may fail at times) and also slows app launch
+            //std::cout << "product_price_xmr: " << String::to_string_with_precision(sales_price_xmr, 12) << std::endl;
+            dokun::Label * price_label = new dokun::Label(currency_symbol + String::to_string_with_precision(sales_price, 2) + " " + String::upper(currency));
+            price_label->set_color(0, 0, 0, 1.0);
+            price_label->set_relative_position(10, product_stars[0]->get_relative_y() + product_stars[0]->get_height_scaled() + 10);//(10, product_name_label->get_relative_y() + product_name_label->get_height() + 15);//box->get_height() - price_label->get_height() - 10);
+            box->add_gui(*price_label);
+            // cryptocurrency ticker (symbol)
+            Image * monero_ticker = new Image(Icon::get["monero_symbol_white"]->get_data(), 64, 64, 1, 4);
+            monero_ticker->set_outline(true);
+            monero_ticker->set_outline_thickness(0.2);//(1.2);
+            monero_ticker->resize(16, 16);
+            monero_ticker->set_visible(false);
+            monero_ticker->set_relative_position(10, price_label->get_relative_y() + price_label->get_height() + 8);
+            box->add_image(*monero_ticker);
+            // price display xmr
+            dokun::Label * price_label_xmr = new dokun::Label(String::to_string_with_precision(sales_price_xmr, 12) + " XMR");
+            if(!monero_ticker->is_visible()) price_label_xmr->set_relative_position(10, price_label->get_relative_y() + price_label->get_height() + 10 );//(monero_ticker->get_relative_x() + monero_ticker->get_width_scaled() + 5, monero_ticker->get_relative_y() + (monero_ticker->get_height_scaled() - price_label->get_height()) / 2);// <= use this if monero_symbol is visible
+            if(monero_ticker->is_visible()) price_label_xmr->set_relative_position(monero_ticker->get_relative_x() + monero_ticker->get_width_scaled() + 5, monero_ticker->get_relative_y() + (monero_ticker->get_height_scaled() - price_label->get_height()) / 2);
+            price_label_xmr->set_color(0, 0, 0, 1.0);
+            box->add_gui(*price_label_xmr);
+            //////////////////////////////////////////////////
+            // show_product or buy button (not neccessary, but optional since user can just click the box to view the item)
+            // ...
         ////} // grid (view) columns
     } // grid (view) rows
     ////////////////////
-        /*Item item(item_ids[i]); // temporary (will die at end of scope)
-            Image * item_image = item.get_upload_image();//.get();
-            
-    std::cout << "ball file: " << item_image->get_file() << std::endl;
-    std::cout << "ball width: " << item_image->get_width() << std::endl;
-    std::cout << "ball height: " << item_image->get_height() << std::endl;
-    std::cout << "ball channels: " << item_image->get_channel() << std::endl;
-        item_image->resize(128, 128);
-        std::cout << "ball scaled_size: " << item_image->get_size_scaled() << std::endl;
-        item_image->set_alignment("center");
-        view->get_box(0, 0)->add_image(*item_image);*/
-    ////////////////////
-    std::cout << "box_image_count (0, 0): " << view->get_box(0, 0)->get_image_count() << std::endl;
-    std::cout << "box_label_count (0, 0): " << view->get_box(0, 0)->get_label_count() << std::endl;
-    std::cout << "box_gui_count (0, 0):   " << view->get_box(0, 0)->get_gui_count() << std::endl;
+    // in most cases, the number of rows (products) is greater than the box_count so this "if" scope will be ignored 99% of the time but in case all boxes are not filled with product images, fill the ones that need it
+    if(rows < box_count) { // if there are less items than catalog boxes, get the boxes that do need an item and fill them up with placeholder product images
+        for(int i = 0; i < box_count; i++) {//std::cout << "box_index(i): " << i << std::endl;
+            Box * box = view->get_box(i);
+            if(box->get_image_count() > 0) continue; // skip boxes that already have product images
+            // product_image (thumbnail)
+            Image * product_image = new Image(Icon::get["image_gallery"]->get_data(), 64, 64, 1, 4);
+            product_image->resize(128, 128);
+            product_image->set_alignment("center");
+            box->add_image(*product_image);
+        }
+    }
     ////////////////////
     PQclear(result); // free result
 }
@@ -203,8 +289,9 @@ void neroshop::Catalog::set_box_height(int box_height) {
 ////////////////////
 void neroshop::Catalog::set_box_size(int box_width, int box_height) {
     // make sure width is not greater than window's width//if(width > window_width) width = window_width;
-    set_box_width(box_width); // auto updates box sizes
-    set_box_height(box_height); // auto updates box sizes
+    if(!view.get()) throw std::runtime_error("catalog view is not initialized");
+    view->set_size(box_width, box_height);
+    update(); // update ONLY once after setting both the width and height
 }
 ////////////////////
 void neroshop::Catalog::set_box_size(const Vector2i& box_size) {
@@ -218,8 +305,15 @@ Grid * neroshop::Catalog::get_grid() const {
 ////////////////////
 Box * neroshop::Catalog::get_box(int row, int column) const {
     if(!view.get()) throw std::runtime_error("catalog view is not initialized");
-    if(view->get_box_list().empty()) throw std::runtime_error("The catalog is empty!");
-    return view->get_block(row, column);
+    if(view->get_box_list_2d().empty()) throw std::runtime_error("The catalog is empty!");
+    return view->get_box(row, column);
+}
+////////////////////
+Box * neroshop::Catalog::get_box(int index) const {
+    if(!view.get()) throw std::runtime_error("catalog view is not initialized");
+    std::vector<std::shared_ptr<Box>> box_list_1d = view->get_box_list_1d();
+    if(box_list_1d.empty()) throw std::runtime_error("The catalog is empty!");
+    return box_list_1d[index].get();
 }
 ////////////////////
 Box * neroshop::Catalog::get_current() const {

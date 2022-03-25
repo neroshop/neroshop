@@ -14,7 +14,7 @@ gradient(false),
 gradient_color(color)
 {
 	set_position(0, 0);
-	set_size(50, 50); // size of each individual block_list in grid
+	set_size(50, 50); // size of each individual box_list in grid
 	set_orientation(0);
 }
 /////////////////////
@@ -38,8 +38,8 @@ int Grid::grid_new(lua_State *L)
 /////////////////////
 Grid::~Grid()
 {
-    ////block_list.reset();
-    block_list.clear(); // clear rows
+    ////box_list.reset();
+    box_list.clear(); // clear rows (will automatically delete boxes)
     std::cout << "grid deleted\n";
 }
 ////////////////////
@@ -48,39 +48,39 @@ void Grid::draw() // COMPLETE! :D
 {
     on_draw(); // sets position relative to parent, regardless of visibility
 	if(!is_visible()) return;
-	if(block_list.empty()) return; // 0 rows
-	for(int i = 0; i < block_list.size(); i++) // block_list.size() = rows
+	if(box_list.empty()) return; // 0 rows
+	for(int i = 0; i < box_list.size(); i++) // box_list.size() = rows
 	{
-		for(int j = 0; j < block_list[i].size(); j++) // block_list[i] = items in block_list i
+		for(int j = 0; j < box_list[i].size(); j++) // box_list[i] = items in box_list i
 		{		
                 on_highlight(i, j);
 				// Set geometry
-				block_list[i][j]->set_position(get_position().x + j * (get_width() + gap_horz), get_position().y + i * (get_height() + gap_vert));
+				box_list[i][j]->set_position(get_position().x + j * (get_width() + gap_horz), get_position().y + i * (get_height() + gap_vert));
                 // Draw grid
-				block_list[i][j]->set_width(get_width());
-				block_list[i][j]->set_height(get_height());
-				block_list[i][j]->set_angle(get_angle());
-				block_list[i][j]->set_scale(get_scale());
-				block_list[i][j]->set_color(block_list[i][j]->get_color()); // already the default
-				block_list[i][j]->set_radius(0.0);
-				block_list[i][j]->set_title_bar(false); // grids should NEVER have a title_bar!
-				block_list[i][j]->set_outline(outline); // outline is now the same as border
-				block_list[i][j]->set_outline_color(outline_color);
-				block_list[i][j]->set_outline_width(outline_width);//block_list[i][j]->set_outline_(outline_);
-				//block_list[i][j]->set_gradient(block_list[i][j]->gradient);
-				//block_list[i][j]->set_gradient_color(block_list[i][j]->gradient_color);
-				//block_list[i][j]->set_gradient_value(block_list[i][j]->gradient_value);
-				//block_list[i][j]->set_shadow(false);
+				box_list[i][j]->set_width(get_width());
+				box_list[i][j]->set_height(get_height());
+				box_list[i][j]->set_angle(get_angle());
+				box_list[i][j]->set_scale(get_scale());
+				box_list[i][j]->set_color(box_list[i][j]->get_color()); // already the default
+				box_list[i][j]->set_radius(0.0);
+				box_list[i][j]->set_title_bar(false); // grids should NEVER have a title_bar!
+				box_list[i][j]->set_outline(outline); // outline is now the same as border
+				box_list[i][j]->set_outline_color(outline_color);
+				box_list[i][j]->set_outline_width(outline_width);//box_list[i][j]->set_outline_(outline_);
+				//box_list[i][j]->set_gradient(box_list[i][j]->gradient);
+				//box_list[i][j]->set_gradient_color(box_list[i][j]->gradient_color);
+				//box_list[i][j]->set_gradient_value(box_list[i][j]->gradient_value);
+				//box_list[i][j]->set_shadow(false);
 				// Image properties
-				//block_list[i][j]->set_();
-				/*if(block_list[i][j]->get_image(0)) {
-				    block_list[i][j]->get_image(0)->set_position(block_list[i][j]->get_x(), block_list[i][j]->get_y());
-				    block_list[i][j]->get_image(0)->set_scale(block_list[i][j]->get_image(0)->get_aspect_ratio_correction(get_width(), get_height()),
-					    block_list[i][j]->get_image(0)->get_aspect_ratio_correction(get_width(), get_height()));	// equivalent to Image::scale_to_fit
+				//box_list[i][j]->set_();
+				/*if(box_list[i][j]->get_image(0)) {
+				    box_list[i][j]->get_image(0)->set_position(box_list[i][j]->get_x(), box_list[i][j]->get_y());
+				    box_list[i][j]->get_image(0)->set_scale(box_list[i][j]->get_image(0)->get_aspect_ratio_correction(get_width(), get_height()),
+					    box_list[i][j]->get_image(0)->get_aspect_ratio_correction(get_width(), get_height()));	// equivalent to Image::scale_to_fit
 				}*/
-				// block_list should set image relative position based on image's alignment
-				block_list[i][j]->set_position(block_list[i][j]->get_position().x, block_list[i][j]->get_position().y);
-				block_list[i][j]->draw(); // each block_list can have its own label, image, etc.
+				// box_list should set image relative position based on image's alignment
+				box_list[i][j]->set_position(box_list[i][j]->get_position().x, box_list[i][j]->get_position().y);
+				box_list[i][j]->draw(); // each box_list can have its own label, image, etc.
 		}
 	}
 } // nothing will be drawn if rows and columns are not set
@@ -111,31 +111,31 @@ int Grid::draw(lua_State *L)
 ////////////////////
 void Grid::update() // crashes when called inside a loop
 {
-    /*for(int r = 0; r < block_list.size(); r++) {
-        for(int c = 0; c < block_list[r].size(); c++) {
-            //block_list[r].clear(); // clear columns
-            ////std::cout << "row size: " << block_list.size() << "\n";
-            ////std::cout << "column size: " << block_list[r].size() << "\n"; // this also causes a crash
-            ////block_list[r].erase(block_list[r].begin() + r);
-            ////std::cout << "use count: " << block_list[r][c].use_count() << "\n";
-            ////if(block_list[r][c].use_count() > 0) {
-                ////////block_list[r][c].reset(); // delete all columns // causes "Segmentation fault (core dumped)" error
-                //block_list[r][c] = nullptr;
+    /*for(int r = 0; r < box_list.size(); r++) {
+        for(int c = 0; c < box_list[r].size(); c++) {
+            //box_list[r].clear(); // clear columns
+            ////std::cout << "row size: " << box_list.size() << "\n";
+            ////std::cout << "column size: " << box_list[r].size() << "\n"; // this also causes a crash
+            ////box_list[r].erase(box_list[r].begin() + r);
+            ////std::cout << "use count: " << box_list[r][c].use_count() << "\n";
+            ////if(box_list[r][c].use_count() > 0) {
+                ////////box_list[r][c].reset(); // delete all columns // causes "Segmentation fault (core dumped)" error
+                //box_list[r][c] = nullptr;
             ////}
-            ////std::cout << "use count: " << block_list[r][c].use_count() << "\n";
+            ////std::cout << "use count: " << box_list[r][c].use_count() << "\n";
         }
-        ////block_list.erase(block_list.begin() + r);
+        ////box_list.erase(box_list.begin() + r);
     }*/
-    ////////block_list.resize(0); // causes "double free or corruption (fasttop)" error
+    ////////box_list.resize(0); // causes "double free or corruption (fasttop)" error
     ////////////////////////////
-	if(!block_list.empty()) block_list.clear(); // clear rows // causes "free(): invalid pointer" error
+	if(!box_list.empty()) box_list.clear(); // clear rows // causes "free(): invalid pointer" error
 	for(int i = 0; i < rows; i++)
 	{
 		// create empty rows
-		block_list.push_back(std::vector<std::shared_ptr<Box>>()); // empty vector of boxes
+		box_list.push_back(std::vector<std::shared_ptr<Box>>()); // empty vector of boxes
 		// store row items based on # of columns
 		for(int j = 0; j < columns; j++) {
-			block_list[i].push_back(std::make_shared<Box>());
+			box_list[i].push_back(std::make_shared<Box>());
 		}
 	}
 }
@@ -148,7 +148,7 @@ int Grid::update(lua_State *L)
 void Grid::set_rows(int rows)
 {
 	this->rows = rows;
-	update(); // update block_list each time row is changed
+	update(); // update box_list each time row is changed
 }            
 ////////////////////  
 int Grid::set_rows(lua_State *L)
@@ -167,7 +167,7 @@ int Grid::set_rows(lua_State *L)
 void Grid::set_columns(int columns)
 {
 	this->columns = columns;
-	update(); // update block_list each time column is changed
+	update(); // update box_list each time column is changed
 }          
 ////////////////////    
 int Grid::set_columns(lua_State *L)
@@ -272,9 +272,7 @@ void Grid::set_outline_color(const Vector4& color) {
 ////////////////////
 Box * Grid::get_block(int row, int column) const
 {
-    if(block_list.empty()) return nullptr; // if no rows, return nullptr
-	if(block_list.size() < row + 1) throw std::runtime_error("Attempt to access invalid location | grid.cpp (114)");
-	return block_list[row][column].get();
+    return get_box(row, column);
 }              
 ////////////////////
 int Grid::get_block(lua_State *L)
@@ -282,28 +280,36 @@ int Grid::get_block(lua_State *L)
     return 1;
 }
 ////////////////////
-std::vector<std::vector<std::shared_ptr<Box>>> Grid::get_block_list() const {
-    return block_list;
-}
-////////////////////
 Box * Grid::get_box(int row, int column) const {
-    return get_block(row, column);
+    if(box_list.empty()) return nullptr; // if no rows, return nullptr
+	if(box_list.size() < row + 1) throw std::runtime_error("Attempt to access invalid location in grid::get_box(int, int)");
+	return box_list[row][column].get();
 }
 ////////////////////
 Box * Grid::get_box(int index) const {
-    std::vector<Box *> box_1d = {};
-    for(int r = 0; r < this->rows/*or block_list.size()*/; r++) // block.size() = rows
+    std::vector<Box *> box_list_1d = {};
+    for(auto r : box_list)//for(int r = 0; r < this->rows/*or box_list.size()*/; r++) // block.size() = rows
 	{
-		for(int c = 0; c < this->columns/*or block_list[r].size()*/; c++) { // block[r] = items in row r	
-            box_1d.push_back( block_list[r][c].get() );  
+		for(auto c : r) {//for(int c = 0; c < this->columns/*or box_list[r].size()*/; c++) { // block[r] = items in row r	
+            box_list_1d.push_back(c.get());//(box_list[r][c].get());  
         }
     }
-    //std::cout << "box_1d size: " << box_1d.size() << std::endl;
-    return box_1d[index];
+    return box_list_1d[index];
 }
 ////////////////////
-std::vector<std::vector<std::shared_ptr<Box>>> Grid::get_box_list() const {
-    return get_block_list();
+std::vector<std::vector<std::shared_ptr<Box>>> Grid::get_box_list_2d() const {
+    return box_list;
+}
+////////////////////
+std::vector<std::shared_ptr<Box>> Grid::get_box_list_1d() const {//std::vector<Box *> Grid::get_box_list_1d() const {
+    std::vector<std::shared_ptr<Box>> box_list_1d = {};//std::vector<Box *> box_list_1d = {};
+    for(auto r : box_list)//for(int r = 0; r < box_list.size(); r++) // block.size() = rows
+	{
+		for(auto c : r) {//for(int c = 0; c < box_list[r].size(); c++) { // block[r] = items in row r	
+            box_list_1d.push_back(c);//box_list_1d.push_back(box_list[r][c].get());
+        }
+    }
+    return box_list_1d;
 }
 ////////////////////
 int Grid::get_row_count()const
@@ -342,6 +348,14 @@ Vector2 Grid::get_full_size() const {
     return Vector2(get_full_width(), get_full_height());
 }
 ////////////////////
+int Grid::get_horizontal_gap() const {
+    return gap_horz;
+}
+////////////////////
+int Grid::get_vertical_gap() const {
+    return gap_vert;
+}
+////////////////////
 Vector4 Grid::get_color()const
 {
 	return color;
@@ -352,9 +366,9 @@ int Grid::get_color(lua_State *L)
     return 4;
 }
 /*
-	std::cout << "rows " << block_list.size() << "\n"; 
-	for(int k = 0; k < block_list.size(); k++)
-	    std::cout << "row items in block_list [" << k << "] " << block_list[k].size() << "\n";
+	std::cout << "rows " << box_list.size() << "\n"; 
+	for(int k = 0; k < box_list.size(); k++)
+	    std::cout << "row items in box_list [" << k << "] " << box_list[k].size() << "\n";
 */
 ////////////////////
 void Grid::on_highlight(int rows, int cols) {
@@ -364,7 +378,7 @@ void Grid::on_highlight(int rows, int cols) {
 	///////////////////
 	if(!highlight) return;
 	// on hover
-    if(Mouse::is_over(block_list[rows][cols]->get_position().x + cols, block_list[rows][cols]->get_position().y + rows, get_width(), get_height()))
-		block_list[rows][cols]->set_color(highlight_color);
-	else block_list[rows][cols]->set_color(get_color());
+    if(Mouse::is_over(box_list[rows][cols]->get_position().x + cols, box_list[rows][cols]->get_position().y + rows, get_width(), get_height()))
+		box_list[rows][cols]->set_color(highlight_color);
+	else box_list[rows][cols]->set_color(get_color());
 }

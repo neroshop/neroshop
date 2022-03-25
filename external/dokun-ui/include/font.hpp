@@ -22,7 +22,7 @@ extern "C" {       // run as c code
 #define DEFAULT_FONT_PATH "C:/Windows/Fonts/ariblk.ttf"
 #endif
 #ifdef __gnu_linux__
-#define DEFAULT_FONT_PATH "/usr/share/fonts/X11/Type1/c0583bt_.pfb"
+#define DEFAULT_FONT_PATH "/usr/share/fonts/X11/Type1/c0583bt_.pfb"//"/usr/share/fonts/X11/Type1/c0419bt_.pfb"//"/usr/share/fonts/X11/Type1/c0582bt_.pfb"
 #endif
 #ifdef __macosx__
 #define DEFAULT_FONT_PATH "System/Library/Fonts/HelveticaNeue.dfont"
