@@ -696,13 +696,13 @@ void neroshop::Item::upload(const std::string& filename) {
     }
     ///////////////////////////
     // create table
-    if(!DB::Postgres::get_singleton()->table_exists("image")) {
-        DB::Postgres::get_singleton()->create_table("image");
-        DB::Postgres::get_singleton()->add_column("image", "item_id", "integer REFERENCES item(id)");
-    	DB::Postgres::get_singleton()->add_column("image", "name", "text ARRAY");// include ext ////DB::Postgres::get_singleton()->add_column("image", "file", "text");
+    if(!DB::Postgres::get_singleton()->table_exists("images")) {
+        DB::Postgres::get_singleton()->create_table("images");
+        DB::Postgres::get_singleton()->add_column("images", "item_id", "integer REFERENCES item(id)");
+    	DB::Postgres::get_singleton()->add_column("images", "name", "text ARRAY");// include ext ////DB::Postgres::get_singleton()->add_column("images", "file", "text");
     	// bytea is limited to 1GB and OID is limited to 2GB
     	// The oid type is currently implemented as an unsigned four-byte integer: https://www.postgresql.org/docs/current/datatype-oid.html
-    	DB::Postgres::get_singleton()->execute("ALTER TABLE image ADD COLUMN IF NOT EXISTS data oid ARRAY;");//"bytea");//"blob");//"lo");
+    	DB::Postgres::get_singleton()->execute("ALTER TABLE images ADD COLUMN IF NOT EXISTS data oid ARRAY;");//"bytea");//"blob");//"lo");
     }
     //////////////////////////
     std::string image_file = filename;
@@ -715,14 +715,14 @@ void neroshop::Item::upload(const std::string& filename) {
     ///////////////////////////
     /*// bytea
     // insert the image elephant.png
-    DB::Postgres::get_singleton()->execute_params("INSERT INTO image(name, data) VALUES($1, bytea_import($2))", { image_name, image_file }); // pg_read_binary_file($2) // pg_read_file($2)::bytea
+    DB::Postgres::get_singleton()->execute_params("INSERT INTO images(name, data) VALUES($1, bytea_import($2))", { image_name, image_file }); // pg_read_binary_file($2) // pg_read_file($2)::bytea
     // select data
-    std::cout << DB::Postgres::get_singleton()->get_text("SELECT name, data FROM image;") << std::endl;*/ //;//DB::Postgres::get_singleton()->execute_params("", {});
+    std::cout << DB::Postgres::get_singleton()->get_text("SELECT name, data FROM images;") << std::endl;*/ //;//DB::Postgres::get_singleton()->execute_params("", {});
     ///////////////////////////
     // https://www.postgresql.org/docs/current/lo-interfaces.html
     DB::Postgres::get_singleton()->execute("BEGIN;");
     // Before we start anything, lets make sure number of images do not exceed MAX_IMAGES_PER_ITEM
-    int image_count = DB::Postgres::get_singleton()->get_integer_params("SELECT cardinality(data) FROM image WHERE item_id = $1", { std::to_string(this->id) });//("SELECT COUNT(*) FROM image WHERE item_id = $1", { std::to_string(this->id) });//std::cout << "image_count: " << image_count << std::endl; // temp
+    int image_count = DB::Postgres::get_singleton()->get_integer_params("SELECT cardinality(data) FROM images WHERE item_id = $1", { std::to_string(this->id) });//("SELECT COUNT(*) FROM images WHERE item_id = $1", { std::to_string(this->id) });//std::cout << "image_count: " << image_count << std::endl; // temp
     int MAX_IMAGES_PER_ITEM = 1;//6;// for now lets keep the max_images to 1. Will increase later on
     if(image_count >= MAX_IMAGES_PER_ITEM) {
         neroshop::print("MAX_IMAGES_PER_ITEM has been exceeded! Items can only have up to " + std::to_string(MAX_IMAGES_PER_ITEM) + " image(s)", 1);
@@ -776,16 +776,16 @@ void neroshop::Item::upload(const std::string& filename) {
     // append this before the .extension
     image_name = image_name + ("_" + std::to_string(image_oid)) + ("." + image_ext);//std::cout << "UPDATED IMAGE NAME(WITH EXT INCLUDED): " << image_name << std::endl;
     // if image_id is already in table image, update its contents
-    std::string item_id_found = DB::Postgres::get_singleton()->get_text_params("SELECT exists (SELECT item_id FROM image WHERE item_id = $1 LIMIT 1);", { std::to_string(this->id) });
+    std::string item_id_found = DB::Postgres::get_singleton()->get_text_params("SELECT exists (SELECT item_id FROM images WHERE item_id = $1 LIMIT 1);", { std::to_string(this->id) });
     bool item_id_found_in_table_image = (item_id_found == "t") ? true : false;
     if(item_id_found_in_table_image) { 
-        DB::Postgres::get_singleton()->execute_params("UPDATE image SET name = array_append(name, $1::text) WHERE item_id = $2", { image_name, std::to_string(this->id) });
-        DB::Postgres::get_singleton()->execute_params("UPDATE image SET data = array_append(data, $1::oid) WHERE item_id = $2", { std::to_string(image_oid), std::to_string(this->id) });//DB::Postgres::get_singleton()->execute_params("UPDATE image SET data = data || '{$1::oid}' WHERE item_id = $2", { std::to_string(image_oid), std::to_string(this->id) });
+        DB::Postgres::get_singleton()->execute_params("UPDATE images SET name = array_append(name, $1::text) WHERE item_id = $2", { image_name, std::to_string(this->id) });
+        DB::Postgres::get_singleton()->execute_params("UPDATE images SET data = array_append(data, $1::oid) WHERE item_id = $2", { std::to_string(image_oid), std::to_string(this->id) });//DB::Postgres::get_singleton()->execute_params("UPDATE images SET data = data || '{$1::oid}' WHERE item_id = $2", { std::to_string(image_oid), std::to_string(this->id) });
         neroshop::print("added image upload", 3);
     }
     // check if item_id is already in table image. If not, insert item_id into table image
     if(!item_id_found_in_table_image) { 
-        DB::Postgres::get_singleton()->execute_params("INSERT INTO image(item_id, name, data) VALUES($1, $2::text[], $3::oid[])", { std::to_string(this->id), "{" + image_name + "}", "{" + std::to_string(image_oid) + "}" }); // or $3::oid[] with "{" + std::to_string(image_oid) + "}"////DB::Postgres::get_singleton()->execute_params("INSERT INTO image(item_id, name, data) VALUES($1, $2, $3::oid)", { std::to_string(this->id), image_name, std::to_string(image_oid) });
+        DB::Postgres::get_singleton()->execute_params("INSERT INTO images(item_id, name, data) VALUES($1, $2::text[], $3::oid[])", { std::to_string(this->id), "{" + image_name + "}", "{" + std::to_string(image_oid) + "}" }); // or $3::oid[] with "{" + std::to_string(image_oid) + "}"////DB::Postgres::get_singleton()->execute_params("INSERT INTO images(item_id, name, data) VALUES($1, $2, $3::oid)", { std::to_string(this->id), image_name, std::to_string(image_oid) });
         neroshop::print("inserted new image data", 2);
     }        
     ///////////////////////////
@@ -806,10 +806,10 @@ Image * neroshop::Item::get_upload_image(int index) const {
     // begin transaction
     DB::Postgres::get_singleton()->execute("BEGIN;");
     // open the existing large object (for reading)
-    Oid image_oid = DB::Postgres::get_singleton()->get_integer_params("SELECT data[$1] FROM image WHERE item_id = $2;", { std::to_string(index), std::to_string(this->id) });//("SELECT data FROM image WHERE item_id = $1;", { std::to_string(this->id) });//std::cout << image_oid << std::endl;
+    Oid image_oid = DB::Postgres::get_singleton()->get_integer_params("SELECT data[$1] FROM images WHERE item_id = $2;", { std::to_string(index), std::to_string(this->id) });//("SELECT data FROM images WHERE item_id = $1;", { std::to_string(this->id) });//std::cout << image_oid << std::endl;
     if(image_oid == InvalidOid) { std::cout << NEROSHOP_TAG POSTGRESQL_TAG_ERROR "OID not found for this particular image (No image(s) uploaded for this item) " << "\033[0m" << std::endl; DB::Postgres::get_singleton()->execute("ROLLBACK;"); return nullptr; } // ABORT; is the same as ROLLBACK;
     // get image name (with extension included)
-    std::string image_name = DB::Postgres::get_singleton()->get_text_params("SELECT name[$1] FROM image WHERE item_id = $2;", { std::to_string(index), std::to_string(this->id) });//std::cout << image_name << std::endl;
+    std::string image_name = DB::Postgres::get_singleton()->get_text_params("SELECT name[$1] FROM images WHERE item_id = $2;", { std::to_string(index), std::to_string(this->id) });//std::cout << image_name << std::endl;
     ///////////////////////////
     ////std::cout << lo_import_with_oid(DB::Postgres::get_singleton()->get_handle(), "/tmp/random.png", image_oid) << std::endl;
     // NEROSHOP_PATH is defined in "neroshop/src/debug.hpp"
@@ -854,7 +854,7 @@ void neroshop::Item::delete_upload_image(int index) {
     // begin transaction (required when dealing with large objects)
     DB::Postgres::get_singleton()->execute("BEGIN;");
     // get image oid (large object)
-    Oid image_oid = DB::Postgres::get_singleton()->get_integer_params("SELECT data[$1] FROM image WHERE item_id = $2;", { std::to_string(index), std::to_string(this->id) });//std::cout << image_oid << std::endl;
+    Oid image_oid = DB::Postgres::get_singleton()->get_integer_params("SELECT data[$1] FROM images WHERE item_id = $2;", { std::to_string(index), std::to_string(this->id) });//std::cout << image_oid << std::endl;
     if(image_oid == InvalidOid) { DB::Postgres::get_singleton()->execute("ROLLBACK;"); return; } // ABORT; is the same as ROLLBACK;
     // delete large object
     int lo_result = lo_unlink(DB::Postgres::get_singleton()->get_handle(), image_oid);
@@ -864,13 +864,13 @@ void neroshop::Item::delete_upload_image(int index) {
         return;
     }   
     // remove image data and other values at a specific index in the arrays
-    DB::Postgres::get_singleton()->execute_params("UPDATE image SET name = array_remove(name, name[$1]) WHERE item_id = $2", { std::to_string(index), std::to_string(this->id) });
-    DB::Postgres::get_singleton()->execute_params("UPDATE image SET data = array_remove(data, data[$1]) WHERE item_id = $2", { std::to_string(index), std::to_string(this->id) });
+    DB::Postgres::get_singleton()->execute_params("UPDATE images SET name = array_remove(name, name[$1]) WHERE item_id = $2", { std::to_string(index), std::to_string(this->id) });
+    DB::Postgres::get_singleton()->execute_params("UPDATE images SET data = array_remove(data, data[$1]) WHERE item_id = $2", { std::to_string(index), std::to_string(this->id) });
     neroshop::print("deleted image at index " + std::to_string(index), 3);
     // remove the image from the database (only if image data and name is empty)
-    int image_count = DB::Postgres::get_singleton()->get_integer_params("SELECT cardinality(data) FROM image WHERE item_id = $1", { std::to_string(this->id) });
+    int image_count = DB::Postgres::get_singleton()->get_integer_params("SELECT cardinality(data) FROM images WHERE item_id = $1", { std::to_string(this->id) });
     if(image_count == 0) {
-        DB::Postgres::get_singleton()->execute_params("DELETE FROM image WHERE item_id = $1", { std::to_string(this->id) });
+        DB::Postgres::get_singleton()->execute_params("DELETE FROM images WHERE item_id = $1", { std::to_string(this->id) });
         neroshop::print("item (" + std::to_string(this->id) + ")'s image(s) has been permanently removed from the database", 1);
     }
     // end transaction
@@ -879,6 +879,11 @@ void neroshop::Item::delete_upload_image(int index) {
 ////////////////////
 void neroshop::Item::delete_all_upload_images(void) {
     
+}
+////////////////////
+int neroshop::Item::get_image_count() const {
+    int image_count = DB::Postgres::get_singleton()->get_integer_params("SELECT cardinality(data) FROM images WHERE item_id = $1", { std::to_string(this->id) });
+    return image_count;
 }
 ////////////////////
 ////////////////////

@@ -9,8 +9,12 @@
 #include "icon.hpp"
 #include "item.hpp" // item price, details, and upload images
 #include "converter.hpp" // currency conversion
+#include "user.hpp" // for users' favorites/wishlist and verified purchases
 // dokun-ui
 #include <grid.hpp>
+#include <spinner.hpp>
+#include <button.hpp>
+//#include <.hpp>
 // STL
 #include <iostream>
 #include <memory> // std::shared_ptr, std::make_shared
@@ -50,12 +54,15 @@ public:
     std::shared_ptr<Grid> view; // shows catalog_page (item listings)
     void initialize();
     void update(); // updates size and width of boxes
+    void delete_view_children();
+    void delete_page_children();
     // box contents
     void add_contents(int box_index); // adds content to product page
     void populate(); // fills / populates category view with items in inventory
     //populate_by_category, populate_by_best_seller (check table order_item -> item_id)
     // populate_by_latest,  populate_by_best_deals_and_promo
     // we can show featured items, best sellers, 
+    void refresh(); // refresh the contents
     // product data
     void fetch_inventory();
     /*void add_product_image();
@@ -65,6 +72,8 @@ public:
     void add_product_quantity_spinner();
     void add_heart(); // favorite or wishlist
     void add_cart_button(); // add-to-cart button*/
+    void setup_page();
+    void update_page(int item_id);
     // views: list_view (1 column, multiple rows), grid_view (multiple rows, multiple columns)
 };
 }

@@ -282,7 +282,7 @@ int Grid::get_block(lua_State *L)
 ////////////////////
 Box * Grid::get_box(int row, int column) const {
     if(box_list.empty()) return nullptr; // if no rows, return nullptr
-	if(box_list.size() < row + 1) throw std::runtime_error("Attempt to access invalid location in grid::get_box(int, int)");
+	if(box_list.size() < row + 1) throw std::out_of_range("Attempt to access invalid location in grid::get_box(int, int)");
 	return box_list[row][column].get();
 }
 ////////////////////
@@ -372,9 +372,7 @@ int Grid::get_color(lua_State *L)
 */
 ////////////////////
 void Grid::on_highlight(int rows, int cols) {
-	if(!is_visible()) return;
-	if(is_disabled()) return;
-	if(!is_active()) return;
+	if(!is_visible() || is_disabled() || !is_active()) return;
 	///////////////////
 	if(!highlight) return;
 	// on hover

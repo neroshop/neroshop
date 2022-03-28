@@ -99,9 +99,6 @@ public:
 	Vector2 get_relative_position() const;           static int get_relative_position(lua_State *L);	
 	double get_angle()     const;                    static int get_angle(lua_State *L);
 	Vector2 get_scale()    const;                    static int get_scale(lua_State *L);
-	int get_width_scaled() const;                    static int get_width_scaled(lua_State *L);
-	int get_height_scaled() const;                   static int get_height_scaled(lua_State *L);
-	Vector2 get_size_scaled() const;                     static int get_size_scaled(lua_State *L);
 	double get_aspect_ratio_correction(int rect_x, int rect_y) const;     static int get_aspect_ratio_correction(lua_State * L);
 	std::string get_alignment() const;               static int get_alignment(lua_State *L);
 	Vector4 get_rect() const; static int get_rect(lua_State * L);

@@ -44,6 +44,7 @@ Image::~Image(void)
 {
 	destroy(); // destroy texture buffer obj and delete image pixel data
 	Factory::get_image_factory()->release(this);
+	//std::cout << "image deleted\n";
 }
 /////////////
 bool Image::load(const std::string& file_name) // from file
@@ -169,9 +170,9 @@ int Image::save(lua_State *L)
 /////////////
 void Image::copy(const Image& image) // copies another image's texture pixels - no need to copy the position, angle, scale, color, relative_position, nor alignment - or it will just mess up everything
 {
-    data    = static_cast<unsigned char *>(image.get_data   ()); // copy the pixel data as well
-	width   = image.get_width  ();
-	height  = image.get_height ();
+    data    = static_cast<unsigned char *>(image.get_data()); // copy the pixel data as well
+	width   = image.width; // must be original width
+	height  = image.height; // must be original height
 	depth   = image.get_depth  ();
 	channel = image.get_channel();
 	file    = image.get_file   (); // this is not neccessary but whatever ...
@@ -185,18 +186,37 @@ void Image::copy(const Image& image) // copies another image's texture pixels - 
 	format          = image.get_format         ();
     // check for opengl context
     Renderer::context_check();
-    // generate texture buffer if it not a valid OpenGL texture and it did not previously exist
-    if(buffer == 0) glGenTextures(1, &buffer);    
-	// update texture buffer without having to generate a new one
-    glBindTexture(GL_TEXTURE_2D, buffer); // bind buffer
+    // delete old buffer
+    /*if(glIsTexture(buffer) && buffer != 0) {
+        destroy();
+    }
+    // copy buffer from other image
+    //this->buffer = image.get_buffer();
+    // OR*/
+    // generate a new buffer if image object does not yet have one
+    /*if(!glIsTexture(buffer) && buffer == 0) { 
+        generate();
+        std::cout << "Image::copy(const Image&): buffer_id " << buffer << " (generated)\n";
+    }*/
+    /////////////////////////////////////////
+    /*glBindTexture(GL_TEXTURE_2D, buffer); // bind buffer
+        glGetTexImage(GL_TEXTURE_2D,//target
+  	        0, // level
+  	        GL_RGBA, // format
+  	        GL_UNSIGNED_BYTE, // type
+  	        (GLvoid*)0);//static_cast<GLvoid *>(image.get_data()));
+        ////glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, static_cast<GLsizei>(width), static_cast<GLsizei>(height), 0, static_cast<GLenum>(format), GL_UNSIGNED_BYTE, static_cast<GLvoid *>(image.data)); // pass texture width, height, and data to OpenGL
+	glBindTexture(GL_TEXTURE_2D, 0);*/
+    /////////////////////////////////////////
+    /*glBindTexture(GL_TEXTURE_2D, buffer); // bind buffer
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, static_cast<GLint>(min_filter));
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, static_cast<GLint>(mag_filter));
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, static_cast<GLint>(wrap_s));
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, static_cast<GLint>(wrap_t));
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, static_cast<GLsizei>(get_width()), static_cast<GLsizei>(get_height()), 0, static_cast<GLenum>(get_format()), GL_UNSIGNED_BYTE, static_cast<GLvoid *>(image.get_data   ()/*get_data()*/)); // pass texture width, height, and data to OpenGL
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, static_cast<GLsizei>(width), static_cast<GLsizei>(height), 0, static_cast<GLenum>(format), GL_UNSIGNED_BYTE, static_cast<GLvoid *>(image.data)); // pass texture width, height, and data to OpenGL
         glGenerateMipmap(GL_TEXTURE_2D); // generate mipmaps
-	glBindTexture(GL_TEXTURE_2D, 0);
-#ifdef DOKUN_DEBUG0	
+	glBindTexture(GL_TEXTURE_2D, 0);*/	
+#ifdef DOKUN_DEBUG0
 	std::cout << "Image::copy(const Image&): buffer " << buffer << " (updated)" << std::endl;
 #endif
 #endif
@@ -205,8 +225,8 @@ void Image::copy(const Image& image) // copies another image's texture pixels - 
 void Image::copy(const Texture& texture) // same as Image:copy_texture in Lua
 {
     data    = static_cast<unsigned char *>(texture.get_data   ()); // copy the pixel data as well
-    width   = texture.get_width  ();
-	height  = texture.get_height ();
+    width   = texture.width; // must be original width
+	height  = texture.height; // must be original height
 	depth   = texture.get_depth  ();
 	channel = texture.get_channel();
 	file    = texture.get_file   (); // this is not neccessary but whatever ...
@@ -228,7 +248,7 @@ void Image::copy(const Texture& texture) // same as Image:copy_texture in Lua
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, static_cast<GLint>(mag_filter));
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, static_cast<GLint>(wrap_s));
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, static_cast<GLint>(wrap_t));
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, static_cast<GLsizei>(get_width()), static_cast<GLsizei>(get_height()), 0, static_cast<GLenum>(get_format()), GL_UNSIGNED_BYTE, static_cast<GLvoid *>(texture.get_data   ()/*get_data()*/)); // pass texture width, height, and data to OpenGL
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, static_cast<GLsizei>(width), static_cast<GLsizei>(height), 0, static_cast<GLenum>(format), GL_UNSIGNED_BYTE, static_cast<GLvoid *>(texture.data/*data*/)); // pass texture width, height, and data to OpenGL
         glGenerateMipmap(GL_TEXTURE_2D); // generate mipmaps
 	glBindTexture(GL_TEXTURE_2D, 0);
 #ifdef DOKUN_DEBUG0
@@ -295,8 +315,8 @@ int Image::flip(lua_State *L)
 /////////////
 void Image::resize(int width, int height)
 {
-	int old_width  = get_width ();
-	int old_height = get_height();
+	int old_width  = this->width; // must be original width
+	int old_height = this->height; // must be original height
 	set_scale(width / (double)old_width, height / (double)old_height);
 }
 /////////////
@@ -343,7 +363,7 @@ void Image::generate()
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, static_cast<GLint>(mag_filter));
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, static_cast<GLint>(wrap_s));
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, static_cast<GLint>(wrap_t));
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, static_cast<GLsizei>(get_width()), static_cast<GLsizei>(get_height()), 0, static_cast<GLenum>(get_format()), GL_UNSIGNED_BYTE, static_cast<GLvoid *>(get_data())); // pass texture width, height, and data to OpenGL
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, static_cast<GLsizei>(width), static_cast<GLsizei>(height), 0, static_cast<GLenum>(format), GL_UNSIGNED_BYTE, static_cast<GLvoid *>(data)); // pass texture width, height, and data to OpenGL
         glGenerateMipmap(GL_TEXTURE_2D); // generate mipmaps
 		glBindTexture(GL_TEXTURE_2D, 0); // unbind buffer
 	#ifdef DOKUN_DEBUG0
@@ -372,22 +392,23 @@ void Image::destroy()
     ////Renderer::context_check(); // message keeps spamming which is annoying xD
     if(glIsTexture(buffer) && buffer != 0)
 	{
+	    int buffer_temp = buffer;
         glDeleteTextures(1, static_cast<GLuint *>(&buffer)); // delete old texture buffer obj
         buffer = 0;	// to ensure its deleted
-	#ifdef DOKUN_DEBUG0
-	    if(!glIsTexture(buffer)) dokun::Logger("Image::destroy(): " + String(Factory::get_image_factory()->get_location(this)).str() + " buffer destroyed");
+	#ifdef DOKUN_DEBUG
+	    if(!glIsTexture(buffer)) std::cout << "Image::destroy(): buffer_id " << buffer_temp << " destroyed\n";//dokun::Logger("Image::destroy(): " + String(Factory::get_image_factory()->get_location(this)).str() + " buffer destroyed");
     #endif
 #endif	
 	}
 	// delete image pixel data as well ..
-	if(data != nullptr) 
+	/*if(data != nullptr) 
 	{
         if(is_png()) delete [] static_cast<png_byte *>(data); // array allocated with "new", so I guess I have to delete it this way???
         data = nullptr; // set image pixel data to nullptr
 #ifdef DOKUN_DEBUG0
         if(!data) std::cout << "Image_" << String(Factory::get_texture_factory()->get_location(this)) << ": data deleted." << std::endl;
 #endif
-	}			
+	}*/			
 }
 int Image::destroy(lua_State *L)
 {
@@ -888,7 +909,7 @@ int Image::set_param(lua_State *L)
 /////////////
 int Image::get_width () const
 {
-    return width;
+    return width * scale.x; // in case of set_scale, will return scaled width else original width
 }
 /////////////
 int Image::get_width(lua_State *L)
@@ -907,7 +928,7 @@ int Image::get_width(lua_State *L)
 /////////////
 int Image::get_height () const
 {
-    return height;
+    return height * scale.y; // in case of set_scale, will return scaled height else original height
 }
 /////////////
 int Image::get_height(lua_State *L)
@@ -963,64 +984,6 @@ int Image::get_size(lua_State *L)
     return 2;
 }
 /////////////
-int Image::get_width_scaled() const // width after scaling
-{
-    return width * scale.x;
-}
-/////////////
-int Image::get_width_scaled(lua_State *L)
-{
-    luaL_checktype(L, 1, LUA_TTABLE);
-	lua_getfield(L, 1, "udata");
-	if(lua_isuserdata(L, -1))
-	{
-	    Image * image = *static_cast<Image **>(lua_touserdata(L, -1));
-		lua_pushinteger(L, image->get_width_scaled());
-		return 1;
-	}
-    lua_pushnil(L);
-    return 1;
-}
-/////////////
-int Image::get_height_scaled() const // height after scaling
-{
-    return height * scale.y;
-}
-/////////////
-int Image::get_height_scaled(lua_State *L)
-{
-    luaL_checktype(L, 1, LUA_TTABLE);
-	lua_getfield(L, 1, "udata");
-	if(lua_isuserdata(L, -1))
-	{
-	    Image * image = *static_cast<Image **>(lua_touserdata(L, -1));
-		lua_pushinteger(L, image->get_height_scaled());
-		return 1;
-	}
-    lua_pushnil(L);
-    return 1;
-}
-/////////////
-Vector2 Image::get_size_scaled() const
-{
-    return Vector2(get_width_scaled(), get_height_scaled());
-}
-/////////////
-int Image::get_size_scaled(lua_State *L)
-{
-    luaL_checktype(L, 1, LUA_TTABLE);
-	lua_getfield(L, 1, "udata");
-	if(lua_isuserdata(L, -1))
-	{
-	    Image * image = *static_cast<Image **>(lua_touserdata(L, -1));
-		lua_pushnumber(L, image->get_size_scaled().x);
-		lua_pushnumber(L, image->get_size_scaled().y);
-		return 2;
-	}
-    lua_pushnil(L);
-	lua_pushnil(L);
-    return 2;
-}
 /////////////
 void * Image::get_data() const
 {
@@ -1358,10 +1321,18 @@ int Image::get_alignment(lua_State *L)
 /////////////
 Vector4 Image::get_rect() const
 {
-	int image_width  = get_width ();
-	int image_height = get_height();
+	int image_width  = width;
+	int image_height = height;
 	return Vector4(x, y, image_width, image_height);
 }
+/////////////
+/*Vector4 Image::get_rect_scaled() const
+{
+	int image_width_scaled  = get_width_scaled();
+	int image_height_scaled = get_height_scaled();
+	return Vector4(x, y, image_width_scaled, image_height_scaled);
+}*/
+/////////////
 int Image::get_rect(lua_State * L)
 {
     return 4;

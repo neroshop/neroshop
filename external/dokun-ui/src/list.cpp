@@ -65,8 +65,8 @@ void List::draw()
 			Image * image = item->get_image();
             if(image != nullptr)
 			{
-				int image_width  = (image->is_resized() == false) ? image->get_width () : image->get_width_scaled ();
-			    int image_height = (image->is_resized() == false) ? image->get_height() : image->get_height_scaled();					
+				int image_width  = image->get_width();
+			    int image_height = image->get_height();					
 				if(image->get_alignment() == "left"  ) image->set_relative_position(0, 0);
 				if(image->get_alignment() == "center") image->set_relative_position((item->get_width() - item->get_height()) / 2, 0);
 				if(image->get_alignment() == "right" ) image->set_relative_position(item->get_width() - item->get_height(), 0);		

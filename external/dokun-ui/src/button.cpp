@@ -101,8 +101,8 @@ void Button::draw()
 		// Draw image (over button)
 		if(image != nullptr)
 		{
-            int image_width  = (!image->is_resized()) ? image->get_width () : image->get_width_scaled ();
-			int image_height = (!image->is_resized()) ? image->get_height() : image->get_height_scaled();
+            int image_width  = image->get_width();
+			int image_height = image->get_height();
 			if(image->get_alignment() == "left"  ) { image->set_relative_position(0, 0);	}
 			if(image->get_alignment() == "center") { image->set_relative_position((get_width() - image_width) / 2, (get_height() - image_height) / 2);}
 			if(image->get_alignment() == "right" ) { image->set_relative_position(get_width() - image_width, 0);	}

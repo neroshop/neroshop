@@ -5,6 +5,7 @@
 - use delegating constructor for every class                     []
 
 [MID PRIORITY]
+- make table names plural ('cause select * from customer seems "grammatically" incorrect to me)
 - improve currency conversion and use multiple sources to retrieve currency rates []
 - rewrite renderer.cpp from scratch (if I can't find an experienced graphics programmer)
 - figure out how to turn qrcode data into png and jpeg

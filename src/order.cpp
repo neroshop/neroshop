@@ -356,9 +356,7 @@ void neroshop::Order::create_user_order(unsigned int user_id, const std::string&
         return; // if cart is empty, exit function
     }
     ////////////////////////////////
-    //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
-    // begin transaction
-    ////DB::Postgres::get_singleton()->execute("BEGIN;");
+    //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
     ////////////////////////////////
     if(!DB::Postgres::get_singleton()->table_exists("orders")) { 
         DB::Postgres::get_singleton()->create_table("orders");
@@ -375,6 +373,8 @@ void neroshop::Order::create_user_order(unsigned int user_id, const std::string&
         DB::Postgres::get_singleton()->execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS notes text;"); // encrypted message containing customer's shipping address
         //DB::Postgres::get_singleton()->execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS column_name column_type;");
     }
+    // begin transaction
+    DB::Postgres::get_singleton()->execute("BEGIN;");
     // before we create the order, lets create a savepoint (just in case the order fails or we screw something up)
     ////DB::Postgres::get_singleton()->execute("SAVEPOINT order_creation_savepoint;");
     // set order date (timestamp) to the current date (timestamp) // timestamp includes both date and time instead of the time only
@@ -382,7 +382,7 @@ void neroshop::Order::create_user_order(unsigned int user_id, const std::string&
     double weight = cart->get_total_weight(user_id);
     std::cout << "order_weight: " << weight << std::endl;
     // insert new order
-    int order_id = DB::Postgres::get_singleton()->get_integer_params("INSERT INTO orders (user_id, date, status, weight, subtotal, discount, shipping_cost, total, payment_method, currency, notes) "
+    int order_id = DB::Postgres::get_singleton()->get_integer_params("INSERT INTO orders (user_id, order_date, status, weight, subtotal, discount, shipping_cost, total, payment_method, currency, notes) "
         "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id"/*, 12, 13, 14, 15)"*/, 
         { std::to_string(user_id), date, "Incomplete", std::to_string(weight), std::to_string(0.000000000000), std::to_string(0.000000000000), std::to_string(0.000000000000), std::to_string(0.000000000000),
         "crypto", "monero (xmr)", shipping_address + ";" + contact_info }); // shipping_address, shipping_nethod ??
@@ -517,7 +517,7 @@ void neroshop::Order::create_user_order(unsigned int user_id, const std::string&
     DB::Postgres::get_singleton()->execute_params("UPDATE orders SET status = $1 WHERE id = $2", { get_status_string(), std::to_string(order_id) });    
     ////////////////////////////////*/
     // end transaction
-    ////DB::Postgres::get_singleton()->execute("COMMIT;");
+    DB::Postgres::get_singleton()->execute("COMMIT;");
     ////////////////////////////////
 }
 ////////////////////

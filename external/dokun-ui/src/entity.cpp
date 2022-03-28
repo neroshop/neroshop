@@ -363,11 +363,10 @@ Component * Entity::get_component(const std::string& name)const
 {
     if(component_list.empty()) return nullptr;
     //////////////////////////
-	for(int i = 0; i < component_list.size(); i++) 
+	for(auto components : component_list) 
 	{
-		if(component_list[i]->get_name() == name) {
-			return component_list[i].get();
-		}
+		if(components->get_name() == name) 
+			return components.get();
 	}
     return nullptr;	
 }
@@ -521,23 +520,20 @@ int Entity::is_visible(lua_State *L)
 ///////////
 bool Entity::has_component(const std::string& name)const
 {
-	for(int i = 0; i < component_list.size(); i++)
+	for(auto components : component_list) 
 	{
-		if(component_list[i]->get_name() == name)
-		{
+		if(components->get_name() == name) 
 			return true;
-		}
 	}
     return false;	
 }
 ///////////
 bool Entity::has_component(const Component& component)const
 {
-	for(int i = 0; i < component_list.size(); i++)
+	for(auto components : component_list) 
 	{
-		if(component_list[i].get() == &const_cast<Component&>(component)) {
+		if(components.get() == &const_cast<Component&>(component)) 
 			return true;
-		}
 	}
     return false;		
 }

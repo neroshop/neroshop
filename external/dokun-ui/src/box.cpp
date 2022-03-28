@@ -318,8 +318,8 @@ void Box::draw_box() { // other boxes: list, grid
 			    for(auto images : image_list) { //Image * image = image_list[0].get();// temp
                 //----------------------------------
 				    // get image size whether its original or resized or scaled
-				    int image_width  = (images->is_resized() == false) ? images->get_width () : images->get_width_scaled ();
-			        int image_height = (images->is_resized() == false) ? images->get_height() : images->get_height_scaled();
+				    int image_width = images->get_width();
+			        int image_height = images->get_height();
                     // set image alignment and position relative to GUI	
 				    if(images->get_alignment() == "left"  ) {images->set_relative_position(0, 0);}					
                     if(images->get_alignment() == "center") {images->set_relative_position((get_width() - image_width) / 2, (get_height() - image_height) / 2);}
@@ -390,8 +390,8 @@ void Box::draw_tooltip() {
 	{   // get image size whether its original or resized or scaled
                 Image * image = image_list[0].get();// temp
                 //----------------------------------
-				int image_width  = (image->is_resized() == false) ? image->get_width () : image->get_width_scaled ();
-			    int image_height = (image->is_resized() == false) ? image->get_height() : image->get_height_scaled();
+                int image_width = image->get_width();
+			    int image_height = image->get_height();
                 // set image alignment and position relative to GUI	
 				if(image->get_alignment() == "left"  ) {image->set_relative_position(0, 0);}					
                 if(image->get_alignment() == "center") {image->set_relative_position((get_width() - image_width) / 2, (get_height() - image_height) / 2);}

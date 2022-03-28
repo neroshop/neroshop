@@ -696,6 +696,48 @@ int GUI::set_sortable(lua_State *L)
 	return 0;	
 }
 /////////////  
+// callback_names: hover, press, left_press, middle_press, right_press, click, left_click, middle_click, right_click
+void GUI::set_callback(const std::string& callback_name, std::function<void(void)> callback_function) {
+    if(String::contains(String::lower(callback_name), "hover")) {
+        callback_list["on_hover"] = callback_function;
+        std::cout << DOKUN_UI_TAG "on_hover callback set\n";    
+    }    
+    //-------------------------------------------
+    if(String::lower(callback_name) == "press") { // any button pressed
+        callback_list["on_press"] = callback_function;
+        std::cout << DOKUN_UI_TAG "on_press callback set\n";    
+    }
+    if(String::contains(String::lower(callback_name), "left_press")) { // left button pressed
+        callback_list["on_left_press"] = callback_function;
+        std::cout << DOKUN_UI_TAG "on_left_press callback set\n";
+    }
+    if(String::contains(String::lower(callback_name), "middle_press")) { // middle button pressed
+        callback_list["on_middle_press"] = callback_function;
+        std::cout << DOKUN_UI_TAG "on_middle_press callback set\n";    
+    }    
+    if(String::contains(String::lower(callback_name), "right_press")) { // right button pressed
+        callback_list["on_right_press"] = callback_function;
+        std::cout << DOKUN_UI_TAG "on_right_press callback set\n";
+    }    
+    //-------------------------------------------
+    if(String::lower(callback_name) == "click") { // any button clicked
+        callback_list["on_click"] = callback_function;
+        std::cout << DOKUN_UI_TAG "on_click callback set\n";
+    }
+    if(String::contains(String::lower(callback_name), "left_click")) { // left button clicked
+        callback_list["on_left_click"] = callback_function;
+        std::cout << DOKUN_UI_TAG "on_left_click callback set\n";    
+    }
+    if(String::contains(String::lower(callback_name), "middle_click")) { // middle button clicked
+        callback_list["on_middle_click"] = callback_function;
+        std::cout << DOKUN_UI_TAG "on_middle_click callback set\n";    
+    }
+    if(String::contains(String::lower(callback_name), "right_click")) { // right button clicked
+        callback_list["on_right_click"] = callback_function;
+        std::cout << DOKUN_UI_TAG "on_right_click callback set\n";    
+    }        
+}
+/////////////  
 ///////////// 
 // GETTERS 
 ///////////// 
@@ -1288,6 +1330,12 @@ void GUI::on_draw() // NOTE: position can be set regardless of whether gui is vi
 {
     generate_shader(); // generate shaders before drawing
     on_parent(); // set child's position relative to its parent, regardless of whether it is visible or not
+    //----------
+    // slows everything down by a TON for some reason :/
+    /*on_hover();
+    on_press();
+    on_click();*/
+    //----------
     on_focus();  // set the GUI's focus, but only if it is visible!
     on_disable(); // set color to gray on disabling GUI
 }
@@ -1295,6 +1343,12 @@ void GUI::on_draw() // NOTE: position can be set regardless of whether gui is vi
 void GUI::on_draw_no_focus() {
     generate_shader(); // generate shaders before drawing
     on_parent(); // set child's position relative to its parent, regardless of whether it is visible or not
+    //----------
+    // slows everything down by a TON for some reason :/
+    /*on_hover();
+    on_press();
+    on_click();*/
+    //----------    
     on_disable(); // set color to gray on disabling GUI
 }
 /////////////
@@ -1363,6 +1417,52 @@ void GUI::on_disable() {
 //}
 /////////////
 /////////////
+// Mouse input is slowed/lags because of these callback functions :/
+void GUI::on_hover() {
+    if(!is_visible() || is_disabled() || !is_active()) return;
+    if(!callback_list["on_hover"]) return;
+    if(Mouse::is_over(get_rect())) {
+        callback_list["on_hover"]();
+    }
+}
+/////////////
+void GUI::on_press() { // when mouse is pressed, but never released
+    if(!is_visible() || is_disabled() || !is_active()) return;
+    if(Mouse::is_over(get_rect())) {
+        if(Mouse::is_pressed(1) || Mouse::is_pressed(2) || Mouse::is_pressed(3)) {
+            if(callback_list["on_press"]) callback_list["on_press"](); // any button pressed
+        }
+    }
+    if(Mouse::is_over(get_rect()) && Mouse::is_pressed(1)) {
+        if(callback_list["on_left_press"]) callback_list["on_left_press"](); // left button pressed
+    }
+    if(Mouse::is_over(get_rect()) && Mouse::is_pressed(2)) {
+        if(callback_list["on_middle_press"]) callback_list["on_middle_press"](); // middle button pressed
+    }    
+    if(Mouse::is_over(get_rect()) && Mouse::is_pressed(3)) {
+        if(callback_list["on_right_press"]) callback_list["on_right_press"](); // right button pressed
+    }        
+}
+/////////////
+void GUI::on_click() { // when GUI element is both pressed and released by mouse (so basically, a complete click)
+    if(!is_visible() || is_disabled() || !is_active()) return;
+    if(Mouse::is_over(get_rect())) {
+        if(Mouse::is_clicked(1) || Mouse::is_clicked(2) || Mouse::is_clicked(3)) {
+            if(callback_list["on_click"]) callback_list["on_click"](); // any button clicked
+        }
+    }
+    if(Mouse::is_over(get_rect()) && Mouse::is_clicked(1)) {
+        if(callback_list["on_left_click"]) callback_list["on_left_click"](); // left button clicked
+    }
+    if(Mouse::is_over(get_rect()) && Mouse::is_clicked(2)) {
+        if(callback_list["on_middle_click"]) callback_list["on_middle_click"](); // middle button clicked
+    }    
+    if(Mouse::is_over(get_rect()) && Mouse::is_clicked(3)) {
+        if(callback_list["on_right_click"]) callback_list["on_right_click"](); // right button clicked
+    }        
+}
+/////////////
+/////////////
 /////////////
 // EVENTS
 /////////////
@@ -1400,7 +1500,8 @@ bool GUI::is_pressed() // executes multiple times
 	#ifdef __gnu_linux__
 	#endif
 	if(!visible) return false; // gui must be visible first
-	if(!active) return false; // gui must not be disabled	
+	if(disabled) return false; // gui must not be disabled
+	if(!active) return false; // gui must not be inactive
 	//////////////////////////
 	// Mouse::get_color does not work unless it is called after the draw function :/
     //std::cout << "mouse_color: " << Mouse::get_color() << std::endl;

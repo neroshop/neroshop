@@ -29,6 +29,7 @@ public:
     void delete_upload_image(int index);
     void delete_all_upload_images();
     Image * get_upload_image(int index) const;
+    int get_image_count() const;
     // getters
  	unsigned int get_quantity() const;
 	static unsigned int get_quantity(unsigned int item_id);

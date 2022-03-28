@@ -77,10 +77,6 @@ void neroshop::Seller::list_item(const neroshop::Item& item, unsigned int stock_
     // https://www.postgresql.org/docs/current/datatype-numeric.html
     // numeric(3,2) will be able to store max 9.99 3-2 = 1
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
-    // begin transaction
-    DB::Postgres::get_singleton()->execute("BEGIN;");
-    // create a restore point
-    DB::Postgres::get_singleton()->execute("SAVEPOINT before_seller_item_listing_savepoint;");
     // create table: inventory
     if(!DB::Postgres::get_singleton()->table_exists("inventory")) { // if(!db.table_exists(""))
 	    DB::Postgres::get_singleton()->create_table("inventory"); // inventory_id will be auto generated (primary key)
@@ -94,15 +90,19 @@ void neroshop::Seller::list_item(const neroshop::Item& item, unsigned int stock_
 	    DB::Postgres::get_singleton()->add_column("inventory", "discount_times", "integer"); // number of times the discount can be used (in a single order)
 	    DB::Postgres::get_singleton()->add_column("inventory", "discount_expiry", "timestamptz DEFAULT NULL"); // will be in UTC format // date the discount expires
 	    DB::Postgres::get_singleton()->add_column("inventory", "condition", "text"); // seller_condition for each item
-	}    
+	}        
     // to prevent duplicating item_id that is being sold by the same seller_id (a seller cannot list the same item twice, except change the stock amount)
     int item_id = DB::Postgres::get_singleton()->get_integer_params("SELECT item_id FROM inventory WHERE item_id = $1 AND seller_id = $2", { std::to_string(item.get_id()), std::to_string(get_id()) });
 	if(item_id == item.get_id()) { 
 	    neroshop::print("\033[1;33mYou have already listed this item (id: " + std::to_string(item_id) + ")\033[0m"); 
-	    DB::Postgres::get_singleton()->execute("ROLLBACK TO before_seller_item_listing_savepoint;");
+	    ////DB::Postgres::get_singleton()->execute("ROLLBACK;");
 	    //DB::Postgres::get_singleton()->finish();
 	    return;
-	}	
+	}	    
+    // begin transaction
+    DB::Postgres::get_singleton()->execute("BEGIN;");
+    // create a restore point - no need for this
+    ////DB::Postgres::get_singleton()->execute("SAVEPOINT before_seller_item_listing_savepoint;");
 	// convert localtime to universal time
 	//std::cout << "discount_exp_date to UTC: " << DB::Postgres::get_singleton()->localtimestamp_to_utc(discount_expiry) << std::endl;
 	// SELECT TO_TIMESTAMP('2021 12 10', 'YYYY-MM-DD HH24:MI:SS');
@@ -114,7 +114,7 @@ void neroshop::Seller::list_item(const neroshop::Item& item, unsigned int stock_
 	    String::lower(currency), std::to_string(discount), std::to_string(discounted_items), std::to_string(discount_times), discount_expiry, condition });
 	// end transaction
 	DB::Postgres::get_singleton()->execute("COMMIT;");
-	/*DB::Postgres::get_singleton()->finish();*/
+	////DB::Postgres::get_singleton()->finish();
 	// ???
 	NEROSHOP_TAG_OUT std::cout << "\033[1;37m" << item.get_name() << " (id: " << item.get_id() << ", stock_qty: " << stock_qty << ") has been listed by seller \033[1;34m" << get_name() << " (id: " << get_id() << ")" << "\033[0m" << std::endl;
     ////////////////////////////////	
@@ -612,14 +612,16 @@ neroshop::User * neroshop::Seller::on_login(const std::string& username) { // as
     int user_id = DB::Postgres::get_singleton()->get_integer_params("SELECT id FROM users WHERE name = $1", { username });
     dynamic_cast<Seller *>(user)->set_id(user_id);
     dynamic_cast<Seller *>(user)->set_account_type(user_account_type::seller);
-    /*DB::Postgres::get_singleton()->finish();*/
+    ////DB::Postgres::get_singleton()->finish();
+    // save user to global static object for easy access
+    User::set_singleton(*user);
     //-------------------------------
     // load orders
     dynamic_cast<Seller *>(user)->load_orders();
+    // load wishlists
+    dynamic_cast<Seller *>(user)->load_favorites();    
     // load customer_orders
     static_cast<Seller *>(user)->load_customer_orders();
-    // load wishlists
-    // ...    
     // load cart (into memory)
     if(user->is_registered()) {
         Cart::get_singleton()->load_cart(user->get_id());

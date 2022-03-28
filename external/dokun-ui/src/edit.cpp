@@ -1561,8 +1561,8 @@ void Edit::on_placeholder_text() { // placeholder visibility toggle
 void Edit::on_placeholder_image() {///*
     if(!placeholder_image) return; // if no placeholder_image is set, exit function
     if(!label) throw std::runtime_error("label is not initialized"); // label must be initialized
-    int image_width  = (!placeholder_image->is_resized()) ? placeholder_image->get_width () : placeholder_image->get_width_scaled ();
-	int image_height = (!placeholder_image->is_resized()) ? placeholder_image->get_height() : placeholder_image->get_height_scaled();
+    int image_width  = placeholder_image->get_width();
+	int image_height = placeholder_image->get_height();
 	if(placeholder_image->get_alignment() == "left"  ) placeholder_image->set_relative_position(0, (get_height() - image_height) / 2); // center y
 	if(placeholder_image->get_alignment() == "center") placeholder_image->set_relative_position((get_width() - image_width) / 2, (get_height() - image_height) / 2); // center both x and y
 	if(placeholder_image->get_alignment() == "right" ) placeholder_image->set_relative_position(get_width() - image_width, (get_height() - image_height) / 2); // center y

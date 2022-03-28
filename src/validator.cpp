@@ -67,8 +67,8 @@ void neroshop::Validator::save_user(const std::string& username, const char pw_h
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");////DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
     // begin transaction
     DB::Postgres::get_singleton()->execute("BEGIN;");
-    // create a restore point
-    DB::Postgres::get_singleton()->execute("SAVEPOINT before_account_creation_savepoint;");
+    // create a restore point - not necessary
+    ////DB::Postgres::get_singleton()->execute("SAVEPOINT before_account_creation_savepoint;");
     ////////////////////////////////
     // table: account_type
     if(!DB::Postgres::get_singleton()->table_exists("account_type")) {
@@ -92,7 +92,7 @@ void neroshop::Validator::save_user(const std::string& username, const char pw_h
     // insert new data into table users
     int user_id = DB::Postgres::get_singleton()->get_integer_params("INSERT INTO users (name, pw_hash, opt_email, account_type_id) VALUES ($1, $2, $3, $4) RETURNING id", { String::lower(username), pw_hash, email_hash, std::to_string(1) });//DB::Postgres::get_singleton()->execute_params("INSERT INTO users (name, pw_hash, opt_email, account_type_id) VALUES ($1, $2, $3, $4)", { String::lower(username), pw_hash, email_hash, std::to_string(1) });
 	if(user_id < 1) {
-	    DB::Postgres::get_singleton()->execute("ROLLBACK TO before_account_creation_savepoint;");
+	    DB::Postgres::get_singleton()->execute("ROLLBACK;"); // abort transaction
 	    return; // exit function
 	}
 	//std::cout << "Validator::register_user(): user with id: " << user_id << " has just been created" << std::endl;
@@ -106,9 +106,19 @@ void neroshop::Validator::save_user(const std::string& username, const char pw_h
 	}
 	// insert new data into table cart - each user will have their own cart
 	DB::Postgres::get_singleton()->execute_params("INSERT INTO cart (user_id) VALUES ($1)", { std::to_string(user_id) });
+	////////////////////////////////
+	// table: favorites
+	if(!DB::Postgres::get_singleton()->table_exists("favorites")) {
+	    DB::Postgres::get_singleton()->create_table("favorites");
+	    DB::Postgres::get_singleton()->execute("ALTER TABLE favorites ADD COLUMN user_id integer REFERENCES users(id);");
+	    DB::Postgres::get_singleton()->execute("ALTER TABLE favorites ADD COLUMN item_ids integer[];");//REFERENCES item(id);"); // no support for foreign keys on array elements sadly: https://stackoverflow.com/questions/41054507/postgresql-array-of-elements-that-each-are-a-foreign-key
+	}
+	// insert new data into table favorites
+	DB::Postgres::get_singleton()->execute_params("INSERT INTO favorites (user_id) VALUES ($1)", { std::to_string(user_id) });
+	////////////////////////////////
 	// end transaction
 	DB::Postgres::get_singleton()->execute("COMMIT;");
-    /*DB::Postgres::get_singleton()->finish();*/
+    ////DB::Postgres::get_singleton()->finish();
     ////////////////////////////////
 }
 ////////////////////

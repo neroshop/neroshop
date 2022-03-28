@@ -39,7 +39,7 @@ int Mouse::is_scrolled(lua_State *L)
 	return 1;
 }
 /////////////
-bool Mouse::is_pressed(int button, int times_pressed) // a specific button is pressed
+bool Mouse::is_pressed(int button, int times_pressed) // a specific button is pressed but never released
 {
 	if(button == 1) // left
 	{
@@ -85,6 +85,11 @@ int Mouse::is_released(lua_State *L)
     return 1;
 }
 /////////////
+bool Mouse::is_clicked(int button) { // when mouse is both pressed and released
+    // ...
+    return false;
+}
+/////////////
 // any mouse button is pressed
 bool Mouse::is_down()
 {
@@ -125,6 +130,7 @@ bool Mouse::is_over(const dokun::Window& window) // hover over a window
         return true;
 	return false;
 }
+/////////////
 /////////////
 bool Mouse::is_over(double x, double y, int width, int height) // hover over a 2d object
 {

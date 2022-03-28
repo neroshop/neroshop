@@ -51,6 +51,7 @@ class Mouse {
 		static bool is_scrolled();                                  static int is_scrolled(lua_State *L);        
 		static bool is_pressed(int button, int times_pressed = 1);  static int is_pressed(lua_State *L);              
         static bool is_released(int button);                        static int is_released(lua_State *L);
+        static bool is_clicked(int button); // when mouse is both pressed and released
         static bool is_down();                                      static int is_down(lua_State *L);
         static bool is_up();                                        static int is_up(lua_State *L);
 		static bool is_over(double x, double y);                             static int is_over(lua_State *L);

@@ -2132,14 +2132,13 @@ int dokun::Window::get_style(lua_State *L)
 ////////////
 dokun::Window * dokun::Window::get_active() // returns window with current focus
 {
-    for(int i = 0; i < Factory::get_window_factory()->get_size(); i++)
+    for(auto windows : Factory::get_window_factory()->get_storage())
 	{
-		dokun::Window * window = static_cast<dokun::Window *>(Factory::get_window_factory()->get_object(i));
-		if(window->is_focused()) // only one window can have focus at a time
-		{
+		dokun::Window * window = static_cast<dokun::Window *>(windows);
+		if(window->is_focused()) { // only one window can have focus at a time
 			return window;
 		}
-	}	
+	}
 	return nullptr;
 }
 ////////////

@@ -73,6 +73,8 @@ class GUI: public Entity////, std::enable_shared_from_this<GUI> // note: public 
 		void set_droppable (bool droppable);            static int set_droppable(lua_State *L);
 		void set_resizeable(bool resizeable);           static int set_resizeable(lua_State *L);
 		void set_sortable(bool sortable);               static int set_sortable(lua_State *L);
+		// custom callbacks - on_press, on_click, and on_hover
+		void set_callback(const std::string& callback_name, std::function<void(void)> callback_func); // ex. add_callback("on_hover", some_function);
 		// getters
 		////std::shared_ptr<GUI> get_shared_ptr();// const;
 		virtual int get_width() const;                  static int get_width(lua_State *L); // label width and height is applied in a different way based on its font
@@ -120,6 +122,12 @@ class GUI: public Entity////, std::enable_shared_from_this<GUI> // note: public 
         virtual void on_focus();
         virtual void on_parent(); // label has its own implementation of on_parent() so this function must be virtual
 		virtual void on_disable();
+		// custom callbacks
+		void on_hover(); // when mouse is over GUI element
+		void on_press(); // when mouse is pressed, but never released
+        void on_release(); // when mouse is released
+		void on_click(); // click is for when GUI is both pressed and released by mouse (so basically, a complete click - press and release)
+		// on_press, on_click, on_hover // https://stackoverflow.com/questions/9451559/what-is-the-difference-between-clicked-and-pressed-in-qt
 		// interaction checks
 	    bool is_hovered(); static int is_hovered(lua_State * L);// mouse over
 	    bool is_pressed(); static int is_pressed(lua_State * L); // executes many times in loop
@@ -157,8 +165,11 @@ class GUI: public Entity////, std::enable_shared_from_this<GUI> // note: public 
 		bool droppable; // if gui can be dropped
 		bool resizeable; // can gui be resized?
 		bool sortable; // Reorder elements in a list or grid
-		// shader
+		////////////////
+		// callback list // std::function<return_type(arg1, arg2, arg3, ...)>
+		std::map<std::string, std::function<void()>> callback_list;
 	protected:	
+	    // shader
 		static Shader * gui_shader; // all derived GUIs can access this member
 }; // widget=0, label=1, button=2, edit=3, progress_bar=4
 /*

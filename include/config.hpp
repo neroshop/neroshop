@@ -49,7 +49,7 @@ namespace neroshop {
 "neroshop[\"daemon\"][\"remote\"] = false; -- set to true if the node that you want to connect to is a remote node\n"//\n"
 "neroshop[\"wallet\"] = {};\n"
 "neroshop[\"wallet\"][\"file\"] = \"\"; -- include \".keys\" extension\n" // path or file
-"neroshop[\"wallet\"][\"restore_height\"] = \"2022-01-01\"; -- block height or date (YYYY-MM-DD)\n";
+"neroshop[\"wallet\"][\"restore_height\"] = \"2014-04-18\"; -- block height or date (YYYY-MM-DD)\n";
         // swap data_dir with user
     #ifdef __gnu_linux__ // works!    
         text = String::swap_first_of(text, "/home/<user>/.bitmonero", ("/home/" + user + "/.bitmonero"));

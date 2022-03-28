@@ -54,11 +54,13 @@ neroshop::User * neroshop::Buyer::on_login(const std::string& username) { // if 
     dynamic_cast<Buyer *>(user)->set_id(user_id);
     dynamic_cast<Buyer *>(user)->set_account_type(user_account_type::buyer); // set the account_type    
     //DB::Postgres::get_singleton()->finish();
+    // save user to global static object for easy access
+    User::set_singleton(*user);
     //-----------------------------------------
     // load orders
     dynamic_cast<Buyer *>(user)->load_orders();
     // load wishlists
-    // ...       
+    dynamic_cast<Buyer *>(user)->load_favorites();
     // load cart (into memory)
     if(user->is_registered()) {
         Cart::get_singleton()->load_cart(user->get_id());
