@@ -73,7 +73,7 @@ public:
     bool column_exists(const std::string& table_name, const std::string& column_name) const;// get_integer("SELECT COUNT(column_name) FROM table_name;");
 private:
     PGconn * conn;
-    static DB::Postgres * db_obj; // singleton obj (to make connection easier for all classes to access and to keep track of a single connection)
+    static std::unique_ptr<DB::Postgres> db_obj; // singleton obj (to make connection easier for all classes to access and to keep track of a single connection)
 };
 }
 }

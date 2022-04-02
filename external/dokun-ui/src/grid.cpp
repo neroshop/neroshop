@@ -38,8 +38,15 @@ int Grid::grid_new(lua_State *L)
 /////////////////////
 Grid::~Grid()
 {
-    ////box_list.reset();
-    box_list.clear(); // clear rows (will automatically delete boxes)
+    // "box_list.clear()" will cause a "double free or corruption (fasttop)" error so we must check if objects are not null then delete them individually
+    for(auto rows_ : box_list) {
+        for(auto boxes : rows_) {
+            if(boxes.get()) {
+                boxes.reset();
+                if(!boxes.get()) std::cout << "grid box deleted" << std::endl; // confirm deletion
+            }
+        }
+    }
     std::cout << "grid deleted\n";
 }
 ////////////////////
@@ -135,7 +142,7 @@ void Grid::update() // crashes when called inside a loop
 		box_list.push_back(std::vector<std::shared_ptr<Box>>()); // empty vector of boxes
 		// store row items based on # of columns
 		for(int j = 0; j < columns; j++) {
-			box_list[i].push_back(std::make_shared<Box>());
+			box_list[i].push_back(std::make_shared<Box>());//(std::unique_ptr<Box>(new Box()));
 		}
 	}
 }
@@ -301,12 +308,12 @@ std::vector<std::vector<std::shared_ptr<Box>>> Grid::get_box_list_2d() const {
     return box_list;
 }
 ////////////////////
-std::vector<std::shared_ptr<Box>> Grid::get_box_list_1d() const {//std::vector<Box *> Grid::get_box_list_1d() const {
-    std::vector<std::shared_ptr<Box>> box_list_1d = {};//std::vector<Box *> box_list_1d = {};
+std::vector<Box *> Grid::get_box_list_1d() const {
+    std::vector<Box *> box_list_1d = {};
     for(auto r : box_list)//for(int r = 0; r < box_list.size(); r++) // block.size() = rows
 	{
 		for(auto c : r) {//for(int c = 0; c < box_list[r].size(); c++) { // block[r] = items in row r	
-            box_list_1d.push_back(c);//box_list_1d.push_back(box_list[r][c].get());
+            box_list_1d.push_back(c.get());//box_list_1d.push_back(box_list[r][c].get());
         }
     }
     return box_list_1d;

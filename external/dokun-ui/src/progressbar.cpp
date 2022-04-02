@@ -121,9 +121,15 @@ int Progressbar::set_text(lua_State *L)
 /////////////
 void Progressbar::set_label(const dokun::Label& label)
 {
-    std::shared_ptr<dokun::Label> progress_label(&const_cast<dokun::Label&>(label));
+    // shared_ptr - I've been doing it wrong all this time :/
+    /*std::shared_ptr<dokun::Label> progress_label(&const_cast<dokun::Label&>(label));
 	this->label = progress_label;
-	this->label->set_parent(*this); // also set as child // label must be centered manually
+	this->label->set_parent(*this); // also set as child // label must be centered manually*/
+    //////////////////////////////////
+    // unique_ptr - faster than shared_ptr and better for use with private class members that do not need to be shared
+    std::unique_ptr<dokun::Label> progress_label(&const_cast<dokun::Label&>(label)); // raw pointers cannot be moved so just copy from the normal raw pointer
+    this->label = std::move(progress_label); // unique pointers cannot be copied, but can only be moved // unique pointers cannot be copied, but can only be moved // "std::unique_ptr::release()" is a similar function but "std::move()" is better of the two
+    this->label->set_parent(*this);
 }   
 /////////////
 int Progressbar::set_label(lua_State *L)

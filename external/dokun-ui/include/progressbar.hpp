@@ -68,7 +68,7 @@ public:
 		Vector4 foreground_color; // moving bar color (forground)
 		Vector4 background_color; // (background)
 		// text
-		std::shared_ptr<dokun::Label> label;
+		std::unique_ptr<dokun::Label> label;
 		unsigned int text_direction;
 		// outline
 		bool outline;

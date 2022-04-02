@@ -39,7 +39,7 @@ Button::Button(int x, int y, int width, int height) : Button()
 /////////////
 Button::Button(const std::string& text) : Button()
 {
-	label = new dokun::Label(text); // since we are creating a new button with a text, it will need an initialized label
+	label = std::unique_ptr<dokun::Label>(new dokun::Label(text)); // since we are creating a new button with a text, it will need an initialized label
 	label->set_parent(*this);
 	label->set_alignment("center"); // buttons should center labels by default or nah? this is assuming that the button contains only a label and no image - seems reasonable to me ¯\_(•‿•)_/¯
 }
@@ -47,7 +47,7 @@ Button::Button(const std::string& text) : Button()
 Button::Button(const std::string& text, int x, int y) : Button()
 {
 	set_position(x, y);
-	label = new dokun::Label(text);
+	label = std::unique_ptr<dokun::Label>(new dokun::Label(text));
 	label->set_parent(*this);
 	label->set_alignment("center"); // buttons should center labels by default or nah?
 }
@@ -57,22 +57,20 @@ Button::Button(const std::string& text, int x, int y, int width, int height) : B
 	set_position(x, y);
 	set_width(width);
 	set_height(height);
-	label = new dokun::Label(text);
+	label = std::unique_ptr<dokun::Label>(new dokun::Label(text));
 	label->set_parent(*this);
 	label->set_alignment("center"); // buttons should center labels by default or nah?
 }
 /////////////
 Button::~Button(void)
 {
-    // delete image
-    if(image) {
-        delete image;
-        image = nullptr; // its good practice to set all deleted objects created with "new" to null regardless of what anybody says
+    // reset (delete) image
+    if(image.get()) {
+        image.reset();
     }
-    // delete label
-    if(label) {
-        delete label;
-        label = nullptr;
+    // reset (delete) label
+    if(label.get()) {
+        label.reset();
     }
     std::cout << "button deleted\n";
 }
@@ -161,7 +159,7 @@ int Button::draw(lua_State *L)
 /////////////
 void Button::set_text(const std::string& text)
 {
-    if(!label) throw std::runtime_error("button label is not initialized");
+    if(!label.get()) throw std::runtime_error("button label is not initialized");
 	label->set_string(text);
 }
 /////////////
@@ -181,7 +179,8 @@ int Button::set_text(lua_State *L)
 /////////////
 void Button::set_image(const Image& image) 
 {
-	this->image = &const_cast<Image&>(image); // image->set_position ( button.x + pixels_to_units(button.width / 2), button.y + pixels_to_units(button.height / 2)) // I think this centers the image on the button, idk;    1 unit of movement = 16(for sprites) or 100(default) pixels
+    std::unique_ptr<Image> button_image(&const_cast<Image&>(image));
+	this->image = std::move(button_image); // image->set_position ( button.x + pixels_to_units(button.width / 2), button.y + pixels_to_units(button.height / 2)) // I think this centers the image on the button, idk;    1 unit of movement = 16(for sprites) or 100(default) pixels
 }
 /////////////
 int Button::set_image(lua_State *L)
@@ -224,7 +223,8 @@ int Button::set_image(lua_State *L)
 /////////////
 void Button::set_label(const dokun::Label& label)
 {
-	this->label = &const_cast<dokun::Label&>(label);
+    std::unique_ptr<dokun::Label> button_label(&const_cast<dokun::Label&>(label));
+	this->label = std::move(button_label);
 	this->label->set_parent(*this);
 }
 /////////////
@@ -431,7 +431,7 @@ int Button::set_gradient_color(lua_State *L)
 /////////////
 dokun::Label * Button::get_label()const
 {
-	return label;
+	return label.get();
 }
 /////////////
 int Button::get_label(lua_State *L)
@@ -448,7 +448,7 @@ int Button::get_label(lua_State *L)
 /////////////
 Image * Button::get_image()const
 {
-	return image;
+	return image.get();
 } 
 /////////////
 int Button::get_image(lua_State *L)
@@ -465,7 +465,7 @@ int Button::get_image(lua_State *L)
 /////////////
 std::string Button::get_text()const
 {
-    if(!label) throw std::runtime_error("button label is not initialized");
+    if(!label.get()) throw std::runtime_error("button label is not initialized");
 	return label->get_string();
 }
 /////////////

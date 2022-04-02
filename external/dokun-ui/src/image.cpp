@@ -1601,7 +1601,7 @@ bool Image::load_png(std::string file_name)
      row_pointers[height - 1 - i] = (png_byte*)data + i * rowbytes;
    }
     // save row pointers
-   data_p = row_pointers;
+   rdata = row_pointers;//reinterpret_cast<unsigned char *>(row_pointers);
    // the actual reading of the png file
    //read the png into data through row_pointers
    png_read_image(png_ptr, row_pointers);

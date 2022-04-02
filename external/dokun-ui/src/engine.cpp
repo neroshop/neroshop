@@ -158,8 +158,6 @@ bool dokun::Engine::on_open()
 	}*/
     /////////////////////////////////////////
     //Renderer::start(); // initializes Renderer by setting default values
-    // load the default font (ONLY once so that you do not have to load it a hundred times)
-    if(!dokun::Font::system_font->load(DEFAULT_FONT_PATH)) Logger("Could not load default font from " + String(DEFAULT_FONT_PATH).str());
 	// set status to 1 (proof that engine has been initialized)
 	status = 1;
     //Logger("engine initialized.");

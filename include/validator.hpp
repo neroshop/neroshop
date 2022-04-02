@@ -12,11 +12,14 @@
 #include <fstream> // std::ofstream, std::ifstream
 #include <chrono>  // std::chrono
 #include <iomanip> //std::put_time, std::setfill, std::setw
+// neroshop
 #include "db.hpp"
+// libbcrypt
 extern "C" {
 #include "bcrypt.h"
 #include "crypt_blowfish/ow-crypt.h" // for hashing pw (bcrypt)
 }
+// openssl
 #include <openssl/sha.h> // for hashing email (sha256) // -lssl -lcrypto
 #include <openssl/evp.h> // recommended for sha256, sha512, etc. // https://stackoverflow.com/questions/2262386/generate-sha256-with-openssl-and-c#comment67577990_10632725
 

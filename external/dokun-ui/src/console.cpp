@@ -312,7 +312,9 @@ void Console::init()
  	    console_ptr->edit->set_size(console_ptr->box->get_width(), 20);
 	    //edit->set_position(700, 600);
 	    dokun::Label * edit_label = new dokun::Label();
-	    edit_label->set_font(*dokun::Font::get_system_font());
+	    // font
+	    dokun::Font * font = new dokun::Font(DOKUN_DEFAULT_FONT_PATH);
+	    edit_label->set_font(*font); // font will be stored in a unique_ptr
 	    edit_label->set_color(49, 39, 19, 255);
 	    edit_label->set_relative_position(0, 4);
 	    console_ptr->edit->set_label(* edit_label); 

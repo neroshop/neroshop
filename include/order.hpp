@@ -26,8 +26,6 @@ public:
 	Order(unsigned int id);
 	~Order();
 	void create_order(unsigned int user_id,/* unsigned int seller_id, */const std::string& shipping_address, std::string contact_info = ""); // order: order_id, [order_date], product, SKU, quantity, price (subtotal), discount (optional), shipping_cost/estimated_delivery, carrier[dhl, usps, etc.], payment method:monero[xmr], total
-	void create_guest_order(unsigned int guest_id,/* unsigned int seller_id, */const std::string& shipping_address, std::string contact_info = ""); // order: order_id, [order_date], product, SKU, quantity, price (subtotal), discount (optional), shipping_cost/estimated_delivery, carrier[dhl, usps, etc.], payment method:monero[xmr], total
-	void create_user_order(unsigned int user_id,/* unsigned int seller_id, */const std::string& shipping_address, std::string contact_info = "");
 	//void create_order(unsigned int cart_id, unsigned int buyer_id, const std::string& shipping_address, std::string contact_info = "");
 	//void create_order();
 	void cancel_order(); // revoke the order
@@ -45,6 +43,8 @@ public:
 	friend class Cart; // order can now access cart's private functions
 	friend class Seller; // seller can edit order_status, except cancellation, done,
 private:
+	void create_guest_order(unsigned int guest_id,/* unsigned int seller_id, */const std::string& shipping_address, std::string contact_info = ""); // order: order_id, [order_date], product, SKU, quantity, price (subtotal), discount (optional), shipping_cost/estimated_delivery, carrier[dhl, usps, etc.], payment method:monero[xmr], total
+	void create_registered_user_order(unsigned int user_id,/* unsigned int seller_id, */const std::string& shipping_address, std::string contact_info = "");
 	static bool in_db(unsigned int order_number); // check if an order is in the order database  // order #144
 	unsigned int id;
 	order_status status; // order_status

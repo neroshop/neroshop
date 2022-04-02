@@ -43,12 +43,10 @@ dokun::Font::~Font(void)
 {
 	destroy(); // destroy texture_buffer
 	Factory::get_font_factory()->release(this);
-    std::cout << (this != dokun::Font::system_font) ? "font deleted\n" : "system font deleted\n";	
+    std::cout << "font deleted\n";
 }
 /////////////
 FT_Library dokun::Font::library (nullptr);
-/////////////
-dokun::Font * dokun::Font::system_font (new dokun::Font());
 /////////////
 bool dokun::Font::open()
 {
@@ -65,9 +63,6 @@ bool dokun::Font::open()
 void dokun::Font::close()
 {
     if(library == nullptr) return; // if freetype2 is already closed, then return
-    delete system_font;            // destroy default font (works by clicking the window's close button "X"). The default font is created and owned by dokun so it should be automatically deleted by the engine
-    system_font = nullptr;         // set default font to nullptr
-
 	FT_Error error = FT_Done_FreeType( library );
 	if ( error ) { dokun::Logger("FT_Done_FreeType failed."); return; }
 	library = nullptr; // set library to nullptr once FT_Done_FreeType succeeds.
@@ -763,10 +758,6 @@ int get_advance(lua_State *L)
 */
 /////////////
 /////////////
-dokun::Font * dokun::Font::get_system_font()
-{
-	return system_font;
-}
 /////////////
 /////////////
 bool dokun::Font::is_generated() const // checks if a texture has been generated for each glyph

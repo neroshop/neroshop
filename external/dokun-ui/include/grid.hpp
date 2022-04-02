@@ -38,7 +38,7 @@ public:
 	Box * get_box(int row, int column) const;
 	Box * get_box(int index) const; // for 1D index positions of grid boxes
 	std::vector<std::vector<std::shared_ptr<Box>>> get_box_list_2d() const;
-	std::vector<std::shared_ptr<Box>> get_box_list_1d() const;
+	std::vector<Box *> get_box_list_1d() const;
 	int get_row_count()const;                     static int get_row_count(lua_State *L);
 	int get_column_count()const;                  static int get_column_count(lua_State *L);
 	int get_box_count() const;
@@ -51,7 +51,7 @@ public:
 private:
     // callbacks
     void on_highlight(int rows, int columns); // rows come first before columns
-	std::vector< std::vector<std::shared_ptr<Box>> > box_list;
+	std::vector<std::vector<std::shared_ptr<Box>>> box_list;
     int rows, columns;
     int gap_horz; // the horizontal gap between blocks
     int gap_vert; // the vertical gap between blocks

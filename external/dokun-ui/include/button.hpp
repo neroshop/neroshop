@@ -82,8 +82,8 @@ private:
 	Vector4 press_color;
 	Vector4 old_color; // might not need
 	// content
-	dokun::Label * label;
-	Image * image;
+	std::unique_ptr<dokun::Label> label;
+	std::unique_ptr<Image> image;
 	//////////////
 	double tint_factor; // 0.25, 0.5, 0.75, 1.0 (100% tint = white)
 	double shade_factor; // 0.25, 0.5, 0.75, 1.0 (100% shade = black)

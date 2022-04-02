@@ -1,14 +1,17 @@
 #include "../include/cart.hpp"
 
 ////////////////////
-neroshop::Cart::Cart() : id(0) {
-    max_items = 10; // cart can only hold up to 10 unique items
-    max_quantity = 100; // cart items can only add up to 100 qty
+neroshop::Cart::Cart() : id(0), max_items(10), max_quantity(100) {
+    // cart can only hold up to 10 unique items
+    // cart items can only add up to 100 qty
 }
 ////////////////////
-neroshop::Cart::~Cart() {}
+neroshop::Cart::~Cart() {
+    contents.clear(); // this should reset (delete) all cart items
+    std::cout << "\033[1;37mcart deleted\033[0m\n";
+}
 ////////////////////
-neroshop::Cart * neroshop::Cart::cart_obj (nullptr);
+std::unique_ptr<neroshop::Cart> neroshop::Cart::cart (nullptr);
 ////////////////////
 // normal
 ////////////////////
@@ -67,7 +70,8 @@ void neroshop::Cart::load(const neroshop::Item& item, unsigned int quantity) { /
     unsigned int stock_qty = item.get_stock_quantity(); // get stock quantity
     if(quantity >= stock_qty) quantity = stock_qty; // quantity cannot be more than what is in stock
     // load the item and quantity ...
-    cart_obj->contents.push_back(&const_cast<neroshop::Item&>(item)); // store existing item
+    std::shared_ptr<neroshop::Item> cart_item(&const_cast<neroshop::Item&>(item));
+    Cart::get_singleton()->contents.push_back(cart_item); // store existing item
     const_cast<neroshop::Item&>(item).set_quantity(quantity); // save existing item_qty
     NEROSHOP_TAG_OUT std::cout << "\033[1;32m" << item.get_name() << " (id: " << item.get_id() << ", qty: " << quantity << ") has been loaded into cart" << "\033[0m" << std::endl;
 }
@@ -117,8 +121,9 @@ void neroshop::Cart::add(const neroshop::Item& item, int quantity) { // good!
     if(!in_cart(item.get_id()))//if(!in_cart(item)) 
     {
         add_db(item.get_id()); // add item to table Cart
-        contents.push_back(&const_cast<neroshop::Item&>(item));// add item to cart.contents
-        const_cast<neroshop::Item&>(item).set_quantity(item_qty + quantity);// increase item quantity by a user-specified amount
+        std::shared_ptr<neroshop::Item> cart_item(&const_cast<neroshop::Item&>(item));
+        contents.push_back(cart_item);// add item to cart.contents
+        cart_item->set_quantity(item_qty + quantity);// increase item quantity by a user-specified amount
         NEROSHOP_TAG_OUT std::cout << "\033[1;32m" << item.get_name() << " (" << quantity << ") added to cart" << "\033[0m" << std::endl;
     }
 #ifdef NEROSHOP_DEBUG
@@ -322,8 +327,12 @@ unsigned int get_contents_count_db() { // returns number of rows in table Cart
 ////////////////////
 ////////////////////
 neroshop::Item * neroshop::Cart::get_item(unsigned int index) const {
-    if(index > (contents.size()-1)) throw std::runtime_error(std::string(std::string("\033[0;31m") + "(neroshop::Cart::get_item): attempting to access invalid index" + std::string("\033[0m")).c_str());//std::cerr << "\033[0;31m" << "neroshop::Cart::get_item(): attempting to access invalid index" << "\033[0m" << std::endl;//return nullptr;
-    return contents[index];//contents[index].get();
+    if(index > (contents.size() - 1)) throw std::out_of_range(std::string(std::string("\033[0;31m") + "(neroshop::Cart::get_item): attempting to access invalid index" + std::string("\033[0m")).c_str());//std::cerr << "\033[0;31m" << "neroshop::Cart::get_item(): attempting to access invalid index" << "\033[0m" << std::endl;//return nullptr;
+    return contents[index].get();
+}
+////////////////////
+std::vector<std::shared_ptr<neroshop::Item>> neroshop::Cart::get_contents_list() const {
+    return contents;
 }
 ////////////////////
 unsigned int neroshop::Cart::get_id() const {
@@ -332,8 +341,8 @@ unsigned int neroshop::Cart::get_id() const {
 ////////////////////
 ////////////////////
 neroshop::Cart * neroshop::Cart::get_singleton() {
-    if(!cart_obj) cart_obj = new Cart();
-    return cart_obj;
+    if(!cart.get()) {neroshop::print("cart created");cart = std::unique_ptr<neroshop::Cart>(new Cart());}
+    return cart.get();
 }
 ////////////////////
 ////////////////////
@@ -495,9 +504,11 @@ bool neroshop::Cart::load_cart(int user_id) {
         // update the item's quantity (just to be sure it is not more than whats in stock)
         DB::Postgres::get_singleton()->execute_params("UPDATE cart_item SET item_qty = $1 WHERE cart_id = $2 AND item_id = $3", { std::to_string(item_qty), std::to_string(cart_id), std::to_string(item_id) });        
         // create the item (object) then store it in the cart(for later use) - it would be better to store the item_ids rather than the item object
-        neroshop::Item * item = new Item(item_id);
-        Cart::get_singleton()->contents.push_back(item);//cart_obj->
-        neroshop::print("loaded cart item (id: " + std::to_string(item_id) + ", qty: " + std::to_string(item_qty) + ")");//NEROSHOP_TAG_OUT std::cout << "\033[1;32m" << item.get_name() << " (id: " << item.get_id() << ", qty: " << quantity << ") has been loaded into cart" << "\033[0m" << std::endl;
+        std::shared_ptr<neroshop::Item> item = std::make_shared<neroshop::Item>(item_id);//neroshop::Item * item = new Item(item_id);
+        //if(std::find(contents.begin(), contents.end(), item) == contents.end()) {
+            Cart::get_singleton()->contents.push_back(item);
+            neroshop::print("loaded cart item (id: " + std::to_string(item_id) + ", qty: " + std::to_string(item_qty) + ")");//NEROSHOP_TAG_OUT std::cout << "\033[1;32m" << item.get_name() << " (id: " << item.get_id() << ", qty: " << quantity << ") has been loaded into cart" << "\033[0m" << std::endl;
+        //}
     }
     /////////////////////////////
     PQclear(result);
@@ -506,7 +517,7 @@ bool neroshop::Cart::load_cart(int user_id) {
 }
 ////////////////////
 ////////////////////
-void neroshop::Cart::add(int user_id, const neroshop::Item& item, int quantity) {
+void neroshop::Cart::add(int user_id, unsigned int item_id, int quantity) {
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
     ////////////////////    
     // if quantity is zero or negative then there's nothing to add
@@ -524,10 +535,10 @@ void neroshop::Cart::add(int user_id, const neroshop::Item& item, int quantity) 
         return; // exit function
     }
     // remove this
-    std::string item_name = DB::Postgres::get_singleton()->get_text_params("SELECT name FROM item WHERE id = $1", { std::to_string(item.get_id()) });
+    std::string item_name = DB::Postgres::get_singleton()->get_text_params("SELECT name FROM item WHERE id = $1", { std::to_string(item_id) });
     if(item_name.empty()) item_name = "???";
     // check if item is in database    
-    int item_id = DB::Postgres::get_singleton()->get_integer_params("SELECT id FROM item WHERE id = $1", { std::to_string(item.get_id()) });//if(!item.is_registered()) {NEROSHOP_TAG_OUT std::cout << "\033[1;91m" << item.get_name() << " is not registered in the database" << "\033[0m" << std::endl;return;}
+    ////int item_id = DB::Postgres::get_singleton()->get_integer_params("SELECT id FROM item WHERE id = $1", { std::to_string(item_id) });//if(!item.is_registered()) {NEROSHOP_TAG_OUT std::cout << "\033[1;91m" << item.get_name() << " is not registered in the database" << "\033[0m" << std::endl;return;}
     if(item_id == 0) {
         neroshop::print(item_name + " has not been registered");
         return; // exit function
@@ -570,12 +581,14 @@ void neroshop::Cart::add(int user_id, const neroshop::Item& item, int quantity) 
     if(!in_cart(user_id, item_id))//if(!in_cart(item)) 
     {
         // get item original price and weight
-        double price = DB::Postgres::get_singleton()->get_double_params("SELECT price FROM item WHERE id = $1", { std::to_string(item.get_id()) });
-        float weight = DB::Postgres::get_singleton()->get_real_params("SELECT weight FROM item WHERE id = $1", { std::to_string(item.get_id()) });
+        double price = DB::Postgres::get_singleton()->get_double_params("SELECT price FROM item WHERE id = $1", { std::to_string(item_id) });
+        float weight = DB::Postgres::get_singleton()->get_real_params("SELECT weight FROM item WHERE id = $1", { std::to_string(item_id) });
         // add item to table Cart
-        insert_into(user_id, item_id, quantity, price, weight);//item_qty + quantity// increase item quantity by a user-specified amount
-        contents.push_back(&const_cast<neroshop::Item&>(item));// add item to cart.contents
-        NEROSHOP_TAG_OUT std::cout << "\033[1;32m" << item_name << " (" << quantity << ") added to cart" << "\033[0m" << std::endl;  
+        //if(std::find(contents.begin(), contents.end(), &const_cast<neroshop::Item&>(item)) == contents.end()) {
+            insert_into(user_id, item_id, quantity, price, weight);//item_qty + quantity// increase item quantity by a user-specified amount
+            contents.push_back(std::make_shared<neroshop::Item>(item_id));// add item to cart.contents
+            NEROSHOP_TAG_OUT std::cout << "\033[1;32m" << item_name << " (" << quantity << ") added to cart" << "\033[0m" << std::endl;  
+        //}
     }
 #ifdef NEROSHOP_DEBUG
     NEROSHOP_TAG_OUT std::cout << "\033[0;97m" << "Total items in cart: " << get_total_quantity(user_id) << "\033[0m" << std::endl;
@@ -584,8 +597,15 @@ void neroshop::Cart::add(int user_id, const neroshop::Item& item, int quantity) 
     //DB::Postgres::get_singleton()->finish();
 }
 ////////////////////
+void neroshop::Cart::add(int user_id, const neroshop::Item& item, int quantity) {
+    add(user_id, item.get_id(), quantity);
+}
+////////////////////
+void neroshop::Cart::remove(int user_id, unsigned int item_id, int quantity) {
+}
+////////////////////
 void neroshop::Cart::remove(int user_id, const neroshop::Item& item, int quantity) {
-
+    remove(user_id, item.get_id(), quantity);
 }
 ////////////////////
 void neroshop::Cart::create_cart_item_table() {
@@ -636,6 +656,8 @@ void neroshop::Cart::empty(int user_id) {
     int cart_id = DB::Postgres::get_singleton()->get_integer_params("SELECT id FROM cart WHERE user_id = $1", { std::to_string(user_id) });
     // delete everything from user's cart
     DB::Postgres::get_singleton()->execute_params("DELETE FROM cart_item WHERE cart_id = $1;", { std::to_string(cart_id) });
+    // clear the contents from the vector as well
+    contents.clear();
 }
 ////////////////////
 ////////////////////

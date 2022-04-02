@@ -20,7 +20,11 @@ neroshop::Item::Item(const std::string& name, const std::string& desc, double pr
 ////////////////////
 ////////////////////
 ////////////////////
-neroshop::Item::~Item() {}
+neroshop::Item::~Item() {
+#ifdef NEROSHOP_DEBUG0
+    std::cout << "item deleted\n";
+#endif    
+}
 ////////////////////
 void neroshop::Item::register_item(const std::string& name, const std::string& description, double price, double weight, double length, double width, double height, const std::string& condition, const std::string& product_code) {
     ////////////////////////////////

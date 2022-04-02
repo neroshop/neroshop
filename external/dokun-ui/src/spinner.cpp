@@ -177,8 +177,8 @@ int Spinner::set_color(lua_State * L)
 /////////////
 void Spinner::set_label(const dokun::Label& label)
 {
-    std::shared_ptr<dokun::Label> spinner_label(&const_cast<dokun::Label&>(label));
-	this->label = spinner_label;
+    std::unique_ptr<dokun::Label> spinner_label(&const_cast<dokun::Label&>(label));
+	this->label = std::move(spinner_label); // unique pointers cannot be copied, but can only be moved // "std::unique_ptr::release()" is a similar function but "std::move()" is better of the two
 	this->label->set_parent(*this); // set parent to Spinner
 	this->label->set_string(String::to_string_with_precision(value, decimal_places));
 	this->label->set_alignment("center"); // spinners should center labels by default

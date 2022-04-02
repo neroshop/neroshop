@@ -14,11 +14,11 @@ class Label : public GUI {
         Label();                                                                              static int label_new(lua_State *L);
 		Label(const Label& label);
 		Label(const dokun::Font& font);
+		Label(const dokun::Font& font, const std::string& text);
 		Label(const std::string& text);
+		Label(const std::string& text, int x, int y, int width, int height);
         Label(int x, int y);
         Label(int x, int y, int width, int height);
-		Label(const std::string& text, int x, int y, int width, int height);
-		Label(const std::string& text, const dokun::Font& font);
 		~Label();
 		// normal
 		void draw();
@@ -67,7 +67,7 @@ class Label : public GUI {
 	    static Shader * label_shader;
 	    void update(void); // updates the width of the label
 		std::string string;
-		dokun::Font * font;
+		std::unique_ptr<dokun::Font> font;
 		Vector4 color;
 		unsigned int style;
 		Vector4 background_color;

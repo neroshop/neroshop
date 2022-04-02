@@ -17,7 +17,7 @@
 //#include <.hpp>
 // STL
 #include <iostream>
-#include <memory> // std::shared_ptr, std::make_shared
+#include <memory> // std::unique_ptr, std::shared_ptr, std::make_shared
 
 namespace neroshop {
 class Catalog {
@@ -49,11 +49,13 @@ public:
     Vector2i get_size() const;
     //get_capacity(); // number of boxes that can be lined up horizontally
     //get_row_capacity(); // number of boxes that can be lined up vertically
-//private:
-    std::shared_ptr<Box> current; // shows product_page (you can only view one product page at a time) // make this static
-    std::shared_ptr<Grid> view; // shows catalog_page (item listings)
+private:
+    std::unique_ptr<Box> current; // shows product_page (you can only view one product page at a time) // make this static
+    std::unique_ptr<Grid> view; // shows catalog_page (item listings)
+    std::unique_ptr<Box> tooltip;
     void initialize();
     void update(); // updates size and width of boxes
+public:    
     void delete_view_children();
     void delete_page_children();
     // box contents

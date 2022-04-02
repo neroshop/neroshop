@@ -35,7 +35,7 @@ private:
     int min_module_pixel_size;
     std::string text;
     bool overwrite_existing_file;
-    qrcodegen::QrCode::Ecc ecc;
+    qrcodegen::QrCode::Ecc ecc; // to-do: change this to a unique_ptr
 };
 }
 #endif

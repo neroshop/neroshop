@@ -12,6 +12,7 @@ class Buyer : public User { // customers will not be required to register, unles
 public:
     Buyer();
     Buyer(const std::string& name);
+    ~Buyer();
     // callbacks
     static neroshop::User * on_login(const std::string& username);
 private:

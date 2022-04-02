@@ -1,11 +1,28 @@
 #include "../include/catalog.hpp"
 
 ////////////////////
-neroshop::Catalog::Catalog() {// list views ALWAYS have 1 column, grid views can have multiple rows and columns
+neroshop::Catalog::Catalog() : view(nullptr), current(nullptr), tooltip(nullptr) {// list views ALWAYS have 1 column, grid views can have multiple rows and columns
     initialize();
 }
 ////////////////////
 neroshop::Catalog::~Catalog() {
+    // delete tooltip
+    if(tooltip.get()) { 
+        tooltip.reset();
+        if(!tooltip.get()) std::cout << "catalog tooltip deleted\n"; // confirm deletion
+    }
+    // delete page
+    if(current.get()) { 
+        //delete_page_children();
+        current.reset();
+        if(!current.get()) std::cout << "catalog page deleted\n"; // confirm deletion
+    }    
+    // delete view
+    if(view.get()) { 
+        //delete_view_children();
+        view.reset();
+    }    
+    std::cout << "catalog deleted\n";
 }
 ////////////////////
 ////////////////////
@@ -22,10 +39,10 @@ void neroshop::Catalog::initialize() {
     */
     // initialize view
     if(view.get()) {neroshop::print("catalog is already initialized", 2);return;} // if view was already initialized then exit function
-    view = std::make_shared<Grid>();
+    view = std::unique_ptr<Grid>(new Grid());
     std::cout << "catalog view initialized\n";
     // set initial values // size=400,300;rows=2;columns=3 OR 
-    view->set_rows(2/*3*/);//(6)//(1); // we cannot have columns without rows
+    view->set_rows(3);//(6)//(1); // we cannot have columns without rows
     view->set_columns(3);//(5)//(1);
     view->set_gap(5);//view->set_horizontal_gap(5);//view->set_vertical_gap(50);
     view->set_color(160, 160, 160, 1.0);
@@ -34,7 +51,7 @@ void neroshop::Catalog::initialize() {
     ////////////////////
     // initialize current page (product page)
     if(current.get()) {neroshop::print("catalog is already initialized", 2);return;}
-    current = std::make_shared<Box>();
+    current = std::unique_ptr<Box>(new Box());
     setup_page();
     current->hide(); // hide product page by default
     ////////////////////
@@ -78,7 +95,7 @@ void neroshop::Catalog::delete_page_children() {
         if(page_images.use_count() > 0) page_images.reset();
     }   
     // delete (reset) the page itself (will also reset children)
-    ////if(current.use_count() > 0) current.reset();
+    ////if(current.get()) current.reset();
 }
 ////////////////////
 void neroshop::Catalog::draw() {
@@ -181,7 +198,7 @@ void neroshop::Catalog::setup_page() {
     // 3. cart / checkout page
     // product_page ------------------------------------------------------------------
     // PRODUCT IMAGE BORDER BOX
-    Box * product_image_border_box = new Box();
+    /*Box * product_image_border_box = new Box();
     product_image_border_box->set_outline(true);
     product_image_border_box->set_size(500, 500);
     product_image_border_box->set_relative_position(10, 10);
@@ -202,12 +219,12 @@ void neroshop::Catalog::setup_page() {
     ////product_image_border_boxes[0]->set_relative_position(10, product_image_border_box->get_relative_y() + product_image_border_box->get_height() + box_gap);
     for(int i = 0; i < product_image_border_boxes.size(); i++) {
         product_image_border_boxes[i]->set_outline(true);
-        product_image_border_boxes[i]->set_size((product_image_border_box->get_width() - box_gap) / product_image_border_boxes.size(), 128/*product_image_border_box->get_height() / product_image_border_boxes.size()*/);
+        product_image_border_boxes[i]->set_size((product_image_border_box->get_width() - box_gap) / product_image_border_boxes.size(), 128);
     
         current->add_gui(*product_image_border_boxes[i]);
         if(i == 0) continue; // skip first product image border sub box
         ////product_image_border_boxes[i]->set_relative_position(product_image_border_boxes[i - 1]->get_relative_x() + product_image_border_boxes[i - 1]->get_width() + box_gap, product_image_border_boxes[0]->get_relative_y());
-    }
+    }*/
     // NAVIGATION ARROWS (add to main product_image_border_box)
     /*// PRODUCT NAME LABEL
     dokun::Label product_name_label("Monero Ball"); // place at bottom of image or next to image
@@ -314,7 +331,7 @@ void neroshop::Catalog::setup_page() {
 }
 ////////////////////
 void neroshop::Catalog::update_page(int item_id) {
-    Item product(item_id); // temporary (will die at end of scope)
+    /*Item product(item_id); // temporary (will die at end of scope)
     // get product_image_border_box's image
     Box * product_image_border_box = static_cast<Box *>(current->get_gui(0));
     Image * product_image_0 = static_cast<Box *>(current->get_gui(0))->get_image(0);//current->get_image(0)->
@@ -322,18 +339,19 @@ void neroshop::Catalog::update_page(int item_id) {
     std::shared_ptr<Image> product_image_0_copy(product_image_0);//std::cout << "use_count(before reset): " << product_image_0_copy.use_count() << std::endl;
     product_image_0_copy.reset();//std::cout << "use_count(after reset): " << product_image_0_copy.use_count() << std::endl;    
     // get product thumbnail image
-    Image product_image_temp = *product.get_upload_image(1); // first image in array
+    Image product_image_temp = *product.get_upload_image(1);*/ // first image in array
     /*if(!product_image_temp) {
         product_image_0 = new Image(Icon::get["image_gallery"]->get_data(), 64, 64, 1, 4);
     }*/    
     // copy grid box image to page image
-    std::cout << "image buffer: " << static_cast<Box *>(current->get_gui(0))->get_image(0)->get_buffer() << std::endl;
+    /*std::cout << "image buffer: " << static_cast<Box *>(current->get_gui(0))->get_image(0)->get_buffer() << std::endl;
     if(product_image_border_box->get_image_count() > 0) {
     product_image_0->copy((&product_image_temp) ? product_image_temp : *Icon::get["image_gallery"] );//// (product_image_temp) ? *product_image_temp//load(product_image.get_data(), product_image.get_width(), product_image.get_height(), product_image.get_depth(), product_image.get_channel());
     // if image size is greater than border size, scale the image
     if(product_image_0->get_width() > product_image_border_box->get_width() || product_image_0->get_height() > product_image_border_box->get_height()) {
         std::cout << "image is too large, but we will scale it for you!\n";
         product_image_0->resize(128, 128);
+        // "corrupted double-linked list. Aborted(core dumped)" error somewhere around here
     }
     // set relative position
     product_image_0->set_relative_position((product_image_border_box->get_width() - product_image_0->get_width()) / 2, (product_image_border_box->get_height() - product_image_0->get_height()) / 2);
@@ -347,6 +365,7 @@ void neroshop::Catalog::update_page(int item_id) {
   ////product_image_border_boxes_?->set_relative_position(product_image_border_boxes_?->get_relative_x() + product_image_border_boxes_?->get_width() + 10, product_image_border_boxes_1->get_relative_y());
   //--------------------------------------------------
   //--------------------------------------------------
+*/  
 }
 ////////////////////
 ////////////////////
@@ -408,13 +427,14 @@ void neroshop::Catalog::fetch_inventory() {
             verified_purchase_icon->resize(24, 24);//(32, 32);
             verified_purchase_icon->set_color(128, 128, 128, 1.0);//(30, 80, 155); //155 or 255
             verified_purchase_icon->set_relative_position(10, 10);
-            verified_purchase_icon->set_visible(false); // hide by default and show only if user has purchased the item
+            verified_purchase_icon->set_visible(false); // hide by default and show only if user has purchased the item (guests purchases are not stored which is another reason why verified_purchase_icon is hidden)
             box->add_image(*verified_purchase_icon);
             // heart_icon (favorites or wishlist)
             Image * heart_icon = new Image(Icon::get["heart"]->get_data(), 64, 64, 1, 4);
             heart_icon->set_color(128, 128, 128, 1.0);//(224, 93, 93, 1.0);
             heart_icon->resize(verified_purchase_icon->get_width(), verified_purchase_icon->get_height());//(24, 24);//(16, 16);
             heart_icon->set_relative_position(box->get_width() - heart_icon->get_width() - 10, 10);
+            heart_icon->set_visible(false); // hide by default and show only if user has favorited the item (guests cannot heart items which is another reason why heart_icon is hidden)
             box->add_image(*heart_icon);
             // product_image (thumbnail)     
             Item item(item_id); // temporary (will die at end of scope)
@@ -493,6 +513,10 @@ void neroshop::Catalog::fetch_inventory() {
             price_label_xmr->set_visible(false);
             box->add_gui(*price_label_xmr);
             //////////////////////////////////////////////////
+            // tooltip
+            //If(mouse_is_over(heart_icon)) tooltip->show("This item is in your favorites");
+            //If(mouse_is_over(verified_purchase_icon)) tooltip->show("You've previously purchased this item");
+            //////////////////////////////////////////////////
             // show_product or buy button (not neccessary, but optional since user can just click the box to view the item)
             // ...
         ////} // grid (view) columns
@@ -534,6 +558,8 @@ void neroshop::Catalog::refresh() {
             bool favorited = User::get_singleton()->has_favorited(item_id);
             heart_icon->set_color((favorited) ? Vector4(224, 93, 93, 1.0) : Vector4(128, 128, 128, 1.0));//;        
             heart_icon->set_visible((favorited) ? true : false); // show if hidden by default
+            // check whether image has been loaded or not
+            // product_image - load if not yet loaded
         }
     }
     //-----------------------------------
@@ -582,9 +608,9 @@ Box * neroshop::Catalog::get_box(int row, int column) const {
 ////////////////////
 Box * neroshop::Catalog::get_box(int index) const {
     if(!view.get()) throw std::runtime_error("catalog view is not initialized");
-    std::vector<std::shared_ptr<Box>> box_list_1d = view->get_box_list_1d();
+    std::vector<Box *> box_list_1d = view->get_box_list_1d();
     if(box_list_1d.empty()) throw std::runtime_error("The catalog is empty!");
-    return box_list_1d[index].get();
+    return box_list_1d[index];
 }
 ////////////////////
 Box * neroshop::Catalog::get_current() const {

@@ -118,29 +118,24 @@ Box::Box(int x, int y, int width, int height) : Box()
 /////////////
 Box::~Box(void)
 {
-    // delete titlebar label
-    if(title_bar_label) {
-        delete title_bar_label;
-        title_bar_label = nullptr;
+    // reset (delete) titlebar label
+    if(title_bar_label.get()) {
+        title_bar_label.reset();
+        if(!title_bar_label.get()) std::cout << "title bar label deleted\n";
     }
-    // delete titlebar image
-    if(title_bar_image) {
-        delete title_bar_image;
-        title_bar_image = nullptr;
+    // reset (delete) titlebar image
+    if(title_bar_image.get()) {
+        title_bar_image.reset();
+        if(!title_bar_image.get()) std::cout << "title bar image deleted\n";
     }
-    // delete label - we no longer need to delete labels now that we are using shared_ptrs
-	/*if(label) {
-	    delete label; // call label destructor
-	    label = nullptr;
-	}*/
-	// delete image - we no longer need to delete images now that we are using shared_ptrs
-	/*if(image) {
-	    delete image; // call image destructor
-	    image = nullptr;
-	}*/
-	// I guess this is how to properly delete a smart pointer
-	for(auto guis : child_list) guis.reset(); // labels included
-	for(auto images : image_list) images.reset();
+	// reset (delete) box guis
+	for(auto guis : child_list) {
+	    if(guis.get()) guis.reset();//if(guis.use_count() > 0) guis.reset(); // labels included
+	}
+	// reset (delete) box images
+	for(auto images : image_list) {
+	    if(images.get()) images.reset();//if(images.use_count() > 0) images.reset();
+	}
 	std::cout << "box deleted\n";
 }
 /////////////
@@ -944,8 +939,10 @@ int Box::set_title_bar_text_color(lua_State * L)
 //////////////
 void Box::set_title_bar_label(const dokun::Label& label)
 {
-	title_bar_label = &const_cast<dokun::Label&>(label);
+    std::unique_ptr<dokun::Label> box_title_bar_label(&const_cast<dokun::Label&>(label));
+	title_bar_label = std::move(box_title_bar_label);
 }
+//////////////
 int Box::set_title_bar_label(lua_State * L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
@@ -969,8 +966,10 @@ int Box::set_title_bar_label(lua_State * L)
 //////////////
 void Box::set_title_bar_image(const Image& image)
 {
-	title_bar_image = &const_cast<Image&>(image);
-}                                  
+    std::unique_ptr<Image> box_title_bar_image(&const_cast<Image&>(image));
+	title_bar_image = std::move(box_title_bar_image);
+}     
+//////////////                             
 int Box::set_title_bar_image(lua_State * L)
 {
 	luaL_checktype(L, 1, LUA_TTABLE);
@@ -1394,7 +1393,7 @@ Vector4 Box::get_title_bar_color() const
 /////////////
 dokun::Label * Box::get_title_bar_label() const
 {
-    return title_bar_label;
+    return title_bar_label.get();
 }
 /////////////
 std::string Box::get_title_bar_text() const
@@ -1411,7 +1410,7 @@ Vector4 Box::get_title_bar_text_color() const
 /////////////
 Image * Box::get_title_bar_icon() const
 {
-	return title_bar_image;
+	return title_bar_image.get();
 }
 /////////////
 /////////////

@@ -8,6 +8,11 @@ neroshop::Buyer::Buyer(const std::string& name) : Buyer() {
     //std::cout << "buyer created\n";
 }
 ////////////////////
+neroshop::Buyer::~Buyer() {
+#ifdef NEROSHOP_DEBUG
+    std::cout << "buyer deleted\n";
+#endif    
+}
 ////////////////////
 ////////////////////
 ////////////////////
@@ -55,7 +60,7 @@ neroshop::User * neroshop::Buyer::on_login(const std::string& username) { // if 
     dynamic_cast<Buyer *>(user)->set_account_type(user_account_type::buyer); // set the account_type    
     //DB::Postgres::get_singleton()->finish();
     // save user to global static object for easy access
-    User::set_singleton(*user);
+    //User::set_singleton(*user);
     //-----------------------------------------
     // load orders
     dynamic_cast<Buyer *>(user)->load_orders();

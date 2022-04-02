@@ -150,21 +150,18 @@ private:
 	unsigned int  width;
 	unsigned int height;
 	unsigned int depth;
-	unsigned char * data;//std::vector<unsigned char *> data;//void*data
-	void *data_p;
+	unsigned char * data;//std::vector<unsigned char> data; // the data to pass to opengl
+	unsigned char** rdata; // the actual data
 	unsigned int channel;
 	std::string    file;
 	Vector4 color;
 	Texture * texture;
+	bool resized;
 	// outline
 	bool outline;
 	float outline_thickness;
 	Vector3 outline_color;
 	float outline_threshold;
-	// after resize
-	unsigned int new_width;
-	unsigned int new_height;
-	bool resized;
 	// geometric values
 	double x, y;
 	double angle;

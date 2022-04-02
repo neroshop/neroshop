@@ -95,7 +95,7 @@ private:
 		double ball_radius;
 		bool ball_locked;
 		// label
-		std::shared_ptr<dokun::Label> label;
+		std::unique_ptr<dokun::Label> label;
 		// outline
 		bool outline;
 		Vector4 outline_color;

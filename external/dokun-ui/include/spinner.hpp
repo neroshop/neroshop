@@ -95,7 +95,7 @@ private:
 	bool separator;
 	unsigned int separator_size;
 	// label
-	std::shared_ptr<dokun::Label> label;
+	std::unique_ptr<dokun::Label> label;
 	// outline
 	bool outline;
 	double outline_width;

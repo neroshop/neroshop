@@ -19,7 +19,7 @@ neroshop::DB::Postgres::~Postgres() {
     finish();
 }
 ////////////////////
-neroshop::DB::Postgres * neroshop::DB::Postgres::db_obj (nullptr);
+std::unique_ptr<neroshop::DB::Postgres> neroshop::DB::Postgres::db_obj (nullptr);
 ////////////////////
 bool neroshop::DB::Postgres::connect(const std::string& conninfo) {
     // If you ever get this warning then it means
@@ -549,8 +549,8 @@ std::string neroshop::DB::Postgres::localtime_to_utc(const std::string& localtim
 }
 ////////////////////
 neroshop::DB::Postgres * neroshop::DB::Postgres::get_singleton() {
-    if(!db_obj) db_obj = new DB::Postgres(); // conn is null by default
-    return db_obj;
+    if(!db_obj.get()) db_obj = std::unique_ptr<DB::Postgres>(new DB::Postgres()); // conn is null by default
+    return db_obj.get();
 }
 ////////////////////
 ////////////////////

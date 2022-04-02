@@ -19,13 +19,13 @@ extern "C" {       // run as c code
 #include <lua.hpp>
 // To avoid naming conflictions with X11, dokun namespace will be used
 #ifdef DOKUN_WINDOWS
-#define DEFAULT_FONT_PATH "C:/Windows/Fonts/ariblk.ttf"
+#define DOKUN_DEFAULT_FONT_PATH "C:/Windows/Fonts/ariblk.ttf"
 #endif
 #ifdef __gnu_linux__
-#define DEFAULT_FONT_PATH "/usr/share/fonts/X11/Type1/c0583bt_.pfb"//"/usr/share/fonts/X11/Type1/c0419bt_.pfb"//"/usr/share/fonts/X11/Type1/c0582bt_.pfb"
+#define DOKUN_DEFAULT_FONT_PATH "/usr/share/fonts/X11/Type1/c0583bt_.pfb"//"/usr/share/fonts/X11/Type1/c0419bt_.pfb"//"/usr/share/fonts/X11/Type1/c0582bt_.pfb"
 #endif
 #ifdef __macosx__
-#define DEFAULT_FONT_PATH "System/Library/Fonts/HelveticaNeue.dfont"
+#define DOKUN_DEFAULT_FONT_PATH "System/Library/Fonts/HelveticaNeue.dfont"
 #endif
 
 namespace dokun {
@@ -60,7 +60,6 @@ public:
 	FT_Face get_face()const;                                static int get_face(lua_State *L);
 	std::string get_file()const;                            static int get_file(lua_State *L);
 	FT_Library get_library()const;
-	static Font * get_system_font();
 	// font info  
 	unsigned int get_buffer(char glyph) const;              static int get_buffer(lua_State *L);
 	unsigned int get_buffer(const std::string& glyph) const;
@@ -92,7 +91,6 @@ private:
 	FT_Face face;   // face = collection of glyphs (single characters)
 	FT_Byte * data; // font data loaded from memory
 	std::string file;
-	static dokun::Font * system_font;
 	////////////////////
     std::vector<Texture *> bitmaps; // to save textures
     FT_Glyph_Metrics metrics[256];

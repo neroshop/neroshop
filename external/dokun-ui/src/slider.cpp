@@ -16,7 +16,7 @@ Slider::Slider() : value(0), range(0, 100), decimals(2), step(1), foreground_col
 	set_size(200, 20);
 	set_orientation(0);
 	// temporary ====== I think that users should set the label manually thats why I'm making this temp
-    label = std::make_shared<dokun::Label>(String::to_string_with_precision(value, decimals));
+    label = std::unique_ptr<dokun::Label>(new dokun::Label(String::to_string_with_precision(value, decimals)));//std::make_shared<dokun::Label>(String::to_string_with_precision(value, decimals));
     label->set_parent(*this);
     label->set_alignment("center"); // label will ALWAYS be fixed at the center of its parent (the slider)
     //=================
@@ -250,8 +250,8 @@ int Slider::set_radius(lua_State *L)
 /////////////
 void Slider::set_label(const dokun::Label& label) // we no longer need this function since slider will have its own label by default, eh, but I'll keep this function anyways ...
 {
-    std::shared_ptr<dokun::Label> slider_label(&const_cast<dokun::Label&>(label));
-    this->label = slider_label;
+    std::unique_ptr<dokun::Label> slider_label(&const_cast<dokun::Label&>(label));
+    this->label = std::move(slider_label); // unique pointers cannot be copied, but can only be moved // "std::unique_ptr::release()" is a similar function but "std::move()" is better of the two
     this->label->set_parent(*this);
     this->label->set_string(String::to_string_with_precision(value, decimals)); // we will be updating this value in the draw call too which is why I added this here
     this->label->set_alignment("center"); // label will ALWAYS be fixed at the center of its parent (the slider)

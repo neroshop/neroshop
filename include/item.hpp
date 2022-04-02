@@ -117,6 +117,7 @@ private:
     std::string category;
     std::string SKU_code; // sellers can generate an SKU for items they are selling (NSKU - neroshop stocking unit)
     std::string UPC_code; // universal product code - ONLY code required for all products
+    ////std::vector<std::shared_ptr<Image>> image_list;
     void set_id(unsigned int id);
     //void set_seller_price(unsigned int seller_id, double seller_price);
     //static void set_seller_price(unsigned int item_id, unsigned int seller_id, double seller_price); // seller_price is set by the seller

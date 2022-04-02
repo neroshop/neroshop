@@ -15,7 +15,6 @@ dokun::Label::Label(const dokun::Label& label) : dokun::Label()
 	set_background_color(label.get_background_color());
 	set_alignment(label.get_alignment());
 	set_relative_position(label.get_relative_position());
-	
 	set_position(label.get_position());
 	set_width(label.get_width());
 	set_height(label.get_height());	
@@ -26,44 +25,39 @@ dokun::Label::Label(const dokun::Font& font) : dokun::Label()
 	set_font(font);
 }
 /////////////
+dokun::Label::Label(const dokun::Font& font, const std::string& text) : dokun::Label()
+{
+	set_font(font);
+	set_string(text);
+}
+/////////////
 dokun::Label::Label(const std::string& text) : dokun::Label()
 {
-    if(!dokun::Font::system_font) throw std::runtime_error("default font is not initialized");
-    if(!dokun::Font::system_font->get_file().empty()) set_font(*dokun::Font::system_font); // if the default font has already been loaded, set the font
+	this->font = std::unique_ptr<dokun::Font>(new dokun::Font(DOKUN_DEFAULT_FONT_PATH));
 	set_string(text);
+}
+/////////////
+dokun::Label::Label(const std::string& text, int x, int y, int width, int height) : dokun::Label()
+{
+	this->font = std::unique_ptr<dokun::Font>(new dokun::Font(DOKUN_DEFAULT_FONT_PATH));
+	set_string(text);
+	set_position(x, y);
+	set_width(width);
+	set_height(height);
 }
 /////////////
 dokun::Label::Label(int x, int y) : dokun::Label()
 {
-    if(!dokun::Font::system_font) throw std::runtime_error("default font is not initialized");
-    if(!dokun::Font::system_font->get_file().empty()) set_font(*dokun::Font::system_font); // if the default font has already been loaded, set the font 
 	set_position (x, y);
 }
 /////////////
 dokun::Label::Label(int x, int y, int width, int height) : dokun::Label()
 {
-    if(!dokun::Font::system_font) throw std::runtime_error("default font is not initialized");
-    if(!dokun::Font::system_font->get_file().empty()) set_font(*dokun::Font::system_font);
-	set_position (x, y);
-	set_width (width);
-	set_height (height);
+	set_position(x, y);
+	set_width(width);
+	set_height(height);
 }
-/////////////
-dokun::Label::Label(const std::string& text, int x, int y, int width, int height) : dokun::Label()
-{
-    if(!dokun::Font::system_font) throw std::runtime_error("default font is not initialized");
-    if(!dokun::Font::system_font->get_file().empty()) set_font(*dokun::Font::system_font); // if the default font has already been loaded, set the font
-	set_string (text);
-	set_position (x, y);
-	set_width (width);
-	set_height (height);
-}
-/////////////
-dokun::Label::Label(const std::string& text, const dokun::Font& font) : dokun::Label()
-{
-	set_font(font);
-	set_string(text);
-}
+
 /////////////
 int dokun::Label::label_new(lua_State *L)
 {
@@ -89,12 +83,9 @@ int dokun::Label::label_new(lua_State *L)
 /////////////
 dokun::Label::~Label()
 {
-    // delete font (as long as its not the default font)
-    if(font) {
-        if(font != dokun::Font::system_font) {
-            delete font;
-            font = nullptr;
-        }
+    // reset (delete) font
+    if(font.get()) {
+        font.reset();
     }
     std::cout << "label deleted\n";
 }
@@ -103,12 +94,12 @@ dokun::Label::~Label()
 void dokun::Label::draw()
 {
     on_draw(); // sets position relative to parent, regardless of visibility and generates shaders for all GUIs including Labels
-	if(!font) return; // return if no font //if(string.empty()) return; // return if empty string (BAD: It will prevent from updating label's x and y position)
+	if(!font.get()) return; // return if no font //if(string.empty()) return; // return if empty string (BAD: It will prevent from updating label's x and y position)
     if(!is_visible()) return; // exit function if not visible
 	// STORE ALL CHARACTERS IN ARRAY BEFORE DRAWING!
 	font->generate();
     // Draw text
-	Renderer::draw_text(string, get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y, get_color().x, get_color().y, get_color().z, get_color().w, *font, label_shader);
+	Renderer::draw_text(string, get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y, get_color().x, get_color().y, get_color().z, get_color().w, *font.get(), label_shader);
 }
 /////////////
 void dokun::Label::draw(double x, double y)
@@ -225,7 +216,7 @@ void dokun::Label::set_string(const std::string& string_)
 {
 	this->string = string_;
 	// update label size whenever the string is changed
-    if(!font) return; // do not update if no font
+    if(!font.get()) return; // do not update if no font
 	width = font->get_width (string_);
 	height= font->get_height(string_);
 #ifdef DOKUN_DEBUG0
@@ -255,7 +246,8 @@ int dokun::Label::set_string(lua_State *L)
 /////////////
 void dokun::Label::set_font(const dokun::Font& font)
 {
-	this->font = &const_cast<dokun::Font&>(font);
+    std::unique_ptr<dokun::Font> label_font(&const_cast<dokun::Font&>(font));
+	this->font = std::move(label_font);
 }
 /////////////
 int dokun::Label::set_font(lua_State *L)
@@ -425,7 +417,7 @@ int dokun::Label::set_relative_position(lua_State * L)
 /////////////
 dokun::Font * dokun::Label::get_font()const
 {
-	return font;
+	return font.get();
 }
 /////////////
 int dokun::Label::get_font(lua_State *L)
@@ -591,7 +583,7 @@ std::vector<Vector2> dokun::Label::get_character_size_array()
 /////////////
 void dokun::Label::set_width(int width)
 {
-	int old_width  = (font ? font->get_width (string) : get_width()); // width of entire string
+	int old_width  = (font.get() ? font->get_width (string) : get_width()); // width of entire string
 	set_scale(width / static_cast<double>(old_width), get_scale().y);
 	this->width = width; // save width (in value)
 }
@@ -610,7 +602,7 @@ int dokun::Label::set_width(lua_State * L)
 /////////////
 void dokun::Label::set_height(int height)
 {
-	int old_height = (font ? font->get_height(string) : get_height());
+	int old_height = (font.get() ? font->get_height(string) : get_height());
 	set_scale(get_scale().x, height / static_cast<double>(old_height));
 	this->height = height; // save height (in value)
 }
@@ -649,7 +641,7 @@ int dokun::Label::set_size(lua_State * L)
 // override (getters)
 int dokun::Label::get_width()const
 {
-	/*if(font) return font->get_width(this->string) * get_scale().x; // if font is set, return width of all characters combined, whether scaled or not
+	/*if(font.get()) return font->get_width(this->string) * get_scale().x; // if font is set, return width of all characters combined, whether scaled or not
 	return width * get_scale().x;*/ // return width whether scaled or not
     // width is not accurate, so I have to use 10 as the width for each character in a monospaced font
     return (string.length() * 10) * get_scale().x;
@@ -670,7 +662,7 @@ int dokun::Label::get_width(lua_State * L)
 /////////////
 int dokun::Label::get_height()const
 {
-	/*if(font) return font->get_height(this->string) * get_scale().y; // if font is set, return largest glyph height, whether scaled or not
+	/*if(font.get()) return font->get_height(this->string) * get_scale().y; // if font is set, return largest glyph height, whether scaled or not
 	return height * get_scale().y;*/ // return height whether scaled or not
     // height is not accurate, so I have to use 10 as the height for monospaced fonts
     return 10 * get_scale().y;

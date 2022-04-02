@@ -3,6 +3,7 @@
 - discard all raw pointers and replace them with shared pointers []
 - stop using raw pointers for non-static objects                 []
 - use delegating constructor for every class                     []
+- use shared_ptr for vectors of objects and use unique_ptr for single class private member objects []
 
 [MID PRIORITY]
 - make table names plural ('cause select * from customer seems "grammatically" incorrect to me)

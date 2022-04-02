@@ -26,7 +26,7 @@
 #include "seller.hpp"
 #include "item.hpp"
 #include "cart.hpp"
-#include "order.hpp" //#include ".hpp"
+#include "order.hpp"
 #include "message.hpp"
 #include "catalog.hpp"
 //#include "server.hpp" // for daemon to use

@@ -49,20 +49,20 @@ void neroshop::Message::initialize()
     if(box) return; // box must be uninitialized before it can be initialized
     std::cout << "message_box initialized\n";
     // create a message_box - box size set in Message::restore()
-    box = std::make_shared<Box>();
+    box = std::unique_ptr<Box>(new Box());//std::make_shared<Box>();
     //box->set_outline(true);
     box->set_draggable(true);
     box->set_color(167,173,186);//(101,115,126);//(54,69,79);//(112,128,144);//(17,17,24);//(72, 88, 111, 1.0);
     // message_box label - label defaults set in Message::restore()
     dokun::Label * box_label = new dokun::Label();
-    box_label->set_font(*dokun::Font::get_system_font());
+    box_label->set_font(*new dokun::Font(DOKUN_DEFAULT_FONT_PATH));
     box->set_label(*box_label);
     // message_box title bar
     box->set_title_bar(true);
     box->set_title_bar_color(21, 34, 56, 1.0);//(15, 46, 83, 1.0);
     // message_box title bar label
     dokun::Label * title_label = new dokun::Label();
-    title_label->set_font(*dokun::Font::get_system_font());
+    title_label->set_font(*new dokun::Font(DOKUN_DEFAULT_FONT_PATH));
     title_label->set_string("neroshop");
     title_label->set_alignment("center");
     box->set_title_bar_label(*title_label);
@@ -133,7 +133,7 @@ void neroshop::Message::add_label(int relative_x, int relative_y) {
     std::shared_ptr<dokun::Label> label = std::make_shared<dokun::Label>();
 	//std::cout << "label.get() = "<< label.get() << std::endl;
 	//std::cout << "label.use_count() = " << label.use_count() << std::endl;    
-    label->set_font(*dokun::Font::get_system_font());
+    label->set_font(*new dokun::Font(DOKUN_DEFAULT_FONT_PATH));
     //////////////////////////////
     // get previous label in label_list
     int previous_label_index = label_list.size() - 1;
@@ -176,7 +176,7 @@ void neroshop::Message::add_edit(int relative_x, int relative_y, int width, int 
     //////////////////////////////
     // edit label
     dokun::Label * edit_label = new dokun::Label();
-    edit_label->set_font(*dokun::Font::get_system_font());
+    edit_label->set_font(*new dokun::Font(DOKUN_DEFAULT_FONT_PATH));
 	edit_label->set_color(32, 32, 32);
 	edit->set_label(* edit_label);
 	//////////////////////////////

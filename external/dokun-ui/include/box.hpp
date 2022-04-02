@@ -199,20 +199,20 @@ class Box : public GUI { // A box ui - ui element that can act as a container fo
 		bool title_bar;
 		int title_bar_height;
 		Vector4 title_bar_color;// = Vector4(47, 79, 79, 255);
-		dokun::Label * title_bar_label;//std::string title_bar_text;
+		std::unique_ptr<dokun::Label> title_bar_label;//std::string title_bar_text;
 		Vector4 title_bar_text_color;
-		Image * title_bar_image;// = nullptr; //double title_bar_radius;
+		std::unique_ptr<Image> title_bar_image;// = nullptr; //double title_bar_radius;
 		bool title_bar_button_iconify;
 		bool title_bar_button_maximize;
 		bool title_bar_button_close; Vector4 title_bar_button_close_color; Image * close_button_image;
 		int title_bar_button_width;
 		int title_bar_horizontal_padding;
-		// Box : outline
+		// Box : outline and border
 		bool outline;
 		double outline_width;
 		Vector4 outline_color;
 		bool outline_antialiased;
-		// Box : border
+		// Box : border (remove this since an outline can also be used as a border)
 		bool border;
 		Vector4 border_color;// = Vector4();
 		Vector2 border_size;// = Vector2(1, 1);

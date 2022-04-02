@@ -181,11 +181,6 @@ namespace neroshop {
         // neroshop.db
         create_local_database();
         //////////////////////////////////////////////////
-        // cart.db (stored locally or offline)
-        if(!Cart::get_singleton()->open()) {
-            return false;
-        }
-        //////////////////////////////////////////////////
         // icons
         Icon::load_all(); // must load all icons before using them    
         //////////////////////////////////////////////////
@@ -339,7 +334,7 @@ int main() {
     ////font->load("c0583bt_.pfb");//("UbuntuMono-R.ttf");//("res/Hack-Regular.ttf");//("res/FiraCode-Retina.ttf");//("res/consolab.ttf");//crashes//("c0583bt_.pfb");//works//("res/UbuntuMono-R.ttf");//("res/Mecha-GXPg.ttf");//https://github.com/tonsky/FiraCode    
     // -------------------------------- :P -------------------------------------------
     Label neroshop_label;
-    neroshop_label.set_font(*dokun::Font::get_system_font());//(font);
+    neroshop_label.set_font(*new dokun::Font(DOKUN_DEFAULT_FONT_PATH));//(font);
     neroshop_label.set_string("ner  shop");
     neroshop_label.set_position(20, 30); // "n"=pos_x(20)
     //neroshop_label.set_scale(1.5, 1.5);
@@ -380,7 +375,7 @@ int main() {
     user_edit->set_character_limit(500);//(32);//(64);//(500);//temp - 500 for testing//(user_edit->get_width() / 10); // 50 characters MAX (width / space_cursor_takes_up_each_increment)
     user_edit->set_position((window.get_width() / 2) - (user_edit->get_width() / 2), (window.get_height() / 2) - (user_edit->get_height() / 2));
     Label user_edit_label;// = new Label(); // Label causes a segment fault in GLFW!!
-    user_edit_label.set_font(*dokun::Font::get_system_font());//(static_cast<dokun::Font&>(*font));
+    user_edit_label.set_font(*new dokun::Font(DOKUN_DEFAULT_FONT_PATH));//(static_cast<dokun::Font&>(*font));
     user_edit_label.set_color(0, 0, 0, 1.0);//(49, 39, 19, 1.0);
     user_edit_label.set_relative_position(0, 4);
     user_edit->set_label(user_edit_label);
@@ -395,7 +390,7 @@ int main() {
     pw_edit->set_character_limit(128);//(256);//(pw_edit->get_width() / 10);
     pw_edit->set_position(user_edit->get_x(), user_edit->get_y() + user_edit->get_height() + 5);
     Label pw_edit_label;
-    pw_edit_label.set_font(*dokun::Font::get_system_font());
+    pw_edit_label.set_font(*new dokun::Font(DOKUN_DEFAULT_FONT_PATH));
     pw_edit->set_label(pw_edit_label);
     pw_edit->get_label()->set_color(0, 0, 0, 1.0);
     pw_edit->set_sensative(true);
@@ -427,7 +422,7 @@ int main() {
     //save_toggle->set_radio(); // should actually be a checkbox instead
     // save_login_label
     Label save_user_label; // right
-    save_user_label.set_font(*dokun::Font::get_system_font());
+    save_user_label.set_font(*new dokun::Font(DOKUN_DEFAULT_FONT_PATH));
     save_user_label.set_string("Save user");
     //save_toggle->set_position(save_user_label.get_x() - save_user_label.get_width() - 1/*save_toggle->get_width()*/); 
     //pw_edit_icon->hide();
@@ -514,7 +509,7 @@ int main() {
     //wallet_edit->set_position(pw_edit->get_x(), pw_edit->get_y() + pw_edit->get_height() + 5);
     wallet_edit->set_color(112, 128, 144);
     Label wallet_label;//(".."); // setting the text crashes the app // wallet_label //wallet_label.get_font()->set_pixel_size(0, 18);// changes the entire font's size//std::cout << "cursor_space: " << wallet_edit->get_cursor_space() << std::endl; // returns the space the cursor is increased by
-    wallet_label.set_font(*dokun::Font::get_system_font());
+    wallet_label.set_font(*new dokun::Font(DOKUN_DEFAULT_FONT_PATH));
     wallet_edit->set_label(wallet_label); // length of wallet file was 69
     wallet_edit->set_text_color(32, 32, 32);
     //wallet_label.set_relative_position(wallet_label.get_relative_x() + 10, wallet_label.get_relative_y() + 10);
@@ -545,7 +540,7 @@ int main() {
     user_edit_r->set_size(500, 30);
     user_edit_r->set_character_limit(user_edit_r->get_width() / 10);
     Label user_edit_label_r; // = new Label();
-    user_edit_label_r.set_font(*dokun::Font::get_system_font());
+    user_edit_label_r.set_font(*new dokun::Font(DOKUN_DEFAULT_FONT_PATH));
     user_edit_label_r.set_color(0, 0, 0, 1.0);
     //user_edit_label_r.set_relative_position(0, 4);
     user_edit_r->set_label(user_edit_label_r);
@@ -556,7 +551,7 @@ int main() {
     pw_edit_r->set_size(250 - 5, 30); // added a gap (+5) between pw_edit_r and pw_confirm_edit
     pw_edit_r->set_character_limit(128);//(pw_edit_r->get_width() / 10);
     Label pw_edit_label_r; // = new Label();
-    pw_edit_label_r.set_font(*dokun::Font::get_system_font());
+    pw_edit_label_r.set_font(*new dokun::Font(DOKUN_DEFAULT_FONT_PATH));
     pw_edit_label_r.set_color(0, 0, 0, 1.0);
     pw_edit_r->set_label(pw_edit_label_r);
     pw_edit_r->set_placeholder_text("Password *");
@@ -566,7 +561,7 @@ int main() {
     pw_confirm_edit->set_size(250, 30);
     pw_confirm_edit->set_character_limit(pw_edit_r->get_character_limit());//(pw_confirm_edit->get_width() / 10); //(pw_edit_r->get_character_limit());
     Label pw_confirm_edit_label; // = new Label();
-    pw_confirm_edit_label.set_font(*dokun::Font::get_system_font());
+    pw_confirm_edit_label.set_font(*new dokun::Font(DOKUN_DEFAULT_FONT_PATH));
     pw_confirm_edit_label.set_color(0, 0, 0, 1.0);
     pw_confirm_edit->set_label(pw_confirm_edit_label);
     pw_confirm_edit->set_placeholder_text("Confirm password *");
@@ -576,7 +571,7 @@ int main() {
     opt_email_edit->set_size(500, 30);
     opt_email_edit->set_character_limit(opt_email_edit->get_width() / 10);
     Label opt_email_edit_label; // = new Label();
-    opt_email_edit_label.set_font(*dokun::Font::get_system_font());
+    opt_email_edit_label.set_font(*new dokun::Font(DOKUN_DEFAULT_FONT_PATH));
     opt_email_edit_label.set_color(0, 0, 0, 1.0);
     opt_email_edit->set_label(opt_email_edit_label);
     opt_email_edit->set_placeholder_text("Email (optional)"); // optional, but without it we won't be able to recover your password or send you email notifications
@@ -637,7 +632,7 @@ int main() {
     search_bar->set_cursor_color(255, 255, 255);
     search_bar->set_character_limit(1024);//(2048);//(std::numeric_limits<int>::max());//(std::numeric_limits<double>::infinity());//inf
     Label search_bar_label;
-    search_bar_label.set_font(*dokun::Font::get_system_font());
+    search_bar_label.set_font(*new dokun::Font(DOKUN_DEFAULT_FONT_PATH));
     search_bar_label.set_position(0, 10);
     search_bar_label.set_color(255, 255, 255);//(127, 127, 127);//(32, 32, 32);//(242, 100, 17);
     search_bar->set_label(search_bar_label);
@@ -665,7 +660,7 @@ int main() {
     // upload login_button    
     // date and time
     Label date_display;
-    date_display.set_font(*dokun::Font::get_system_font());
+    date_display.set_font(*new dokun::Font(DOKUN_DEFAULT_FONT_PATH));
     date_display.set_string(Validator::get_date("%Y-%m-%d  %H:%M:%S %p"));
     date_display.set_position(window.get_client_width() - date_display.get_width(), window.get_client_height() - date_display.get_height());
     // icon_settings
@@ -791,7 +786,7 @@ int main() {
     box->set_size(100, 50);
     box->set_color(160, 160, 160, 1.0);//(0, 51, 102);
     Label box_label;
-    box_label.set_font(*dokun::Font::get_system_font());
+    box_label.set_font(*new dokun::Font(DOKUN_DEFAULT_FONT_PATH));
     box_label.set_alignment("center");
     box->set_label(box_label);
     //box->set_text("Hello");
@@ -808,10 +803,11 @@ int main() {
     spinner->set_separator(true);
     spinner->set_separator_size(5);
     Label spinner_label;
-    spinner_label.set_font(*dokun::Font::get_system_font());
+    spinner_label.set_font(*new dokun::Font(DOKUN_DEFAULT_FONT_PATH));
     spinner_label.set_alignment("center");
     spinner_label.set_color(100, 100, 100);
     spinner->set_label(spinner_label); // value is set to 0 by default
+    //if(spinner->get_label() == &spinner_label) std::cout << "spinner_label is equal to spinner->get_label()" << std::endl; // just testing if unique ptr is really set to the raw pointer
     ////////////////
     Toggle * checkbox = new Toggle();
     checkbox->set_checkbox();
@@ -862,6 +858,8 @@ int main() {
                     opt_email_edit->clear_all();
                     // clear all GUI focus
                     GUI::clear_all();
+                    // refresh catalog
+                    catalog->refresh();
                     // leave the register_menu
                     register_menu = false;
                     // go to the home_menu
@@ -1006,6 +1004,8 @@ int main() {
                     }
                     if(account_type_id == 1) user = Buyer::on_login(user_edit->get_text());
                     if(account_type_id == 2) user = Seller::on_login(user_edit->get_text());
+                    // save user to global static object for easy access
+                    if(user) User::set_singleton(*user);
                     // broadcast messages to server
                     if(client->is_connected()) client->write(user->get_name() + " has logged in "); // temporary
                     // refresh catalog (in case anything changes after user login)
@@ -1043,12 +1043,12 @@ int main() {
                     }
                     std::cout << "**********************************************************\n";
                     /// 0. Convert to a seller and register an item
-                    user->convert(); // convert to seller
+                    ////user->convert(); // convert to seller
                     //Item::register(...);
                     /// 1. Seller will list some items or increase stock (for already listed items)
-                    /*static_cast<Seller *>(user)->set_stock_quantity(1, 250);
-                    static_cast<Seller *>(user)->set_stock_quantity(2, 500);
-                    static_cast<Seller *>(user)->set_stock_quantity(3, 100);*/
+                    //static_cast<Seller *>(user)->set_stock_quantity(1, 250);
+                    //static_cast<Seller *>(user)->set_stock_quantity(2, 500);
+                    //static_cast<Seller *>(user)->set_stock_quantity(3, 100);
                     static_cast<Seller *>(user)->list_item(ball, 500, 8.50, "USD", 0.50, 2, 1, "2022-02-12 12:05:00", "new"); //adds item to inventory
                     static_cast<Seller *>(user)->list_item(candy, 1070, 2.00, "USD");
                     static_cast<Seller *>(user)->list_item(ring, 200, 101.00, "USD");//, 0.00, 0, "new");
@@ -1059,14 +1059,15 @@ int main() {
                     /// 2. which users will be able to then add to cart
                     //Cart::get_singleton()->remove(ball, 10);
                     ////user->add_to_cart(ball, 2);
-                    ////user->add_to_cart(candy, 10);
+                    user->add_to_cart(candy, 10);
                     ////Cart::get_singleton()->add(ring, 1);
                     //Cart::get_singleton()->add(game, 1);
+                    if(user->is_seller()) static_cast<Seller *>(user)->get_item_id_with_most_sales_by_quantity();//if(user->is_seller()) static_cast<Seller *>(user)->get_item_id_with_most_sales_by_mode();
                     /// 3. and finally, use the cart to make an order
                     std::string shipping_addr = "Lars Mars\n"
                     "12 Earth St.\n"
                     "Boston MA 02115";
-                    ////Order * order = user->create_order(shipping_addr);//, "larteyoh@protonmail.com");                    
+                    user->create_order(shipping_addr);//, "larteyoh@protonmail.com");                    
                     // for an online cart, you can retrieve your cart id like this:
                     // cart_id = db.get_integer_params("SELECT user_id FROM cart WHERE user_id = $1", { user->get_id() });
                     // then save by attaching it to the user
@@ -1091,10 +1092,12 @@ int main() {
                     if(user->get_name() == "mike") user->rate_seller(seller_id, 1, "This seller is rocks!");*/
                     //////////////////////////
                     // add an item to favorites
-                    //user->add_to_favorites(1); // item_id // index 0
-                    //user->add_to_favorites(2); // item_id // index 1
-                    //user->add_to_favorites(3); // item_id // index 2
-                    //user->remove_from_favorites(1);
+                    //user->add_to_favorites(ball);//(1); // item_id // index 0
+                    //user->add_to_favorites(candy.get_id());//(2); // item_id // index 1
+                    //user->add_to_favorites(ring);//(3); // item_id // index 2
+                    //user->remove_from_favorites(ball);//(.get_id());//(1);
+                    //user->remove_from_favorites(candy.get_id());//(.get_id());//(1);
+                    //user->clear_favorites();
                     //////////////////////////
                     std::cout << "**********************************************************\n";
                     // clear all GUI focus
@@ -1108,13 +1111,23 @@ int main() {
             // guest_button
             if(guest_button->is_pressed()) {
                 // create user		        
-                if(!user) user = new Buyer("Guest");
+                if(!user) { 
+                    user = new Buyer("Guest");
+                    User::set_singleton(*user);
+                }
                 std::cout << "Hello, " << user->get_name() << std::endl;
                 //std::cout << "is_user_logged_in: " << user->is_logged() << std::endl;
                 //std::cout << "is_user_registered: " << user->is_registered() << std::endl;
                 //std::cout << "is_user_guest: " << user->is_guest() << std::endl;
                 //std::cout << "is_user_buyer: " << user->is_buyer() << std::endl;
                 //std::cout << "is_user_seller: " << user->is_seller() << std::endl;
+                // load the guest cart
+                // cart.db (stored locally or offline)
+                if(!Cart::get_singleton()->open()) {
+                    neroshop::print("unable to open local cart for guest user", 1);
+                }
+                // create order
+                user->create_order("My crib");
                 // clear all GUI focus
                 GUI::clear_all();
                 // leave the login_menu
@@ -1239,8 +1252,9 @@ int main() {
             /////////////////////
             if(wallet_button->is_pressed() && !wallet_opened) {
                 message_box.set_text("Enter wallet name:");
-                message_box.show();
-                message_box.set_text("Enter password:");
+                message_box.get_edit(0)->clear_all(); // clear any existing text
+                message_box.get_edit(0)->show();
+                ////message_box.set_text("Enter password:", 1);
                 message_box.show();
             }
             /////////////////////
@@ -1509,9 +1523,13 @@ int main() {
                 // delete catalog children
                 ////catalog->delete_view_children();
                 ////catalog->delete_page_children();
+                user->logout(); // will call user on_logout callback function
+                user = nullptr; // to confirm that user has been deleted
+                if(!user) std::cout << "user set to nullptr\n";
                 // exit home menu and return to the login screen
                 home_menu = false;
                 login_menu = true;
+                std::cout << "home_menu loop doesnt end here, sadly\n";
             }
             logout_button->draw(order_button->get_x() - logout_button->get_width() - 1, 20);
             /////////////////////////////////////

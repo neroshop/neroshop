@@ -53,7 +53,7 @@ public:
     void transfer(const std::string& address, double amount); // "transfer" will be used for sending refunds
     void sweep_all(const std::string& address); // sends entire balance, including dust to an address // "sweep_all <address>"
     std::string address_new() const; // generates a new subaddress from main account // "address new" // monero addresses start with 4 or 8
-    void address_book_add(const std::string& address, std::string description = ""); // "address_book add <address> <description>"
+    unsigned int address_book_add(const std::string& address, std::string description = ""); // "address_book add <address> <description>"
     void address_book_delete(unsigned int index); // "address_book delete 0"  
     std::vector<std::string> address_all(); // show all addresses
     std::vector<std::string> address_used(); // show all used addresses
@@ -100,12 +100,14 @@ public:
     std::string get_version() const; // "version" - Check software version.
     // singleton obj
     static Wallet * get_singleton();
-    // get wallet handles
+    // get wallet handles (monero, wownero, etc.)
     monero_wallet_full * get_monero_wallet() const;
     std::vector<std::string> recent_address_list; // recently used addresses
+    // friends
+    friend class Seller; // seller can access wallet private members
     // dokun-ui
-    static Progressbar * sync_bar;
-    static dokun::Label * sync_label;
+    static std::unique_ptr<Progressbar> sync_bar;
+    static std::unique_ptr<dokun::Label> sync_label;
 private:
     void set_daemon(); // "set_daemon <host>[:<port>] [trusted|untrusted|this-is-probably-a-spy-node]" - connects to a daemon
     void refresh(); // "refresh" - Synchronize wallet with the Monero network.
@@ -113,12 +115,12 @@ private:
     // callbacks
     void load_from_config(std::string/*const std::string&*/ password = "supersecretpassword123");
 private:
-    static Wallet * wallet_obj; // singleton obj
-    monero_wallet_full * monero_wallet_obj; // monero wallet
+    static neroshop::Wallet * wallet_obj;//std::shared_ptr<neroshop::Wallet> wallet_obj; // singleton obj
+    std::unique_ptr<monero_wallet_full> monero_wallet_obj; // monero wallet
     //monero_wallet_listener * wallet_listener; // listens to wallet for incoming txs // void monero::monero_wallet_full::add_listener	(	monero_wallet_listener & 	listener	)
     monero_network_type network_type; // default will be Mainnet when this app launches
     std::string file; // wallet file    
-    Process * process; // monerod process
+    std::unique_ptr<Process> process; // monerod process // or should this be static instead?
 };
 }
 #endif // WALLET_HPP

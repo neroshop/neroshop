@@ -114,7 +114,7 @@ void neroshop::Validator::save_user(const std::string& username, const char pw_h
 	    DB::Postgres::get_singleton()->execute("ALTER TABLE favorites ADD COLUMN item_ids integer[];");//REFERENCES item(id);"); // no support for foreign keys on array elements sadly: https://stackoverflow.com/questions/41054507/postgresql-array-of-elements-that-each-are-a-foreign-key
 	}
 	// insert new data into table favorites
-	DB::Postgres::get_singleton()->execute_params("INSERT INTO favorites (user_id) VALUES ($1)", { std::to_string(user_id) });
+	DB::Postgres::get_singleton()->execute_params("INSERT INTO favorites (user_id, item_ids) VALUES ($1, '{}')", { std::to_string(user_id) });
 	////////////////////////////////
 	// end transaction
 	DB::Postgres::get_singleton()->execute("COMMIT;");

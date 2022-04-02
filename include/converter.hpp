@@ -22,7 +22,7 @@ public:
     static double to_xmr(double amount, const std::string& currency_code);
     static double btc_to_xmr(double btc); // the king
     static double eth_to_xmr(double eth); // #2 coin
-    static double dai_to_xmr(double dai); // the one and only true stablecoin!
+    static double dai_to_xmr(double dai); // the one and only truly decentralized stablecoin!
     static double usd_to_xmr(double usd);
     static double eur_to_xmr(double eur);
     static double jpy_to_xmr(double jpy); // japanese yen
