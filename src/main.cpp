@@ -30,7 +30,7 @@ void start_neromon_server() {
     server_process = new Process(); // don't forget to delete this!
     server_process->create("./neromon", "");
     // show all processes
-    Process::show_processes();
+    ////Process::show_processes();
 }
 ////////////////////
 //DB2 db2;
@@ -202,6 +202,7 @@ namespace neroshop {
         // kill monerod process ??
         // kill neromon process
         delete server_process;
+        server_process = nullptr;
         // close database server
         DB::Postgres::get_singleton()->finish();
         neroshop::print("neroshop closed");
@@ -619,7 +620,7 @@ int main() {
     // catalog view (item listings)
     // current page (product page)
     //std::cout << "catalog size: " << catalog->get_size() << std::endl;
-    //std::cout << "catalog box_size: " << catalog->get_current()->get_size() << std::endl;
+    //std::cout << "catalog box_size: " << catalog->get_page()->get_size() << std::endl;
     ////catalog->get_view()->add_bottom_gui_list(slider);
     ////catalog->get_view()->add_bottom_gui_list(some_other_gui);
     // initialize catalog view with default values (call outside of loop so we don't constantly allocate instances and to prevent memory leak)
@@ -729,6 +730,16 @@ int main() {
     _icon->set_size(32, 32);
     _icon->set_position(_icon->get_x() + _icon->get_width() + 5, 250);
     bool _activated = false;*/
+    //----------------------------------
+    // initialize informative tooltip
+    std::unique_ptr<Box> hint = std::unique_ptr<Box>(new Box());
+    hint->set_tooltip(true);
+    hint->set_height(20);
+    hint->set_color(64, 64, 64);
+    hint->set_tooltip_arrow_visible(false);//hint->set_tooltip_arrow_direction("up");
+    dokun::Label hint_label("?");
+    hint->add_label(hint_label); // font will be auto set when label is initialized with a string
+    hint->hide(); // hide tooltip by default    
     //----------------------------------  --------------------------------------	
     // to-do:
     // refresh button
@@ -741,7 +752,7 @@ int main() {
     Client * client = Client::get_main_client();
 	int client_port = 1234;//std::stoi(port)//8080
 	std::string client_ip = "0.0.0.0";//"localhost";//0.0.0.0 means anyone can connect to your server
-	neroshop::print("connecting to " + ((client_ip == "localhost") ? "127.0.0.1" : client_ip) + ":" + std::to_string(client_port) + " ..");
+	////neroshop::print("connecting to " + ((client_ip == "localhost") ? "127.0.0.1" : client_ip) + ":" + std::to_string(client_port) + " ...");
 	if(!client->connect(client_port, client_ip)) {
 	    //exit(0);
 	} else std::cout << client->read() << std::endl; // read from server once
@@ -762,7 +773,7 @@ int main() {
     Slider * slider2 = new Slider();
     slider2->set_value(500);//(100);
     slider2->set_position(10, 450);    
-    slider2->set_range(1, 2000);
+    slider2->set_range(0, 100);//(1, 2000);
     //--------------------------------
     Slider * slider3 = new Slider();
     slider3->set_value(500);
@@ -790,7 +801,7 @@ int main() {
     box_label.set_alignment("center");
     box->set_label(box_label);
     //box->set_text("Hello");
-    box->set_as_tooltip(true);
+    box->set_tooltip(true);
     box->set_position(100, 150);
     box->set_title_bar(true);
     box->set_radius(50.0); // for rounded corner
@@ -834,7 +845,6 @@ int main() {
     test_button.set_position(100, 200);
     ////////////////
     ////////////////
-    std::cout << "while loop commencing...\n";
     while(window.is_open()) { // main thread
         window.poll_events(); // check for events        
         window.set_viewport(window.get_client_width(), window.get_client_height()); // set to dimensions of render client rather than the entire window (for pixel coordinates)
@@ -1010,27 +1020,29 @@ int main() {
                     if(client->is_connected()) client->write(user->get_name() + " has logged in "); // temporary
                     // refresh catalog (in case anything changes after user login)
                     catalog->refresh();
-                    // set wallet and check for pending orders
+                    // set wallet
                     if(user->is_seller()) {
+                        // wallet gets deleted on logout (since the seller_user gets deleted) so we must re-create the wallet again in case the seller re-logins
+                        // this causes a crash
+                        if(!wallet) {
+                            std::cout << "wallet is nullptr\n";
+                            //wallet = Wallet::get_singleton();
+                            //std::cout << "wallet re-created\n";
+                            //static_cast<Seller *>(user)->set_wallet(*wallet);
+                            //wallet_set = true; 
+                        }                    
                         // set the wallet if it is opened, but it is not yet set
                         if(wallet != nullptr) {//if(wallet_opened && !wallet_set) {
                             static_cast<Seller *>(user)->set_wallet(*wallet);
                             wallet_set = true;
                             neroshop::print("wallet set for seller (id: " + std::to_string(user->get_id()) + ")", 3);
                         }
-                        // check for any incoming orders (pending)
-                        /*std::vector<int> pending_orders = static_cast<Seller *>(user)->get_pending_customer_orders();
-                        if(pending_orders.size() > 0) {
-                            if(wallet_opened && synced) {
-                                static_cast<Seller *>(user)->on_order_received();
-                            }
-                        }*/
                     }
                     // print detailed user information
-                    std::cout << "**********************************************************\n";
+                    /*std::cout << "**********************************************************\n";
                     std::cout << user->has_email() << " (user->has_email())" << std::endl;
                     std::cout << user->is_registered() << " (user->is_registered())" << std::endl;
-                    //std::cout << User::is_registered("jackfrost"/*user->get_name()*/) << " (User::is_registered(name))" << std::endl;
+                    //std::cout << User::is_registered("jackfrost") << " (User::is_registered(name))" << std::endl;
                     std::cout << user->is_logged() << " (user->is_logged())" << std::endl;
                     std::cout << user->is_seller() << " (user->is_seller())" << std::endl;
                     std::cout << user->is_buyer() << " (user->is_buyer())" << std::endl;
@@ -1040,10 +1052,10 @@ int main() {
                         std::cout << "good_ratings: \033[1;32m" << static_cast<Seller *>(user)->get_good_ratings() << "\033[0m" << std::endl;
                         std::cout << "bad_ratings: \033[1;91m" << static_cast<Seller *>(user)->get_bad_ratings() << "\033[0m" << std::endl;
                         std::cout << "reputation: \033[1;34m" << static_cast<Seller *>(user)->get_reputation() << "%\033[0m" << std::endl;
-                    }
+                    }*/
                     std::cout << "**********************************************************\n";
                     /// 0. Convert to a seller and register an item
-                    ////user->convert(); // convert to seller
+                    user->convert(); // convert to seller
                     //Item::register(...);
                     /// 1. Seller will list some items or increase stock (for already listed items)
                     //static_cast<Seller *>(user)->set_stock_quantity(1, 250);
@@ -1058,16 +1070,16 @@ int main() {
                     //static_cast<Seller *>(user)->list_item(game, 7, 69.00, "usd");
                     /// 2. which users will be able to then add to cart
                     //Cart::get_singleton()->remove(ball, 10);
-                    ////user->add_to_cart(ball, 2);
+                    user->add_to_cart(ball, 2);
                     user->add_to_cart(candy, 10);
                     ////Cart::get_singleton()->add(ring, 1);
                     //Cart::get_singleton()->add(game, 1);
-                    if(user->is_seller()) static_cast<Seller *>(user)->get_item_id_with_most_sales_by_quantity();//if(user->is_seller()) static_cast<Seller *>(user)->get_item_id_with_most_sales_by_mode();
+                    ////if(user->is_seller()) static_cast<Seller *>(user)->get_item_id_with_most_sales();//if(user->is_seller()) static_cast<Seller *>(user)->get_item_id_with_most_orders();
                     /// 3. and finally, use the cart to make an order
                     std::string shipping_addr = "Lars Mars\n"
                     "12 Earth St.\n"
                     "Boston MA 02115";
-                    user->create_order(shipping_addr);//, "larteyoh@protonmail.com");                    
+                    ////user->create_order(shipping_addr);//, "larteyoh@protonmail.com");                    
                     // for an online cart, you can retrieve your cart id like this:
                     // cart_id = db.get_integer_params("SELECT user_id FROM cart WHERE user_id = $1", { user->get_id() });
                     // then save by attaching it to the user
@@ -1093,7 +1105,7 @@ int main() {
                     //////////////////////////
                     // add an item to favorites
                     //user->add_to_favorites(ball);//(1); // item_id // index 0
-                    //user->add_to_favorites(candy.get_id());//(2); // item_id // index 1
+                    ////user->add_to_favorites(candy.get_id());//(2); // item_id // index 1
                     //user->add_to_favorites(ring);//(3); // item_id // index 2
                     //user->remove_from_favorites(ball);//(.get_id());//(1);
                     //user->remove_from_favorites(candy.get_id());//(.get_id());//(1);
@@ -1374,6 +1386,41 @@ int main() {
             //Renderer::draw_checkbox(30, 500, slider->get_value(), slider->get_value(), 0, 1, 1, 0, 51, 102, 1.0,
 	        //    true, Vector4(255, 255, 255, 1.0)); // value, checkmark_color
             //->set_(round(slider->get_value()));
+            /////////////////////////////////////
+            hint->hide();
+            if(Mouse::is_over(settings_button->get_rect()) && settings_button->is_visible()) {
+            	std::string message = "config";
+	            hint->get_label(0)->set_string(message);
+	            hint->get_label(0)->set_alignment("center");
+	            hint->set_size(hint->get_label(0)->get_width() + 20, 50);
+	            hint->set_position(settings_button->get_x() + (settings_button->get_width() - hint->get_width()) / 2, settings_button->get_y() + settings_button->get_height() + 5);//, ?->get_y() - (hint->get_height() + hint->get_tooltip_arrow_height()) - 5);	            
+	            hint->show();
+            }
+            if(Mouse::is_over(daemon_button->get_rect()) && daemon_button->is_visible()) {
+            	std::string message = "sync";
+	            hint->get_label(0)->set_string(message);
+	            hint->get_label(0)->set_alignment("center");
+	            hint->set_size(hint->get_label(0)->get_width() + 20, 50);
+	            hint->set_position(daemon_button->get_x() + (daemon_button->get_width() - hint->get_width()) / 2, daemon_button->get_y() + daemon_button->get_height() + 5);//, ?->get_y() - (hint->get_height() + hint->get_tooltip_arrow_height()) - 5);	            
+	            hint->show();
+            }
+            if(Mouse::is_over(wallet_button->get_rect()) && wallet_button->is_visible()) {
+            	std::string message = "create";
+	            hint->get_label(0)->set_string(message);
+	            hint->get_label(0)->set_alignment("center");
+	            hint->set_size(hint->get_label(0)->get_width() + 20, 50);
+	            hint->set_position(wallet_button->get_x() + (wallet_button->get_width() - hint->get_width()) / 2, wallet_button->get_y() + wallet_button->get_height() + 5);//, ?->get_y() - (hint->get_height() + hint->get_tooltip_arrow_height()) - 5);	            
+	            hint->show();
+            }
+            if(Mouse::is_over(upload_button->get_rect()) && upload_button->is_visible()) {
+            	std::string message = "upload";
+	            hint->get_label(0)->set_string(message);
+	            hint->get_label(0)->set_alignment("center");
+	            hint->set_size(hint->get_label(0)->get_width() + 20, 50);
+	            hint->set_position(upload_button->get_x() + (upload_button->get_width() - hint->get_width()) / 2, upload_button->get_y() + upload_button->get_height() + 5);//, ?->get_y() - (hint->get_height() + hint->get_tooltip_arrow_height()) - 5);	            
+	            hint->show();
+            }
+            hint->draw();            
             // draw message (if visible)
             //if(Keyboard::is_pressed(DOKUN_KEY_M)) message_box.show();
             //if(Keyboard::is_pressed(DOKUN_KEY_H)) message_box.get_button(0)->hide();
@@ -1523,9 +1570,15 @@ int main() {
                 // delete catalog children
                 ////catalog->delete_view_children();
                 ////catalog->delete_page_children();
+                bool user_is_seller = user->is_seller();
                 user->logout(); // will call user on_logout callback function
                 user = nullptr; // to confirm that user has been deleted
                 if(!user) std::cout << "user set to nullptr\n";
+                // set wallet to nullptr (after deletion)
+                if(user_is_seller) {
+                    wallet = nullptr;
+                    std::cout << "wallet set to nullptr\n";
+                }
                 // exit home menu and return to the login screen
                 home_menu = false;
                 login_menu = true;
@@ -1545,8 +1598,10 @@ int main() {
             slider2->draw();// temp
             slider3->draw(slider2->get_x(), slider2->get_y() + 50);
             //->set_color(color_slider_r.get_value(), color_slider_g.get_value(), color_slider_b.get_value());
-            ////////catalog->get_current()->get_gui(0/*add_cart_button*/)->set_color(color_slider_r.get_value(), color_slider_g.get_value(), color_slider_b.get_value());
-            ////catalog->set_width(slider2->get_value() * 10); // temp
+            ////////catalog->get_page()->get_gui(0/*add_cart_button*/)->set_color(color_slider_r.get_value(), color_slider_g.get_value(), color_slider_b.get_value());
+            //std::cout << "slider2 factory index: " << Factory::get_gui_factory()->get_location(&slider2) << std::endl;
+            //catalog->get_box(0, 0)->set_radius(slider2->get_value());//set_width(slider2->get_value() * 10); // temp
+            //std::cout << "best_seller box radius: " << catalog->get_box(0, 0)->get_radius() << std::endl;
             ////product_stars[0]->set_outline_thickness(slider2->get_value() / 100.0f);
             ////std::cout << "slider2 value: " << slider2->get_value() / 100.0f << std::endl;
             // invalid pointer error here ...
@@ -1555,10 +1610,6 @@ int main() {
             // adjust grid box sizes
             ////catalog->set_box_size((int)slider2->get_value(), (int)slider3->get_value());
             ////std::cout << "catalog box_size: " << catalog->get_grid()->get_size() << std::endl;
-            /////////////////////////////////////
-            ////catalog->get_current()->set_size(slider2->get_value(), slider3->get_value());
-            ////catalog->center(window.get_client_width(), window.get_client_height());
-            catalog->draw(window.get_client_width() - catalog->get_width() - 50, 90);//(50, 90);
             /////////////////////////////////////
             ////search_suggestion_list->draw(search_bar->get_x(), search_bar->get_y() + search_bar->get_height());
             //std::cout << "search_bar cursor position: " << search_bar->get_cursor_position() << std::endl;
@@ -1580,6 +1631,45 @@ int main() {
             ////search_bar->set_size((window.get_client_width() < 1280) ? 400 : (window.get_client_width() / 4) * 2, 40);//search_bar->set_size((window.get_client_width() > 1280) ? (window.get_client_width() / 4) * 2 : 400, 40);//search_bar->set_text(search_bar->get_text());     
             search_bar->draw(150, 20);//((window.get_client_width() / 2) - ((search_bar->get_width() + search_button->get_width() + 1) / 2), 60); // center of window // search_bar and search_button will act as one single GUI element
             search_button->draw(search_bar->get_x() + search_bar->get_width() + 1, search_bar->get_y()); // leave a tiny gap between sbar and sbutton
+            /////////////////////////////////////
+            ////catalog->get_page()->set_size(slider2->get_value(), slider3->get_value());
+            ////catalog->center(window.get_client_width(), window.get_client_height());
+            catalog->draw(window.get_client_width() - catalog->get_width() - 50, 90);//(50, 90);
+            /////////////////////////////////////
+            hint->hide();
+            if(Mouse::is_over(order_button->get_rect()) && order_button->is_visible()) {
+            	std::string message = "orders";
+	            hint->get_label(0)->set_string(message);
+	            hint->get_label(0)->set_alignment("center");
+	            hint->set_size(hint->get_label(0)->get_width() + 20, 50);
+	            hint->set_position(order_button->get_x() + (order_button->get_width() - hint->get_width()) / 2, order_button->get_y() + order_button->get_height() + 5);//, ?->get_y() - (hint->get_height() + hint->get_tooltip_arrow_height()) - 5);	            
+	            hint->show();
+            }
+            if(Mouse::is_over(user_button->get_rect()) && user_button->is_visible()) {
+            	std::string message = "account";
+	            hint->get_label(0)->set_string(message);
+	            hint->get_label(0)->set_alignment("center");
+	            hint->set_size(hint->get_label(0)->get_width() + 20, 50);
+	            hint->set_position(user_button->get_x() + (user_button->get_width() - hint->get_width()) / 2, user_button->get_y() + user_button->get_height() + 5);//, ?->get_y() - (hint->get_height() + hint->get_tooltip_arrow_height()) - 5);	            
+	            hint->show();
+            }
+            if(Mouse::is_over(logout_button->get_rect()) && logout_button->is_visible()) {
+            	std::string message = "logout";
+	            hint->get_label(0)->set_string(message);
+	            hint->get_label(0)->set_alignment("center");
+	            hint->set_size(hint->get_label(0)->get_width() + 20, 50);
+	            hint->set_position(logout_button->get_x() + (logout_button->get_width() - hint->get_width()) / 2, logout_button->get_y() + logout_button->get_height() + 5);//, ?->get_y() - (hint->get_height() + hint->get_tooltip_arrow_height()) - 5);	            
+	            hint->show();
+            }
+            /*if(Mouse::is_over(?->get_rect()) && ?->is_visible()) {
+            	std::string message = "";
+	            hint->get_label(0)->set_string(message);
+	            hint->get_label(0)->set_alignment("center");
+	            hint->set_size(hint->get_label(0)->get_width() + 20, 50);
+	            hint->set_position(?->get_x() + (?->get_width() - hint->get_width()) / 2, ?->get_y() + ?->get_height() + 5);//, ?->get_y() - (hint->get_height() + hint->get_tooltip_arrow_height()) - 5);	            
+	            hint->show();
+            }*/                                   
+            hint->draw();
             /////////////////////////////////////
             // check for any incoming orders (pending)
             // use timer to check every x seconds

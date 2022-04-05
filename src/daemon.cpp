@@ -15,6 +15,7 @@
 #include "server.hpp" // server // https://www.linuxhowtos.org/C_C++/socket.htm
 #include "debug.hpp"
 //#include "db2.hpp" // daemon should handle database server requests from the client ??
+#define NEROMON_TAG std::string("\033[1;95m[neromon]:\033[0m ") +
 
 using namespace neroshop;
 
@@ -23,6 +24,7 @@ void close_server() {
     server->shutdown();
     delete server; // calls destructor which calls closesocket()
     server = nullptr;
+    std::cout << NEROMON_TAG "\033[1;91mdisconnected\033[0m" << std::endl;
 }
 void do_heartbeat()
 {
@@ -32,7 +34,7 @@ void do_heartbeat()
 	    //std::cout << "server's client_socket: " << server->get_client_socket() << std::endl;// returns 5
 	    //std::thread new_client(client); // create a new client thread each time it accepts
 	    //new_client.join();
-	    server->write("Welcome to neroshop-server"); // write to client once
+	    server->write(NEROMON_TAG "\033[1;32mconnected\033[0m"); // write to client once
     } //else exit(0);
 	std::cout << server->read() << std::flush << std::endl;
 }
@@ -81,13 +83,13 @@ int main(void)
     close(STDOUT_FILENO);
     close(STDERR_FILENO);*/
     // Daemon-specific intialization should go here
-    const int SLEEP_INTERVAL = 5;
+    const int SLEEP_INTERVAL = 1;//5;
     //////////////////////////////////////////////////
     // server
     std::atexit(close_server);
     int server_port = 1234;//(std::stoi(port));//port 38081 fails
 	if(server->bind(server_port)) {
-	    std::cout << std::endl << "\033[1;35m[neroshop-server]:\033[0m Server is online" << std::endl;
+	    std::cout << std::endl << NEROMON_TAG "\033[1;97mbinded to port " + std::to_string(server_port) << "\033[0m" << std::endl;
 	}
 	server->listen(); // listens for any incoming connection
     // Enter daemon loop

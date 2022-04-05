@@ -79,7 +79,7 @@ private: // can be accessed by only this class (cannot even be inherited)
     std::vector<std::shared_ptr<neroshop::Item>> contents;//protected: // cannot be accessed outside of class but by a derived class (subclass)
     unsigned int max_items; // cart can only hold up to 10 items
     unsigned int max_quantity; // the max quantity each item can add up to is 100, so 10 items can have 10 quantity each, making the total number of items 100 //unsigned int id;
-    static std::unique_ptr<Cart> cart; // singleton object
+    static std::unique_ptr<Cart> cart_obj; // singleton object
     static void load(const neroshop::Item& item, unsigned int quantity); // loads cart.db on app start
     static void add_db(unsigned int item_id); // adds item to cart table for first time
     static void remove_db(unsigned int item_id); // removes item from cart table

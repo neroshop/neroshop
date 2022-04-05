@@ -112,7 +112,7 @@ Box::Box(int x, int y) : Box()
 Box::Box(int x, int y, int width, int height) : Box()
 {
     set_position(x, y);
-	set_width  (width);
+	set_width(width);
 	set_height(height);
 }
 /////////////
@@ -1198,7 +1198,7 @@ int Box::set_alignment(lua_State * L)
 /////////////
 // tooltip
 /////////////
-void Box::set_as_tooltip(bool tooltip)
+void Box::set_tooltip(bool tooltip)
 {
 	type = (tooltip == true) ? "tooltip" : "box";
 	color.w = 0.6;
@@ -1212,9 +1212,22 @@ int Box::set_as_tooltip(lua_State *L)
 	if(lua_isuserdata(L, -1))
 	{
 	    Box * box = *static_cast<Box **>(lua_touserdata(L, -1));
-	    box->set_as_tooltip(lua_toboolean(L, 2));
+	    box->set_tooltip(lua_toboolean(L, 2));
 	}
 	return 0;
+}
+/////////////
+void Box::set_tooltip_arrow_direction(const std::string& tooltip_arrow_direction) {
+    this->tooltip_arrow_direction = tooltip_arrow_direction;
+}
+/////////////
+void Box::set_tooltip_arrow_visible(bool visible) {
+    if(!visible) this->type = "box";
+}
+/////////////
+/////////////
+int Box::get_tooltip_arrow_height() const {
+    return tooltip_arrow_height;
 }
 /////////////
 /////////////

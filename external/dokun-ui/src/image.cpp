@@ -1321,17 +1321,8 @@ int Image::get_alignment(lua_State *L)
 /////////////
 Vector4 Image::get_rect() const
 {
-	int image_width  = width;
-	int image_height = height;
-	return Vector4(x, y, image_width, image_height);
+	return Vector4(x, y, get_width(), get_height());
 }
-/////////////
-/*Vector4 Image::get_rect_scaled() const
-{
-	int image_width_scaled  = get_width_scaled();
-	int image_height_scaled = get_height_scaled();
-	return Vector4(x, y, image_width_scaled, image_height_scaled);
-}*/
 /////////////
 int Image::get_rect(lua_State * L)
 {

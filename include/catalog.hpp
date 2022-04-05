@@ -40,7 +40,10 @@ public:
     Grid * get_grid() const; // contains all the boxes
     Box * get_box(int row, int column) const;
     Box * get_box(int index) const;
-    Box * get_current() const; // returns current page
+    Grid * get_view() const; // same as get_grid
+    Box * get_page() const; // returns current page
+    Box * get_tooltip() const; // returns tooltip
+    Box * get_sort_box() const; // returns sort_box
     int get_x() const;
     int get_y() const;
     Vector2i get_position() const;
@@ -53,27 +56,24 @@ private:
     std::unique_ptr<Box> current; // shows product_page (you can only view one product page at a time) // make this static
     std::unique_ptr<Grid> view; // shows catalog_page (item listings)
     std::unique_ptr<Box> tooltip;
+    std::unique_ptr<Box> sort_box; // sort and filter by brand, color, size, type, price_range, customer reviews (ratings), etc.
     void initialize();
     void update(); // updates size and width of boxes
 public:    
-    void delete_view_children();
-    void delete_page_children();
-    // box contents
-    void add_contents(int box_index); // adds content to product page
+    void delete_view_children(); // deprecated
+    void delete_page_children(); // deprecated
+    // catalog view (grid) functions -----------------------------
     void populate(); // fills / populates category view with items in inventory
     //populate_by_category, populate_by_best_seller (check table order_item -> item_id)
     // populate_by_latest,  populate_by_best_deals_and_promo
     // we can show featured items, best sellers, 
     void refresh(); // refresh the contents
-    // product data
-    void fetch_inventory();
-    /*void add_product_image();
-    void add_product_price();
-    void add_product_stars(); // star ratings
-    void add_product_star_label();
-    void add_product_quantity_spinner();
-    void add_heart(); // favorite or wishlist
-    void add_cart_button(); // add-to-cart button*/
+    // fetching product information from the database ------------
+    void fetch_items(); // fetches all items that have been registered
+    void fetch_inventory(); // fetches all inventory items (regardless of whether they are in stock or not)
+    void fetch_best_sellers(); // fetches the best-selling items
+    void fetch_most_favorited(); // fetches the most favorited items
+    // catalog current product page (box) functions --------------
     void setup_page();
     void update_page(int item_id);
     // views: list_view (1 column, multiple rows), grid_view (multiple rows, multiple columns)

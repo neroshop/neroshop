@@ -700,41 +700,41 @@ int GUI::set_sortable(lua_State *L)
 void GUI::set_callback(const std::string& callback_name, std::function<void(void)> callback_function) {
     if(String::contains(String::lower(callback_name), "hover")) {
         callback_list["on_hover"] = callback_function;
-        std::cout << DOKUN_UI_TAG "on_hover callback set\n";    
+        //std::cout << DOKUN_UI_TAG "on_hover callback set\n";    
     }    
     //-------------------------------------------
     if(String::lower(callback_name) == "press") { // any button pressed
         callback_list["on_press"] = callback_function;
-        std::cout << DOKUN_UI_TAG "on_press callback set\n";    
+        //std::cout << DOKUN_UI_TAG "on_press callback set\n";    
     }
     if(String::contains(String::lower(callback_name), "left_press")) { // left button pressed
         callback_list["on_left_press"] = callback_function;
-        std::cout << DOKUN_UI_TAG "on_left_press callback set\n";
+        //std::cout << DOKUN_UI_TAG "on_left_press callback set\n";
     }
     if(String::contains(String::lower(callback_name), "middle_press")) { // middle button pressed
         callback_list["on_middle_press"] = callback_function;
-        std::cout << DOKUN_UI_TAG "on_middle_press callback set\n";    
+        //std::cout << DOKUN_UI_TAG "on_middle_press callback set\n";    
     }    
     if(String::contains(String::lower(callback_name), "right_press")) { // right button pressed
         callback_list["on_right_press"] = callback_function;
-        std::cout << DOKUN_UI_TAG "on_right_press callback set\n";
+        //std::cout << DOKUN_UI_TAG "on_right_press callback set\n";
     }    
     //-------------------------------------------
     if(String::lower(callback_name) == "click") { // any button clicked
         callback_list["on_click"] = callback_function;
-        std::cout << DOKUN_UI_TAG "on_click callback set\n";
+        //std::cout << DOKUN_UI_TAG "on_click callback set\n";
     }
     if(String::contains(String::lower(callback_name), "left_click")) { // left button clicked
         callback_list["on_left_click"] = callback_function;
-        std::cout << DOKUN_UI_TAG "on_left_click callback set\n";    
+        //std::cout << DOKUN_UI_TAG "on_left_click callback set\n";    
     }
     if(String::contains(String::lower(callback_name), "middle_click")) { // middle button clicked
         callback_list["on_middle_click"] = callback_function;
-        std::cout << DOKUN_UI_TAG "on_middle_click callback set\n";    
+        //std::cout << DOKUN_UI_TAG "on_middle_click callback set\n";    
     }
     if(String::contains(String::lower(callback_name), "right_click")) { // right button clicked
         callback_list["on_right_click"] = callback_function;
-        std::cout << DOKUN_UI_TAG "on_right_click callback set\n";    
+        //std::cout << DOKUN_UI_TAG "on_right_click callback set\n";    
     }        
 }
 /////////////  

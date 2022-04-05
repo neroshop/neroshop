@@ -11,7 +11,7 @@ neroshop::Cart::~Cart() {
     std::cout << "\033[1;37mcart deleted\033[0m\n";
 }
 ////////////////////
-std::unique_ptr<neroshop::Cart> neroshop::Cart::cart (nullptr);
+std::unique_ptr<neroshop::Cart> neroshop::Cart::cart_obj (nullptr);
 ////////////////////
 // normal
 ////////////////////
@@ -341,8 +341,8 @@ unsigned int neroshop::Cart::get_id() const {
 ////////////////////
 ////////////////////
 neroshop::Cart * neroshop::Cart::get_singleton() {
-    if(!cart.get()) {neroshop::print("cart created");cart = std::unique_ptr<neroshop::Cart>(new Cart());}
-    return cart.get();
+    if(!cart_obj.get()) {neroshop::print("cart created");cart_obj = std::unique_ptr<neroshop::Cart>(new Cart());}
+    return cart_obj.get();
 }
 ////////////////////
 ////////////////////

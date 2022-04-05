@@ -24,18 +24,15 @@ neroshop::Seller::~Seller() {
 ////////////////////
 ////////////////////
 ////////////////////
-void neroshop::Seller::list_item(unsigned int item_id, unsigned int stock_qty, double sales_price, std::string currency)
-{}
-////////////////////
-void neroshop::Seller::list_item(const neroshop::Item& item, unsigned int stock_qty, double sales_price, std::string currency, 
-    double discount, unsigned int discounted_items, unsigned int discount_times, std::string discount_expiry, std::string condition) { // ex. 5% off 10 balls
+void neroshop::Seller::list_item(unsigned int item_id, unsigned int stock_qty, double sales_price, std::string currency, double discount, unsigned int discounted_items, unsigned int discount_times, std::string discount_expiry, std::string condition)
+{
     // seller must be logged in
     if(!is_logged()) {neroshop::print("You must be logged in to list an item", 2); return;}
     // user must be an actual seller, not a buyer
-    if(!is_seller()) {neroshop::print("Must be a seller to list an item (id: " + std::to_string(item.get_id()) + ")", 2); return;}
+    if(!is_seller()) {neroshop::print("Must be a seller to list an item (id: " + std::to_string(item_id) + ")", 2); return;}
     // a seller can create an item and then register it to the database
     // but if the item is not registered then it cannot be listed
-    if(!item.is_registered()) {NEROSHOP_TAG_OUT std::cout << "\033[0;91m" << "This item is not registered (invalid Item id)" << "\033[0m" << std::endl; return;}
+    if(item_id < 1) {NEROSHOP_TAG_OUT std::cout << "\033[0;91m" << "This item is not registered (invalid Item id)" << "\033[0m" << std::endl; return;}
     // make sure currency is supported
     if(!neroshop::Converter::is_supported_currency(currency)) {neroshop::print(currency + " is not a supported currency", 2); return;}
     ////////////////////////////////
@@ -59,8 +56,8 @@ void neroshop::Seller::list_item(const neroshop::Item& item, unsigned int stock_
 	}
     // to prevent duplicating item_id that is being sold by the same seller_id (a seller cannot list the same item twice, except change the stock amount)
     int item_id = db.get_column_integer("inventory", "item_id", 
-        "item_id = " + std::to_string(item.get_id()) + " AND seller_id = " + std::to_string(get_id()));
-	if(item_id == item.get_id()) { neroshop::print("\033[1;33mYou have already listed this item (id: " + std::to_string(item_id) + ")\033[0m");return;}
+        "item_id = " + std::to_string(item_id) + " AND seller_id = " + std::to_string(get_id()));
+	if(item_id == item_id) { neroshop::print("\033[1;33mYou have already listed this item (id: " + std::to_string(item_id) + ")\033[0m");return;}
 	// say you have 50 of an item, for every 2 of the same item, you get $0.50 off
 	//double total_discount_calc = (50 / 2) * 0.50;
 	double total_discount = (stock_qty_or_num_items_to_apply_discount / discounted_items) * discount; // stock_qty would be replace with item_qty in this case
@@ -73,8 +70,8 @@ void neroshop::Seller::list_item(const neroshop::Item& item, unsigned int stock_
 #endif	
 	// insert item in inventory
 	db.insert("inventory", "item_id, seller_id, stock_qty, seller_price, currency, seller_discount, discount_qty, condition", 
-	    std::to_string(item.get_id()) + ", " + std::to_string(get_id()) + ", " + std::to_string(stock_qty) + ", " + std::to_string(sales_price) + ", " + DB::Sqlite3::to_sql_string(String::lower(currency)) + ", " + std::to_string(discount) + ", " + std::to_string(discounted_items) + ", " + DB::Sqlite3::to_sql_string(condition));
-	NEROSHOP_TAG_OUT std::cout << "\033[1;37m" << item.get_name() << " (id: " << item.get_id() << ", stock_qty: " << stock_qty << ") has been listed by seller \033[1;34m" << get_name() << " (id: " << get_id() << ")" << "\033[0m" << std::endl; // price per unit (of an item)
+	    std::to_string(item_id) + ", " + std::to_string(get_id()) + ", " + std::to_string(stock_qty) + ", " + std::to_string(sales_price) + ", " + DB::Sqlite3::to_sql_string(String::lower(currency)) + ", " + std::to_string(discount) + ", " + std::to_string(discounted_items) + ", " + DB::Sqlite3::to_sql_string(condition));
+	NEROSHOP_TAG_OUT std::cout << "\033[1;37m" << item.get_name() << " (id: " << item_id << ", stock_qty: " << stock_qty << ") has been listed by seller \033[1;34m" << get_name() << " (id: " << get_id() << ")" << "\033[0m" << std::endl; // price per unit (of an item)
 	db.close();*/
     ////////////////////////////////
     // postgresql
@@ -98,15 +95,15 @@ void neroshop::Seller::list_item(const neroshop::Item& item, unsigned int stock_
 	    DB::Postgres::get_singleton()->add_column("inventory", "condition", "text"); // seller_condition for each item
 	}        
     // to prevent duplicating item_id that is being sold by the same seller_id (a seller cannot list the same item twice, except change the stock amount)
-    int item_id = DB::Postgres::get_singleton()->get_integer_params("SELECT item_id FROM inventory WHERE item_id = $1 AND seller_id = $2", { std::to_string(item.get_id()), std::to_string(get_id()) });
-	if(item_id == item.get_id()) { 
+    int listed_item = DB::Postgres::get_singleton()->get_integer_params("SELECT item_id FROM inventory WHERE item_id = $1 AND seller_id = $2", { std::to_string(item_id), std::to_string(get_id()) });
+	if(listed_item == item_id) { 
 	    neroshop::print("\033[1;33mYou have already listed this item (id: " + std::to_string(item_id) + ")\033[0m"); 
 	    ////DB::Postgres::get_singleton()->execute("ROLLBACK;");
 	    //DB::Postgres::get_singleton()->finish();
 	    return;
 	}	    
-    // begin transaction
-    DB::Postgres::get_singleton()->execute("BEGIN;");
+    // begin transaction - this is not necessary since it is just a single operation
+    ////DB::Postgres::get_singleton()->execute("BEGIN;");
     // create a restore point - no need for this
     ////DB::Postgres::get_singleton()->execute("SAVEPOINT before_seller_item_listing_savepoint;");
 	// convert localtime to universal time
@@ -116,23 +113,29 @@ void neroshop::Seller::list_item(const neroshop::Item& item, unsigned int stock_
 	// SELECT TO_CHAR(now(), 'YYYY-MM-DD HH24:MI:SS') ;
 	// insert item in inventory
 	DB::Postgres::get_singleton()->execute_params("INSERT INTO inventory (item_id, seller_id, stock_qty, seller_price, currency, seller_discount, discount_qty, discount_times, discount_expiry, condition) "
-	    "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, TO_TIMESTAMP($9,'YYYY-MM-DD HH24:MI:SS'), $10)", { std::to_string(item.get_id()), std::to_string(get_id()), std::to_string(stock_qty), std::to_string(sales_price)/* price per unit (of an item)*/,
+	    "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, TO_TIMESTAMP($9,'YYYY-MM-DD HH24:MI:SS'), $10)", { std::to_string(item_id), std::to_string(get_id()), std::to_string(stock_qty), std::to_string(sales_price)/* price per unit (of an item)*/,
 	    String::lower(currency), std::to_string(discount), std::to_string(discounted_items), std::to_string(discount_times), discount_expiry, condition });
 	// end transaction
-	DB::Postgres::get_singleton()->execute("COMMIT;");
+	////DB::Postgres::get_singleton()->execute("COMMIT;");
 	////DB::Postgres::get_singleton()->finish();
-	// ???
-	NEROSHOP_TAG_OUT std::cout << "\033[1;37m" << item.get_name() << " (id: " << item.get_id() << ", stock_qty: " << stock_qty << ") has been listed by seller \033[1;34m" << get_name() << " (id: " << get_id() << ")" << "\033[0m" << std::endl;
+	std::string item_name = DB::Postgres::get_singleton()->get_text_params("SELECT name FROM item WHERE id = $1", { std::to_string(item_id) });
+	NEROSHOP_TAG_OUT std::cout << "\033[1;37m" << item_name << " (id: " << item_id << ", stock_qty: " << stock_qty << ") has been listed by seller \033[1;34m" << get_name() << " (id: " << get_id() << ")" << "\033[0m" << std::endl;
     ////////////////////////////////	
+}
+////////////////////
+void neroshop::Seller::list_item(const neroshop::Item& item, unsigned int stock_qty, double sales_price, std::string currency, double discount, unsigned int discounted_items, unsigned int discount_times, std::string discount_expiry, std::string condition) { // ex. 5% off 10 balls
+    list_item(item.get_id(), stock_qty, sales_price, currency, discount, discounted_items, discount_times, discount_expiry, condition);
 }
 // static_cast<Seller *>(user)->list_item(ball, 50, 8.50, "usd", 0.50, 2, "new"); // $0.50 cents off every 2 balls
 ////////////////////
-void neroshop::Seller::delist(unsigned int item_id) {
-    // update item stock to 0 beforehand or nah?
-    // ...
-    // delete item from inventory
-    DB::Postgres::get_singleton()->execute_params("DELETE FROM inventory WHERE item_id = $1 AND seller_id = $2", { std::to_string(item_id), std::to_string(get_id()) });
+void neroshop::Seller::delist_item(unsigned int item_id) {
+    DB::Postgres::get_singleton()->execute_params("DELETE FROM inventory WHERE item_id = $1 AND seller_id = $2", { std::to_string(item_id), std::to_string(get_id()) }); // update item stock to 0 beforehand or nah?
 }
+////////////////////
+void neroshop::Seller::delist_item(const neroshop::Item& item) {
+    delist_item(item.get_id());
+}
+////////////////////
 ////////////////////
 ////////////////////
 // the moment the seller logs in, they should be notified that they have a pending transaction from a customer
@@ -360,9 +363,9 @@ void neroshop::Seller::set_wallet(const neroshop::Wallet& wallet) {
 ////////////////////
 ////////////////////
 ////////////////////
+////////////////////
+////////////////////
 // getters
-////////////////////
-////////////////////
 ////////////////////
 unsigned int neroshop::Seller::get_good_ratings() const {
     /*DB::Sqlite3 db("neroshop.db");
@@ -451,29 +454,23 @@ unsigned int neroshop::Seller::get_reputation() const {
 }
 ////////////////////
 ////////////////////
-////////////////////
-////////////////////
-////////////////////
 neroshop::Wallet * neroshop::Seller::get_wallet() const {
-    // since Wallet is a singleton class, we must use the singleton object or nah?
     return wallet.get();
+}
+////////////////////
+////////////////////
+unsigned int neroshop::Seller::get_customer_order(unsigned int index) const {
+    if(customer_order_list.empty()) return 0;//return nullptr;
+    if(index > (customer_order_list.size() - 1)) throw std::out_of_range("neroshop::Seller::get_customer_order(): attempt to access invalid index");
+    return customer_order_list[index];
+}
+////////////////////
+unsigned int neroshop::Seller::get_customer_order_count() const {
+    return customer_order_list.size();
 }
 ////////////////////
 std::vector<int> neroshop::Seller::get_pending_customer_orders() {
     std::vector<int> pending_order_list;
-    /*DB::Sqlite3 db("neroshop.db");
-    ///////////
-    for(int i = 0; i < customer_order_list.size(); i++) {
-         int pending_orders = db.get_column_integer("orders", "id", "id = " + std::to_string(customer_order_list[i]) + " AND status = " + DB::Sqlite3::to_sql_string("Pending"));
-         if(pending_orders != 0) {
-             pending_order_list.push_back(customer_order_list[i]);
-             std::cout << "Pending orders #: " << pending_orders << std::endl;
-         }  
-    }
-    ///////////
-    db.close();*/
-    ////////////////////////////////
-    // postgresql
     ////////////////////////////////
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
     ////////////////////////////////
@@ -511,27 +508,20 @@ std::vector<int> neroshop::Seller::get_pending_customer_orders() {
         //message.draw();
     }*/
     ////////////////////////////////
-    /*DB::Postgres::get_singleton()->finish();*/    
+    //DB::Postgres::get_singleton()->finish();
     ////////////////////////////////
     return pending_order_list;
 }
 ////////////////////
+////////////////////
 unsigned int neroshop::Seller::get_sales_count() const {
-    // ITEM IS NOT CONSIDERED SOLD UNTIL THE ORDER IS DONE PROCESSING!
-    /*DB::Sqlite3 db("neroshop.db");
-    int sold_items_count = db.get_column_integer("order_item", "COUNT(*)", "seller_id = " + std::to_string(get_id()));
-    db.close();
-    return sold_items_count;*/
-    ////////////////////////////////
-    // postgresql
-    ////////////////////////////////
+    // should item not be considered sold until the order is done processing or nah ?
 	int items_sold = DB::Postgres::get_singleton()->get_integer_params("SELECT SUM(item_qty) FROM order_item WHERE seller_id = $1;", { std::to_string(get_id()) });
 	return items_sold;
-	////////////////////////////////    
 }
 ////////////////////
 unsigned int neroshop::Seller::get_units_sold(unsigned int item_id) const {
-    int units_sold = DB::Postgres::get_singleton()->get_integer_params("SELECT SUM(item_qty) FROM order_item WHERE item_id = $1 AND seller_id = $2", { std::to_string(item_id), std::to_string(get_id()) }); // get the sum of the item's "item_qty" NOT the number of rows //SELECT COUNT(*) AS row_count, SUM(item_qty) FROM order_item WHERE item_id = 2 AND seller_id = 1;
+    int units_sold = DB::Postgres::get_singleton()->get_integer_params("SELECT SUM(item_qty) FROM order_item WHERE item_id = $1 AND seller_id = $2", { std::to_string(item_id), std::to_string(get_id()) });
     return units_sold;
 }
 ////////////////////
@@ -539,64 +529,71 @@ unsigned int neroshop::Seller::get_units_sold(const neroshop::Item& item) const 
     return get_units_sold(item.get_id());
 }
 ////////////////////
-unsigned int neroshop::Seller::get_item_id_with_most_sales_by_quantity() const { // this function is preferred over the "_by_mode" version as it provides the most accurate best-selling item_id result
-    // get the item with the biggest sum of quantity - if two items are the best sellers then it will select the lowest item_id of the two best-selling items (unless I add DESC)
+double neroshop::Seller::get_sales_profit() const {
+    double profit_from_sales = DB::Postgres::get_singleton()->get_real_params("SELECT SUM(item_price * item_qty) FROM order_item WHERE seller_id = $1;", { std::to_string(get_id()) });//neroshop::print("The overall profit made from all sales combined is: $" + std::to_string(profit_from_sales), 3);
+    return profit_from_sales;
+}
+////////////////////
+double neroshop::Seller::get_profits_made(unsigned int item_id) const {
+    double item_profits = DB::Postgres::get_singleton()->get_real_params("SELECT SUM(item_price * item_qty) FROM order_item WHERE item_id = $1 AND seller_id = $2;", { std::to_string(item_id), std::to_string(get_id()) });//std::string item_name = DB::Postgres::get_singleton()->get_text_params("SELECT name FROM item WHERE id = $1", { std::to_string(item_id) });neroshop::print("The overall profit made from \"" + item_name + "\" is: $" + std::to_string(item_profits), 3);
+    return item_profits;
+}
+////////////////////
+double neroshop::Seller::get_profits_made(const neroshop::Item& item) const {
+    return get_profits_made(item.get_id());
+}
+////////////////////
+unsigned int neroshop::Seller::get_item_id_with_most_sales() const { // this function is preferred over the "_by_mode" version as it provides the most accurate best-selling item_id result
+    // get the item with the biggest quantity sold (returns multiple results but I've limited it to 1)
     int item_with_biggest_qty = DB::Postgres::get_singleton()->get_integer_params("SELECT item_id FROM order_item WHERE seller_id = $1 GROUP BY item_id ORDER BY SUM(item_qty) DESC LIMIT 1;", { std::to_string(get_id()) }); // from the biggest to smallest sum of item_qty
-    // debugging ...
+#ifdef NEROSHOP_DEBUG
     std::string item_name = DB::Postgres::get_singleton()->get_text_params("SELECT name FROM item WHERE id = $1", { std::to_string(item_with_biggest_qty) });
-    neroshop::print("\"" + item_name + "\" is the best seller with a sale of " + std::to_string(get_units_sold(item_with_biggest_qty)) + " units", 3);
+    neroshop::print("\"" + item_name + "\" is your best-selling item with a sale of " + std::to_string(get_units_sold(item_with_biggest_qty)) + " units", 3);
+#endif    
     return item_with_biggest_qty;
 }
 ////////////////////
-/*unsigned int neroshop::Seller::get_item_id_with_most_sales_by_mode() const {
-    // get the item with the most occurences / most unique purchases for all orders - if two items are the most occuring then it will select the lowest item_id of the two (unless I add DESC)
+unsigned int neroshop::Seller::get_item_id_with_most_orders() const {
+    // get the item with the most occurences in all orders - if two items are the most occuring then it will select the lowest item_id of the two (unless I add DESC)
     int item_with_most_occurrences = DB::Postgres::get_singleton()->get_integer_params("SELECT MODE() WITHIN GROUP (ORDER BY item_id) FROM order_item WHERE seller_id = $1;", { std::to_string(get_id()) });
-    // debugging ...
+#ifdef NEROSHOP_DEBUG
     std::string item_name = DB::Postgres::get_singleton()->get_text_params("SELECT name FROM item WHERE id = $1", { std::to_string(item_with_most_occurrences) });
     int times_occured = DB::Postgres::get_singleton()->get_integer_params("SELECT COUNT(*) FROM order_item WHERE item_id = $1 AND seller_id = $2;", { std::to_string(item_with_most_occurrences), std::to_string(get_id()) });
-    neroshop::print("\"" + item_name + "\" is the most occuring / uniquely purchased item occuring " + std::to_string(times_occured) + " times (total) in all orders", 2);    
+    neroshop::print("\"" + item_name + "\" is your most ordered item occuring a total of " + std::to_string(times_occured) + " times in all orders", 2);
+#endif    
     return item_with_most_occurrences;
-}*/
-////////////////////
-unsigned int neroshop::Seller::get_customer_order(unsigned int index) const {
-    if(index > (customer_order_list.size()-1)) throw std::runtime_error("neroshop::Seller::get_customer_order(): attempt to access invalid index");
-    return customer_order_list[index];
-}
-////////////////////
-unsigned int neroshop::Seller::get_customer_order_count() const {
-    return customer_order_list.size();
 }
 ////////////////////
 ////////////////////
 ////////////////////
-////////////////////
+// boolean
 ////////////////////
 bool neroshop::Seller::has_listed(unsigned int item_id) const {
-    if(item_id < 1) { neroshop::print("Seller::is_listed(): invalid Item id", 1); return false; }
-    /*DB::Sqlite3 db("neroshop.db");
-	//db.execute("PRAGMA journal_mode = WAL;"); // this may reduce the incidence of SQLITE_BUSY errors (such as database being locked)
-	if(!db.table_exists("inventory")) return false;
-	int id = db.get_column_integer("inventory", "item_id", "item_id = " + std::to_string(item_id) + " AND seller_id = " + std::to_string(get_id()));
-	db.close();*/
-    ////////////////////////////////
-    // postgresql
-    ////////////////////////////////
-    //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");	
-	int id = DB::Postgres::get_singleton()->get_integer_params("SELECT item_id FROM inventory WHERE item_id = $1 AND seller_id = $2", { std::to_string(item_id), std::to_string(get_id()) });
-	/*DB::Postgres::get_singleton()->finish();*/
-	////////////////////////////////
-	return (id != 0);
+	bool listed = (DB::Postgres::get_singleton()->get_text_params("SELECT EXISTS(SELECT item_id FROM inventory WHERE item_id = $1 AND seller_id = $2);", { std::to_string(item_id), std::to_string(get_id()) }) == "t") ? true : false;
+	return listed;
 }
 ////////////////////
+bool neroshop::Seller::has_listed(const neroshop::Item& item) const {
+    return has_listed(item.get_id());
+}
+////////////////////
+bool neroshop::Seller::has_stock(unsigned int item_id) const {
+    bool in_stock = (DB::Postgres::get_singleton()->get_text_params("SELECT EXISTS(SELECT item_id FROM inventory WHERE item_id = $1 AND seller_id = $2 AND stock_qty > 0);", { std::to_string(item_id), std::to_string(get_id()) }) == "t") ? true : false;
+    return in_stock;
+}
+////////////////////
+bool neroshop::Seller::has_stock(const neroshop::Item& item) const {
+    return has_stock(item.get_id());
+}
 ////////////////////
 bool neroshop::Seller::has_wallet() const {
-    if(!wallet) return false; // wallet is nullptr
+    if(!wallet.get()) return false; // wallet is nullptr
     if(!wallet->get_monero_wallet()) return false; // wallet not opened
     return true;
 }
 ////////////////////
 bool neroshop::Seller::has_wallet_synced() const {
-    if(!wallet) return false; // wallet is nullptr
+    if(!wallet.get()) return false; // wallet is nullptr
     if(!wallet->get_monero_wallet()) return false; // wallet not opened
     if(!wallet->get_monero_wallet()->is_synced()) return false; // wallet not synced to daemon
     return true;
@@ -604,27 +601,9 @@ bool neroshop::Seller::has_wallet_synced() const {
 ////////////////////
 ////////////////////
 ////////////////////
+// callbacks
+////////////////////
 neroshop::User * neroshop::Seller::on_login(const std::string& username) { // assumes user data already exists in database
-    // get user_data from db and set them
-    /*DB::Sqlite3 db("neroshop.db");
-    neroshop::User * user = new Seller(username);
-    dynamic_cast<Seller *>(user)->set_logged(true); // protected, so can only be accessed by child class obj   // if validator::login(user, pw) returns true, then set neroshop::User::logged to true    
-    dynamic_cast<Seller *>(user)->set_id(db.get_column_integer("users", "id", "name = " + DB::Sqlite3::to_sql_string(username)));
-    dynamic_cast<Seller *>(user)->set_account_type(user_account_type::seller);
-#ifdef NEROSHOP_DEBUG
-    std::cout << "\033[1;34m(account_type: " << String::lower(user->get_account_type_string()) << ", id: " << user->get_id() << ", reputation: " << static_cast<Seller *>(user)->get_reputation() << ")\033[0m" << std::endl;
-#endif    
-    ///////////
-    // load orders
-    dynamic_cast<Seller *>(user)->load_orders();
-    // load customer_orders
-    static_cast<Seller *>(user)->load_customer_orders();
-    // load wishlists
-    // ...
-    db.close();*/ // don't forget to close the db
-    ////////////////////////////////
-    // postgresql
-    ////////////////////////////////
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");//DB::Postgres::get_singleton()->connect;//DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
     // create a new user (seller)
     neroshop::User * user = new Seller(username);
@@ -647,16 +626,14 @@ neroshop::User * neroshop::Seller::on_login(const std::string& username) { // as
     if(user->is_registered()) {
         Cart::get_singleton()->load_cart(user->get_id());
     }        
-    ////////////////////////////////
 #ifdef NEROSHOP_DEBUG
     std::cout << "\033[1;34m(account_type: " << String::lower(user->get_account_type_string()) << ", id: " << user->get_id() << ", reputation: " << static_cast<Seller *>(user)->get_reputation() << ")\033[0m" << std::endl; // get_reputation() also opens the database hence the warning
 #endif    
-    ////////////////////////////////    
     return user;          
 }
 ////////////////////
 void neroshop::Seller::on_order_received(std::string& subaddress) {
-    if(wallet == nullptr) throw std::runtime_error("wallet has not been initialized");
+    if(!wallet.get()) throw std::runtime_error("wallet has not been initialized");
     if(!wallet->get_monero_wallet()) throw std::runtime_error("monero_wallet_full is not opened");
     // if wallet is not properly synced with the daemon, you can only generate used addresses
     // unless wallet is synced to a daemon, you will not be able to generate any unique addresses

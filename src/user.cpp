@@ -834,9 +834,9 @@ bool neroshop::User::has_purchased(unsigned int item_id) { // for registered use
     std::vector<unsigned int> purchases_list = {};
     for(auto orders : order_list) { 
         int order_item = DB::Postgres::get_singleton()->get_integer_params("SELECT item_id FROM order_item WHERE item_id = $1 AND order_id = $2", { std::to_string(item_id), std::to_string(orders->get_id()) });
+        // to-do: check if order was not cancelled or refunded
         if(order_item < 1) continue; // skip invalid ids
-        if(order_item == item_id) {
-            std::cout << "user_order_ids: " << orders->get_id() << std::endl;
+        if(order_item == item_id) {//std::cout << "user_order_ids: " << orders->get_id() << std::endl;
             // store purchased item_ids if not yet stored
             if(std::find(purchases_list.begin(), purchases_list.end(), item_id) == purchases_list.end()) {
                 purchases_list.push_back(order_item);
@@ -880,7 +880,7 @@ void neroshop::User::logout() {
     this->account_type = user_account_type::guest; // set account type to the default
     this->logged = false; // make sure user is no longer logged in
     // reset (delete) cart (this will clear all items from the cart.contents_list vector. we do not want to mess with the cart db though :D)
-    if(Cart::cart.get()) Cart::cart.reset(); ////delete Cart::cart_obj; Cart::cart_obj = nullptr;
+    if(Cart::cart_obj.get()) Cart::cart_obj.reset(); ////delete Cart::cart_obj; Cart::cart_obj = nullptr;
     // delete this user
     if(this) delete this;//this = nullptr;
     // set the singleton user object to nullptr now that user has been deleted

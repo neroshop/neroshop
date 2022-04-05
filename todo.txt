@@ -1,18 +1,20 @@
 [HIGH PRIORITY]
 - replace inappropriate doubles with floats                      []
-- discard all raw pointers and replace them with shared pointers []
-- stop using raw pointers for non-static objects                 []
+- discard all raw pointers and replace them with smart pointers  []
 - use delegating constructor for every class                     []
 - use shared_ptr for vectors of objects and use unique_ptr for single class private member objects []
+- give orders a unique uuid with "ns" prepended to it            []
+- fix bug where server only reads once and then does not read ever again []
+- create a sorting box on the left side of the application and create PREVIOUS/NEXT or SHOW_MORE buttons for the catalog view []
+- improve currency conversion and use multiple sources to retrieve currency rates []
+- complete application back-end (functionality)                  []
+- complete application front-end (user interface)                []
 
 [MID PRIORITY]
 - make table names plural ('cause select * from customer seems "grammatically" incorrect to me)
-- improve currency conversion and use multiple sources to retrieve currency rates []
 - rewrite renderer.cpp from scratch (if I can't find an experienced graphics programmer)
 - figure out how to turn qrcode data into png and jpeg
 - change font
-- create cart table with a user_id column [x]
-- create cart_items table                 [x]
 - create product category table, simplify category list and create subcategories
 - create catalog with sorting by price, category, etc.
 - work on search engine
@@ -116,5 +118,5 @@ SkyDB:
 https://blog.sia.tech/skydb-a-mutable-database-for-the-decentralized-web-7170beeaa985
 
 Considerations:
-In the future, I may consider supporting other private-by-default coins such as wownero and piratechain
+In the future, I may consider supporting other private-by-default coins such as wownero, dero, and piratechain
 

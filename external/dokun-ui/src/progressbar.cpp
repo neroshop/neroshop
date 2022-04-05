@@ -128,7 +128,7 @@ void Progressbar::set_label(const dokun::Label& label)
     //////////////////////////////////
     // unique_ptr - faster than shared_ptr and better for use with private class members that do not need to be shared
     std::unique_ptr<dokun::Label> progress_label(&const_cast<dokun::Label&>(label)); // raw pointers cannot be moved so just copy from the normal raw pointer
-    this->label = std::move(progress_label); // unique pointers cannot be copied, but can only be moved // unique pointers cannot be copied, but can only be moved // "std::unique_ptr::release()" is a similar function but "std::move()" is better of the two
+    this->label = std::move(progress_label); // unique pointers cannot be copied, but can only be moved // "std::unique_ptr::release()" is a similar function but "std::move()" is better of the two
     this->label->set_parent(*this);
 }   
 /////////////

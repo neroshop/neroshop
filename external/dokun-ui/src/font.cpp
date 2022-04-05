@@ -355,7 +355,11 @@ int dokun::Font::set_size(lua_State *L) // ONLY works if set before loading font
 }
 /////////////
 void dokun::Font::set_pixel_size(unsigned int width, unsigned int height) {   
-    FT_Set_Pixel_Sizes(face, width, height);
+    this->width = width;
+    this->height = height;
+    // this always fails for some reason. I guess you have to set the pixel size before loading the font
+    /*FT_Error error = FT_Set_Pixel_Sizes(face, width, height);
+    if(error) std::cout << DOKUN_UI_TAG "Could not set font pixel size" << std::endl;*/
 }    
 /////////////
 /////////////
@@ -494,6 +498,7 @@ int dokun::Font::get_size(lua_State *L)
 	return 2;	
 }
 /////////////
+// this gives totally incorrect results
 Vector4 dokun::Font::get_rect()const
 {
 	int x = face->bbox.xMax;      // right 

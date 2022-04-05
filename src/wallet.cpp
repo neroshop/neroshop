@@ -35,9 +35,10 @@ neroshop::Wallet::~Wallet()
 #endif    
 }
 ////////////////////
-neroshop::Wallet * neroshop::Wallet::wallet_obj(new neroshop::Wallet());//std::shared_ptr<neroshop::Wallet> neroshop::Wallet::wallet_obj(std::make_shared<neroshop::Wallet>());
+neroshop::Wallet * neroshop::Wallet::wallet_obj(nullptr);//(new neroshop::Wallet());//std::shared_ptr<neroshop::Wallet> neroshop::Wallet::wallet_obj(std::make_shared<neroshop::Wallet>());
 ////////////////////
 neroshop::Wallet * neroshop::Wallet::get_singleton() {
+    if(!wallet_obj) wallet_obj = new Wallet();
     return wallet_obj;//.get();
 }
 ////////////////////

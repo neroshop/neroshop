@@ -162,7 +162,7 @@ public:
 	    // shader
 	    Shader* shader,
 	    // radius
-	    float radius,
+	    float radius, 
 	    // arrow - placement("up", "down"=default, "left", "right")
 	    std::string placement = "down", int arrow_width = 10, int arrow_height = 5, double arrow_offset = -1.0);
 	//--------------------------

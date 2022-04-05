@@ -113,7 +113,7 @@ bool neroshop::Server::accept()
 		close();
 		return false;
 	}
-	std::cout << "\033[1;35m[neroshop-server]:\033[0;37m Received connection from " << inet_ntoa(client_addr.sin_addr) << ":\033[0;36m" << ntohs(client_addr.sin_port) << "\033[0m" << std::endl;//std::cout << "client_socket: " << newsocket << std::endl; // always prints out 5
+	std::cout << NEROSHOP_TAG "\033[0;37mReceived connection from " << inet_ntoa(client_addr.sin_addr) << ":\033[0;36m" << ntohs(client_addr.sin_port) << "\033[0m" << std::endl;//std::cout << "client_socket: " << newsocket << std::endl; // always prints out 5
 #endif
 	return true;
 }
@@ -180,7 +180,7 @@ std::string neroshop::Server::read() // receive data
 		close();			
 	}
 	if(read_result == 0) {
-        std::cerr << "\033[1;35m[neroshop-server]:\033[0m Client orderly shut down the connection." << std::endl;
+        std::cerr << NEROSHOP_TAG "\033[0mClient orderly shut down the connection." << std::endl;
         shutdown();
         close();
         exit(0);//or wait for client to re-connect to server ?

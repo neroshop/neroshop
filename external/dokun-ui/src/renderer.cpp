@@ -2390,7 +2390,7 @@ void Renderer::draw_switch(int x, int y, int width, int height, float angle, flo
 }
 //////////// // Usage: Renderer::draw_tooltip("Hello", 750, 500, 100, 50, 0.0, 1, 1, 106, 106, 106, 255.0);
 void Renderer::draw_tooltip(const std::string& text, int x, int y, int width, int height, float angle, float scale_x, float scale_y, unsigned int red, unsigned int green, unsigned int blue, float alpha, Shader* shader,
-	float radius,    
+	float radius, 
     std::string direction, int arrow_width, int arrow_height, double arrow_offset)
 {
 #ifdef DOKUN_OPENGL	// OpenGL is defined
@@ -2476,7 +2476,7 @@ void Renderer::draw_tooltip(const std::string& text, int x, int y, int width, in
 	shader->set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
     glBindVertexArray(vertex_array_obj); // (vao start 2)
-        glDrawElements(GL_TRIANGLE_FAN, 6, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);                // (vao end 2  )
     //glBindTexture(GL_TEXTURE_2D, base);  // bind texture
     // Restore defaults
@@ -2541,11 +2541,9 @@ void Renderer::draw_tooltip(const std::string& text, int x, int y, int width, in
         glDrawArrays(GL_LINE_LOOP, 0, 3);//glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);*/	
 	// Draw triangle
-	double arrow_red   = red; // arrow will copy the color of tooltip. Make sure color is a double!
-	double arrow_green = green;
-	double arrow_blue  = blue;
-	double arrow_alpha = alpha;
-	shader->set_float("color", (arrow_red / 255.0), (arrow_green / 255.0), (arrow_blue / 255.0), arrow_alpha); //glBindTexture(GL_TEXTURE_2D, base);  // bind texture
+	// arrow will copy the color of tooltip. Make sure color is a float/double!
+	Vector4 arrow_color = Vector4(red, green, blue, alpha);
+	shader->set_float("color", (arrow_color.x / 255.0), (arrow_color.y / 255.0), (arrow_color.z / 255.0), arrow_color.w); //glBindTexture(GL_TEXTURE_2D, base);  // bind texture
     glBindVertexArray(arrow_vertex_array_obj); // (vao start 2)
         glDrawArrays(GL_TRIANGLES, 0, 3); // draw 3 points to form a triangle
 	glBindVertexArray(0);                // (vao end 2  ) //glBindTexture(GL_TEXTURE_2D, base);  // bind texture

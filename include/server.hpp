@@ -13,6 +13,8 @@
 #include <thread>
 #include <mutex>
 #include <vector>
+// neroshop
+#include "debug.hpp"
 
 namespace neroshop {
 class Server { // listens to a port and accepts a socket

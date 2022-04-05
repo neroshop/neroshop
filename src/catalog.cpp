@@ -6,6 +6,11 @@ neroshop::Catalog::Catalog() : view(nullptr), current(nullptr), tooltip(nullptr)
 }
 ////////////////////
 neroshop::Catalog::~Catalog() {
+    // delete sort_box
+    if(sort_box.get()) {
+        sort_box.reset();
+        if(!sort_box.get()) std::cout << "catalog sort_box deleted\n";
+    }
     // delete tooltip
     if(tooltip.get()) { 
         tooltip.reset();
@@ -42,7 +47,7 @@ void neroshop::Catalog::initialize() {
     view = std::unique_ptr<Grid>(new Grid());
     std::cout << "catalog view initialized\n";
     // set initial values // size=400,300;rows=2;columns=3 OR 
-    view->set_rows(3);//(6)//(1); // we cannot have columns without rows
+    view->set_rows(2);//(3);//(6)//(1); // we cannot have columns without rows
     view->set_columns(3);//(5)//(1);
     view->set_gap(5);//view->set_horizontal_gap(5);//view->set_vertical_gap(50);
     view->set_color(160, 160, 160, 1.0);
@@ -54,6 +59,35 @@ void neroshop::Catalog::initialize() {
     current = std::unique_ptr<Box>(new Box());
     setup_page();
     current->hide(); // hide product page by default
+    ////////////////////
+    // initialize tooltip
+    if(tooltip.get()) {neroshop::print("catalog is already initialized", 2);return;}
+    tooltip = std::unique_ptr<Box>(new Box());
+    tooltip->set_tooltip(true);
+    tooltip->set_color(64, 64, 64);//tooltip->set_tooltip_arrow_direction("down");
+    tooltip->add_label(*new dokun::Label("")); // font will be auto set when label is initialized with a string
+    tooltip->hide(); // hide tooltip by default
+    ////////////////////
+    // initialize sorting and filtering box
+    if(sort_box.get()) {neroshop::print("catalog is already initialized", 2);return;}
+    sort_box = std::unique_ptr<Box>(new Box());
+    // add labels, check boxes, radios, etc.
+    // department or category
+    // release date: newer, older
+    // brand: nintendo, playstation, xbox
+    // [BOLD]color[BOLD]
+      // [] red
+      // [] green
+      // [] blue
+      // [] any
+    // size
+    // type
+    // ratings: 5, 4, 3, 2, 1 stars
+    // condition: new, used
+    // price: <$10, <$20, <$30, <$40
+    // deals
+    // availability: include out of stock [x]
+    sort_box->hide(); // only show when user looks up an item using the search bar
     ////////////////////
 }
 ////////////////////
@@ -100,19 +134,20 @@ void neroshop::Catalog::delete_page_children() {
 ////////////////////
 void neroshop::Catalog::draw() {
     //std::cout << "view_pos: " << view->get_position() << std::endl;
+    tooltip->hide(); // hide tooltip by default, unless mouse is over icon
     // put this in "on_draw" function
 	std::vector<std::vector<std::shared_ptr<Box>>> box_list = view->get_box_list_2d();
 	if(box_list.empty()) return;// if no rows, exit function
 	for(auto rows : box_list) {
 	    for(auto boxes : rows) {
-	        // so long as product page is visible, grid boxes cannot be active
-	        if(current->is_visible()) boxes->set_active(false); else boxes->set_active(true);
+	        // so long as product page is visible, grid boxes cannot be active or maybe I could hide the grid boxes?
+	        if(current->is_visible()) { /*view->hide();*/ boxes->set_active(false); } else { /*view->show();*/ boxes->set_active(true); }
 	        // update relative positions of box contents
 	        // images
 	        if(boxes->get_image_count() < 9) continue; // skip boxes with less than 3 image(s)
 	        //std::cout << "box image count: " << boxes->get_image_count() << std::endl;
-	        ////Image * verified_purchase_icon = boxes->get_image(0); // image 1
-	        ////Image * heart_icon = boxes->get_image(1); // image 2
+	        Image * verified_purchase_icon = boxes->get_image(0); // image 1
+	        Image * heart_icon = boxes->get_image(1); // image 2
 	        ////Image * product_image = boxes->get_image(2); // image 3
 	        ////Image * product_star_0 = boxes->get_image(3); // image 4
 	        ////Image * product_star_1 = boxes->get_image(4); // image 5
@@ -154,10 +189,24 @@ void neroshop::Catalog::draw() {
 	        // price label xmr
 	        ////GUI * price_label_xmr = boxes->get_gui(2); // third gui
 	        ////price_label_xmr->set_relative_position();
-	        // if favorite button pressed, add item to favorites ...
-	        // ...
-	        // if item was previously purchased, change verified_purchase icon color
-	        // ...
+	        // if mouse is over favorite button, show tooltip ...
+	        if(Mouse::is_over(verified_purchase_icon->get_rect()) && verified_purchase_icon->is_visible() && boxes->is_active()) { // && verified_purchase_icon->is_active()) {
+	            std::string message = "You've previously purchased this item";
+	            tooltip->get_label(0)->set_string(message);
+	            tooltip->get_label(0)->set_alignment("center");
+	            tooltip->set_size(tooltip->get_label(0)->get_width() + 20, 50);
+	            tooltip->set_position(verified_purchase_icon->get_x() + (verified_purchase_icon->get_width() - tooltip->get_width()) / 2, verified_purchase_icon->get_y() - (tooltip->get_height() + tooltip->get_tooltip_arrow_height()) - 5/*, verified_purchase_icon->get_y() + verified_purchase_icon->get_height()*/);//above icon//under icon
+	            tooltip->show();
+	        }
+	        // if mouse is over verified_purchase icon, show tooltip
+	        if(Mouse::is_over(heart_icon->get_rect()) && heart_icon->is_visible() && boxes->is_active()) {
+	            std::string message = "You've favorited this item";
+	            tooltip->get_label(0)->set_string(message);
+	            tooltip->get_label(0)->set_alignment("center");
+	            tooltip->set_size(tooltip->get_label(0)->get_width() + 20, 50);
+	            tooltip->set_position(heart_icon->get_x() + (heart_icon->get_width() - tooltip->get_width()) / 2, heart_icon->get_y() - (tooltip->get_height() + tooltip->get_tooltip_arrow_height()) - 5);	            
+	            tooltip->show();
+	        }
 	        // on box press, show current page
 	        if(boxes->is_pressed()) {
 	            // populate page with box item details before we show it
@@ -169,6 +218,10 @@ void neroshop::Catalog::draw() {
 	    }
 	}    
     /////////////////////////////////
+    // set filter box size and position
+    sort_box->set_size(sort_box->get_width(), view->get_full_height());
+    sort_box->set_position(50, view->get_y());
+    /////////////////////////////////
     int window_width = static_cast<dokun::Window *>(Factory::get_window_factory()->get_object(0))->get_client_width();
     int window_height = static_cast<dokun::Window *>(Factory::get_window_factory()->get_object(0))->get_client_height();
     current->set_width(window_width - 40); // edge must line up with cart_button's edge
@@ -177,7 +230,9 @@ void neroshop::Catalog::draw() {
     // if ESCAPE is pressed, hide the product page
     if(dokun::Keyboard::is_pressed(DOKUN_KEY_C/*DOKUN_KEY_ESCAPE*/)) current->hide();
     /////////////////////////////////
-    view->draw();    
+    view->draw();
+    tooltip->draw();
+    sort_box->draw();
     current->draw();
 }
 ////////////////////
@@ -369,24 +424,36 @@ void neroshop::Catalog::update_page(int item_id) {
 }
 ////////////////////
 ////////////////////
-void neroshop::Catalog::add_contents(int box_index) {
-    // first, we must retrieve item information from the database
-    /////std::string product_name;
-    ////fetch_name(product_name); // maybe set a limit on number of names we can fetch and maybe fetch only the bestselling items
-    // then we will add the item's contents (image, name, price, star ratings, etc.) to the catalog
-    /*for(auto boxes : box_list) {
-        // create content here
-        // ...
-        // then add the contents to the boxes
-        boxes->add_();
-    }*/
-}
 ////////////////////
 // This function will change overtime and will populate the catalog with products such as best sellers, most wished for, etc.
 void neroshop::Catalog::populate() {
+    //fetch_items();
     fetch_inventory();
+    //fetch_best_sellers();
     //-----------------------------------
     neroshop::print("catalog populated");
+}
+////////////////////
+void neroshop::Catalog::fetch_items() {
+    std::string command = "SELECT * FROM item ORDER BY id ASC LIMIT $1;"; // "ORDER BY id ASC" = place in ascending order by id (oldest to latest items). DESC would be from the latest to the oldest items
+    int box_count = view->get_row_count() * view->get_column_count(); // rows x columns
+    std::vector<const char *> param_values = { std::to_string(box_count).c_str() };
+    PGresult * result = PQexecParams(DB::Postgres::get_singleton()->get_handle(), command.c_str(), 1, nullptr, param_values.data(), nullptr, nullptr, 0);
+    if (PQresultStatus(result) != PGRES_TUPLES_OK) {
+        neroshop::print("Catalog::fetch(): No registered items found", 2);        
+        PQclear(result);//DB::Postgres::get_singleton()->finish();//exit(1);
+        return; // exit so we don't double free "result"
+    }
+    int rows = PQntuples(result); // max_rows is limited to number of boxes in the grid//std::cout << "number of rows (items): " << rows << std::endl;
+    for(int i = 0; i < std::min<size_t>(rows, box_count); i++) {
+        Box * box = view->get_box(i);//(r, c);
+        int item_id = std::stoi(PQgetvalue(result, i, 0));
+        std::string item_name = DB::Postgres::get_singleton()->get_text_params("SELECT name FROM item WHERE id = $1", { std::to_string(item_id) });
+        std::cout << "registered item_ids: " << item_id << " (" << item_name << ")" << std::endl;        
+        // draw contents here ...
+    }
+    ////////////////////
+    PQclear(result); // free result when done using it       
 }
 ////////////////////
 void neroshop::Catalog::fetch_inventory() {
@@ -395,7 +462,7 @@ void neroshop::Catalog::fetch_inventory() {
     std::vector<const char *> param_values = { std::to_string(box_count).c_str() };
     PGresult * result = PQexecParams(DB::Postgres::get_singleton()->get_handle(), command.c_str(), 1, nullptr, param_values.data(), nullptr, nullptr, 0);
     if (PQresultStatus(result) != PGRES_TUPLES_OK) {
-        neroshop::print("Catalog::fetch(): No items found", 2);        
+        neroshop::print("Catalog::fetch(): No inventory items found", 2);        
         PQclear(result);//DB::Postgres::get_singleton()->finish();//exit(1);
         return; // exit so we don't double free "result"
     }
@@ -538,6 +605,66 @@ void neroshop::Catalog::fetch_inventory() {
     PQclear(result); // free result
 }
 ////////////////////
+void neroshop::Catalog::fetch_best_sellers() {
+    // if an item has never been ordered at least once, then it will not appear in best-sellers
+    std::string command = "SELECT item_id FROM order_item GROUP BY item_id ORDER BY SUM(item_qty) DESC LIMIT $1;"; // DESC (from highest to lowest sum of item_qty)
+    int box_count = view->get_row_count() * view->get_column_count(); // rows x columns
+    std::vector<const char *> param_values = { std::to_string(box_count).c_str() };
+    PGresult * result = PQexecParams(DB::Postgres::get_singleton()->get_handle(), command.c_str(), 1, nullptr, param_values.data(), nullptr, nullptr, 0);
+    if (PQresultStatus(result) != PGRES_TUPLES_OK) {
+        neroshop::print("Catalog::fetch(): No items found", 2);        
+        PQclear(result);//DB::Postgres::get_singleton()->finish();//exit(1);
+        return; // exit so we don't double free "result"
+    }
+    int rows = PQntuples(result); // max_rows is limited to number of boxes in the grid//std::cout << "number of rows (items): " << rows << std::endl;
+    for(int i = 0; i < std::min<size_t>(rows, box_count); i++) {
+        Box * box = view->get_box(i);//(r, c);
+        int item_id = std::stoi(PQgetvalue(result, i, 0));
+        std::string item_name = DB::Postgres::get_singleton()->get_text_params("SELECT name FROM item WHERE id = $1", { std::to_string(item_id) });
+        std::cout << "best-selling item_ids: " << item_id << " (" << item_name << ")" << std::endl;
+        // draw contents here ...
+        // best_seller ticker
+        /*Box * best_seller_ticker = new Box();
+        best_seller_ticker->set_size(120, 24);
+        best_seller_ticker->set_color(255, 82, 82, 1.0);//https://www.color-hex.com/color-palette/2539
+        best_seller_ticker->set_radius(10);////dokun::Font * font = new dokun::Font(); font->set_pixel_size(0, 14); font->load(DOKUN_DEFAULT_FONT_PATH);////best_seller_ticker->set_size(110 - 20, 17 + 3);//std::cout << "text size(based on font calc): " << Vector2(font->get_width("best seller"), font->get_height("best seller")) << std::endl;
+        dokun::Label * best_seller_label = new dokun::Label("best seller");//new dokun::Label(*font, "best seller");
+        best_seller_label->set_alignment("center");//best_seller_label->set_relative_position((best_seller_ticker->get_width() - font->get_width("best seller")) / 2, (best_seller_ticker->get_height() - font->get_height("best seller")) / 2);
+        best_seller_ticker->set_label(*best_seller_label);//or add_gui//best_seller_ticker->set_size(best_seller_label->get_width() + 20, 24);
+        //best_seller_ticker->set_visible(true);
+        best_seller_ticker->set_relative_position(40, 10); // center the x or nah?
+        box->add_gui(*best_seller_ticker);*/        
+    }
+    ////////////////////
+    PQclear(result); // free result when done using it
+}
+////////////////////
+// I don't know how to get the mode of unnest(item_ids) in table favorites :/
+void neroshop::Catalog::fetch_most_favorited() {
+    // if an item has never been favorited at least once, then it will not appear in most favorited
+    std::string command = "";//"SELECT unnest(item_ids) FROM favorites;";
+    /*SELECT count(*), UNNEST(item_ids) as item_id
+    FROM favorites GROUP BY item_id;*/
+    int box_count = view->get_row_count() * view->get_column_count(); // rows x columns
+    std::vector<const char *> param_values = { std::to_string(box_count).c_str() };
+    PGresult * result = PQexecParams(DB::Postgres::get_singleton()->get_handle(), command.c_str(), 1, nullptr, param_values.data(), nullptr, nullptr, 0);
+    if (PQresultStatus(result) != PGRES_TUPLES_OK) {
+        neroshop::print("Catalog::fetch(): No items found", 2);        
+        PQclear(result);//DB::Postgres::get_singleton()->finish();//exit(1);
+        return; // exit so we don't double free "result"
+    }
+    int rows = PQntuples(result); // max_rows is limited to number of boxes in the grid//std::cout << "number of rows (items): " << rows << std::endl;
+    for(int i = 0; i < std::min<size_t>(rows, box_count); i++) {
+        Box * box = view->get_box(i);//(r, c);
+        int item_id = std::stoi(PQgetvalue(result, i, 0));
+        std::string item_name = DB::Postgres::get_singleton()->get_text_params("SELECT name FROM item WHERE id = $1", { std::to_string(item_id) });
+        std::cout << "most favorited item_ids: " << item_id << " (" << item_name << ")" << std::endl;
+        // draw contents here ...
+    }
+    ////////////////////
+    PQclear(result); // free result when done using it
+}
+////////////////////
 // refresh content without allocating new objects
 void neroshop::Catalog::refresh() {
     std::vector<std::vector<std::shared_ptr<Box>>> box_list = view->get_box_list_2d();
@@ -613,8 +740,20 @@ Box * neroshop::Catalog::get_box(int index) const {
     return box_list_1d[index];
 }
 ////////////////////
-Box * neroshop::Catalog::get_current() const {
+Grid * neroshop::Catalog::get_view() const {
+    return get_grid();
+}
+////////////////////
+Box * neroshop::Catalog::get_page() const {
     return current.get();
+}
+////////////////////
+Box * neroshop::Catalog::get_tooltip() const {
+    return tooltip.get();
+}
+////////////////////
+Box * neroshop::Catalog::get_sort_box() const {
+    return sort_box.get();
 }
 ////////////////////
 int neroshop::Catalog::get_x() const {

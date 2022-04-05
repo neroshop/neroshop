@@ -47,7 +47,9 @@ neroshop::Message * neroshop::Message::second(nullptr);
 void neroshop::Message::initialize() 
 {
     if(box) return; // box must be uninitialized before it can be initialized
+#ifdef NEROSHOP_DEBUG0    
     std::cout << "message_box initialized\n";
+#endif
     // create a message_box - box size set in Message::restore()
     box = std::unique_ptr<Box>(new Box());//std::make_shared<Box>();
     //box->set_outline(true);
@@ -136,8 +138,8 @@ void neroshop::Message::add_label(int relative_x, int relative_y) {
     label->set_font(*new dokun::Font(DOKUN_DEFAULT_FONT_PATH));
     //////////////////////////////
     // get previous label in label_list
-    int previous_label_index = label_list.size() - 1;
-    std::cout << "last label index: " << previous_label_index << std::endl;    
+    //int previous_label_index = label_list.size() - 1;
+    //std::cout << "last label index: " << previous_label_index << std::endl;    
     //////////////////////////////
     // set label relative position
     label->set_relative_position(relative_x, relative_y);

@@ -95,7 +95,11 @@ class Box : public GUI { // A box ui - ui element that can act as a container fo
         void set_text_list(const std::string& text, int index);                        static int set_text_list(lua_State * L);
 		void set_label(const dokun::Label& label, int index = 0);                                            static int set_label(lua_State * L);
         // tooltip
-        void set_as_tooltip(bool tooltip);                                             static int set_as_tooltip(lua_State *L);
+        void set_tooltip(bool tooltip);                                             static int set_as_tooltip(lua_State *L);
+		void set_tooltip_arrow_direction(const std::string& tooltip_arrow_direction);
+		void set_tooltip_arrow_visible(bool visible);
+		// tooltip - getters
+		int get_tooltip_arrow_height() const;
 		// getters
 		Vector4 get_color() const;                                                     static int get_color(lua_State * L);
 		GUI * get_gui(unsigned int index)const;
