@@ -34,21 +34,20 @@
 
 namespace neroshop {
 // this wallet class is only meant for creating and loading wallets, generating subaddresses, and listening to transactions. sending transactions? not so much - more focused on receiving
-class Wallet {
+class Wallet : public monero_wallet_listener {
 public:
-    // constructors and destructors
     Wallet();
     Wallet(const std::string& file); // include .keys
     ~Wallet();
-    // normal
+    // wallet-related functions
     void connect(); // connect to a hw
-    void create(std::string password = ""/*, const std::string &confirm_pw*/, monero_network_type network_type = monero_network_type::STAGENET); // creates a new wallet
-    void create_from_mnemonic(const std::string& mnemonic, std::string password = ""/*, const std::string &confirm_pw*/, monero_network_type network_type = monero_network_type::STAGENET); // create wallet from mnemonic phrase
-    void create_from_keys(const std::string& address, const std::string& view_key, const std::string& spend_key, std::string password = ""/*, const std::string &confirm_pw*/, monero_network_type network_type = monero_network_type::STAGENET); // create wallet from address, view_key, and spend_key
-    std::string upload(bool open = true, std::string password = "", monero_network_type network_type = monero_network_type::STAGENET); // change to mainnet later
-    void open(const std::string& path, std::string password = "", monero_network_type network_type = monero_network_type::STAGENET);
-    void restore(const std::string& mnemonic, std::string password = "", monero_network_type network_type = monero_network_type::STAGENET); // restore from mnemonic //void restore(const std::string& keyfile); // restore from keyfile
-    void restore(const std::string& address, const std::string& view_key, const std::string& spend_key, std::string password = "", monero_network_type network_type = monero_network_type::STAGENET); // restore from keys (address, view_key, spend_key)
+    void create(std::string password = ""/*, const std::string& confirm_pw*/); // creates a new wallet
+    void create_from_mnemonic(const std::string& mnemonic, std::string password = ""/*, const std::string &confirm_pw*/); // create wallet from mnemonic phrase
+    void create_from_keys(const std::string& address, const std::string& view_key, const std::string& spend_key, std::string password = ""/*, const std::string &confirm_pw*/); // create wallet from address, view_key, and spend_key
+    std::string upload(bool open = true, std::string password = ""); // change to mainnet later
+    void open(const std::string& path, std::string password = "");
+    void restore(const std::string& mnemonic, std::string password = ""); // restore from mnemonic //void restore(const std::string& keyfile); // restore from keyfile
+    void restore(const std::string& address, const std::string& view_key, const std::string& spend_key, std::string password = ""); // restore from keys (address, view_key, spend_key)
     void close(bool save=false);
     void transfer(const std::string& address, double amount); // "transfer" will be used for sending refunds
     void sweep_all(const std::string& address); // sends entire balance, including dust to an address // "sweep_all <address>"
@@ -58,6 +57,15 @@ public:
     std::vector<std::string> address_all(); // show all addresses
     std::vector<std::string> address_used(); // show all used addresses
     std::vector<std::string> address_unused(); // show all unused addresses
+    // override monero_wallet_listener functions (when inheriting from the class)
+    // now I can finally remove the darn singleton :D
+    // https://moneroecosystem.org/monero-cpp/classmonero_1_1monero__wallet__listener.html
+    void on_sync_progress(uint64_t height, uint64_t start_height, uint64_t end_height, double percent_done, const std::string& message);
+    ////void on_new_block (uint64_t height);
+    void on_balances_changed(uint64_t new_balance, uint64_t new_unlocked_balance);
+    void on_output_received(const monero_output_wallet& output);
+    ////void on_output_spent (const monero_output_wallet &output);
+    // daemon or node-related functions
     void daemon_open(const std::string& ip, const std::string& port, bool confirm_external_bind = false, bool restricted_rpc = true, bool remote = false, std::string data_dir = std::string("/home/") + System::get_user() + std::string("/.bitmonero")/*""*/, std::string network_type = "stagenet", unsigned int restore_height = 0);
     bool daemon_connect(const std::string& ip, const std::string& port);
     void daemon_close();
@@ -92,22 +100,18 @@ public:
     std::string get_mnemonic(const std::string& password) const; // "seed"
     //-Image * get_qr_code() const; // returns address qrcode // "show_qr_code"
     //-Image * get_qr_code(unsigned int address_index) const; // returns the qrcode of the address at "index"
-    std::string get_file() const; // "wallet_info"
+    std::string get_path() const; // "wallet_info"
     std::string get_description() const; // "wallet_info"    
     std::string get_type() const; // "wallet_info": Normal, HW
-    std::string get_network_type() const; // "wallet_info":  Mainnet, Testnet, Stagenet
+    monero::monero_network_type get_network_type() const; // "wallet_info":  Mainnet, Testnet, Stagenet
+    std::string get_network_type_str() const; // "wallet_info":  Mainnet, Testnet, Stagenet
     std::string get_status() const; // "status" - Check current status of wallet.
     std::string get_version() const; // "version" - Check software version.
-    // singleton obj
-    static Wallet * get_singleton();
     // get wallet handles (monero, wownero, etc.)
     monero_wallet_full * get_monero_wallet() const;
     std::vector<std::string> recent_address_list; // recently used addresses
     // friends
     friend class Seller; // seller can access wallet private members
-    // dokun-ui
-    static std::unique_ptr<Progressbar> sync_bar;
-    static std::unique_ptr<dokun::Label> sync_label;
 private:
     void set_daemon(); // "set_daemon <host>[:<port>] [trusted|untrusted|this-is-probably-a-spy-node]" - connects to a daemon
     void refresh(); // "refresh" - Synchronize wallet with the Monero network.
@@ -115,12 +119,12 @@ private:
     // callbacks
     void load_from_config(std::string/*const std::string&*/ password = "supersecretpassword123");
 private:
-    static neroshop::Wallet * wallet_obj;//std::shared_ptr<neroshop::Wallet> wallet_obj; // singleton obj
-    std::unique_ptr<monero_wallet_full> monero_wallet_obj; // monero wallet
-    //monero_wallet_listener * wallet_listener; // listens to wallet for incoming txs // void monero::monero_wallet_full::add_listener	(	monero_wallet_listener & 	listener	)
-    monero_network_type network_type; // default will be Mainnet when this app launches
-    std::string file; // wallet file    
-    std::unique_ptr<Process> process; // monerod process // or should this be static instead?
+    // monero-related
+    std::unique_ptr<monero::monero_wallet_full> monero_wallet_obj; // monero wallet
+    monero::monero_network_type network_type; // default will be mainnet when this application is released
+    // process-related (dokun-ui)
+    std::unique_ptr<Process> process; // monerod process // every wallet will have its own process
+    std::unique_ptr<Progressbar> sync_bar;
 };
 }
 #endif // WALLET_HPP

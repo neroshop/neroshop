@@ -1222,6 +1222,7 @@ void Box::set_tooltip_arrow_direction(const std::string& tooltip_arrow_direction
 }
 /////////////
 void Box::set_tooltip_arrow_visible(bool visible) {
+    if(visible) this->type = "tooltip";
     if(!visible) this->type = "box";
 }
 /////////////

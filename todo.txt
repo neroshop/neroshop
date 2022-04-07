@@ -4,7 +4,7 @@
 - use delegating constructor for every class                     []
 - use shared_ptr for vectors of objects and use unique_ptr for single class private member objects []
 - give orders a unique uuid with "ns" prepended to it            []
-- fix bug where server only reads once and then does not read ever again []
+- fix bug where server only reads once and then does not ever read again []
 - create a sorting box on the left side of the application and create PREVIOUS/NEXT or SHOW_MORE buttons for the catalog view []
 - improve currency conversion and use multiple sources to retrieve currency rates []
 - complete application back-end (functionality)                  []
@@ -25,15 +25,23 @@
 - add auction system
 - remove login as guest option (for now, since I don't know how guest data will be stored in main database)
 - make neroshop p2p (peer-to-peer)
-- keep number of source files in "neroshop/src" at no more than 20 sources files [x]
+- validate addresses before sending it out to buyer
+- add e2e encrypted chat/messaging and forum
+- best-seller/best vendor sections
+- dispute and report system
+- wipe orders (and their order_items) within a certain time frame (30 days)
+- multisignature wallet support
+- encrypt sensative data before storing it in database
+
 
 [LOW PRIORITY]
-- create neroshop domain name (.org preffered)
-- create neroshop onion address
-- neroshop matrix server [-]
-- tor integration
-- use const for function parameters, in case I end up working on neroshop with other people (https://stackoverflow.com/a/117557)
-- create avatar table for user avatars []
+- keep number of source files in "neroshop/src" at no more than 20               [x]
+- keep number of external dependencies in "neroshop/external" at no more than 10 [x]
+- create neroshop domain name (.org preffered)                                   []
+- create neroshop onion address                                                  []
+- neroshop matrix server                                                         [-]
+- tor integration                                                                []
+- create avatar table for user avatars                                           []
 
 [UI]
 - prevent mouse press from affecting overlapped GUIs     []
@@ -93,6 +101,7 @@ hashing (pw)   : [bcrypt], scrypt, argon2, PBKDF2
 hashing (email): [SHA256], MD5, SHA1
 encryption     : [openssl], crypto++ (cryptopp), libsodium
 decentralized file hosting: siacoin, filecoin, ipfs (free), bittorent
+plain text encryption (E2EE using asymmetric encryption which uses 2 keys from both sender and receiver rather than symmetric which shares only 1 key): signal protocol (AKA TextSecure Protocol), Off-the-Record Messaging (OTR),  
 
 I realize that I need an online database that is scalable like MySQL or PostgreSQL 
 and I cannot use SQLite since its only for offline use :(

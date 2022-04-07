@@ -114,9 +114,9 @@ EOF
 ```
 
 ### NOTE:
-I am an awful programmer and still consider myself a noob at this since I don't know what I'm doing half of the time, so if there's anyone out there who can help me bring
-my project to life, I'd highly appreciate it :3 ! 
-I am also willing to compensate any contributors with Monero when I become financially stable >.< .
+I am an awful programmer and still consider myself a noob at this since I don't know what I'm doing half of the time, so if there's anyone out there who has experience using C++ and can help me bring
+my project to life, I'd highly appreciate it (・ω・) or If you have any tips and advice that can help me become a better programmer, that would be great too (^-^)!
+I am poor but willing to compensate any contributors with Monero when I become financially stable (>.<).
 
 [//]: # (git add build.sh CMakeLists.txt external/ include/ readme.md res/neroshop-logo.png res/wallets src/ todo.txt res/ss res/tmp_images)
 [//]: # (git commit -m"empty commit")

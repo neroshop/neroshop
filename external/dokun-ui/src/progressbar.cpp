@@ -38,12 +38,9 @@ Progressbar::Progressbar(int x, int y, int width, int height) : Progressbar()
 /////////////
 Progressbar::~Progressbar()
 {
-    // we no longer need to delete label now that we are using smart_ptrs
-    // delete label
-    /*if(label) {
-        delete label;
-        label = nullptr;
-    }*/
+    if(label.get()) {
+        label.reset();//if(!label.get()) std::cout << "progress_bar label deleted\n";
+    }
     std::cout << "progress_bar deleted\n";
 }
 /////////////

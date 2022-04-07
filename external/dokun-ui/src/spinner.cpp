@@ -47,12 +47,10 @@ int spinner_new(lua_State *L)
 /////////////
 Spinner::~Spinner()
 {
-    // we no longer need to delete label now that we are using smart_ptrs
-    // delete label
-    /*if(label) {
-        delete label;
-        label = nullptr;
-    }*/
+    if(label.get()) {
+        label.reset();//if(!label.get()) std::cout << "spinner label deleted\n";
+    }   
+    std::cout << "spinner deleted\n";
 }
 /////////////		
 void Spinner::draw()

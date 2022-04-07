@@ -59,6 +59,11 @@ bool dokun::Engine::on_open()
     //std::locale::global(std::locale(""));
     // start session
     ////Logger::open();
+    /////////////////////////////////////////
+    // must be called when using threads on Linux before it calls XOpenDisplay (for thread-safety and so the app does not crash)
+#ifdef __gnu_linux__
+	if(!XInitThreads()) std::cout << DOKUN_UI_TAG "XInitThreads: multi-threads not supported" << std::endl;
+#endif    
 	/////////////////////////////////////////
 #ifdef DOKUN_GLFW	   
     // Setup glfw (initialize glfw)

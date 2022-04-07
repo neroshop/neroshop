@@ -3,76 +3,75 @@
 ////////////////////
 // constructors and destructors
 ////////////////////
-neroshop::Wallet::Wallet() : monero_wallet_obj(nullptr)
+neroshop::Wallet::Wallet() : process(nullptr), sync_bar(nullptr), monero_wallet_obj(nullptr), network_type(monero_network_type::STAGENET)
 {}
 ////////////////////
-neroshop::Wallet::Wallet(const std::string& file) {
-    if(File::exists(file)) { // if file exists
+neroshop::Wallet::Wallet(const std::string& file) { // must include .keys extension
+    // if wallet.keys file is found, open it
+    if(monero::monero_wallet_full::wallet_exists(file)) { // if file exists
         open(file.substr(0, file.find(".")));
-        this->file = file;
         return; // exit function
     }
-    if(!File::exists(file)) { // in case the file does not exist
+    // if wallet.keys is not found then create it
+    if(!monero::monero_wallet_full::wallet_exists(file)) { // in case the file does not exist
         create(file.substr(0, file.find("."))); // create the wallet file
-        this->file = file;
         return; // exit function
     }
 }
 ////////////////////
 neroshop::Wallet::~Wallet() 
 {
-    //monero_wallet_obj->remove_listener (sync_listener); // sync listener
-    //monero_wallet_obj->remove_listener (listener); // tx_output listener  
     if(monero_wallet_obj.get()) {
+        // remove listener
+        //monero_wallet_obj->remove_listener (listener); // tx_output listener
         // close monero wallet
         close(false);
         // reset (delete) monero wallet
         monero_wallet_obj.reset(); // will call monero_wallet_full destructor
         if(!monero_wallet_obj.get()) std::cout << "monero wallet deleted\n"; // just to confirm that the monero wallet has been set to nullptr after deletion
     }
+    // destroy process
+    if(process.get()) {
+        process.reset(); // this will call the process destructor which should auto kill the process
+        if(!process.get()) std::cout << "wallet process deleted\n";
+    }
+    // destroy sync_bar
+    if(sync_bar.get()) {
+        sync_bar.reset(); // will also delete the label along with the label's font//if(!sync_bar.get()) std::cout << "wallet sync progress_bar deleted\n";
+    }
 #ifdef NEROSHOP_DEBUG    
     std::cout << "wallet deleted\n";
 #endif    
 }
 ////////////////////
-neroshop::Wallet * neroshop::Wallet::wallet_obj(nullptr);//(new neroshop::Wallet());//std::shared_ptr<neroshop::Wallet> neroshop::Wallet::wallet_obj(std::make_shared<neroshop::Wallet>());
-////////////////////
-neroshop::Wallet * neroshop::Wallet::get_singleton() {
-    if(!wallet_obj) wallet_obj = new Wallet();
-    return wallet_obj;//.get();
-}
 ////////////////////
 ////////////////////
 // normal
 ////////////////////
-void neroshop::Wallet::connect() {
-    // connect a hardware wallet
+void neroshop::Wallet::connect() { // connect a hardware wallet
 }
 ////////////////////
-void neroshop::Wallet::create(std::string password/*, const std::string &confirm_pw*/, monero_network_type network_type) {
-    std::string path = (!file.empty()) ? file.substr(0, file.find(".")) : "wallet";// will create a wallet.keys file in the current path
-    //monero_wallet_obj = monero_wallet_full::create_wallet_random (path, password, network_type/*, const monero_rpc_connection &daemon_connection=monero_rpc_connection(), const std::string &language="English", std::unique_ptr< epee::net_utils::http::http_client_factory > http_client_factory=nullptr*/);
+void neroshop::Wallet::create(std::string password/*, const std::string& confirm_pw*/) {
+    std::string path = "wallet"; // will create a wallet.keys file in the current path
     monero_wallet_obj = std::unique_ptr<monero_wallet_full>(monero_wallet_full::create_wallet_random (path, password, network_type/*, const monero_rpc_connection &daemon_connection=monero_rpc_connection(), const std::string &language="English", std::unique_ptr< epee::net_utils::http::http_client_factory > http_client_factory=nullptr*/));
     if(monero_wallet_obj.get()) std::cout << "\033[1;35;49m" << "created wallet \"" << path << ".keys\"" << "\033[0m" << std::endl;
 }
 ////////////////////
-void neroshop::Wallet::create_from_mnemonic(const std::string& mnemonic, std::string password/*, const std::string &confirm_pw*/, monero_network_type network_type) {
+void neroshop::Wallet::create_from_mnemonic(const std::string& mnemonic, std::string password/*, const std::string &confirm_pw*/) {
     // retrieve keys from text edit
-    std::string path = (!file.empty()) ? file.substr(0, file.find(".")) : "wallet";// will create a wallet.keys file in the current path
-    //monero_wallet_obj = monero_wallet_full::create_wallet_from_mnemonic (path, password, monero_network_type::MAINNET, mnemonic/*, const monero_rpc_connection &daemon_connection=monero_rpc_connection(), uint64_t restore_height=0, const std::string &seed_offset="", std::unique_ptr< epee::net_utils::http::http_client_factory > http_client_factory=nullptr*/);
-    monero_wallet_obj = std::unique_ptr<monero_wallet_full>(monero_wallet_full::create_wallet_from_mnemonic (path, password, monero_network_type::MAINNET, mnemonic/*, const monero_rpc_connection &daemon_connection=monero_rpc_connection(), uint64_t restore_height=0, const std::string &seed_offset="", std::unique_ptr< epee::net_utils::http::http_client_factory > http_client_factory=nullptr*/));
+    std::string path = "wallet"; // will create a wallet.keys file in the current path
+    monero_wallet_obj = std::unique_ptr<monero_wallet_full>(monero_wallet_full::create_wallet_from_mnemonic (path, password, network_type, mnemonic/*, const monero_rpc_connection &daemon_connection=monero_rpc_connection(), uint64_t restore_height=0, const std::string &seed_offset="", std::unique_ptr< epee::net_utils::http::http_client_factory > http_client_factory=nullptr*/));
     if(monero_wallet_obj.get()) std::cout << "\033[1;35;49m" << "created wallet \"" << path << ".keys\" (from mnemonic)" << "\033[0m" << std::endl;
 }
 ////////////////////
-void neroshop::Wallet::create_from_keys(const std::string& address, const std::string& view_key, const std::string& spend_key, std::string password/*, const std::string &confirm_pw*/, monero_network_type network_type) {
+void neroshop::Wallet::create_from_keys(const std::string& address, const std::string& view_key, const std::string& spend_key, std::string password/*, const std::string &confirm_pw*/) {
     // retrieve keys from text edit
-    std::string path = (!file.empty()) ? file.substr(0, file.find(".")) : "wallet";// will create a wallet.keys file in the current path
-    //monero_wallet_obj = monero_wallet_full::create_wallet_from_keys (path, password, network_type, address, view_key, spend_key/*, const monero_rpc_connection &daemon_connection=monero_rpc_connection(), uint64_t restore_height=0, const std::string &language="English", std::unique_ptr< epee::net_utils::http::http_client_factory > http_client_factory=nullptr*/);
+    std::string path = "wallet"; // will create a wallet.keys file in the current path
     monero_wallet_obj = std::unique_ptr<monero_wallet_full>(monero_wallet_full::create_wallet_from_keys (path, password, network_type, address, view_key, spend_key/*, const monero_rpc_connection &daemon_connection=monero_rpc_connection(), uint64_t restore_height=0, const std::string &language="English", std::unique_ptr< epee::net_utils::http::http_client_factory > http_client_factory=nullptr*/));
     if(monero_wallet_obj.get()) std::cout << "\033[1;35;49m" << "created wallet \"" << path << ".keys\" (from keys)" << "\033[0m" << std::endl;
 }
 ////////////////////
-std::string neroshop::Wallet::upload(bool open, std::string password, monero_network_type network_type) { // opens the wallet file
+std::string neroshop::Wallet::upload(bool open, std::string password) { // opens the wallet file
     // open file dialog to retrieve walletfile path
     // reminder: use this function for an upload button instead
     //           then call neroshop::Wallet::open when user presses a "submit" button.
@@ -85,20 +84,19 @@ std::string neroshop::Wallet::upload(bool open, std::string password, monero_net
     std::string filename(file); // "wallet.keys" file
     filename = filename.substr(0, filename.find(".")); // remove ".keys" extension
     if(!monero::monero_wallet_full::wallet_exists(filename + ".keys")) { neroshop::print("wallet not found", 1); return ""; } // check if wallet file is valid (or exists)
-    if(open == true) neroshop::Wallet::open(filename, password, network_type);// will re-apply ".keys" ext to the wallet file
+    if(open == true) neroshop::Wallet::open(filename, password);// will re-apply ".keys" ext to the wallet file
     return std::string(filename + ".keys");
 }
 ////////////////////
-void neroshop::Wallet::open(const std::string& path, std::string password, monero_network_type network_type) { // opens the wallet file's name without the ".key" extension
-    //monero_wallet_obj = monero::monero_wallet_full::open_wallet(path, password, network_type); // will re-apply ".keys" ext to the wallet file
+void neroshop::Wallet::open(const std::string& path, std::string password) { // opens the wallet file's name without the ".key" extension
     monero_wallet_obj = std::unique_ptr<monero_wallet_full>(monero::monero_wallet_full::open_wallet(path, password, network_type)); // will re-apply ".keys" ext to the wallet file
     if(monero_wallet_obj.get()) std::cout << "\033[1;35;49m" << "opened wallet \"" << path << ".keys\"" << "\033[0m" << std::endl;
 }
 ////////////////////
-void neroshop::Wallet::restore(const std::string& mnemonic, std::string password, monero_network_type network_type) 
+void neroshop::Wallet::restore(const std::string& mnemonic, std::string password) 
 {}
 ////////////////////
-void neroshop::Wallet::restore(const std::string& address, const std::string& view_key, const std::string& spend_key, std::string password, monero_network_type network_type)
+void neroshop::Wallet::restore(const std::string& address, const std::string& view_key, const std::string& spend_key, std::string password)
 {}
 ////////////////////
 void neroshop::Wallet::close(bool save) 
@@ -111,14 +109,14 @@ void neroshop::Wallet::transfer(const std::string& address, double amount) {
     if(!monero_wallet_obj.get()) throw std::runtime_error("monero_wallet_full is not opened");
     //Configures a transaction to send, sweep, or create a payment URI.
     // send funds from the restored wallet to the random wallet
-    monero_tx_config config;
+    /*monero_tx_config config;
     config.m_account_index = 0; // withdraw funds from account at index 0
     config.m_address = address; // wallet_random // boost::optional< std::string > 	m_address
     config.m_amount = amount; // boost::optional< uint64_t > 	m_amount
     config.m_relay = true;
     std::shared_ptr<monero_tx_wallet> sent_tx = monero_wallet_obj->create_tx(config);
     bool in_pool = sent_tx->m_in_tx_pool.get();  // true
-    
+    */
     //uint64_t fee = sent_tx->m_fee.get(); // "Are you sure you want to send ...?"
     //monero_wallet_obj->relay_tx(*sent_tx); // recipient receives notification within 5 seconds    
     // prove that you've sent the payment using "get_tx_proof"
@@ -211,6 +209,150 @@ std::vector<std::string> neroshop::Wallet::address_unused()
     return address_list;
 }
 ////////////////////
+////////////////////
+////////////////////
+// override
+////////////////////
+// I get the error: "../../src/xcb_io.c:641: _XReply: Assertion `!xcb_xlib_threads_sequence_lost' failed." when using this function
+// or maybe its just some random threading error
+void neroshop::Wallet::on_sync_progress(uint64_t height, uint64_t start_height, uint64_t end_height, double percent_done, const std::string& message) {
+	    // if monero_wallet is already synced, skip this function (this function keeps spamming throughout the entire app session -.-)
+	    if(monero_wallet_obj.get()->is_synced()) return;
+	    /*auto now = std::chrono::system_clock::now();
+        auto in_time_t = std::chrono::system_clock::to_time_t(now); // current time
+	    std::stringstream ss;
+	    ss << std::put_time(std::localtime(&in_time_t), "[%Y-%m-%d  %l:%M:%S %p]");
+	    std::string date = ss.str();
+        std::cout << "\033[0;35;49m" << date << " \033[1;33;49m" << "**********************************************************************" << "\033[0m" << std::endl;
+        std::cout << "\033[0;35;49m" << date << " \033[1;33;49m" << "Synced " << height << "/" << end_height;//<< "\033[0m" << std::endl;
+        unsigned int blocks_to_sync = end_height - height;
+        std::cout << "\033[1;33;49m" << " [Your node is " << blocks_to_sync << " block(s) behind]" << "\033[0m" << std::endl;//" blocks (" << blocks_to_sync / 60? << " minutes) behind]" << "\033[0m" << std::endl; // 1 block = 1 minute
+        std::cout << "\033[0;35;49m" << date << " \033[1;33;49m" << message << ": " << (percent_done * 100) << "%" << "\033[0m" << std::endl;
+        if((percent_done * 100) == 100) std::cout << "\033[0;35;49m" << date << " \033[1;32;49m" << "SYNCHRONIZATION DONE" << std::endl;
+        std::cout << "\033[0;35;49m" << date << std::endl;
+        std::cout << "\033[0;35;49m" << date << " \033[1;33;49m" << "**********************************************************************" << "\033[0m" << std::endl;*/
+        ///////////////////////////////////
+        if(!sync_bar.get()) {
+            sync_bar = std::unique_ptr<Progressbar>(new Progressbar());//sync_bar->set_range(0.0, 100.0); // 0-100%//sync_bar->set_outline(true);
+            sync_bar->set_size(300, 30);
+            dokun::Label * sync_label = new dokun::Label();//std::unique_ptr<dokun::Label>(new dokun::Label());
+            dokun::Font * sync_font = new dokun::Font(DOKUN_DEFAULT_FONT_PATH);//std::unique_ptr<dokun::Font> sync_font = std::unique_ptr<dokun::Font>(new dokun::Font(DOKUN_DEFAULT_FONT_PATH));
+            sync_label->set_font(*sync_font);//(sync_font.get());
+            sync_label->set_alignment("center");
+            sync_bar->set_label(*sync_label);
+        }
+        dokun::Window * window = static_cast<dokun::Window *>(Factory::get_window_factory()->get_object(0)); // using dokun::Window::get_active() causes a seg fault when window loses focus while syncing - since it only gets the window that has focus :(
+        window->poll_events(); // check for events
+        window->set_viewport(Renderer::get_display_size().x, Renderer::get_display_size().y);//(1280, 720);
+        window->clear(32, 32, 32);
+        double progress = percent_done * 100; //sync_bar->set_range(0, 100);
+        //////////
+        if(progress < 100) { // while progress is not 100%, send a fake event to keep the progressbar going
+        #ifdef DOKUN_X11 // if using X Window System on Linux
+            dokun::Keyboard::fake_event(window->get_display(), window->get_handle());
+        #endif
+        }
+        //////////
+        sync_bar->get_label()->set_string(String::to_string_with_precision(progress, 2) + "%");
+        sync_bar->set_value(progress);
+        //////////
+        if(progress >= 100 && !neroshop::Message::get_second()->is_visible()) { // only show this msg once
+            // box text (label)        
+            neroshop::Message::get_second()->set_text("SYNCHRONIZATION DONE", 107,142,35);
+            neroshop::Message::get_second()->get_label(0)->set_alignment("none");
+            neroshop::Message::get_second()->get_label(0)->set_relative_position((neroshop::Message::get_second()->get_width() / 2) - (neroshop::Message::get_second()->get_label(0)->get_width() / 2), ((neroshop::Message::get_second()->get_height() - neroshop::Message::get_second()->get_label(0)->get_height()) / 2) - 20);            
+            // close button
+            neroshop::Message::get_second()->get_button(0)->set_text("Close");
+            neroshop::Message::get_second()->get_button(0)->set_color(214, 31, 31, 1.0);                    
+            neroshop::Message::get_second()->get_button(0)->set_relative_position((neroshop::Message::get_second()->get_width() / 2) - (neroshop::Message::get_second()->get_button(0)->get_width() / 2), neroshop::Message::get_second()->get_height() - neroshop::Message::get_second()->get_button(0)->get_height() - 20);            
+            // show message box and button
+            neroshop::Message::get_second()->get_button(0)->show();
+            neroshop::Message::get_second()->show();
+            // when sync is complete, we return to the main thread with no time to draw the msgbox, so its best to draw msgbox in main thread at all times
+        }
+        // on close button pressed
+        if(neroshop::Message::get_second()->get_button(0)->is_pressed()) {
+            neroshop::Message::get_second()->hide();
+        }
+        sync_bar->set_position((window->get_client_width() / 2) - (sync_bar->get_width() / 2), (window->get_client_height() / 2) - (sync_bar->get_height() / 2));// center progressbar
+        sync_bar->draw();        
+        ////////////////
+        window->update();
+}
+////////////////////
+void neroshop::Wallet::on_output_received(const monero_output_wallet& output) {
+        // if wallet is not fully synced with a daemon, skip this function
+        if(!monero_wallet_obj.get()) return;
+        if(!monero_wallet_obj.get()->is_synced()) return;
+        uint64_t amount = output.m_amount.get();
+        std::string tx_hash = output.m_tx->m_hash.get();
+        bool is_confirmed = output.m_tx->m_is_confirmed.get(); // unlocked_balance (can be spent)
+        bool is_locked = std::dynamic_pointer_cast<monero_tx_wallet>(output.m_tx)->m_is_locked.get(); // balance (locked - still processing)
+        int account_index = output.m_account_index.get(); // should always be 0 (default)
+        int subaddress_index = output.m_subaddress_index.get();
+        // get balance (actual)
+        double piconero = 0.000000000001;
+        double balance = (amount * piconero);
+        // get the subaddress
+        std::string subaddress = get_address(subaddress_index);
+        // you've received some xmr but it may be unspendable for the meantime
+        if(is_locked) {
+            std::cout << "\033[1;92;49m" << "TX incoming (amount: " << std::fixed << std::setprecision(12) << balance << std::fixed << std::setprecision(2) << " xmr, txid: " << tx_hash << ", account_idx: " << account_index << ", subaddress_idx: " << subaddress_index << ")" << "\033[0m" << std::endl;
+            // store subaddress in recent_address_list (if not yet added)
+            if(std::find(recent_address_list.begin(), recent_address_list.end(), subaddress) == recent_address_list.end())
+                recent_address_list.push_back(subaddress);//std::cout << "recently used addresses (count): " << recent_address_list.size() << std::endl;
+        }
+        // your xmr can now be spent freely :)
+        // at this point, any recently used subaddress will be removed from vector returned by Wallet::addresses_unused() (this is the final confirmation) - sometimes this message shows twice
+        if(is_confirmed) { 
+            std::cout << "\033[1;32;49m" << "You have received " << std::fixed << std::setprecision(12) << balance << std::fixed << std::setprecision(2) << " xmr " << "(txid: " << tx_hash << ", account_idx: " << account_index << ", subaddress_idx: " << subaddress_index << ")" << "\033[0m" << std::endl;
+            // set message box text then show message box
+            // box text0 (label)
+            neroshop::Message::get_second()->set_text(String::to_string_with_precision(balance, 12) + " xmr was deposited into your account ", 0, 107, 61);//56, 117, 11);//if(get_monero_wallet() != nullptr) //neroshop::Message::get_second()->set_text(std::string("You have received " + String::to_string_with_precision(balance, 12) + " xmr"), 56, 117, 11);//34, 139, 34);//neroshop::Message message(std::string("output received: " + std::to_string(balance) + " xmr"), 34, 139, 34);//(address: " + String::get_first_n_characters(subaddress, 4) + ".." + String::get_last_n_characters(subaddress, 4) + ")"
+            neroshop::Message::get_second()->get_label(0)->set_alignment("none");
+            neroshop::Message::get_second()->get_label(0)->set_relative_position((neroshop::Message::get_second()->get_width() / 2) - (neroshop::Message::get_second()->get_label(0)->get_width() / 2), ((neroshop::Message::get_second()->get_height() - neroshop::Message::get_second()->get_label(0)->get_height()) / 2) - 20);
+            std::cout << neroshop::Message::get_second()->get_label(0)->get_string() << " (width: " << (neroshop::Message::get_second()->get_label(0)->get_string().length() * 10) << ")" << std::endl;
+            // box text1
+            int text_gap = 10;//5; // space between text0 and text1 (vertically)
+            neroshop::Message::get_second()->set_text(String::get_first_n_characters(subaddress, 15) + ".." + String::get_last_n_characters(subaddress, 15) + " (idx: " + std::to_string(subaddress_index) + ")", 1);
+            neroshop::Message::get_second()->get_label(1)->set_alignment("none");//neroshop::Message::get_second()->get_label(0)->get_relative_x()
+            neroshop::Message::get_second()->get_label(1)->set_relative_position(((neroshop::Message::get_second()->get_width() / 2) - (neroshop::Message::get_second()->get_label(1)->get_string().length()*10 / 2)) - (10 * std::to_string(subaddress_index).length()), neroshop::Message::get_second()->get_label(0)->get_relative_y() + neroshop::Message::get_second()->get_label(0)->get_height() + text_gap); // 1          
+            // cancel button
+            neroshop::Message::get_second()->get_button(0)->set_text("Close");
+            neroshop::Message::get_second()->get_button(0)->set_color(214, 31, 31, 1.0);                    
+            neroshop::Message::get_second()->get_button(0)->set_relative_position((neroshop::Message::get_second()->get_width() / 2) - (neroshop::Message::get_second()->get_button(0)->get_width() / 2), neroshop::Message::get_second()->get_height() - neroshop::Message::get_second()->get_button(0)->get_height() - 20);//200-30(height)-20(bottompadding) = 150(button_y)
+            // show message box, labels and buttons
+            neroshop::Message::get_second()->get_label(1)->show();
+            neroshop::Message::get_second()->get_button(0)->show();
+            neroshop::Message::get_second()->show();
+        }
+}
+////////////////////
+void neroshop::Wallet::on_balances_changed(uint64_t new_balance, uint64_t new_unlocked_balance) {
+        // if wallet is not fully synced with a daemon, skip this function
+        if(!monero_wallet_obj.get()) return;
+        if(!monero_wallet_obj.get()->is_synced()) return;
+        double piconero = 0.000000000001;
+        double balance = (new_balance * piconero);
+        double unlocked_balance = (new_unlocked_balance * piconero);
+        // if total balance is still locked, display it
+        // but if total balance is fully unlocked, then you already have the balance so no need to keep displaying it 
+        if(unlocked_balance != balance) {
+            // balance updated (unlocked)
+            std::cout << std::fixed << std::setprecision(12) << "\033[1;33;49m" << "balance: " << "\033[0m" << balance << std::fixed << std::setprecision(2);// << std::endl;
+            std::cout << std::fixed << std::setprecision(12) << " (unlocked_balance: " << unlocked_balance << std::fixed << std::setprecision(2) << ")" << std::endl;
+        }
+        if(unlocked_balance == balance) {
+            std::cout << "\033[1;35;49m" << "Balance is now fully unlocked" << "\033[0m" << std::endl;// Your full balance can be spent now
+            //std::cout << std::fixed << std::setprecision(12) << "balance: " << balance << std::fixed << std::setprecision(2);// << std::endl;
+            //std::cout << std::fixed << std::setprecision(12) << " (unlocked_balance: " << unlocked_balance << std::fixed << std::setprecision(2) << ")" << std::endl;//Japanese violet: 91, 50, 86
+        }
+}
+////////////////////
+////////////////////
+////////////////////
+// daemon
+////////////////////
 // open the daemon before opening the wallet
 void neroshop::Wallet::daemon_open(const std::string& ip, const std::string& port, bool confirm_external_bind, bool restricted_rpc, bool remote, std::string data_dir, std::string network_type, unsigned int restore_height) 
 {
@@ -239,144 +381,6 @@ void neroshop::Wallet::daemon_open(const std::string& ip, const std::string& por
     //}//}
 }
 ////////////////////
-std::unique_ptr<Progressbar> neroshop::Wallet::sync_bar (nullptr);
-////////////////////
-std::unique_ptr<dokun::Label> neroshop::Wallet::sync_label (nullptr);
-////////////////////
-////////////////////
-////////////////////
-// create wallet_listener to synchronize the wallet and receive progress notifications
-struct : monero_wallet_listener { // listener	- listener to receive notifications during synchronization 
-    void on_sync_progress(uint64_t height, uint64_t start_height, uint64_t end_height, double percent_done, const std::string& message) {
-	    /*auto now = std::chrono::system_clock::now();
-        auto in_time_t = std::chrono::system_clock::to_time_t(now); // current time
-	    std::stringstream ss;
-	    ss << std::put_time(std::localtime(&in_time_t), "[%Y-%m-%d  %l:%M:%S %p]");
-	    std::string date = ss.str();
-        std::cout << "\033[0;35;49m" << date << " \033[1;33;49m" << "**********************************************************************" << "\033[0m" << std::endl;
-        std::cout << "\033[0;35;49m" << date << " \033[1;33;49m" << "Synced " << height << "/" << end_height;//<< "\033[0m" << std::endl;
-        unsigned int blocks_to_sync = end_height - height;
-        std::cout << "\033[1;33;49m" << " [Your node is " << blocks_to_sync << " block(s) behind]" << "\033[0m" << std::endl;//" blocks (" << blocks_to_sync / 60? << " minutes) behind]" << "\033[0m" << std::endl; // 1 block = 1 minute
-        std::cout << "\033[0;35;49m" << date << " \033[1;33;49m" << message << ": " << (percent_done * 100) << "%" << "\033[0m" << std::endl;
-        if((percent_done * 100) == 100) std::cout << "\033[0;35;49m" << date << " \033[1;32;49m" << "SYNCHRONIZATION DONE" << std::endl;
-        std::cout << "\033[0;35;49m" << date << std::endl;
-        std::cout << "\033[0;35;49m" << date << " \033[1;33;49m" << "**********************************************************************" << "\033[0m" << std::endl;*/
-        ///////////////////////////////////
-        if(!neroshop::Wallet::sync_bar.get()) {
-            neroshop::Wallet::sync_bar = std::unique_ptr<Progressbar>(new Progressbar());//sync_bar->set_range(0.0, 100.0); // 0-100%//sync_bar->set_outline(true);
-            neroshop::Wallet::sync_bar->set_size(300, 30);
-            neroshop::Wallet::sync_label = std::unique_ptr<dokun::Label>(new dokun::Label());
-            dokun::Font * sync_font = new dokun::Font(DOKUN_DEFAULT_FONT_PATH);//std::unique_ptr<dokun::Font> sync_font = std::unique_ptr<dokun::Font>(new dokun::Font(DOKUN_DEFAULT_FONT_PATH));
-            neroshop::Wallet::sync_label->set_font(*sync_font);//(sync_font.get());
-            neroshop::Wallet::sync_label->set_alignment("center");
-            neroshop::Wallet::sync_bar->set_label(*neroshop::Wallet::sync_label);
-        }
-        dokun::Window * window = static_cast<dokun::Window *>(Factory::get_window_factory()->get_object(0)); // using dokun::Window::get_active() causes a seg fault when window loses focus while syncing - since it only gets the window that has focus :(
-        window->poll_events(); // check for events
-        window->set_viewport(Renderer::get_display_size().x, Renderer::get_display_size().y);//(1280, 720);
-        window->clear(32, 32, 32);
-        double progress = percent_done * 100; //sync_bar->set_range(0, 100);
-        //////////
-        if(progress < 100) { // while progress is not 100%, send a fake event to keep the progressbar going
-        #ifdef DOKUN_X11 // if using X Window System on Linux
-            dokun::Keyboard::fake_event(window->get_display(), window->get_handle());
-        #endif
-        }
-        //////////
-        neroshop::Wallet::sync_bar->get_label()->set_string(String::to_string_with_precision(progress, 2) + "%");
-        neroshop::Wallet::sync_bar->set_value(progress);
-        //////////
-        if(progress >= 100 && !neroshop::Message::get_second()->is_visible()) { // only show this msg once
-            // box text (label)        
-            neroshop::Message::get_second()->set_text("SYNCHRONIZATION DONE", 107,142,35);
-            neroshop::Message::get_second()->get_label(0)->set_alignment("none");
-            neroshop::Message::get_second()->get_label(0)->set_relative_position((neroshop::Message::get_second()->get_width() / 2) - (neroshop::Message::get_second()->get_label(0)->get_string().length() * 10/*neroshop::Message::get_second()->get_label(0)->get_width()*/ / 2), ((neroshop::Message::get_second()->get_height() - 10/*neroshop::Message::get_second()->get_label(0)->get_height()*/) / 2) - 20);            
-            // close button
-            neroshop::Message::get_second()->get_button(0)->set_text("Close");
-            neroshop::Message::get_second()->get_button(0)->set_color(214, 31, 31, 1.0);                    
-            neroshop::Message::get_second()->get_button(0)->set_relative_position((neroshop::Message::get_second()->get_width() / 2) - (neroshop::Message::get_second()->get_button(0)->get_width() / 2), neroshop::Message::get_second()->get_height() - neroshop::Message::get_second()->get_button(0)->get_height() - 20);            
-            // show message box and button
-            neroshop::Message::get_second()->get_button(0)->show();
-            neroshop::Message::get_second()->show();
-            // when sync is complete, we return to the main thread with no time to draw the msgbox, so its best to draw msgbox in main thread at all times
-        }
-        // on close button pressed
-        if(neroshop::Message::get_second()->get_button(0)->is_pressed()) {
-            neroshop::Message::get_second()->hide();
-        }
-        neroshop::Wallet::sync_bar->set_position((window->get_client_width() / 2) - (neroshop::Wallet::sync_bar->get_width() / 2), (window->get_client_height() / 2) - (neroshop::Wallet::sync_bar->get_height() / 2));// center progressbar
-        neroshop::Wallet::sync_bar->draw();        
-        ////////////////
-        window->update();
-    }
-} sync_listener;
-////////////////////
-struct : monero_wallet_listener {
-    //void on_new_block (uint64_t height) {}
-    void on_output_received(const monero_output_wallet& output) {
-        uint64_t amount = output.m_amount.get();
-        std::string tx_hash = output.m_tx->m_hash.get();
-        bool is_confirmed = output.m_tx->m_is_confirmed.get(); // unlocked_balance (can be spent)
-        bool is_locked = std::dynamic_pointer_cast<monero_tx_wallet>(output.m_tx)->m_is_locked.get(); // balance (locked - still processing)
-        int account_index = output.m_account_index.get(); // should always be 0 (default)
-        int subaddress_index = output.m_subaddress_index.get();
-        // get balance (actual)
-        double piconero = 0.000000000001;
-        double balance = (amount * piconero);
-        // get the subaddress
-        std::string subaddress = neroshop::Wallet::get_singleton()->get_address(subaddress_index);
-        // you've received some xmr but it may be unspendable for the meantime
-        if(is_locked) {
-            std::cout << "\033[1;92;49m" << "TX incoming (amount: " << std::fixed << std::setprecision(12) << balance << std::fixed << std::setprecision(2) << " xmr, txid: " << tx_hash << ", account_idx: " << account_index << ", subaddress_idx: " << subaddress_index << ")" << "\033[0m" << std::endl;
-            // store subaddress in recent_address_list (if not yet added)
-            if(std::find(neroshop::Wallet::get_singleton()->recent_address_list.begin(), neroshop::Wallet::get_singleton()->recent_address_list.end(), subaddress) == neroshop::Wallet::get_singleton()->recent_address_list.end())
-                neroshop::Wallet::get_singleton()->recent_address_list.push_back(subaddress);//std::cout << "recently used addresses (count): " << neroshop::Wallet::get_singleton()->recent_address_list.size() << std::endl;
-        }
-        // your xmr can now be spent freely :)
-        // at this point, any recently used subaddress will be removed from vector returned by Wallet::addresses_unused() (this is the final confirmation) - sometimes this message shows twice
-        if(is_confirmed) { 
-            std::cout << "\033[1;32;49m" << "You have received " << std::fixed << std::setprecision(12) << balance << std::fixed << std::setprecision(2) << " xmr " << "(txid: " << tx_hash << ", account_idx: " << account_index << ", subaddress_idx: " << subaddress_index << ")" << "\033[0m" << std::endl;
-            // set message box text then show message box
-            // box text0 (label)
-            neroshop::Message::get_second()->set_text(String::to_string_with_precision(balance, 12) + " xmr was deposited into your account "/*(address: " + String::get_first_n_characters(subaddress, 4) + ".." + String::get_last_n_characters(subaddress, 4) + ")"*/, 0, 107, 61);//56, 117, 11);//if(neroshop::Wallet::get_singleton()->get_monero_wallet() != nullptr) //neroshop::Message::get_second()->set_text(std::string("You have received " + String::to_string_with_precision(balance, 12) + " xmr"), 56, 117, 11);//34, 139, 34);//neroshop::Message message(std::string("output received: " + std::to_string(balance) + " xmr"), 34, 139, 34);
-            neroshop::Message::get_second()->get_label(0)->set_alignment("none");
-            neroshop::Message::get_second()->get_label(0)->set_relative_position((neroshop::Message::get_second()->get_width() / 2) - (neroshop::Message::get_second()->get_label(0)->get_string().length() * 10/*neroshop::Message::get_second()->get_label(0)->get_width()*/ / 2), ((neroshop::Message::get_second()->get_height() - 10/*neroshop::Message::get_second()->get_label(0)->get_height()*/) / 2) - 20);
-            std::cout << neroshop::Message::get_second()->get_label(0)->get_string() << " (width: " << (neroshop::Message::get_second()->get_label(0)->get_string().length() * 10) << ")" << std::endl;
-            // box text1
-            int text_gap = 10;//5; // space between text0 and text1 (vertically)
-            neroshop::Message::get_second()->set_text(String::get_first_n_characters(subaddress, 15) + ".." + String::get_last_n_characters(subaddress, 15) + " (idx: " + std::to_string(subaddress_index) + ")", 1);
-            neroshop::Message::get_second()->get_label(1)->set_alignment("none");//neroshop::Message::get_second()->get_label(0)->get_relative_x()
-            neroshop::Message::get_second()->get_label(1)->set_relative_position(((neroshop::Message::get_second()->get_width() / 2) - (neroshop::Message::get_second()->get_label(1)->get_string().length()*10 / 2)) - (10 * std::to_string(subaddress_index).length()), neroshop::Message::get_second()->get_label(0)->get_relative_y() + 10/*neroshop::Message::get_second()->get_label(0)->get_height()*/ + text_gap); // 1          
-            // cancel button
-            neroshop::Message::get_second()->get_button(0)->set_text("Close");
-            neroshop::Message::get_second()->get_button(0)->set_color(214, 31, 31, 1.0);                    
-            neroshop::Message::get_second()->get_button(0)->set_relative_position((neroshop::Message::get_second()->get_width() / 2) - (neroshop::Message::get_second()->get_button(0)->get_width() / 2), neroshop::Message::get_second()->get_height() - neroshop::Message::get_second()->get_button(0)->get_height() - 20);//200-30(height)-20(bottompadding) = 150(button_y)
-            // show message box, labels and buttons
-            neroshop::Message::get_second()->get_label(1)->show();
-            neroshop::Message::get_second()->get_button(0)->show();
-            neroshop::Message::get_second()->show();
-        }
-    }
-    void on_balances_changed (uint64_t new_balance, uint64_t new_unlocked_balance) {
-        double piconero = 0.000000000001;
-        double balance = (new_balance * piconero);
-        double unlocked_balance = (new_unlocked_balance * piconero);
-        // if total balance is still locked, display it
-        // but if total balance is fully unlocked, then you already have the balance so no need to keep displaying it 
-        if(unlocked_balance != balance) {
-            // balance updated (unlocked)
-            std::cout << std::fixed << std::setprecision(12) << "\033[1;33;49m" << "balance: " << "\033[0m" << balance << std::fixed << std::setprecision(2);// << std::endl;
-            std::cout << std::fixed << std::setprecision(12) << " (unlocked_balance: " << unlocked_balance << std::fixed << std::setprecision(2) << ")" << std::endl;
-        }
-        if(unlocked_balance == balance) {
-            std::cout << "\033[1;35;49m" << "Balance is now fully unlocked" << "\033[0m" << std::endl;// Your full balance can be spent now
-            //std::cout << std::fixed << std::setprecision(12) << "balance: " << balance << std::fixed << std::setprecision(2);// << std::endl;
-            //std::cout << std::fixed << std::setprecision(12) << " (unlocked_balance: " << unlocked_balance << std::fixed << std::setprecision(2) << ")" << std::endl;//Japanese violet: 91, 50, 86
-        }
-    }
-} wallet_listener;
-////////////////////
-////////////////////
 bool neroshop::Wallet::daemon_connect(const std::string& ip, const std::string& port) { // connect to a running daemon (node)
     if(!monero_wallet_obj.get()) throw std::runtime_error("monero_wallet_full is not opened");
     // connect to the daemon
@@ -390,15 +394,15 @@ bool neroshop::Wallet::daemon_connect(const std::string& ip, const std::string& 
             // when connected to daemon, listen to sync progress (use this only on a detached daemon)
             std::cout << "\033[1;90;49m" << "sync in progress .." << "\033[0m" << std::endl;
             // it is not safe to connect to a daemon that has not fully synced, so listen to the sync progress before attempting to do anything else
-            monero_wallet_obj->sync(sync_listener);//monero_sync_result sync_result = monero_wallet_obj->sync(sync_listener); // synchronize the wallet with the daemon as a one-time synchronous process//if(sync_result.m_received_money) {neroshop::print(std::string("blocks fetched: ") + std::to_string(sync_result.m_num_blocks_fetched));neroshop::print("you have received money");}
-            monero_wallet_obj->remove_listener(sync_listener); // remove sync_listener, since we are done getting the sync progress           
+            monero_wallet_obj->sync(0, *this);// 0 = start_height	is the start height to sync from (ignored if less than last processed block) //(sync_listener);//monero_sync_result sync_result = monero_wallet_obj->sync(sync_listener); // synchronize the wallet with the daemon as a one-time synchronous process//if(sync_result.m_received_money) {neroshop::print(std::string("blocks fetched: ") + std::to_string(sync_result.m_num_blocks_fetched));neroshop::print("you have received money");}
+            monero_wallet_obj->remove_listener(*this);//(sync_listener); // remove sync_listener, since we are done getting the sync progress           
             // continue syncing in order to receive tx notifications
             monero_wallet_obj->start_syncing(5000); // begin syncing the wallet constantly inside the background
             // check if wallet's daemon is synced with the network
             if(monero_wallet_obj.get()->is_daemon_synced()) synced = true;//{std::cout << "\033[1;90;49m" << "daemon is now fully synced with the network" << "\033[0m" << std::endl;synced = true;}
         }
     }
-    monero_wallet_obj->add_listener(wallet_listener); // add wallet_listener
+    monero_wallet_obj->add_listener(*this);//(wallet_listener); // add wallet_listener
     return synced;
 }
 ////////////////////
@@ -574,34 +578,42 @@ std::string  neroshop::Wallet::get_mnemonic(const std::string& password) const {
 ////////////////////
 ////////////////////
 ////////////////////
-std::string  neroshop::Wallet::get_file() const {
+std::string neroshop::Wallet::get_path() const {
     if(!monero_wallet_obj.get()) throw std::runtime_error("monero_wallet_full is not opened");
-    // Get the path of this wallet's file on disk.
-    return monero_wallet_obj->monero_wallet_full::get_path();//	const
-} // "wallet_info"
+    return monero_wallet_obj->monero_wallet_full::get_path(); // returns the path of this wallet's file on disk (without the .keys ext)
+}
 ////////////////////
-std::string  neroshop::Wallet::get_description() const {
+std::string neroshop::Wallet::get_description() const {
     if(!monero_wallet_obj.get()) throw std::runtime_error("monero_wallet_full is not opened");
     return "";
 } // "wallet_info"    
 ////////////////////
-std::string  neroshop::Wallet::get_type() const {
+std::string neroshop::Wallet::get_type() const {
     if(!monero_wallet_obj.get()) throw std::runtime_error("monero_wallet_full is not opened");
     return "";
 } // "wallet_info": Normal, HW
 ////////////////////
-std::string  neroshop::Wallet::get_network_type() const {
+monero::monero_network_type neroshop::Wallet::get_network_type() const {
     if(!monero_wallet_obj.get()) throw std::runtime_error("monero_wallet_full is not opened");
-    //monero_network_type monero::monero_wallet_full::get_network_type	(		)	const
-    return "";
-} // "wallet_info":  Mainnet, Testnet, Stagenet
+    return monero_wallet_obj->get_network_type();//return network_type;
+}
 ////////////////////
-std::string  neroshop::Wallet::get_status() const {
+std::string neroshop::Wallet::get_network_type_str() const {
+    if(!monero_wallet_obj.get()) throw std::runtime_error("monero_wallet_full is not opened");
+    switch(monero_wallet_obj->get_network_type()) {//(network_type) {
+        case monero_network_type::MAINNET: return "mainnet"; break; // 0
+        case monero_network_type::TESTNET: return "testnet"; break; // 1
+        case monero_network_type::STAGENET: return "stagenet"; break; // 2
+    }
+    return "";
+}
+////////////////////
+std::string neroshop::Wallet::get_status() const {
     if(!monero_wallet_obj.get()) throw std::runtime_error("monero_wallet_full is not opened");
     return "";
 } // "status" - Check current status of wallet.
 ////////////////////
-std::string  neroshop::Wallet::get_version() const {
+std::string neroshop::Wallet::get_version() const {
     if(!monero_wallet_obj.get()) throw std::runtime_error("monero_wallet_full is not opened");
     //monero_version monero::monero_wallet_full::get_version	(		)	const
     return "";

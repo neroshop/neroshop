@@ -113,11 +113,11 @@ void connect_database() { // this function is just for testing purposes
 ////////////////////////////////////////////////
 void create_local_database() {
     /////////////////////////////////////////
-    // cache.db
+    // session.sqlite3
     //#ifdef DOKUN_LINUX
-    std::string cache_file_name = std::string(NEROSHOP_PATH) + "/cache.db";
+    std::string cache_file_name = std::string(NEROSHOP_PATH) + "/session.sqlite3";
     if(!File::exists(cache_file_name)) {
-        // create "cache.db" if it does not yet exist
+        // create "session.sqlite3" if it does not yet exist
         DB::Sqlite3 db;if(db.open(cache_file_name)) {
             db.execute("PRAGMA journal_mode = WAL;"); // to prevent database from being locked
             // create table "account" if it does not yet exist
@@ -183,6 +183,7 @@ namespace neroshop {
         //////////////////////////////////////////////////
         // icons
         Icon::load_all(); // must load all icons before using them    
+        //////////////////////////////////////////////////
         //////////////////////////////////////////////////
         // success!
         status = true; // turned on
@@ -304,7 +305,8 @@ int main() {
     }
     // --wallet-file
     std::string wallet_file = Script::get_string(neroshop::get_lua_state(), "neroshop.wallet.file"); //std::cout << "network-type= " << network_type << ", rpc-bind= " << ip << ":" << port << ", data-dir= " << data_dir << ", restore-height= " << restore_height << ", confirmed-external-bind= " << confirm_external_bind << ", restricted-rpc= " << restricted_rpc << ", use-remote-node= " <<  is_remote_node/* << ", " <<  */<< " <-(data retrieved from config)" << std::endl;
-    Wallet * wallet = Wallet::get_singleton();//new Wallet();
+    // only sellers can have wallets, so this should not be initialized or used for non-sellers
+    Wallet * wallet = nullptr;
     // check if wallet is view only
     //if(wallet->get_monero_wallet()->is_view_only ()) {std::cout << "wallet is view-only\n";}
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////	
@@ -316,7 +318,6 @@ int main() {
     bool wallet_set = false;
     bool connected = false;
     int times_reconnected = 0;
-    bool favorite_set = false;// temp
     // window
     dokun::Window window;
     window.create("neroshop", 
@@ -394,8 +395,7 @@ int main() {
     pw_edit_label.set_font(*new dokun::Font(DOKUN_DEFAULT_FONT_PATH));
     pw_edit->set_label(pw_edit_label);
     pw_edit->get_label()->set_color(0, 0, 0, 1.0);
-    pw_edit->set_sensative(true);
-    pw_edit->set_text("Password!23"); // THIS IS TEMPORARY!
+    pw_edit->set_sensative(true);//pw_edit->set_text("Password!23"); // THIS IS TEMPORARY!
     // user_button - replace with label "Username"
     //Box * user_edit_icon = new Box();
     // user_edit placeholder image ******************
@@ -429,7 +429,7 @@ int main() {
     //pw_edit_icon->hide();
     // get "save" value from config file or database then set it
     // use sqlite instead of lua to save this.
-    std::string cache_file_name = std::string(NEROSHOP_PATH) + "/cache.db";
+    std::string cache_file_name = std::string(NEROSHOP_PATH) + "/session.sqlite3";
     DB::Sqlite3 db(cache_file_name);
     bool cached_save = db.get_column_integer("account", "save", "id = 1"); // returns zero (false) by default
     std::string cached_username = db.get_column_text("account", "username", "id = 1"); // returns empty string by default
@@ -994,15 +994,7 @@ int main() {
                 }
                 if(logged) //if(Validator::login(user_edit->get_text(), pw_edit->get_text()))
                 {
-                    // use sql instead of lua for storing the save_user
-                    // upon login, update the save_toggle value to whatever the value was set to at the time the user logged in
-                    std::string cache_file_name = std::string(NEROSHOP_PATH) + "/cache.db";
-                    DB::Sqlite3 db(cache_file_name);
-                    db.update("account", "save", std::to_string(save_toggle->get_value()), "id = 1");
-                    db.update("account", "username", (save_toggle->get_value()) ? DB::Sqlite3::to_sql_string(user_edit->get_text()) : "''", "id = 1");
-                    if(save_toggle->get_value() == true ) neroshop::print("Username saved", 3);
-                    if(save_toggle->get_value() == false) neroshop::print("Username not saved", 2);
-                    db.close();
+                    /////////////////////////////////////////////
                     // check whether user is a buyer or seller
                     ////DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
                     unsigned int account_type_id = DB::Postgres::get_singleton()->get_integer_params("SELECT account_type_id FROM users WHERE name = $1", { user_edit->get_text() });
@@ -1025,19 +1017,36 @@ int main() {
                         // wallet gets deleted on logout (since the seller_user gets deleted) so we must re-create the wallet again in case the seller re-logins
                         // this causes a crash
                         if(!wallet) {
-                            std::cout << "wallet is nullptr\n";
-                            //wallet = Wallet::get_singleton();
-                            //std::cout << "wallet re-created\n";
-                            //static_cast<Seller *>(user)->set_wallet(*wallet);
-                            //wallet_set = true; 
-                        }                    
-                        // set the wallet if it is opened, but it is not yet set
-                        if(wallet != nullptr) {//if(wallet_opened && !wallet_set) {
+                            wallet = new Wallet();
+                            std::cout << "wallet instance created (on_login)\n";
+                            /*if(!wallet_set) {//if(wallet != nullptr) {//if(wallet_opened && !wallet_set) {
+                                static_cast<Seller *>(user)->set_wallet(*wallet);
+                                wallet_set = true;
+                                neroshop::print("wallet set for seller (id: " + std::to_string(user->get_id()) + ")", 3);                        
+                            }*/
+                        }
+                        if(wallet && !wallet_set) {//if(wallet != nullptr) {//if(wallet_opened && !wallet_set) {
                             static_cast<Seller *>(user)->set_wallet(*wallet);
                             wallet_set = true;
-                            neroshop::print("wallet set for seller (id: " + std::to_string(user->get_id()) + ")", 3);
-                        }
+                            neroshop::print("wallet set for seller (id: " + std::to_string(user->get_id()) + ")", 3);                        
+                        }                        
+                    }                
+                    /////////////////////////////////////////////
+                    // use sql instead of lua for storing the save_user
+                    // upon login, update the save_toggle value to whatever the value was set to at the time the user logged in
+                    std::string cache_file_name = std::string(NEROSHOP_PATH) + "/session.sqlite3";
+                    DB::Sqlite3 db(cache_file_name);
+                    db.update("account", "save", std::to_string(save_toggle->get_value()), "id = 1");
+                    db.update("account", "username", (save_toggle->get_value()) ? DB::Sqlite3::to_sql_string(user_edit->get_text()) : "''", "id = 1");
+                    if(save_toggle->get_value() == true) { 
+                        neroshop::print("Username saved", 3);
                     }
+                    if(save_toggle->get_value() == false) { 
+                        neroshop::print("Username not saved", 2);
+                        user_edit->clear_all(); // clear user edit on login
+                    }
+                    db.close();
+                    pw_edit->clear_all(); // clear the pw edits (for security purposes)
                     // print detailed user information
                     /*std::cout << "**********************************************************\n";
                     std::cout << user->has_email() << " (user->has_email())" << std::endl;
@@ -1205,7 +1214,7 @@ int main() {
             // upload button
             if(upload_button->is_pressed() && !wallet_opened) {
                 // upload just the filename, but do not open it
-                std::cout << "wallet upload_button is pressed\n";
+                //std::cout << "wallet upload_button is pressed\n";
                 std::string wallet_file = wallet->upload(false);
                 if(!wallet_file.empty()) {
                     wallet_edit->set_text(wallet_file); //wallet_edit->show();
@@ -1252,6 +1261,7 @@ int main() {
                 std::string password = message_box.get_edit(0)->get_text(); // get pw from edit //std::string password; std::cin >> password;
                 message_box.get_edit(0)->clear_all(); // clear pw from edit
                 message_box.get_edit(0)->set_focus(false);
+                if(!wallet) { wallet = new Wallet(); std::cout << "wallet instance created (on_upload)\n"; }
                 wallet->open(wallet_name.substr(0, wallet_name.find(".")), password); // will crash if password is incorrect // Wallet::open requires that you exclude the ".keys" ext
                 wallet_opened = true;
                 // hide message box, once wallet is opened
@@ -1472,20 +1482,7 @@ int main() {
                 favorite_set = false;
                 favorite_button.get_image()->set_color(128, 128, 128);
                 //return;
-            }*/          
-            //-------------------------------  
-            if(Keyboard::is_pressed(DOKUN_KEY_LEFT)) {
-                //quantity_spinner.set_relative_position(quantity_spinner.get_relative_x() - 5, quantity_spinner.get_relative_y());
-            }
-            if(Keyboard::is_pressed(DOKUN_KEY_RIGHT)) {
-                //quantity_spinner.set_relative_position(quantity_spinner.get_relative_x() + 5, quantity_spinner.get_relative_y());
-            }
-            if(Keyboard::is_pressed(DOKUN_KEY_UP)) {
-                //quantity_spinner.set_relative_position(quantity_spinner.get_relative_x(), quantity_spinner.get_relative_y() - 5);
-            }
-            if(Keyboard::is_pressed(DOKUN_KEY_DOWN)) {
-                //quantity_spinner.set_relative_position(quantity_spinner.get_relative_x(), quantity_spinner.get_relative_y() + 5);
-            }            
+            }*/            
             //-------------------------------  
             /*if(Mouse::is_over(cart_button->get_image()->get_rect())) cart_button->get_image()->set_color(242, 100, 17);
             else {
@@ -1578,6 +1575,10 @@ int main() {
                 if(user_is_seller) {
                     wallet = nullptr;
                     std::cout << "wallet set to nullptr\n";
+                    wallet_opened = false;
+                    wallet_set = false;
+                    // restore sync_box color
+                    sync_box->set_color(255, 0, 0);
                 }
                 // exit home menu and return to the login screen
                 home_menu = false;
