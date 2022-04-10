@@ -5,16 +5,11 @@ An attempt to create an online marketplace for [Monero](https://getmonero.org/) 
 [![alt text](res/neroshop-logo.png)](https://github.com/larteyoh/neroshop "neroshop logo")
 
 ## Table of contents
-> [The history behind neroshop](#summary)
-
-> [Upcoming features](#features) <!--[Coming soon]--><!--* [Documentation](#documentation)-->
-
-> [Major dependencies](#dependencies)
-
-> [Building neroshop from source](#compiling-neroshop-from-source)
-
-<!--* [Setting up PostgreSQL](#setting-up-postgresql)--> <!--* [License](#license)-->
-> [Contact](#contact)
+* [The history behind neroshop](#summary)
+* [Upcoming features](#features) <!--* [Documentation](#documentation)-->
+* [Major dependencies](#dependencies)
+* [Building neroshop from source](#compiling-neroshop-from-source) <!--* [Setting up PostgreSQL](#setting-up-postgresql)--> <!--* [License](#license)-->
+* [Contact](#contact)
 
 
 ### Summary:
@@ -139,9 +134,9 @@ EOF
 ```
 
 ## Contact
-larteyoh@pm.me
+> larteyoh@pm.me
 
-[@layter:matrix.org](https://app.element.io/#/room/#neroshop:matrix.org)
+> [@layter:matrix.org](https://app.element.io/#/room/#neroshop:matrix.org)
 
 ### NOTE:
 ```
