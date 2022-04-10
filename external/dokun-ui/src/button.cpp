@@ -87,7 +87,7 @@ void Button::draw()
 		    get_angle(), get_scale().x, get_scale().y, 
 			get_color().x, get_color().y, get_color().z, get_color().w,
             // shader
-            GUI::gui_shader,
+            (!shader.get()) ? GUI::gui_shader : shader.get(),
             // outline
             outline, outline_width, outline_color, outline_antialiased,
             // radius

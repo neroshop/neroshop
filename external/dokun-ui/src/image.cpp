@@ -170,20 +170,20 @@ int Image::save(lua_State *L)
 /////////////
 void Image::copy(const Image& image) // copies another image's texture pixels - no need to copy the position, angle, scale, color, relative_position, nor alignment - or it will just mess up everything
 {
-    data    = static_cast<unsigned char *>(image.get_data()); // copy the pixel data as well
+    data    = image.data;//static_cast<unsigned char *>(image.data); // copy the pixel data as well
 	width   = image.width; // must be original width
 	height  = image.height; // must be original height
-	depth   = image.get_depth  ();
-	channel = image.get_channel();
-	file    = image.get_file   (); // this is not neccessary but whatever ...
+	depth   = image.depth;
+	channel = image.channel;
+	file    = image.file; // this is not neccessary but whatever ...//set_scale(image.scale.x, image.scale.y);// ...
 #ifdef DOKUN_OPENGL
-    //buffer          = image.get_buffer         (); // buffer must be unique like the Image itself
-	min_filter      = image.get_filter         ().x;
-	mag_filter      = image.get_filter         ().y;
-	wrap_s          = image.get_wrap           ().x;
-	wrap_t          = image.get_wrap           ().y;
+    //buffer          = image.get_buffer(); // buffer must be unique like the Image itself
+	min_filter      = image.get_filter().x;
+	mag_filter      = image.get_filter().y;
+	wrap_s          = image.get_wrap().x;
+	wrap_t          = image.get_wrap().y;
 	internal_format = image.get_internal_format();
-	format          = image.get_format         ();
+	format          = image.get_format();
     // check for opengl context
     Renderer::context_check();
     // delete old buffer
@@ -1281,14 +1281,14 @@ int Image::get_scale(lua_State *L)
 /////////////
 double Image::get_aspect_ratio_correction(int rect_width, int rect_height) const // scale to fit inside a rect
 {
-	double image_aspect = width / height; // use the raw width and height. Do not use (size * scale) to get aspect ratio or it will screw everything up!!
-	double rect_aspect  = rect_width  / rect_height;
-    double scale_factor = 0.0;
+	float image_aspect = width / height; // use the raw width and height. Do not use (size * scale) to get aspect ratio or it will screw everything up!!
+	float rect_aspect  = rect_width  / rect_height;
+    float scale_factor = 0.0;
    	if(rect_aspect > image_aspect) {
-		scale_factor = rect_height / (double)height;
+		scale_factor = rect_height / (float)height;
 	} 
 	else if(image_aspect < rect_aspect) {
-	    scale_factor = rect_width  / (double)width;
+	    scale_factor = rect_width  / (float)width;
 	}
 	return scale_factor;
 }

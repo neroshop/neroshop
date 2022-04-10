@@ -268,8 +268,8 @@ int Entity::set_component(lua_State *L)
 ///////////
 void Entity::set_shader(const Shader& shader)
 {	
-    std::shared_ptr<Shader> entity_shader(&const_cast<Shader&>(shader));
-	this->shader = entity_shader;
+    std::unique_ptr<Shader> entity_shader(&const_cast<Shader&>(shader));
+	this->shader = std::move(entity_shader);
 }
 ///////////
 int Entity::set_shader(lua_State *L)
@@ -299,8 +299,8 @@ void Entity::set_script(lua_State *L, const std::string& file_name)
 ///////////
 void Entity::set_script(const Script& script)
 {
-    std::shared_ptr<Script> entity_script(&const_cast<Script&>(script));
-	this->script = entity_script;
+    std::unique_ptr<Script> entity_script(&const_cast<Script&>(script));
+	this->script = std::move(entity_script);
 }
 ///////////
 int Entity::set_script(lua_State *L)

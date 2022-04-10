@@ -30,7 +30,7 @@ public: // can be accessed by any class or function
     void shift_down(const neroshop::Item& item);
 	void swap_positions(const neroshop::Item& item1, const neroshop::Item& item2);
 	void checkout(); // user's cart contents impact inventory availability. Only after purchase will actual inventory decrease
-	static bool create_db();
+	static bool create_guest_cart();
 	//static bool create_offline_db();
 	// getters
 	double get_seller_subtotal_price(unsigned int seller_id = 0) const;

@@ -53,7 +53,7 @@ void Slider::draw()
 		    int ball_width = ball_size;
 		    Renderer::draw_slider(get_x(), get_y(), get_width(), get_height(), 0, get_scale().x, get_scale().y, foreground_color.x, foreground_color.y, foreground_color.z, foreground_color.w,
 			// shader    
-			    GUI::gui_shader,
+			    (!shader.get()) ? GUI::gui_shader : shader.get(),
 			// beam properties
 			    get_range().x, get_range().y, value, background_color, radius,
 			// ball properties
@@ -64,7 +64,7 @@ void Slider::draw()
 		if(get_orientation() != 0) { // vertical 
 		    int ball_height = ball_size;
 		    Renderer::draw_slider_vertical(get_x(), get_y(), get_width(), get_height(), 0, get_scale().x, get_scale().y, foreground_color.x, foreground_color.y, foreground_color.z, foreground_color.w,
-			    GUI::gui_shader,
+			    (!shader.get()) ? GUI::gui_shader : shader.get(),
 			    get_range().x, get_range().y, value, background_color, ball_height, ball_color);
 		}	
 	// Label

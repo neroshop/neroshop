@@ -113,11 +113,11 @@ void connect_database() { // this function is just for testing purposes
 ////////////////////////////////////////////////
 void create_local_database() {
     /////////////////////////////////////////
-    // session.sqlite3
+    // cookies.sqlite3 - used to store guest user cart
     //#ifdef DOKUN_LINUX
-    std::string cache_file_name = std::string(NEROSHOP_PATH) + "/session.sqlite3";
+    std::string cache_file_name = std::string(NEROSHOP_PATH) + "/cookies.sqlite3"; //https://www.geeksforgeeks.org/difference-between-session-and-cookies/
     if(!File::exists(cache_file_name)) {
-        // create "session.sqlite3" if it does not yet exist
+        // create "cookies.sqlite3" if it does not yet exist
         DB::Sqlite3 db;if(db.open(cache_file_name)) {
             db.execute("PRAGMA journal_mode = WAL;"); // to prevent database from being locked
             // create table "account" if it does not yet exist
@@ -362,8 +362,6 @@ int main() {
     message_box.add_button("Cancel", 0, 0, 100, 30); // 1
     message_box.get_button(1)->set_color(214, 31, 31, 1.0); // Cancel button
     message_box.add_button("Submit", 0, 0, 100, message_box.get_edit(0)->get_height()); // 2
-    // temporary
-    message_box.get_edit(0)->set_text("supersecretpassword123");
     // create a second message box - this will display wallet notification messages
     Message wallet_message_box;
     wallet_message_box.add_button("Close", 0, 0, 100, 30); // 0
@@ -395,7 +393,7 @@ int main() {
     pw_edit_label.set_font(*new dokun::Font(DOKUN_DEFAULT_FONT_PATH));
     pw_edit->set_label(pw_edit_label);
     pw_edit->get_label()->set_color(0, 0, 0, 1.0);
-    pw_edit->set_sensative(true);//pw_edit->set_text("Password!23"); // THIS IS TEMPORARY!
+    pw_edit->set_sensative(true);//pw_edit->set_text("Password!23"); // THIS IS TEMPORARY! DELETE SOON!
     // user_button - replace with label "Username"
     //Box * user_edit_icon = new Box();
     // user_edit placeholder image ******************
@@ -420,25 +418,34 @@ int main() {
     pw_edit->set_placeholder_text("   Password");
     // save_login (checkbox)
     Toggle * save_toggle = new Toggle(); // left
-    //save_toggle->set_radio(); // should actually be a checkbox instead
-    // save_login_label
-    Label save_user_label; // right
-    save_user_label.set_font(*new dokun::Font(DOKUN_DEFAULT_FONT_PATH));
-    save_user_label.set_string("Save user");
-    //save_toggle->set_position(save_user_label.get_x() - save_user_label.get_width() - 1/*save_toggle->get_width()*/); 
-    //pw_edit_icon->hide();
+    save_toggle->set_checkbox();
+    save_toggle->set_size(30, user_edit->get_height());
     // get "save" value from config file or database then set it
     // use sqlite instead of lua to save this.
-    std::string cache_file_name = std::string(NEROSHOP_PATH) + "/session.sqlite3";
+    std::string cache_file_name = std::string(NEROSHOP_PATH) + "/cookies.sqlite3";
     DB::Sqlite3 db(cache_file_name);
     bool cached_save = db.get_column_integer("account", "save", "id = 1"); // returns zero (false) by default
     std::string cached_username = db.get_column_text("account", "username", "id = 1"); // returns empty string by default
     db.close();
-    std::cout << "save: " << cached_save << ", username: " << cached_username << std::endl;
+    //std::cout << "save: " << cached_save << ", username: " << cached_username << std::endl;
     // store cached "save" value in save_toggle
     save_toggle->set_value(cached_save);//((Script::get_boolean(neroshop::get_lua_state(), "neroshop.account.saved") != -1) ? Script::get_boolean(neroshop::get_lua_state(), "neroshop.account.saved") : false);
     // store cached "username" value in user_edit
     if(save_toggle->get_value() == true) user_edit->set_text(cached_username);//(Script::get_string(neroshop::get_lua_state(), "neroshop.account.username"));
+    // password visibility toggle
+    Box visible_toggle;
+    visible_toggle.set_color(128, 128, 128, 1.0);
+    visible_toggle.set_size(30, pw_edit->get_height());
+    Image hide_icon(Icon::get["hide"]->get_data(), 64, 64, 1, 4); // default
+    hide_icon.resize(24, 24);
+    hide_icon.set_alignment("center");
+    Image show_icon(Icon::get["eye"]->get_data(), 64, 64, 1, 4);
+    show_icon.resize(24, 24);
+    show_icon.set_alignment("center");
+    visible_toggle.add_image(show_icon);
+    visible_toggle.add_image(hide_icon);
+    visible_toggle.get_image(1)->set_visible(false); // by default, show_icon is visible
+    // visible_toggle contains two images so we can hide one at a time
     /////////////
     // login_button
     Button * login_button = new Button();
@@ -735,10 +742,13 @@ int main() {
     std::unique_ptr<Box> hint = std::unique_ptr<Box>(new Box());
     hint->set_tooltip(true);
     hint->set_height(20);
-    hint->set_color(64, 64, 64);
+    hint->set_color(0, 0, 0);
+    hint->set_radius(10);
+    hint->set_outline(true);
+    hint->set_outline_color(255, 255, 255, 1.0);
     hint->set_tooltip_arrow_visible(false);//hint->set_tooltip_arrow_direction("up");
-    dokun::Label hint_label("?");
-    hint->add_label(hint_label); // font will be auto set when label is initialized with a string
+    dokun::Label hint_label("?"); // font will be auto set when label is initialized with a string
+    hint->add_label(hint_label);
     hint->hide(); // hide tooltip by default    
     //----------------------------------  --------------------------------------	
     // to-do:
@@ -1034,7 +1044,7 @@ int main() {
                     /////////////////////////////////////////////
                     // use sql instead of lua for storing the save_user
                     // upon login, update the save_toggle value to whatever the value was set to at the time the user logged in
-                    std::string cache_file_name = std::string(NEROSHOP_PATH) + "/session.sqlite3";
+                    std::string cache_file_name = std::string(NEROSHOP_PATH) + "/cookies.sqlite3";
                     DB::Sqlite3 db(cache_file_name);
                     db.update("account", "save", std::to_string(save_toggle->get_value()), "id = 1");
                     db.update("account", "username", (save_toggle->get_value()) ? DB::Sqlite3::to_sql_string(user_edit->get_text()) : "''", "id = 1");
@@ -1143,7 +1153,7 @@ int main() {
                 //std::cout << "is_user_buyer: " << user->is_buyer() << std::endl;
                 //std::cout << "is_user_seller: " << user->is_seller() << std::endl;
                 // load the guest cart
-                // cart.db (stored locally or offline)
+                // cart table in cookies.sqlite3 (stored locally or offline)
                 if(!Cart::get_singleton()->open()) {
                     neroshop::print("unable to open local cart for guest user", 1);
                 }
@@ -1220,14 +1230,18 @@ int main() {
                     wallet_edit->set_text(wallet_file); //wallet_edit->show();
                     ////////////////////
                     // message_box
-                    message_box.set_width(500);
+                    message_box.set_size(500 + 20, 150);
                     // set relative positions
                     // box_text - center the x
                     message_box.set_text("Please enter your wallet password: ", 0, 0, 0, 1.0);
                     message_box.get_label(0)->set_alignment("none");
                     message_box.get_label(0)->set_relative_position((message_box.get_width() - message_box.get_label(0)->get_width()) / 2, ((message_box.get_height() - message_box.get_label(0)->get_height()) / 2) - 20);//(200−10)÷2 = 95 = (200÷2)−(10÷2) //200=box_ht, 10=label_ht, 95=label_y (centered) // 95 - 20(button_y) = 75
                     // box_edit
+                    message_box.get_edit(0)->set_text("supersecretpassword123"); // THIS IS TEMPORARY! DELETE SOON!
+                    ////message_box.get_edit(0)->clear_all(); // clear any previous text
+                    message_box.get_edit(0)->set_sensative(true); // hide sensative text
                     message_box.get_edit(0)->set_focus(true);
+                    message_box.get_edit(0)->set_size(300, 30);
                     message_box.get_edit(0)->set_relative_position((message_box.get_width() / 2) - (message_box.get_edit(0)->get_width() / 2) - ((message_box.get_button(2)->get_width() + 10) / 2), message_box.get_height() - message_box.get_edit(0)->get_height() - 20);
                     // box_button
                     message_box.get_button(2)->set_relative_position(message_box.get_edit(0)->get_relative_x() + message_box.get_edit(0)->get_width() + 10, message_box.get_edit(0)->get_relative_y());//message_box.get_edit(0)->get_relative_y());
@@ -1273,8 +1287,13 @@ int main() {
             if(!wallet_opened && !message_box.is_visible()) wallet_edit->clear_all();            
             /////////////////////
             if(wallet_button->is_pressed() && !wallet_opened) {
+                message_box.set_size(500 + 20, 250);
+                message_box.get_label(0)->set_relative_position(message_box.get_label(0)->get_relative_x(), 10);
                 message_box.set_text("Enter wallet name:");
                 message_box.get_edit(0)->clear_all(); // clear any existing text
+                message_box.get_edit(0)->set_sensative(false);
+                message_box.get_edit(0)->set_size(300, 30);
+                message_box.get_edit(0)->set_relative_position((message_box.get_width() / 2) - (message_box.get_edit(0)->get_width() / 2), message_box.get_height() - message_box.get_edit(0)->get_height() - 20);
                 message_box.get_edit(0)->show();
                 ////message_box.set_text("Enter password:", 1);
                 message_box.show();
@@ -1350,15 +1369,38 @@ int main() {
             login_button->draw(pw_edit->get_x() + ((login_button->get_width() / 2) - (pw_edit->get_width() / 2)), pw_edit->get_y() + pw_edit->get_height() + 70);//10);//set_position(pw_edit->get_x() - (((login_button->get_width() + register_button->get_width() + 5) / 2) - (pw_edit->get_width() / 2)), pw_edit->get_y() + pw_edit->get_height() + 10); //register_button->set_position(login_button->get_x() + login_button->get_width() + 5, login_button->get_y()); // => register and login on same line
             guest_button->draw(pw_edit->get_x(), login_button->get_y() + login_button->get_height() + 10); //guest_button->set_position(login_button->get_x(), login_button->get_y() + login_button->get_height() + 5);
             register_button->draw(guest_button->get_x() + guest_button->get_width() + 5, guest_button->get_y());
-            // save user
-            save_toggle->draw(pw_edit->get_x(), pw_edit->get_y() + 70);
-            save_user_label.draw(save_toggle->get_x() + save_toggle->get_width() + 5, save_toggle->get_y() + (save_toggle->get_height() / 4));
+            // save toggle
+            save_toggle->draw(user_edit->get_x() + user_edit->get_width() + 5, user_edit->get_y());//(pw_edit->get_x(), pw_edit->get_y() + 70);
+            // visibility toggle
+            // my first time using lambdas :O - lambdas can be used to define functions within a function
+            auto toggle_lambda = [&visible_toggle, &pw_edit]() {
+            if(visible_toggle.is_pressed() && pw_edit->is_sensative()) {
+                // show sensative text
+                pw_edit->set_sensative(false);
+                // change icon (hide)
+                visible_toggle.get_image(0)->set_visible(false);
+                visible_toggle.get_image(1)->set_visible(true);
+                return;
+            }
+            if(visible_toggle.is_pressed() && !pw_edit->is_sensative()) {
+                 // hide sensative text
+                pw_edit->set_sensative(true);
+                // change icon (show)
+                visible_toggle.get_image(0)->set_visible(true);
+                visible_toggle.get_image(1)->set_visible(false);
+                return;
+            }
+            }; // end of toggle_lambda
+            toggle_lambda(); // call lambda
+            visible_toggle.draw(pw_edit->get_x() + pw_edit->get_width() + 5, pw_edit->get_y());
             // sync status
             //sync_label.draw(0 + 20, window.get_client_height() - 20);
             //sync_box->draw(sync_label.get_x() + sync_label.get_width(), sync_label.get_y());
             // temp ----------------------------------------------
             ////slider->draw();
             ////slider2->draw();
+            ////hint->set_radius(slider->get_value());
+            ////save_toggle->set_size((int)slider->get_value(), (int)slider->get_value());
             //Renderer::draw_spinner(100, 100, 40, 20, 0, 1, 1, 255, 255, 255, 1.0, 0, 
             //    20, Vector4(64, 64, 64, 1.0), // button_width, button_color
             //    8, Vector4(0, 255, 255, 1.0), 2.0,         // shape_size, shape_color, shape_depth 
@@ -1430,6 +1472,22 @@ int main() {
 	            hint->set_position(upload_button->get_x() + (upload_button->get_width() - hint->get_width()) / 2, upload_button->get_y() + upload_button->get_height() + 5);//, ?->get_y() - (hint->get_height() + hint->get_tooltip_arrow_height()) - 5);	            
 	            hint->show();
             }
+            if(Mouse::is_over(save_toggle->get_rect()) && save_toggle->is_visible()) {
+            	std::string message = (save_toggle->get_value()) ? "unsave" : "save";
+	            hint->get_label(0)->set_string(message);
+	            hint->get_label(0)->set_alignment("center");
+	            hint->set_size(hint->get_label(0)->get_width() + 20, 50);
+	            hint->set_position(save_toggle->get_x() + save_toggle->get_width() + 5, save_toggle->get_y() + (save_toggle->get_height() - hint->get_height()) / 2); //hint->set_position(save_toggle->get_x() + (save_toggle->get_width() - hint->get_width()) / 2, save_toggle->get_y() + save_toggle->get_height() + 5);
+	            hint->show();
+            }
+            if(Mouse::is_over(visible_toggle.get_rect()) && visible_toggle.is_visible()) {
+            	std::string message = (!pw_edit->is_sensative()) ? "hide" : "show";
+	            hint->get_label(0)->set_string(message);
+	            hint->get_label(0)->set_alignment("center");
+	            hint->set_size(hint->get_label(0)->get_width() + 20, 50);
+	            hint->set_position(visible_toggle.get_x() + visible_toggle.get_width() + 5, visible_toggle.get_y() + (visible_toggle.get_height() - hint->get_height()) / 2);//(visible_toggle.get_x() + (visible_toggle.get_width() - hint->get_width()) / 2, visible_toggle.get_y() + visible_toggle.get_height() + 5);//, ?->get_y() - (hint->get_height() + hint->get_tooltip_arrow_height()) - 5);	            
+	            hint->show();
+            }        
             hint->draw();            
             // draw message (if visible)
             //if(Keyboard::is_pressed(DOKUN_KEY_M)) message_box.show();

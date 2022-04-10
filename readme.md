@@ -5,15 +5,32 @@ An attempt to create an online marketplace for [Monero](https://getmonero.org/) 
 [![alt text](res/neroshop-logo.png)](https://github.com/larteyoh/neroshop "neroshop logo")
 
 ## Table of contents
-* [Why I chose the name neroshop](#naming)
-* [Upcoming features](#features) <!--[Coming soon]--><!--* [Documentation](#documentation)-->
-* [Major dependencies](#dependencies)
-* [Building neroshop from source](#compiling-neroshop-from-source)
-<!--* [Related projects](#related-projects)-->
+> [The history behind neroshop](#summary)
+> [Upcoming features](#features) <!--[Coming soon]--><!--* [Documentation](#documentation)-->
+> [Major dependencies](#dependencies)
+> [Building neroshop from source](#compiling-neroshop-from-source)
+<!--* [Setting up PostgreSQL](#setting-up-postgresql)-->
 <!--* [License](#license)-->
+> [Contact](#contact)
 
-### Naming: 
-The name neroshop comes from "nero", meaning black combined with the word "shop"
+
+### Summary:
+```
+The name neroshop comes from "nero", meaning black combined with the word "shop".
+Ever since I developed an interest for cryptocurrencies, I have become more privacy-conscious and
+more aware of the ponzi scheme that has become of the current financial system.
+This led to my desire to want to create or at least contribute to a world where we can use cryptocurrency for everyday purchases rather than using it as a speculative asset
+while at the same time, protecting each individual's financial privacy without having to trust any centralized entity, and
+without the risk of having your account surveilled, frozen, closed, or limited by how much, where and when you can spend.
+
+I often use Amazon for my online purchases and it's a pain in the butt having to switch back and forth from crypto to fiat just to make purchases
+and on top of that dealing with having every crypto withdrawal subjected to taxation regardless of whether you sold at a profit or a loss.
+I started neroshop for this reason.
+
+You may wondering why I'm using C++ for this project. Well, that's because C++ is my first programming language and 
+it is the only language I know aside from Lua so I am comfortable using C++ for pretty much all my "big" projects.
+And I have absolutely zero intention of using any other programming language. Web development is not really my thing either.
+```
 
 
 ### Features:
@@ -34,7 +51,6 @@ The name neroshop comes from "nero", meaning black combined with the word "shop"
 
 
 ## Dependencies:
-<!-- * [monero](https://github.com/monero-project/monero) (MIT) -->
 |      Library                                                       | Minimum Ver.    | Package                | License                            |         Purpose                                                        |
 |--------------------------------------------------------------------|-----------------|------------------------|------------------------------------|------------------------------------------------------------------------|
 | [monero-cpp](https://github.com/monero-ecosystem/monero-cpp)       | latest          |                        | MIT                                | monero wallet and payment system                                       |
@@ -74,7 +90,7 @@ cd ../
 
 2. Modify "external/monero-cpp/external/monero-project/CMakeLists.txt":
 `option(BUILD_GUI_DEPS "Build GUI dependencies." ON)`
-<!-- Step 2 is probably not necessary :/ -->
+<!-- Step 2 is probably not necessary :U -->
 
 3. Build monero-project twice to create libwallet_merged.a and other .a libraries
 ```sh
@@ -113,10 +129,16 @@ make
 EOF
 ```
 
+## Contact
+larteyoh@pm.me
+[@layter:matrix.org](https://app.element.io/#/room/#neroshop:matrix.org)
+
 ### NOTE:
-I am an awful programmer and still consider myself a noob at this since I don't know what I'm doing half of the time, so if there's anyone out there who has experience using C++ and can help me bring
-my project to life, I'd highly appreciate it (・ω・) or If you have any tips and advice that can help me become a better programmer, that would be great too (^-^)!
-I am poor but willing to compensate any contributors with Monero when I become financially stable (>.<).
+```
+I am an awful programmer and still consider myself a noob at this since I don't know what I'm doing half of the time, so if there's anyone out there who has experience with C++ and can help me bring
+my project to life, I'd highly appreciate it (.3.) or If you have any tips and advice that can help me become a better programmer, that would be great too (^-^) !
+I am poor but willing to compensate any contributors with Monero when I become financially stable (>.<) .
+```
 
 [//]: # (git add build.sh CMakeLists.txt external/ include/ readme.md res/neroshop-logo.png res/wallets src/ todo.txt res/ss res/tmp_images)
 [//]: # (git commit -m"empty commit")

@@ -117,13 +117,7 @@ void GUI::connect(const GUI& a, int signal, const GUI& b, std::function<void(voi
 // generates the default shader used by most GUI elements
 void GUI::generate_shader(void)
 {
-    // assign the object's shader to default shader (if it does not yet have one)
-	if(!shader) {//shader = gui_shader;
-        std::shared_ptr<Shader> entity_shader(gui_shader);
-        shader = entity_shader;
-        //if(shader) std::cout << "GUI " << Factory::get_gui_factory()->get_location(this) << " (?) has been assigned a shader program" << std::endl;
-    }
-    if(gui_shader->is_linked()) return; // exit if shader_program has already been generated//if(!shader) throw std::runtime_error("GUI Shader is not initialized");
+    if(gui_shader->is_linked()) return; // exit if shader_program has already been generated and linked//if(!shader) throw std::runtime_error("GUI Shader is not initialized");
 	// create (initialize) a shader
 	//gui_shader = new Shader();
 	const char * vertex_source[] =
@@ -161,6 +155,10 @@ void GUI::generate_shader(void)
 		"uniform vec2 size;"
 		"uniform float radius;"
 		"\n"
+		"uniform bool outline = true;//false;\n"
+		"uniform float outline_thickness = 0.5;\n"
+		"uniform vec3 outline_color = vec3(255, 255, 255);\n"
+		"uniform float outline_threshold = 0.5;//0.0;\n" // starting point		
 		"\n" // uniform float radius;
 		"float round_corner(vec2 p, vec2 b, float r) {\n"
 		    "return length(max(abs(p)-b+r,0.0))-r;\n" // length(max(abs(p)-b, 0.0))-r;"
@@ -213,12 +211,42 @@ void GUI::generate_shader(void)
 		    "float b = 1.0 - round_corner(tex_coords * size - half_res, half_res, abs(radius));  //(tex_coords - half_res, half_res, radius);\n" // position, size, radius // abs() turns a negative number into a positive number
 		    "float round = smoothstep(0.0, 1.0, b);          \n" //"vec4 pixel = texture2D(texture, tex_coords);" // if texture is present
 		    // fragment color (default):
-		    "out_color = vec4(color.x, color.y, color.z, color.w);//vec4(color.xyz, color.w);\n" //border is in percentage(%) rather than HTML pixel(px)// 1.0, 1.0, 1.0, 1.0 is default frag_color
+		    "out_color = vec4(color.xyz, color.w);\n" //border is in percentage(%) rather than HTML pixel(px)// 1.0, 1.0, 1.0, 1.0 is default frag_color
 		    // rounded corners (radius - uses anti-aliasing via smoothstep to smoothen edges):
-		    "if(radius > 0.0) out_color = vec4(color.xyz, color.w * border);// border);//round);\n" // smooth or linear (anti-aliasing)
+		    "if(radius > 0.0) out_color = vec4(color.xyz, color.w * border);//round);\n" // smooth or linear (anti-aliasing)
 		    // setting anti-aliasing (smoothness) to gui edges without changing the radius:
 		    //"out_color = vec4(color.xyz, color.w * (smoothstep(vec2(0), fwidth(tex_coords), tex_coords) * smoothstep(vec2(0), fwidth(tex_coords), vec2(1) - tex_coords)) );\n"
-		    // gradient color:
+            //////////////////////////////////////////////////////
+            // outline-border
+                "if (outline && out_color.a <= outline_threshold) {\n"
+                    "ivec2 size = textureSize(texture, 0);\n"
+                    "\n"
+                    "float uv_x = tex_coords.x * size.x;\n"
+                    "float uv_y = tex_coords.y * size.y;\n"
+                    "\n"
+                    "float sum = 0.0;\n"
+                    "for (int n = 0; n < 9; ++n) {\n"
+                        "uv_y = (tex_coords.y * size.y) + (outline_thickness * float(n - 4.5));\n"
+                        "float h_sum = 0.0;\n"
+                        "h_sum += texelFetch(texture, ivec2(uv_x - (4.0 * outline_thickness), uv_y), 0).a;\n"
+                        "h_sum += texelFetch(texture, ivec2(uv_x - (3.0 * outline_thickness), uv_y), 0).a;\n"
+                        "h_sum += texelFetch(texture, ivec2(uv_x - (2.0 * outline_thickness), uv_y), 0).a;\n"
+                        "h_sum += texelFetch(texture, ivec2(uv_x - outline_thickness, uv_y), 0).a;\n"
+                        "h_sum += texelFetch(texture, ivec2(uv_x, uv_y), 0).a;\n"
+                        "h_sum += texelFetch(texture, ivec2(uv_x + outline_thickness, uv_y), 0).a;\n"
+                        "h_sum += texelFetch(texture, ivec2(uv_x + (2.0 * outline_thickness), uv_y), 0).a;\n"
+                        "h_sum += texelFetch(texture, ivec2(uv_x + (3.0 * outline_thickness), uv_y), 0).a;\n"
+                        "h_sum += texelFetch(texture, ivec2(uv_x + (4.0 * outline_thickness), uv_y), 0).a;\n"
+                        "sum += h_sum / 9.0;\n"
+                    "}\n"
+                    "\n"
+                    "if (sum / 9.0 >= 0.0001) {\n"
+                        "out_color = vec4(outline_color, color.w);\n"
+                        "if(radius > 0.0) out_color = vec4(outline_color, 1.0 * border);\n" // outline_color.w (alpha) will be 1.0 for now
+                    "}\n"
+                "}\n"
+        //////////////////////////////////////////////////////
+		    // gradient
             "if(gradient.enabled == true)\n"
 			"{"
 			    // top-to-bottom gradient

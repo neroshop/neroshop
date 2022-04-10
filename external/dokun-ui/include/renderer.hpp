@@ -161,6 +161,8 @@ public:
 	static void draw_tooltip(const std::string& text, int x, int y, int width, int height, float angle, float scale_x, float scale_y, unsigned int red, unsigned int green, unsigned int blue, float alpha,
 	    // shader
 	    Shader* shader,
+	    // outline-border
+	    bool outline, const Vector3& outline_color,
 	    // radius
 	    float radius, 
 	    // arrow - placement("up", "down"=default, "left", "right")

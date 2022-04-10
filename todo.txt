@@ -9,6 +9,8 @@
 - improve currency conversion and use multiple sources to retrieve currency rates []
 - complete application back-end (functionality)                  []
 - complete application front-end (user interface)                []
+- create messages button and a seller hub/section button         []
+- make postgresql optional                                       []
 
 [MID PRIORITY]
 - make table names plural ('cause select * from customer seems "grammatically" incorrect to me)
@@ -32,16 +34,16 @@
 - wipe orders (and their order_items) within a certain time frame (30 days)
 - multisignature wallet support
 - encrypt sensative data before storing it in database
-
+- create help/support section                                    []
 
 [LOW PRIORITY]
 - keep number of source files in "neroshop/src" at no more than 20               [x]
 - keep number of external dependencies in "neroshop/external" at no more than 10 [x]
 - create neroshop domain name (.org preffered)                                   []
 - create neroshop onion address                                                  []
-- neroshop matrix server                                                         [-]
+- create neroshop matrix server                                                  [-]
+- host neroshop on gitlab or something more open-source                          []
 - tor integration                                                                []
-- create avatar table for user avatars                                           []
 
 [UI]
 - prevent mouse press from affecting overlapped GUIs     []
@@ -56,76 +58,46 @@
 - remove length restrictions and add scrolling text      [x] 2022-01-25
 - add unicode support [text edit]                        []
 - add multi-line label [text edit]                       []
-- fix alpha values to 1.0 [all]                          [x] 2021-12-17
+- change default alpha values to 1.0 [all]               [x] 2021-12-17
 - add namespace dokun to every dokun-ui class            []
 - fix scrollbar-mouse move                               []
 - created a new version of spinner                       [x] 2021-12-18
-- add functional tab widget                              []
 - fix edit text and cursor when resized                  []
-- add eye icon to text edit to toggle sensative text visibility []
+- add eye icon to text edit to toggle sensative text visibility [x] 2022-04-08
 - work on list gui                                       []
 - work on combobox gui                                   []
 - work on scrollbar and scrollarea                       []
 - work on tab gui                                        []
 
-[Spinner][Progress:98%]
-[Edit][Progress:79%]
-[Slider][Progress:88%]
-
 [ISSUES]
 Font crashes when loading (only a small few fonts are immune from this)
-
-[DATABASE DESIGN]
-neroshop - for storing application data and transactions
-neroshop_user - for storing user data (accounts, settings, etc.)
-* guests' cart database will be stored locally and registered users' cart data will be stored on server.
-* table "users" would stored in database "neroshop_user"
-edit: actually, I will keep everything in a single database since I'm not sure how the two databases will be able to communicate with one another
-
-[LONG-TERM GOALS]
-1. Privacy and Decentralization
-2. User-friendly UI/UX
-3. Scalibility
 
 [HIRING]
 - hire graphics programmer to fix and optimize rendering code in "renderer.cpp"
 - hire network programmer to implement communication between applications and servers or implement peer-to-peer system.
-- hire web developer to help develop website
-- hire social media manager to manage social media accounts
+- hire web developer to help develop website ()
 
-[NOTES]
-since monero uses openssl as a dependency (https://github.com/monero-project/monero#dependencies), I will use openssl's sha-256 for hashing emails.
-passwords will be salted and hashed with bcrypt
-
+[ENCRYPTION TOOLS AND ALGORITHMS]
 hashing (pw)   : [bcrypt], scrypt, argon2, PBKDF2
 hashing (email): [SHA256], MD5, SHA1
-encryption     : [openssl], crypto++ (cryptopp), libsodium
-decentralized file hosting: siacoin, filecoin, ipfs (free), bittorent
-plain text encryption (E2EE using asymmetric encryption which uses 2 keys from both sender and receiver rather than symmetric which shares only 1 key): signal protocol (AKA TextSecure Protocol), Off-the-Record Messaging (OTR),  
+encryption library: [openssl], crypto++ (cryptopp), libsodium
+DB/file hosting: siacoin / SkyDB, filecoin, ipfs, bittorent
+asymmetric encryption: [RSA]
+
+[NOTES]
+Since monero uses openssl as a dependency (https://github.com/monero-project/monero#dependencies), I will use openssl's sha-256 for hashing emails.
+Passwords will be salted and hashed with bcrypt.
+RSA will be used for end-to-end encrypting short notes, messages, and mailing addresses.
+Though asymmetric encryption algorithms like RSA may be slower than symmetric encryption algorithms, they are more secure than symmetric encryption algorithms.
 
 I realize that I need an online database that is scalable like MySQL or PostgreSQL 
 and I cannot use SQLite since its only for offline use :(
+I had to choose between MySQL and PostgreSQL so I went with PostgreSQL since the license is more free than
+MySQL's license.
+Also, I found out that Postgres has built-in NoSQL with JSON/JSONB so there may not be a need for an alternative NoSQL database.
 
-Database Management Systems:
-mySQL (GNU, paid): https://dev.mysql.com/downloads/mysql/
-       https://dev.mysql.com/downloads/c-api/
-       https://dev.mysql.com/downloads/connector/cpp/
-postgreSQL (BSD or MIT): https://www.postgresql.org/download/    =>    https://www.postgresql.org/download/linux/ubuntu/
-                         source - https://www.postgresql.org/ftp/source/
-                         license - https://postgresql.org/about/licence
-                         cpp_bindings - http://www.pqxx.org/development/libpqxx/
+For the user interface, I will be using dokun-ui. "dokun-ui" is a custom-made user interface library that takes some inspiration from QT Creator and HTML/CSS and is forked from dokun (https://github.com/sidtheprince/dokun), an abandoned project.
+The long-term goals that I am aiming for neroshop in order are privacy and decentralization then user-friendly UI/UX, and finally, scalability.
 
-Converting from SQLite to PostgreSQL:
-pgloader: https://pgloader.io/about/
-          docs - https://pgloader.readthedocs.io/en/latest/
-
-For big data and scalability, I might need to use a NoSQL database like:
-MongoDB: https://docs.mongodb.com/drivers/cxx/
-edit: Postgres has built-in NoSQL with JSON/JSONB so there may not be a need for an alternative NoSQL database
-          
-SkyDB:
-https://blog.sia.tech/skydb-a-mutable-database-for-the-decentralized-web-7170beeaa985
-
-Considerations:
-In the future, I may consider supporting other private-by-default coins such as wownero, dero, and piratechain
+In the future, I may consider supporting other private-by-default coins such as wownero, dero, and piratechain.
 

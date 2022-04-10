@@ -55,7 +55,7 @@ void Progressbar::draw()
 	
 		Renderer::draw_progressbar(get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y,
 		    foreground_color.x, foreground_color.y, foreground_color.z, foreground_color.w,
-		    GUI::gui_shader,
+		    (!shader.get()) ? GUI::gui_shader : shader.get(),
 			min_val, max_val, value, background_color,
 			outline, outline_width, outline_color, outline_antialiased,
 			radius

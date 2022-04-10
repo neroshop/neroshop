@@ -64,7 +64,11 @@ void neroshop::Catalog::initialize() {
     if(tooltip.get()) {neroshop::print("catalog is already initialized", 2);return;}
     tooltip = std::unique_ptr<Box>(new Box());
     tooltip->set_tooltip(true);
-    tooltip->set_color(64, 64, 64);//tooltip->set_tooltip_arrow_direction("down");
+    tooltip->set_color(10, 10, 10);//, 1.0);//tooltip->set_tooltip_arrow_direction("down");
+    // outline won't show unless it has a radius :U
+    //tooltip->set_radius(10);
+    //tooltip->set_outline(true); // hint is a box, not a tooltip so why is the outline missing?
+    //tooltip->set_outline_color(255, 255, 255, 1.0);
     tooltip->add_label(*new dokun::Label("")); // font will be auto set when label is initialized with a string
     tooltip->hide(); // hide tooltip by default
     ////////////////////
@@ -207,8 +211,8 @@ void neroshop::Catalog::draw() {
 	            tooltip->set_position(heart_icon->get_x() + (heart_icon->get_width() - tooltip->get_width()) / 2, heart_icon->get_y() - (tooltip->get_height() + tooltip->get_tooltip_arrow_height()) - 5);	            
 	            tooltip->show();
 	        }
-	        // on box press, show current page
-	        if(boxes->is_pressed()) {
+	        // on box product_image press, show current page
+	        if(Mouse::is_over(boxes->get_image(2)->get_rect()) && Mouse::is_pressed(1)) {//if(boxes->is_pressed()) {
 	            // populate page with box item details before we show it
 	            int item_id = boxes->get_component("item_id")->to_integer();
 	            std::cout << "box with item_id(" << item_id << ") is pressed\n";

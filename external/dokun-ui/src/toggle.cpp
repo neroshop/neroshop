@@ -41,7 +41,7 @@ void Toggle::draw()
             background_color = (value == 0) ? off_color : on_color;//Vector4(64, 64, 64, 1.0) : Vector4(0, 51, 102, 1.0);
 		    Renderer::draw_switch(get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y,
 		        foreground_color.x, foreground_color.y, foreground_color.z, foreground_color.w, // handle (foreground - white)
-			    GUI::gui_shader,
+			    (!shader.get()) ? GUI::gui_shader : shader.get(),
 			    value, background_color, 
 			    outline, outline_width, outline_color, outline_antialiased,
 			    radius
@@ -52,7 +52,7 @@ void Toggle::draw()
 		    ////radius = 100.0; // for a perfect circle, w and h should be equal //std::cout << "radio_size: " << get_size() << std::endl;//20, 20
 		    Renderer::draw_radio(get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y,
 		        background_color.x, background_color.y, background_color.z, background_color.w, 
-			    GUI::gui_shader,
+			    (!shader.get()) ? GUI::gui_shader : shader.get(),
 			    value, foreground_color, // inner color (dokun_blue)
 			    outline, outline_width, outline_color, outline_antialiased,
 			    radius
@@ -61,7 +61,7 @@ void Toggle::draw()
     if(is_checkbox()) {
             background_color = (value == 0) ? off_color : on_color;
             Renderer::draw_checkbox(get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y, background_color.x, background_color.y, background_color.z, background_color.w,
-	            GUI::gui_shader,
+	            (!shader.get()) ? GUI::gui_shader : shader.get(),
 	            value, foreground_color, // value, mark_color (white)
 		        outline, outline_width, outline_color, outline_antialiased, radius); // outline
 	}

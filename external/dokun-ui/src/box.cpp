@@ -260,7 +260,7 @@ void Box::draw_box() { // other boxes: list, grid
     title_bar_button_width = title_bar_height / 2;//std::cout << "draw_box: title_bar_button_Width: " << title_bar_button_width << std::endl;
     // Draw box	- at (0, 0) the titlebar will not show as it is the main widget at 0, 0 so the title bar would be hidden by the window's titlebar		
 	Renderer::draw_box(get_position().x, get_position().y, get_width(), get_height(), get_angle(), 
-			get_scale().x, get_scale().y, color.x, color.y, color.z, color.w, GUI::gui_shader,
+			get_scale().x, get_scale().y, color.x, color.y, color.z, color.w, (!shader.get()) ? GUI::gui_shader : shader.get(),
 			    radius, is_iconified(),
 				// title_bar
 				title_bar, title_bar_height, title_bar_color,
@@ -322,7 +322,12 @@ void Box::draw_box() { // other boxes: list, grid
                     if(images->get_alignment() == "none"  ) {}
 				    images->set_position(get_x() + images->get_relative_x(), get_y() + images->get_relative_y());
 				    // if image is larger than box, scale it to fit box
-				    if(image_width > get_width () || image_height > get_height()) images->scale_to_fit(get_width(), get_height());// if image is wider than widget, make width equal or if image is taller than widget, make height equal
+				    if(image_width > get_width () || image_height > get_height()) {
+				        // resize works well for now
+				        images->resize(get_width(), get_height());//std::cout << "scaling to fit image inside box\n";
+				        // Image::scale_to_fit does not work like it used to :/
+				        ////images->scale_to_fit(get_width(), get_height());// if image is wider than widget, make width equal or if image is taller than widget, make height equal
+				    }
 				    // and finally, draw the image ...	
 				    images->draw(); // Image is not a GUI so you cannot set its parent which means it must be drawn manually
 			    //-----------------------------------
@@ -367,7 +372,7 @@ void Box::draw_tooltip() {
 	if(!is_active()) {}// add shade to color
 	if(is_active()) {}  // add tint to color    
     // Draw tooltip
-	Renderer::draw_tooltip("Hello", get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y, get_color().x, get_color().y, get_color().z, get_color().w, GUI::gui_shader, radius, tooltip_arrow_direction, tooltip_arrow_width, tooltip_arrow_height, tooltip_arrow_position/*, tooltip_arrow_color*/);
+	Renderer::draw_tooltip("Hello", get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y, get_color().x, get_color().y, get_color().z, get_color().w, (!shader.get()) ? GUI::gui_shader : shader.get(), outline, outline_color.xyz, radius, tooltip_arrow_direction, tooltip_arrow_width, tooltip_arrow_height, tooltip_arrow_position/*, tooltip_arrow_color*/);
     // Draw label (goes inside box) **********************************************************
     if(!get_label_list().empty()) // make sure Box has an "initialized" label beforehand (or else engine will crash)
     {   

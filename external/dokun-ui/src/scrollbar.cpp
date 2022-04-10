@@ -66,7 +66,7 @@ void Scrollbar::draw()
         int green  = get_color().y;
         int blue   = get_color().z;		
 		int alpha  = get_color().w;		
-		Renderer::draw_scrollbar(x, y, width, height, angle, scale_x, scale_y, red, green, blue, alpha, GUI::gui_shader,
+		Renderer::draw_scrollbar(x, y, width, height, angle, scale_x, scale_y, red, green, blue, alpha, (!shader.get()) ? GUI::gui_shader : shader.get(),
             value, range.x, range.y,
 			// handle
 			handle_offset, handle_size, handle_color,

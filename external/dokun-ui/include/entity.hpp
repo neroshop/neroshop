@@ -91,9 +91,9 @@ class Entity // or GameObject; base abtract class that acts as parent for Sprite
 		// component list
 		std::vector<std::shared_ptr<Component>> component_list; // component - additional data members that can be attached to entities
 		// shader
-		std::shared_ptr<Shader> shader; // shaders - for custom rendering of entities
+		std::unique_ptr<Shader> shader; // shaders - for custom rendering of entities
 		// script (each entity needs no more than 1 script)
-		std::shared_ptr<Script> script;
+		std::unique_ptr<Script> script;
 		bool visible;
 		int mode;
 };

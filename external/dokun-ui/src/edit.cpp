@@ -188,7 +188,7 @@ void Edit::draw()
 	if(readonly) cursor = false; // no cursor necessary for readonly edits!
 	// Draw edit (without cursor)    // text is not really used in Renderer::draw_edit() :/
 	Renderer::draw_edit("", get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y,
-	    get_color().x, get_color().y, get_color().z, get_color().w, GUI::gui_shader, multilined, false, cursor_x, cursor_y, cursor_width, cursor_height, cursor_color);//if(label) label->set_position(get_x() + label->get_relative_x(), get_y() + label->get_relative_y()); // label position stays the same - on the edit, but the cursor is the only thing that moves
+	    get_color().x, get_color().y, get_color().z, get_color().w, (!shader.get()) ? GUI::gui_shader : shader.get(), multilined, false, cursor_x, cursor_y, cursor_width, cursor_height, cursor_color);//if(label) label->set_position(get_x() + label->get_relative_x(), get_y() + label->get_relative_y()); // label position stays the same - on the edit, but the cursor is the only thing that moves
     // ::on_placeholder() was causing a segfault [fixed: placeholder_label was not pre-initialized]
     // Draw children (label, placeholder label, etc.)
     on_placeholder(); // hide or show placeholder (on setting a placeholder text or image)
@@ -197,7 +197,7 @@ void Edit::draw()
     if(label) label->draw(); // will be drawn over placeholder
     // Draw cursor (over the placeholder - by drawing cursor after placeholder)
     on_cursor(); // cursor blinking effect (on cursor being true)
-    if(cursor) Renderer::draw_cursor(cursor_x, cursor_y, cursor_width, cursor_height, cursor_color, GUI::gui_shader, get_x(), get_y(), get_width(), get_height());
+    if(cursor) Renderer::draw_cursor(cursor_x, cursor_y, cursor_width, cursor_height, cursor_color, (!shader.get()) ? GUI::gui_shader : shader.get(), get_x(), get_y(), get_width(), get_height());
 }
 /////////////
 void Edit::draw(double x, double y) 

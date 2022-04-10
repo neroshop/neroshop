@@ -61,14 +61,14 @@ void Spinner::draw()
 	on_button_press();
 	// Draw spinner
 	if(style == 0) {
-	    Renderer::draw_spinner0(get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y, color.x, color.y, color.z, color.w, GUI::gui_shader, value, 
+	    Renderer::draw_spinner0(get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y, color.x, color.y, color.z, color.w, (!shader.get()) ? GUI::gui_shader : shader.get(), value, 
 	        button_width, button_color, 
 	        arrow_size, shape_color,
 	        outline, outline_width, outline_color, outline_antialiased);
     }
     if(style == 1) {
         Renderer::draw_spinner(get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y, color.x, color.y, color.z, color.w,
-            GUI::gui_shader,
+            (!shader.get()) ? GUI::gui_shader : shader.get(),
             button_width, button_color,
             shape_size, shape_color, shape_depth, 
             separator, separator_size 

@@ -17,33 +17,34 @@ std::unique_ptr<neroshop::Cart> neroshop::Cart::cart_obj (nullptr);
 ////////////////////
 bool neroshop::Cart::open() const {
     // cart data is stored locally on a user's device
+    create_guest_cart(); // create cart table if not exist
     // a cart tied to an account (user_id) should be named: cart_user.db (e.g cart_layter.db) or??
-    // cart.db - should not be loaded until user logs in or??
-    std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cart.db";
+    // cookies.sqlite3 - should not be loaded until user logs in or??
+    std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cookies.sqlite3";
     std::ifstream file(cart_file.c_str()); // no need to use f.close() as the file goes out of scope at the end of the function
-    // if cart.db already exists        
+    // if cookies.sqlite3 already exists        
     if(file.good()) {
-        std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cart.db";
+        std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cookies.sqlite3";
         NEROSHOP_TAG_OUT std::cout << "\033[1;36m" << "cart found: \"" << cart_file << "\"\033[0m" << std::endl;
-        // open cart db
+        // open cart db-
         neroshop::DB::Sqlite3 db;
-        if(!db.open(cart_file)) {neroshop::print(SQLITE3_TAG + std::string("could not open cart.db")); return false;}
-        db.execute("PRAGMA journal_mode = WAL;"); // to prevent database from being locked
-        if(!db.table_exists("Cart")) { // table Cart is missing either due to corruption or something
-            neroshop::print(SQLITE3_TAG + std::string("table Cart is missing (Please delete cart.db and then restart the application)"));
+        if(!db.open(cart_file)) {neroshop::print(SQLITE3_TAG + std::string("could not open cookies.sqlite3")); return false;}
+        ////db.execute("PRAGMA journal_mode = WAL;"); // to prevent database from being locked
+        if(!db.table_exists("cart")) { // table Cart is missing either due to corruption or something
+            neroshop::print(SQLITE3_TAG + std::string("table Cart is missing (Please delete cookies.sqlite3 and then restart the application)"));
             db.close();
             return false;
         }
-        // create items based on item_ids stored in cart.db
-        int cart_items_count = db.row_count("Cart"); // numbers of items currently in cart
-        unsigned int last_cart_item = db.get_column_integer("Cart ORDER BY id DESC LIMIT 1", "*"); // number of inserted rows in table cart //std::cout << "last inserted row in table cart: " << last_cart_item << std::endl;
+        // create items based on item_ids stored in cookies.sqlite3
+        int cart_items_count = db.row_count("cart"); // numbers of items currently in cart
+        unsigned int last_cart_item = db.get_column_integer("cart ORDER BY id DESC LIMIT 1", "*"); // number of inserted rows in table cart //std::cout << "last inserted row in table cart: " << last_cart_item << std::endl;
         if(cart_items_count < 1) neroshop::print("Cart is empty");
         if(cart_items_count > 0) 
         {   // load items into the cart
             for(unsigned int i = 1; i <= last_cart_item; i++) {//for(unsigned int i = 1; i <= cart_items_count; i++) {
-                unsigned int cart_item = db.get_column_integer("Cart", "item_id", "id = " + std::to_string(i));
+                unsigned int cart_item = db.get_column_integer("cart", "item_id", "id = " + std::to_string(i));
                 if(cart_item == 0) continue; // item not in cart, so skip
-                unsigned int item_qty = db.get_column_integer("Cart", "item_qty", "item_id = " + std::to_string(cart_item));//neroshop::print("loaded cart item (id: " + std::to_string(cart_item) + ", qty: " + std::to_string(item_qty) + ")");// << std::endl;//std::cout << "found cart item with id: " << i << " (qty: " << item_qty + ")" << std::endl;
+                unsigned int item_qty = db.get_column_integer("cart", "item_qty", "item_id = " + std::to_string(cart_item));//neroshop::print("loaded cart item (id: " + std::to_string(cart_item) + ", qty: " + std::to_string(item_qty) + ")");// << std::endl;//std::cout << "found cart item with id: " << i << " (qty: " << item_qty + ")" << std::endl;
                 neroshop::Item * item = new Item(cart_item);//Item item(cart_item);//item created on stack dies at end of for loop that is why it returns invalid values
                 // if the cart is not empty, just load it, no need to add more of the same items again
                 neroshop::Cart::get_singleton()->load(*item, item_qty);
@@ -51,8 +52,8 @@ bool neroshop::Cart::open() const {
         }
         db.close();
     }
-    if(!file.good()) { // if cart.db does not exist, create it
-        if(!neroshop::Cart::create_db()) {neroshop::print(SQLITE3_TAG + std::string("failed to create cart.db")); return false;}
+    if(!file.good()) { // if cookies.sqlite3 does not exist, create it
+        if(!neroshop::Cart::create_guest_cart()) {neroshop::print(SQLITE3_TAG + std::string("failed to create cookies.sqlite3")); return false;}
     }
     return true;        
 }
@@ -171,11 +172,11 @@ void neroshop::Cart::remove(unsigned int index, int quantity) {
 void neroshop::Cart::empty() {
     contents.clear();
     // clear the sqlite Cart table as well
-    std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cart.db";
+    std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cookies.sqlite3";
     neroshop::DB::Sqlite3 db(cart_file);
-    if(!db.table_exists("Cart")) {db.close(); return;}
-    db.truncate("Cart");
-    //db.vacuum(); // probably not necessary since cart.db is smaller than the main db and is stored locally on the user's device
+    if(!db.table_exists("cart")) {db.close(); return;}
+    db.truncate("cart");
+    //db.vacuum(); // probably not necessary since cookies.sqlite3 is smaller than the main db and is stored locally on the user's device
     db.close();
 }
 ////////////////////
@@ -249,9 +250,9 @@ double neroshop::Cart::get_subtotal_price() const {
 unsigned int neroshop::Cart::get_total_quantity() const {
     ///////////////////
     // this is faster (I think, since we don't use any loops here)
-    std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cart.db";
+    std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cookies.sqlite3";
     neroshop::DB::Sqlite3 db(cart_file);
-    int items_count = db.get_column_integer("Cart", "sum(item_qty) AS cart_qty"); // DB::Postgres::get_singleton()->get_integer("SELECT SUM(item_qty) FROM Cart;");
+    int items_count = db.get_column_integer("cart", "sum(item_qty) AS cart_qty"); // DB::Postgres::get_singleton()->get_integer("SELECT SUM(item_qty) FROM Cart;");
     db.close();
     return items_count;
     /////////////////////////////
@@ -265,15 +266,15 @@ unsigned int neroshop::Cart::get_total_quantity() const {
 }
 ////////////////////
 unsigned int neroshop::Cart::get_total_quantity_db() { // faster than neroshop::Cart::get_total_quantity() since this does not open the db file multiple times, but only one time
-    std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cart.db";
+    std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cookies.sqlite3";
     neroshop::DB::Sqlite3 db(cart_file);
-    if(!db.table_exists("Cart")) {db.close(); return 0;}
+    if(!db.table_exists("cart")) {db.close(); return 0;}
     ///////
-    unsigned int row_count = db.row_count("Cart");
+    unsigned int row_count = db.row_count("cart");
     unsigned int items_count = 0;
     if(row_count < 1) return 0;
     for(unsigned int i = 1; i <= row_count; i++) {
-        unsigned int item_qty = db.get_column_integer("Cart", "item_qty", "item_id = " + std::to_string(i));
+        unsigned int item_qty = db.get_column_integer("cart", "item_qty", "item_id = " + std::to_string(i));
         items_count += item_qty;
     }
     db.close();
@@ -316,10 +317,10 @@ unsigned int neroshop::Cart::get_contents_count() const {
 }
 ////////////////////
 unsigned int get_contents_count_db() { // returns number of rows in table Cart
-    std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cart.db";
+    std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cookies.sqlite3";
     neroshop::DB::Sqlite3 db(cart_file);
-    if(!db.table_exists("Cart")) {db.close(); return 0;}
-    int row_count = db.row_count("Cart");
+    if(!db.table_exists("cart")) {db.close(); return 0;}
+    int row_count = db.row_count("cart");
     db.close();
     return row_count;
 }
@@ -348,7 +349,7 @@ neroshop::Cart * neroshop::Cart::get_singleton() {
 ////////////////////
 ////////////////////
 bool neroshop::Cart::is_empty() const {
-    return contents.empty();//return (db.row_count("Cart") == 0);
+    return contents.empty();//return (db.row_count("cart") == 0);
 }
 ////////////////////
 bool neroshop::Cart::is_full() const {
@@ -357,10 +358,10 @@ bool neroshop::Cart::is_full() const {
 ////////////////////
 bool neroshop::Cart::in_cart(unsigned int item_id) const {//(const neroshop::Item& item) const {
     //return (std::find(contents.begin(), contents.end(), &const_cast<neroshop::Item&>(item)) != contents.end());
-    std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cart.db";
+    std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cookies.sqlite3";
     neroshop::DB::Sqlite3 db(cart_file);
-    if(!db.table_exists("Cart")) {db.close(); return false;}
-    int cart_item = db.get_column_integer("Cart", "item_id", "item_id = " + std::to_string(item_id));
+    if(!db.table_exists("cart")) {db.close(); return false;}
+    int cart_item = db.get_column_integer("cart", "item_id", "item_id = " + std::to_string(item_id));
     if(cart_item == 0) return false; // 0 means item was never registered
     if(cart_item != item_id) return false; // if cart_item_id does not match item_id
     //std::cout << "item with id: " << item_id << " is inside cart" << std::endl;
@@ -373,74 +374,41 @@ bool neroshop::Cart::in_cart(unsigned int item_id) const {//(const neroshop::Ite
 ////////////////////
 ////////////////////
 ////////////////////
-bool neroshop::Cart::create_db() {
-    auto now = std::chrono::system_clock::now();
-    auto in_time_t = std::chrono::system_clock::to_time_t(now); // current time
-	std::stringstream ss;
-	ss << std::put_time(std::localtime(&in_time_t), "%Y%m%d");
-	std::string date = ss.str();
-    ////////////////////////////
-    std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cart.db";
-    neroshop::DB::Sqlite3 db(cart_file);
-    NEROSHOP_TAG_OUT std::cout << "\033[1;97m" << "created " << cart_file << "\033[0m" << std::endl;
-    db.execute("PRAGMA journal_mode = WAL;"); // this may reduce the incidence of SQLITE_BUSY errors (such as database being locked) // https://www.sqlite.org/pragma.html#pragma_journal_mode
-    // table: Cart - one cart per user on each device
-    if(!db.table_exists("Cart")) {
-        db.table("Cart"); // auto generate cart_id (primary key) //db.column("Cart", "ADD", "session_id", "INTEGER"); // combine name+date+time//db.column("Cart", "ADD", "cart_id", "INTEGER"); // the id of the cart this item is in //db.column("Cart", "ADD", "user_id", "INTEGER"); // the id of the (logged) user whose the cart item belongs to
-        db.column("Cart", "ADD", "item_id", "INTEGER"); // the id of the item that is in the cart
-        db.column("Cart", "ADD", "item_qty", "INTEGER");
-        //db.column("Cart", "ADD", "item_price", "INTEGER"); // opt //db.column("Cart", "ADD", "", "TEXT");//db.column("Cart", "ADD", "checked", "BOOLEAN");//NUMERIC // purchased or discarded//db.index("idx_session_ids", "Cart", "session_id");// enforce that the user names are unique, in case there is an attempt to insert a new "name" of the same value// jack_20211021//db.execute("CREATE UNIQUE INDEX idx_user_ids ON Cart (user_id);");//user_id should not be unique since user can have multiple items on cart
-        db.index("idx_item_ids", "Cart", "item_id");//db.execute("CREATE UNIQUE INDEX idx_item_ids ON Cart (item_id);");//std::string session_id = DB::to_sql_string(user + "_" + date);//bool checked = false;
+bool neroshop::Cart::create_guest_cart() {
+    std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cookies.sqlite3";
+    neroshop::DB::Sqlite3 db(cart_file);////db.execute("PRAGMA journal_mode = WAL;"); // this may reduce the incidence of SQLITE_BUSY errors (such as database being locked) // https://www.sqlite.org/pragma.html#pragma_journal_mode
+    // one cart per user (guest) on each device // after each order, cart will be emptied
+    if(!db.table_exists("cart")) {
+        db.table("cart");
+        db.execute("ALTER TABLE cart ADD COLUMN item_id INTEGER;");
+        db.execute("ALTER TABLE cart ADD COLUMN item_qty INTEGER;");
+        db.execute("ALTER TABLE cart ADD COLUMN item_price INTEGER;");//"REAL"); // for money, integer is the most heavily suggested in the sqlite commu :/
+        db.execute("ALTER TABLE cart ADD COLUMN item_weight REAL;");
+        db.index("cart_item_ids_index", "cart", "item_id");//db.execute("CREATE UNIQUE INDEX cart_item_ids_index ON Cart (item_id);");
     }
     db.close();
-    ////////////////////////////////
-    // postgresql
-    ////////////////////////////////
-    /*//DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
-    if(!DB::Postgres::get_singleton()->table_exists("cart")) {
-        DB::Postgres::get_singleton()->create_table("cart");
-        // user_id
-        DB::Postgres::get_singleton()->add_column("cart", "user_id", "integer REFERENCES users(id)");
-        // if user is logged in or recently registered ...
-        // insert user_id to cart (to represent user's ownership of a particular cart_id)
-        //DB::Postgres::get_singleton()->execute_params("INSERT INTO cart (user_id) VALUES ($1)", { user->get_id() });
-    }
-    if(!DB::Postgres::get_singleton()->table_exists("cart_item")) {
-        DB::Postgres::get_singleton()->create_table("cart_item");
-        // cart_id references cart(id)
-        DB::Postgres::get_singleton()->add_column("cart_item", "cart_id", "integer REFERENCES cart(id)");
-        // item_id references item(id)
-        DB::Postgres::get_singleton()->add_column("cart_item", "item_id", "integer REFERENCES item(id)");
-        // item_qty
-        DB::Postgres::get_singleton()->add_column("cart_item", "item_qty", "integer");
-        //DB::Postgres::get_singleton()->add_column("cart_item", "item_price", "money");
-        // each cart_item will belong to a cart_id owned by user_id
-    }    
-    //DB::Postgres::get_singleton()->finish();
-    */
-    ////////////////////////////////    
     return true;
 }
 ////////////////////
 //bool create_offline_db() {} // sqlite
 ////////////////////
 void neroshop::Cart::add_db(unsigned int item_id) {
-    std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cart.db";
+    std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cookies.sqlite3";
     neroshop::DB::Sqlite3 db(cart_file);
-    if(!db.table_exists("Cart")) {db.close(); return;}
-    db.insert("Cart", "item_id, item_qty",
+    if(!db.table_exists("cart")) {db.close(); return;}
+    db.insert("cart", "item_id, item_qty",
         std::to_string(item_id) + ", " + std::to_string(0) //+ ", " + std::to_string(item_price) + ", " + //std::to_string() + ", " + 
     );
     db.close();
 }
 ////////////////////
 void neroshop::Cart::remove_db(unsigned int item_id) {
-    std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cart.db";
+    std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cookies.sqlite3";
     neroshop::DB::Sqlite3 db(cart_file);
-    if(!db.table_exists("Cart")) {db.close(); return;}
-    db.drop("Cart", "item_id = " + std::to_string(item_id)); // deletes column where id=2
+    if(!db.table_exists("cart")) {db.close(); return;}
+    db.drop("cart", "item_id = " + std::to_string(item_id)); // deletes column where id=2
     //db.vacuum();
-    //NEROSHOP_TAG_OUT std::cout << "item " << item_id << " has been removed from Cart.db" << std::endl;
+    //NEROSHOP_TAG_OUT std::cout << "item " << item_id << " has been removed from cookies.sqlite3" << std::endl;
     db.close();
 } 
 ////////////////////

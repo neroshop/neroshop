@@ -487,13 +487,14 @@ void Renderer::draw_box(int x, int y, int width, int height, float angle, float 
 	//glDisable(GL_DEPTH_TEST);          // for removing hidden line
 	// What is drawn last should appear top, according to openGL, so outline will be drawn last
 	// Draw outline
-	if(outline) {
-	shader->set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
-	glLineWidth(outline_width);
+    shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
+	/*glLineWidth(outline_width);
 	glBindVertexArray(title_bar_vertex_array_obj); // use same vao data as title_bar but this time in a line loop
 	    glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-	}	
+	glBindVertexArray(0);*/
 	}      	
 	//--------------------------
 	// CLOSE_BUTTON
@@ -707,19 +708,15 @@ void Renderer::draw_box(int x, int y, int width, int height, float angle, float 
 	{
 	// What is drawn last should appear on top, according to openGL, but we want to HIDE the diagonal line shown by the outline, so outline should appear at the bottom
 	// Modern OpenGL defines only points, lines or triangles; there are no 4-vertex primitive types, so you can't draw a quad without triangles, which is why you see the diagonal line across the box
-	// Draw outline (first: at bottom of box, so we can hide the diagonal lines) // Think of the outline as the skeleton of a box
-	if(outline) {
-	    // restore gradient color (so outline does not copy gradient of close_button, in the case of close_button being the only button in the title_bar)
-	    // outline, box : gradient
-	    ////shader->set_float("gradient.color", (gradient_color.x/255.0), (gradient_color.y/255.0), (gradient_color.z/255.0), gradient_color.w); // color1 will be a shade (bottom)
-	    // outline : color
-	    //shader->set_float("radius", radius); // set rounded_corner
-        shader->set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);//glEnable(GL_LINE_SMOOTH);
-	    glLineWidth(outline_width); // outline_width
-	    glBindVertexArray(box_vertex_array_obj); // use same vao data as box but this time in a line loop
-            glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	    glBindVertexArray(0);	
-	}
+	// Draw outline
+    shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
+	// restore gradient color (so outline does not copy gradient of close_button, in the case of close_button being the only button in the title_bar)
+	// outline, box : gradient
+	////shader->set_float("gradient.color", (gradient_color.x/255.0), (gradient_color.y/255.0), (gradient_color.z/255.0), gradient_color.w); // color1 will be a shade (bottom)
+	//shader->set_float("radius", radius); // set rounded_corner
 	// Draw box (last: on top of outline so diagonal lines do not show up)
 	// box : size (I don't think size is even used in the shader :O)
 	shader->set_vector2("size", Vector2(width, height));
@@ -741,6 +738,7 @@ void Renderer::draw_box(int x, int y, int width, int height, float angle, float 
 	// restore shader defaults
 	if(shader->get_uniform("radius") != -1) shader->set_float("radius", 0.0);
 	shader->set_integer("gradient.enabled", false);
+	shader->set_integer("outline", false);
 	}
 	//--------------------------
 	// Clean textures
@@ -1276,14 +1274,11 @@ void Renderer::draw_button(int x, int y, int width, int height, float angle, flo
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
 	// Draw button_outline
-	if(outline) {
-        shader->set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
-	    //glEnable(GL_LINE_SMOOTH);
-	    glLineWidth(outline_width); // outline_width
-	    glBindVertexArray(button_vertex_array_obj); // use same vao data as box but this time in a line loop
-            glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	    glBindVertexArray(0);
-	}
+	// Draw outline
+    shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
 	// Draw button
 	// button : radius
 	if(shader->get_uniform("radius") != -1) shader->set_float("radius", radius);
@@ -1298,6 +1293,7 @@ void Renderer::draw_button(int x, int y, int width, int height, float angle, flo
 	// restore defaults
 	if(shader->get_uniform("radius") != -1) shader->set_float("radius", 0.0);
 	if(shader->get_uniform("gradient.enabled") != -1) shader->set_integer("gradient.enabled", false);
+	shader->set_integer("outline", false);
 	// Clean textures
 	// Clean buffers
 	glDeleteBuffers(1, &button_tex_coord_buffer_obj);
@@ -1444,15 +1440,11 @@ void Renderer::draw_progressbar(int x, int y, int width, int height, float angle
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);
     // Draw static_bar (background) outline
-	if(outline == true)
-	{
-    shader->set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
-	//glEnable(GL_LINE_SMOOTH);
-	glLineWidth(outline_width); // outline_width
-	glBindVertexArray(background_vertex_array_obj); // use same vao data as background but this time in a line loop
-        glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);		
-	}
+	// Draw outline
+    shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
 	// progressbar radius
 	if(shader->get_uniform("radius") != -1) shader->set_float("radius", radius);
 	// Draw static_bar (background)
@@ -1499,15 +1491,11 @@ void Renderer::draw_progressbar(int x, int y, int width, int height, float angle
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);
 	// Draw moving_bar(foreground) outline
-	if(outline == true)
-	{
-	shader->set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
-	//glEnable(GL_LINE_SMOOTH); // may slow down performance
-	glLineWidth(outline_width); // outline_width
-	glBindVertexArray(foreground_vertex_array_obj); // use same vao data as _ but this time in a line loop
-        glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-    }
+	// Draw outline
+    shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
 	// Draw moving_bar (foreground)
 	shader->set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha); //  foreground_color
     glBindVertexArray(foreground_vertex_array_obj);
@@ -1621,12 +1609,10 @@ void Renderer::draw_edit(const std::string& text, int x, int y, int width, int h
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
 	// Draw edit outline
-	/*shader.set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
-	//glEnable(GL_LINE_SMOOTH); // may slow down performance
-	glLineWidth(outline_width); // outline_width
-	glBindVertexArray(vertex_array_obj); // use same vao data as _ but this time in a line loop
-        glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);*/
+	/*shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);*/
 	// edit : radius
 	shader->set_float  ("radius", 0/*radius*/); // set rounded_corner	
 	// edit : gradient
@@ -1641,6 +1627,7 @@ void Renderer::draw_edit(const std::string& text, int x, int y, int width, int h
 	// Restore defaults
 	shader->set_integer("gradient.enabled", false);
 	shader->set_float  ("radius", 0);
+	////shader->set_integer("outline", false);
     //-----------------------------------
     // CURSOR
 	if(cursor) {    
@@ -1851,12 +1838,11 @@ void Renderer::draw_slider(int x, int y, int width, int height, float angle, flo
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
 	// Draw slider(beam) outline
-	/*shader->set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
-	//glEnable(GL_LINE_SMOOTH); // may slow down performance
-	glLineWidth(outline_width); // outline_width
-	glBindVertexArray(slider_vertex_array_obj); // use same vao data as _ but this time in a line loop
-        glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);*/
+	/*	// Draw outline
+    shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);*/
 	// Draw slider (beam)
 	shader->set_float("radius", radius);
 	shader->set_float("color", (background_color.x / 255.0), (background_color.y / 255.0), (background_color.z / 255.0), background_color.w);
@@ -1905,12 +1891,11 @@ void Renderer::draw_slider(int x, int y, int width, int height, float angle, flo
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
 	/* // Draw beam_bar outline
-	shader->set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
-	//glEnable(GL_LINE_SMOOTH); // may slow down performance
-	glLineWidth(outline_width); // outline_width
-	glBindVertexArray(vertex_array_obj); // use same vao data as _ but this time in a line loop
-        glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);*/
+		// Draw outline
+    shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);*/
 	// Draw beam_bar (foreground)
 	////shader->set_float("radius", radius);
 	shader->set_float("color", (red/ 255.0), (green / 255.0), (blue / 255.0), alpha); //  foreground_color
@@ -1968,6 +1953,7 @@ void Renderer::draw_slider(int x, int y, int width, int height, float angle, flo
 	glBindVertexArray(0);                // (vao end 2  )	
 	// Restore default radius
 	shader->set_float("radius", 0.0);
+	shader->set_integer("outline", false);
 	// Clean textures
 	// Clean buffers
 	// :slider
@@ -2072,12 +2058,11 @@ void Renderer::draw_slider_vertical(int x, int y, int width, int height, float a
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
 	// Draw slider(beam) outline
-	/*shader->set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
-	//glEnable(GL_LINE_SMOOTH); // may slow down performance
-	glLineWidth(outline_width); // outline_width
-	glBindVertexArray(slider_vertex_array_obj); // use same vao data as _ but this time in a line loop
-        glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);*/
+	/*	// Draw outline
+    shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);*/
 	// Draw slider (beam)
 	shader->set_float("color", (background_color.x / 255.0), (background_color.y / 255.0), (background_color.z / 255.0), background_color.w);
     glBindVertexArray(slider_vertex_array_obj); // (vao start 2)
@@ -2125,12 +2110,11 @@ void Renderer::draw_slider_vertical(int x, int y, int width, int height, float a
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
 	/* // Draw beam_bar outline
-	shader->set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
-	//glEnable(GL_LINE_SMOOTH); // may slow down performance
-	glLineWidth(outline_width); // outline_width
-	glBindVertexArray(vertex_array_obj); // use same vao data as _ but this time in a line loop
-        glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);*/
+		// Draw outline
+    shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);*/
 	// Draw beam_bar (foreground)
 	shader->set_float("color", (red/ 255.0), (green / 255.0), (blue / 255.0), alpha); //  foreground_color
     glBindVertexArray(bar_vertex_array_obj); // (vao start 2)
@@ -2289,15 +2273,11 @@ void Renderer::draw_switch(int x, int y, int width, int height, float angle, flo
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
     // Draw switch(background) outline
-	if(outline)
-	{
-	shader->set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
-	//glEnable(GL_LINE_SMOOTH); // may slow down performance
-	glLineWidth(outline_width); // outline_width
-	glBindVertexArray(switch_vertex_array_obj); // use same vao data as _ but this time in a line loop
-        glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-	}
+	// Draw outline
+    shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
 	// Draw switch (background)
 	shader->set_float("radius", radius);
 	shader->set_float("color", (background_color.x / 255.0), (background_color.y / 255.0), (background_color.z / 255.0), background_color.w);
@@ -2306,6 +2286,7 @@ void Renderer::draw_switch(int x, int y, int width, int height, float angle, flo
 	glBindVertexArray(0);                // (vao end 2  )
 	// Restore defaults
 	////shader->set_float("radius", 0.0);
+	////shader->set_integer("outline", false);
 	//------------------------------
 	// HANDLE (foreground)
     // vertex array obj  - stores vertices
@@ -2352,14 +2333,11 @@ void Renderer::draw_switch(int x, int y, int width, int height, float angle, flo
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
     // Draw handle outline
-	if(outline) {
-	    shader->set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
-	    //glEnable(GL_LINE_SMOOTH); // may slow down performance
-	    glLineWidth(outline_width); // outline_width
-	    glBindVertexArray(handle_vertex_array_obj); // use same vao data as _ but this time in a line loop
-            glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	    glBindVertexArray(0);		
-	}
+	// Draw outline
+    shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
 	// Draw handle switch
 	shader->set_float("radius", (radius >= 50.0) ? 100.0 : radius);// when the switch toggle starts to look more round-ish, set radius to 100 %
 	shader->set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
@@ -2368,6 +2346,7 @@ void Renderer::draw_switch(int x, int y, int width, int height, float angle, flo
 	glBindVertexArray(0);
 	// Restore defaults
 	shader->set_float("radius", 0.0);
+	shader->set_integer("outline", false);
 	// Clean textures
 	// Clean buffers
 	// :toggle
@@ -2390,6 +2369,7 @@ void Renderer::draw_switch(int x, int y, int width, int height, float angle, flo
 }
 //////////// // Usage: Renderer::draw_tooltip("Hello", 750, 500, 100, 50, 0.0, 1, 1, 106, 106, 106, 255.0);
 void Renderer::draw_tooltip(const std::string& text, int x, int y, int width, int height, float angle, float scale_x, float scale_y, unsigned int red, unsigned int green, unsigned int blue, float alpha, Shader* shader,
+	bool outline, const Vector3& outline_color,
 	float radius, 
     std::string direction, int arrow_width, int arrow_height, double arrow_offset)
 {
@@ -2464,14 +2444,12 @@ void Renderer::draw_tooltip(const std::string& text, int x, int y, int width, in
 		GLuint indices[] = {0, 1, 3,  1, 2, 3,};  
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
-	// Draw outline
-	/*shader->set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
-	//glEnable(GL_LINE_SMOOTH); // may slow down performance
-	glLineWidth(outline_width); // outline_width
-	glBindVertexArray(vertex_array_obj); // use same vao data as _ but this time in a line loop
-        glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);	*/
 	// Draw
+	// Draw outline
+    shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);	
 	shader->set_float("radius", radius);
 	shader->set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
@@ -2533,20 +2511,13 @@ void Renderer::draw_tooltip(const std::string& text, int x, int y, int width, in
 		GLuint indicestri[] = {1, 2, 3,  0};  
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicestri)* sizeof(GLuint), indicestri, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
-    // Draw outline
-	/*shader->set_float("color", (0.0 / 255.0), (0.0 / 255.0), (0.0 / 255.0), (255.0 / 255.0));
-	//glEnable(GL_LINE_SMOOTH); // may slow down performance
-	glLineWidth(2.0); // outline_width
-	glBindVertexArray(arrow_vertex_array_obj); // use same vao data as _ but this time in a line loop
-        glDrawArrays(GL_LINE_LOOP, 0, 3);//glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);*/	
 	// Draw triangle
-	// arrow will copy the color of tooltip. Make sure color is a float/double!
-	Vector4 arrow_color = Vector4(red, green, blue, alpha);
-	shader->set_float("color", (arrow_color.x / 255.0), (arrow_color.y / 255.0), (arrow_color.z / 255.0), arrow_color.w); //glBindTexture(GL_TEXTURE_2D, base);  // bind texture
+	// arrow will copy the color of tooltip. Make sure color is a float/double!//Vector4 arrow_color = Vector4(red, green, blue, alpha);//shader->set_float("color", (arrow_color.x / 255.0), (arrow_color.y / 255.0), (arrow_color.z / 255.0), arrow_color.w); //glBindTexture(GL_TEXTURE_2D, base);  // bind texture
     glBindVertexArray(arrow_vertex_array_obj); // (vao start 2)
         glDrawArrays(GL_TRIANGLES, 0, 3); // draw 3 points to form a triangle
 	glBindVertexArray(0);                // (vao end 2  ) //glBindTexture(GL_TEXTURE_2D, base);  // bind texture
+	// Restore defaults
+	shader->set_integer("outline", false);
 	//////////////////////
 	// Clean textures
 	//glDeleteTextures(1, &base);
@@ -2648,15 +2619,11 @@ void Renderer::draw_radio(int x, int y, int width, int height, float angle, floa
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
     // Draw radio outline
-	if(outline)
-	{
-	shader->set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
-	if(outline_antialiased) glEnable(GL_LINE_SMOOTH); // may slow down performance
-	glLineWidth(outline_width); // outline_width
-	glBindVertexArray(radio_vertex_array_obj); // use same vao data as _ but this time in a line loop
-        glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);		
-	}
+	// Draw outline
+    shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
 	// Draw radio
 	shader->set_float("radius", radius); // radius should be 100%
 	shader->set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
@@ -2706,16 +2673,14 @@ void Renderer::draw_radio(int x, int y, int width, int height, float angle, floa
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
     // Draw inner outline
-	/*if(outline)
-	{
-	if(value == 0) shader->set_float("color", (64.0f / 255.0), (64.0f / 255.0), (64.0f / 255.0), (255.0f / 255.0)); 
-	if(value == 1) shader->set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
-	if(outline_antialiased) glEnable(GL_LINE_SMOOTH); // may slow down performance
-	glLineWidth(outline_width); // 
-	glBindVertexArray(inner_vertex_array_obj); // use same vao data as _ but this time in a line loop
-        glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);		
-	}*/
+	/*
+	// Draw outline
+    shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    //shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);	
+	if(value == 0) shader->set_float("outline_color", (64.0f / 255.0), (64.0f / 255.0), (64.0f / 255.0), (255.0f / 255.0)); 
+	if(value == 1) shader->set_float("outline_color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);*/
 	// Draw inner quad
 	if(value == 1) { // only draw inner quad when value is 1
 	shader->set_float("color", (inner_color.x / 255.0), (inner_color.y / 255.0), (inner_color.z / 255.0), inner_color.w);
@@ -2724,6 +2689,7 @@ void Renderer::draw_radio(int x, int y, int width, int height, float angle, floa
 	glBindVertexArray(0);                // (vao end 2  )
 	// Restore defaults
 	shader->set_float("radius", 0.0);
+	shader->set_integer("outline", false);
 	}
 	//----------------------------
 	// Clean textures
@@ -2824,14 +2790,11 @@ void Renderer::draw_checkbox(int x, int y, int width, int height, float angle, f
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
     // Draw checkbox outline or border
-	if(outline) {
-	shader->set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
-	if(outline_antialiased) glEnable(GL_LINE_SMOOTH); // may slow down performance
-	glLineWidth(outline_width); // outline_width
-	glBindVertexArray(checkbox_vertex_array_obj); // use same vao data as _ but this time in a line loop
-        glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);		
-	}
+    // Draw outline
+    shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
 	// Draw checkbox (background)
 	shader->set_float("radius", radius);
 	shader->set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
@@ -2840,6 +2803,7 @@ void Renderer::draw_checkbox(int x, int y, int width, int height, float angle, f
 	glBindVertexArray(0);                // (vao end 2  )
 	// Restore defaults
 	shader->set_float("radius", 0.0);
+	shader->set_integer("outline", false);
 	//----------------------------
 #ifdef use_glm	// TEMPORARY
 	// uniform
@@ -2875,8 +2839,8 @@ void Renderer::draw_checkbox(int x, int y, int width, int height, float angle, f
 		// set position relative to checkbox
 		int checkmark_width  = width / 4;//5; // make vertical line longer than horz line //width  / 2;
 		int checkmark_height = (checkmark_width * 2);
-		int checkmark_x = (width / 2) - (checkmark_width  / 2);//width  / 4;         
-		int checkmark_y = (height / 2) - (checkmark_height  / 2);//height / 4;
+		int checkmark_x = (width - checkmark_width) / 2;//(width / 2) - (checkmark_width / 2);//width  / 4;         
+		int checkmark_y = (height - checkmark_height - 2) / 2;//(height / 2) - (checkmark_height / 2);//height / 4;
 		GLfloat vertices1[] = { // when x and y are 0 then from wwidth-wheight
             // horizontal line
 		    static_cast<GLfloat>(x + checkmark_x) + static_cast<float>(checkmark_width), static_cast<GLfloat>(y + checkmark_y) + static_cast<float>(checkmark_height),
@@ -2897,20 +2861,17 @@ void Renderer::draw_checkbox(int x, int y, int width, int height, float angle, f
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
     // Draw inner outline
-	/*if(outline)
-	{
-	if(value == 0) shader->set_float("color", (64.0f / 255.0), (64.0f / 255.0), (64.0f / 255.0), (255.0f / 255.0)); 
-	if(value == 1) shader->set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
-	if(outline_antialiased) glEnable(GL_LINE_SMOOTH); // may slow down performance
-	glLineWidth(outline_width); // 
-	glBindVertexArray(checkmark_vertex_array_obj); // use same vao data as _ but this time in a line loop
-        glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);		
-	}*/
+	/*// Draw outline
+    shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);	
+	if(value == 0) shader->set_float("outline_color", (64.0f / 255.0), (64.0f / 255.0), (64.0f / 255.0), (255.0f / 255.0)); 
+	if(value == 1) shader->set_float("outline_color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);*/
 	// Draw checkmark (foreground)
 	if(value == 1) { // only draw mark when box value is true (box is on)
 	shader->set_float("color", (checkmark_color.x / 255.0), (checkmark_color.y / 255.0), (checkmark_color.z / 255.0), checkmark_color.w);
-    glLineWidth(4.0);
+    glLineWidth(2.0);//glEnable(GL_LINE_SMOOTH);
     glBindVertexArray(checkmark_vertex_array_obj); // (vao start 2)
         glDrawArrays(GL_LINES, 0, 2); // start at index 0, 2 rects// draw 3 points to form a triangle
 	    glDrawArrays(GL_LINES, 2, 2); // start at index 2, 2 rects
@@ -3028,15 +2989,11 @@ void Renderer::draw_scrollbar(int x, int y, int width, int height, float angle, 
 	    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, scrollbar_element_buffer_obj); 
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
-	if(outline) {
-	// Draw scrollbar outline
-    shader->set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
-	//glEnable(GL_LINE_SMOOTH); // may slow down performance
-	glLineWidth(outline_width); // outline_width
-	glBindVertexArray(scrollbar_vertex_array_obj); // use same vao data as _ but this time in a line loop
-        glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-	}	
+    // Draw outline
+    shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
 	// Draw scrollbar
     shader->set_float("color", (red/ 255.0), (green / 255.0), (blue / 255.0), alpha);
     glBindVertexArray(scrollbar_vertex_array_obj); // (vao start 2)
@@ -3084,15 +3041,11 @@ void Renderer::draw_scrollbar(int x, int y, int width, int height, float angle, 
 	glBindVertexArray(0);                // (vao end 1  )
 	if(button)
 	{
-	if(outline) {
-	// Draw top_button outline
-    shader->set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
-	//glEnable(GL_LINE_SMOOTH); // may slow down performance
-	glLineWidth(outline_width); // outline_width
-	glBindVertexArray(top_button_vertex_array_obj); // use same vao data as _ but this time in a line loop
-        glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-	}	
+    // Draw outline
+    shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
 	// Draw top_button
 	shader->set_float("color", (button_color.x / 255.0), (button_color.y / 255.0), (button_color.z / 255.0), button_color.w);
     glBindVertexArray(top_button_vertex_array_obj); // (vao start 2)
@@ -3147,15 +3100,11 @@ void Renderer::draw_scrollbar(int x, int y, int width, int height, float angle, 
 	// Draw bottom_button outline
 	if(button)
 	{
-	if(outline) {
-	// Draw scrollbar outline
-    shader->set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
-	//glEnable(GL_LINE_SMOOTH); // may slow down performance
-	glLineWidth(outline_width); // outline_width
-	glBindVertexArray(bottom_button_vertex_array_obj); // use same vao data as _ but this time in a line loop
-        glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-	}	
+    // Draw outline
+    shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
 	// Draw bottom_button
 	shader->set_float("color", (button_color.x / 255.0), (button_color.y / 255.0), (button_color.z / 255.0), button_color.w);
     glBindVertexArray(bottom_button_vertex_array_obj); // (vao start 2)
@@ -3215,15 +3164,11 @@ void Renderer::draw_scrollbar(int x, int y, int width, int height, float angle, 
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
 	// Draw handle_outline
-	/*if(outline) {
-	// Draw scrollbar outline
-    shader->set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
-	//glEnable(GL_LINE_SMOOTH); // may slow down performance
-	glLineWidth(outline_width); // outline_width
-	glBindVertexArray(handle_vertex_array_obj); // use same vao data as _ but this time in a line loop
-        glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-	}*/	
+	/*// Draw outline
+    shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);*/	
 	// Draw handle
     shader->set_float("color", (handle_color.x/ 255.0), (handle_color.y/ 255.0), (handle_color.z / 255.0), handle_color.w); //  foreground_color	
     glBindVertexArray(handle_vertex_array_obj); // (vao start 2)
@@ -3272,141 +3217,6 @@ void Renderer::draw_scrollbar(int x, int y, int width, int height, float angle, 
 ////////////
 ////////////
 ////////////
-/*
-#ifdef DOKUN_OPENGL	// OpenGL is defined
-	context_check();
-    // Disable 3d for User interdata
-	glDisable(GL_DEPTH_TEST);
-	// Enable transparent background
-    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA); 
-	glEnable(GL_BLEND);
-	// Set polygon mode 
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // wireframe 
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // normal
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);  // points (that you can barely see)
-	// vertex shader
-	const char * vertex_source[] =
-	{
-        "#version 330\n"
-        "\n"
-        "layout (location = 0) in vec2 position ;\n"
-        "layout (location = 1) in vec2 tex_coord;\n"
-		"out vec2 Texcoord;\n"
-		"\n"
-		"\n"
-		"uniform mat4 model;\n"
-		"uniform mat4 proj ;\n"
-		"\n"
-        "void main()\n"
-        "{\n"
-		    "Texcoord    = tex_coord;\n"
-            "gl_Position = proj * model * vec4(position, 0.0, 1.0);\n"
-        "}\n"
-	};
-	const char * fragment_source[] =
-	{
-	    "#version 330\n"
-        "\n"
-		"out vec4 out_color;\n"
-        "uniform vec4 color;\n"
-        "//uniform sampler2D base;\n"
-		"in vec2 Texcoord;\n"
-		"\n"
-		"\n"
-        "void main()\n"
-        "{\n"
-		"\n"
-		"\n"
-		"\n"
-            "out_color = color;\n"
-        "}\n"
-	};
-	// Shader
-	Shader shader;
-	shader.set_source(vertex_source  , 0);
-	shader.set_source(fragment_source, 1);
-	shader.prepare();
-	shader.use ();
-	// uniform
-	glm::mat4 model = glm::mat4(1.0);;
-	model = glm::translate(model, glm::vec3(x + width/2, y + height/2, 0));//model = glm::translate(model, glm::vec3(x, y, 0));
-	model = glm::rotate(model, 0.0f, glm::vec3(0, 0, 1));
-	model = glm::scale(model, glm::vec3(1, 1, 1));
-	model = glm::translate(model, glm::vec3(-x - width/2, -y - height/2, 0));
-	float window_width  = Renderer::get_display_width ();
-	float window_height = Renderer::get_display_height();
-	glm::mat4 proj  = glm::ortho(0.0f, window_width, window_height, 0.0f, -1.0f, 1.0f);
-	glUniformMatrix4fv(glGetUniformLocation(shader.get_program(), "model"), 1, GL_FALSE, glm::value_ptr(model));
-	glUniformMatrix4fv(glGetUniformLocation(shader.get_program(), "proj") , 1, GL_FALSE, glm::value_ptr(proj) );
-	// _
-    // vertex array obj  - stores vertices
-    GLuint vertex_array_obj;
-    glGenVertexArrays(1, &vertex_array_obj);
-	// tex_coord buffer obj
-    glBindVertexArray(vertex_array_obj); // bind again  
-	    GLuint tex_coord_buffer_obj;
-        glGenBuffers( 1, &tex_coord_buffer_obj);
-        glBindBuffer( GL_ARRAY_BUFFER, tex_coord_buffer_obj);
-		GLfloat tex_coords[] = { // texture coordinates range from (0,0) to (1, 1)
-		    0.0, 0.0,
-            1.0, 0.0,
-            1.0, 1.0,
-            0.0, 1.0, 
-        };
-        glBufferData( GL_ARRAY_BUFFER, sizeof(tex_coords)* sizeof(GLfloat), tex_coords, GL_STATIC_DRAW);    
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), static_cast<void *>(0));			
-	    glEnableVertexAttribArray(1); 	
-	glBindVertexArray(0); // unbind
-	// vertex buffer obj
-    glBindVertexArray(vertex_array_obj); // bind vertex array obj
-        GLuint vertex_buffer_obj;
-        glGenBuffers(1, &vertex_buffer_obj);
-        glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_obj);
-		GLfloat vertices[] = { // when x and y are 0 then from wwidth-wheight
-		    static_cast<GLfloat>(x)                                , static_cast<GLfloat>(y),
-            static_cast<GLfloat>(x) + static_cast<GLfloat>(width), static_cast<GLfloat>(y),
-            static_cast<GLfloat>(x) + static_cast<GLfloat>(width), static_cast<GLfloat>(y) + static_cast<GLfloat>(height),
-            static_cast<GLfloat>(x)                                , static_cast<GLfloat>(y) + static_cast<GLfloat>(height),   
-        };      
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices)* sizeof(GLfloat), vertices, GL_STATIC_DRAW);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
-        glEnableVertexAttribArray(0);
-    glBindVertexArray(0); // vertex array obj (end 0)   
-	// element buffer obj
-	glBindVertexArray(vertex_array_obj); // (vao start 1)
-	    GLuint element_buffer_obj;
-        glGenBuffers(1, &element_buffer_obj);
-	    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element_buffer_obj);
-		GLuint indices[] = {0, 1, 3,  1, 2, 3,};  
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
-	glBindVertexArray(0);                // (vao end 1  )
-    // Draw outline
-	//shader.set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
-	//glEnable(GL_LINE_SMOOTH); // may slow down performance
-	glLineWidth(outline_width); // outline_width
-	glBindVertexArray(vertex_array_obj); // use same vao data as _ but this time in a line loop
-        glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);		
-	// Draw _
-	shader.set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
-	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
-    glBindVertexArray(vertex_array_obj); // (vao start 2)
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);                // (vao end 2  )
-    //glBindTexture(GL_TEXTURE_2D, base);  // bind texture
-	// Clean textures
-	//glDeleteTextures(1, &base);
-	// Clean buffers
-	glDeleteBuffers(1, &tex_coord_buffer_obj);
-	glDeleteBuffers(1, &element_buffer_obj);
-	glDeleteBuffers(1, &vertex_buffer_obj );
-	// Clean arrays
-	glDeleteVertexArrays(1, &vertex_array_obj);
-	// Restore defaults
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	// Disable program
-	shader.disable();
-#endif		*/
 ////////////
 ////////////
 ////////////
@@ -3494,13 +3304,11 @@ void Renderer::draw_spinner0(int x, int y, int width, int height, float angle, f
 	    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, spinner_element_buffer_obj);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
-    // Draw outline
-	/*shader->set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
-	//glEnable(GL_LINE_SMOOTH); // may slow down performance
-	glLineWidth(outline_width); // outline_width
-	glBindVertexArray(spinner_vertex_array_obj); // use same vao data as _ but this time in a line loop
-        glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);*/
+	// Draw outline
+    shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
 	// Draw _
 	shader->set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
@@ -3547,13 +3355,11 @@ void Renderer::draw_spinner0(int x, int y, int width, int height, float angle, f
 	    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, top_button_element_buffer_obj); 
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
-    // Draw outline
- 	/*shader->set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
-	//glEnable(GL_LINE_SMOOTH); // may slow down performance
-	glLineWidth(outline_width); // outline_width
-	glBindVertexArray(top_button_vertex_array_obj); // use same vao data as _ but this time in a line loop
-        glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);*/ 		
+	// Draw outline
+    shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
 	// Draw _
 	shader->set_float("color", (button_color.x / 255.0), (button_color.y / 255.0), (button_color.z / 255.0), button_color.w);
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
@@ -3601,13 +3407,11 @@ void Renderer::draw_spinner0(int x, int y, int width, int height, float angle, f
 	    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bottom_button_element_buffer_obj);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
-    // Draw outline
- 	/*shader->set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
-	//glEnable(GL_LINE_SMOOTH); // may slow down performance
-	glLineWidth(outline_width); // outline_width
-	glBindVertexArray(bottom_button_vertex_array_obj); // use same vao data as _ but this time in a line loop
-        glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);*/	
+	// Draw outline
+    shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
 	// Draw _
 	shader->set_float("color", (button_color.x / 255.0), (button_color.y / 255.0), (button_color.z / 255.0), button_color.w);
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
@@ -3647,13 +3451,11 @@ void Renderer::draw_spinner0(int x, int y, int width, int height, float angle, f
 		GLuint indicestri[] = {1, 2, 3,  0};  
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicestri)* sizeof(GLuint), indicestri, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
-    // Draw outline
-	/*shader->set_float("color", (0.0 / 255.0), (0.0 / 255.0), (0.0 / 255.0), (255.0 / 255.0));
-	//glEnable(GL_LINE_SMOOTH); // may slow down performance
-	glLineWidth(2.0); // outline_width
-	glBindVertexArray(top_arrow_vertex_array_obj); // use same vao data as _ but this time in a line loop
-        glDrawArrays(GL_LINE_LOOP, 0, 3);//glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);*/	
+	// Draw outline
+    shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
 	// Draw triangle
 	shader->set_float("color", (arrow_color.x / 255.0), (arrow_color.y / 255.0), (arrow_color.z / 255.0), arrow_color.w);
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
@@ -3692,13 +3494,11 @@ void Renderer::draw_spinner0(int x, int y, int width, int height, float angle, f
 		GLuint indicestrii[] = {1, 2, 3,  0};  
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicestrii)* sizeof(GLuint), indicestrii, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
-    // Draw outline
-	/*shader->set_float("color", (0.0 / 255.0), (0.0 / 255.0), (0.0 / 255.0), (255.0 / 255.0));
-	//glEnable(GL_LINE_SMOOTH); // may slow down performance
-	glLineWidth(2.0); // outline_width
-	glBindVertexArray(bottom_arrow_vertex_array_obj); // use same vao data as _ but this time in a line loop
-        glDrawArrays(GL_LINE_LOOP, 0, 3);//glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);*/	
+	// Draw outline
+    shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
 	// Draw triangle
 	shader->set_float("color", (arrow_color.x / 255.0), (arrow_color.y / 255.0), (arrow_color.z / 255.0), arrow_color.w);
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
@@ -3846,13 +3646,11 @@ void Renderer::draw_spinner(int x, int y, int width, int height, float angle, fl
 	    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, spinner_element_buffer_obj);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
-    // Draw outline
-	/*shader->set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
-	//glEnable(GL_LINE_SMOOTH); // may slow down performance
-	glLineWidth(outline_width); // outline_width
-	glBindVertexArray(spinner_vertex_array_obj); // use same vao data as _ but this time in a line loop
-        glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);*/
+	// Draw outline
+    /*shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);*/
 	// Draw _
 	shader->set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
@@ -3901,13 +3699,11 @@ void Renderer::draw_spinner(int x, int y, int width, int height, float angle, fl
 	    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, left_button_element_buffer_obj);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
-    // Draw outline
-	/*shader->set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
-	//glEnable(GL_LINE_SMOOTH); // may slow down performance
-	glLineWidth(outline_width); // outline_width
-	glBindVertexArray(left_button_vertex_array_obj); // use same vao data as _ but this time in a line loop
-        glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);*/
+	// Draw outline
+    /*shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);*/
 	// Draw _
 	shader->set_float("color", (button_color.x / 255.0), (button_color.y / 255.0), (button_color.z / 255.0), button_color.w);
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
@@ -3955,13 +3751,11 @@ void Renderer::draw_spinner(int x, int y, int width, int height, float angle, fl
 	    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, right_button_element_buffer_obj);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
-    // Draw outline
-	/*shader->set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
-	//glEnable(GL_LINE_SMOOTH); // may slow down performance
-	glLineWidth(outline_width); // outline_width
-	glBindVertexArray(right_button_vertex_array_obj); // use same vao data as _ but this time in a line loop
-        glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);*/
+	// Draw outline
+    /*shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);*/
 	// Draw _
 	shader->set_float("color", (button_color.x / 255.0), (button_color.y / 255.0), (button_color.z / 255.0), button_color.w);
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
@@ -4004,13 +3798,11 @@ void Renderer::draw_spinner(int x, int y, int width, int height, float angle, fl
 		GLuint indicesplu[] = {1, 2, 3,  0};  
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesplu)* sizeof(GLuint), indicesplu, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
-    // Draw outline
-	/*shader->set_float("color", (0.0 / 255.0), (0.0 / 255.0), (0.0 / 255.0), (255.0 / 255.0));
-	//glEnable(GL_LINE_SMOOTH); // may slow down performance
-	glLineWidth(2.0); // outline_width
-	glBindVertexArray(plus_vertex_array_obj); // use same vao data as _ but this time in a line loop
-        glDrawArrays(GL_LINE_LOOP, 0, 3);//glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);*/	
+	// Draw outline
+    /*shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);*/
 	// Draw lines
 	shader->set_float("color", (shape_color.x / 255.0), (shape_color.y / 255.0), (shape_color.z / 255.0), shape_color.w);
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
@@ -4054,12 +3846,10 @@ void Renderer::draw_spinner(int x, int y, int width, int height, float angle, fl
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesduo)* sizeof(GLuint), indicesduo, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
     // Draw outline
-	/*shader->set_float("color", (0.0 / 255.0), (0.0 / 255.0), (0.0 / 255.0), (255.0 / 255.0));
-	//glEnable(GL_LINE_SMOOTH); // may slow down performance
-	glLineWidth(2.0); // outline_width
-	glBindVertexArray(minus_vertex_array_obj); // use same vao data as _ but this time in a line loop
-        glDrawArrays(GL_LINE_LOOP, 0, 3);//glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);*/	
+    /*shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);*/
 	// Draw lines
 	shader->set_float("color", (shape_color.x / 255.0), (shape_color.y / 255.0), (shape_color.z / 255.0), shape_color.w);
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
@@ -4179,13 +3969,11 @@ void Renderer::draw_combobox(int x, int y, int width, int height, float angle, f
 		GLuint indices[] = {0, 1, 3,  1, 2, 3,};  
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
-    // Draw outline
-	/*shader->set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
-	//glEnable(GL_LINE_SMOOTH); // may slow down performance
-	glLineWidth(outline_width); // outline_width
-	glBindVertexArray(combo_vertex_array_obj); // use same vao data as _ but this time in a line loop
-        glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);*/		
+	// Draw outline
+    /*shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);*/
 	// Draw combobox
 	shader->set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
     glBindVertexArray(combo_vertex_array_obj); // (vao start 2)
@@ -4231,13 +4019,11 @@ void Renderer::draw_combobox(int x, int y, int width, int height, float angle, f
 	    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, button_element_buffer_obj);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
-    // Draw outline
-	/*shader->set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
-	//glEnable(GL_LINE_SMOOTH); // may slow down performance
-	glLineWidth(outline_width); // outline_width
-	glBindVertexArray(vertex_array_obj); // use same vao data as _ but this time in a line loop
-        glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);*/		
+	// Draw outline
+    /*shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);*/
 	// Draw button
 	shader->set_float("color", (button_color.x / 255.0), (button_color.y / 255.0), (button_color.z / 255.0), button_color.w);//shader.set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
     glBindVertexArray(button_vertex_array_obj); // (vao start 2)
@@ -4287,13 +4073,11 @@ void Renderer::draw_combobox(int x, int y, int width, int height, float angle, f
 		GLuint indicestri[] = {1, 2, 3,  0};  
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicestri)* sizeof(GLuint), indicestri, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
-    // Draw outline
-	/*shader->set_float("color", (0.0 / 255.0), (0.0 / 255.0), (0.0 / 255.0), (255.0 / 255.0));
-	//glEnable(GL_LINE_SMOOTH); // may slow down performance
-	glLineWidth(2.0); // outline_width
-	glBindVertexArray(arrow_vertex_array_obj); // use same vao data as _ but this time in a line loop
-        glDrawArrays(GL_LINE_LOOP, 0, 3);//glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);*/	
+	// Draw outline
+    /*shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);*/
 	// Draw triangle
 	shader->set_float("color", (255.0 / 255.0), (255.0 / 255.0), (255.0 / 255.0), (255.0 / 255.0));
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
@@ -4401,8 +4185,11 @@ void Renderer::draw_tab(int x, int y, int width, int height, float angle, float 
 		GLuint indices[] = {0, 1, 3,  1, 2, 3,};  
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
-    // Draw outline
-	shader->set_float("color", (32.0 / 255.0), (32.0 / 255.0), (32.0 / 255.0), (255.0 / 255.0));
+	// Draw outline
+    /*shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);//shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
+	shader->set_float("outline_color", (32.0 / 255.0), (32.0 / 255.0), (32.0 / 255.0), (255.0 / 255.0));*/
 	//glEnable(GL_LINE_SMOOTH); // may slow down performance
 	glLineWidth(1.0); // outline_width
 	glBindVertexArray(tab_vertex_array_obj); // use same vao data as _ but this time in a line loop
@@ -4956,12 +4743,10 @@ void Renderer::draw_triangle(float x, float y, int width, int height, float angl
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices)* sizeof(GLuint), indices, GL_STATIC_DRAW); 
 	glBindVertexArray(0);                // (vao end 1  )
     // Draw outline
-	//shader.set_float("color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);
-	//glEnable(GL_LINE_SMOOTH); // may slow down performance
-	/*glLineWidth(1); // outline_width
-	glBindVertexArray(triangle_vertex_array_obj); // use same vao data as _ but this time in a line loop
-        glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);*/		
+    /*shader->set_integer("outline", outline);
+    ////shader->set_float("outline_threshold", outline_threshold);//0.5);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);*/
 	// Draw _
 	shader.set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture

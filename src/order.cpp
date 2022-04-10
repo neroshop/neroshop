@@ -173,7 +173,7 @@ void neroshop::Order::create_guest_order(unsigned int user_id, const std::string
         DB::Postgres::get_singleton()->create_table("orders");
         // order-specific
         DB::Postgres::get_singleton()->add_column("orders", "user_id", "integer REFERENCES users(id)"); // customer that is placing the order
-        DB::Postgres::get_singleton()->add_column("orders", "date", "timestamptz DEFAULT CURRENT_TIMESTAMP"); // date and time order was created
+        DB::Postgres::get_singleton()->add_column("orders", "creation_date", "timestamptz DEFAULT CURRENT_TIMESTAMP"); // date and time order was created
         DB::Postgres::get_singleton()->add_column("orders", "status", "text"); // order status // for each individual item // you don't need all these once you have the item_id (qty, price, weight, sku_code, etc.)        
         DB::Postgres::get_singleton()->add_column("orders", "weight", "real"); // total weight of all items
         DB::Postgres::get_singleton()->add_column("orders", "subtotal", "numeric(20, 12)"); // 20 - 12 = 8 total digits (on left side / whole number side) // 12 decimals // monero supply is 18 million so that is an 8 digit-number // price of all items in cart (combined)
@@ -193,7 +193,7 @@ void neroshop::Order::create_guest_order(unsigned int user_id, const std::string
     // set order date (timestamp) to the current date (timestamp) // timestamp includes both date and time instead of the time only
     std::string date = DB::Postgres::get_singleton()->get_text("SELECT CURRENT_TIMESTAMP;"); // SELECT NOW(), CURRENT_TIMESTAMP; // both now() and current_timestamp are the same thing and both include the timezone: https://dba.stackexchange.com/questions/63548/difference-between-now-and-current-timestamp    // NOW() is postgresql's version; CURRENT_TIMESTAMP is an SQL-standard
     // insert new order
-    int order_id = DB::Postgres::get_singleton()->get_integer_params("INSERT INTO orders (user_id, date, status, weight, subtotal, discount, shipping_cost, total, payment_method, currency, notes) "
+    int order_id = DB::Postgres::get_singleton()->get_integer_params("INSERT INTO orders (user_id, creation_date, status, weight, subtotal, discount, shipping_cost, total, payment_method, currency, notes) "
         "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id"/*, 12, 13, 14, 15)"*/, 
         { std::to_string(user_id), date, "Incomplete", std::to_string(weight), std::to_string(0.000000000000), std::to_string(0.000000000000), std::to_string(0.000000000000), std::to_string(0.000000000000),
         "crypto", "monero (xmr)", shipping_address + ";" + contact_info }); // shipping_address, shipping_nethod ??
@@ -372,7 +372,7 @@ void neroshop::Order::create_registered_user_order(unsigned int user_id, const s
     if(!DB::Postgres::get_singleton()->table_exists("orders")) { 
         DB::Postgres::get_singleton()->create_table("orders");
         DB::Postgres::get_singleton()->execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS user_id integer REFERENCES users(id);"); // customer that is placing the order
-        DB::Postgres::get_singleton()->execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS order_date timestamptz DEFAULT CURRENT_TIMESTAMP;"); // date and time order was created
+        DB::Postgres::get_singleton()->execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS creation_date timestamptz DEFAULT CURRENT_TIMESTAMP;"); // date and time order was created
         DB::Postgres::get_singleton()->execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS status text;");
         DB::Postgres::get_singleton()->execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS weight real;"); // total weight of all items combined
         DB::Postgres::get_singleton()->execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS subtotal numeric(20, 12);"); // price of all items in cart (combined)
@@ -393,7 +393,7 @@ void neroshop::Order::create_registered_user_order(unsigned int user_id, const s
     double weight = neroshop::Cart::get_singleton()->get_total_weight(user_id);
     std::cout << "order_weight: " << weight << std::endl;
     // insert new order
-    int order_id = DB::Postgres::get_singleton()->get_integer_params("INSERT INTO orders (user_id, order_date, status, weight, subtotal, discount, shipping_cost, total, payment_method, currency, notes) "
+    int order_id = DB::Postgres::get_singleton()->get_integer_params("INSERT INTO orders (user_id, creation_date, status, weight, subtotal, discount, shipping_cost, total, payment_method, currency, notes) "
         "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id"/*, 12, 13, 14, 15)"*/, 
         { std::to_string(user_id), date, "Incomplete", std::to_string(weight), std::to_string(0.000000000000), std::to_string(0.000000000000), std::to_string(0.000000000000), std::to_string(0.000000000000),
         "crypto", "monero (xmr)", shipping_address + ";" + contact_info }); // shipping_address, shipping_nethod ??

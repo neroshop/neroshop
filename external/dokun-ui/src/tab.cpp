@@ -24,7 +24,7 @@ void Tab::draw()
 	        //    tab_list.size(), true);
 	        //if(tab_list[i]->get_width())// if tab_width less than label_width, increase tab_width    
 	       	Renderer::draw_tab(tab_list[i]->get_x(), tab_list[i]->get_y(), tab_list[i]->get_width(), tab_list[i]->get_height(), get_angle(), get_scale().x, get_scale().y, tab_list[i]->get_color().x, tab_list[i]->get_color().y, tab_list[i]->get_color().z, tab_list[i]->get_color().w,
-	            GUI::gui_shader,
+	            (!shader.get()) ? GUI::gui_shader : shader.get(),
 	            5/*tab_list.size()*/, true);     
 	        if(label != nullptr)
 	        {

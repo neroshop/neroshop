@@ -23,7 +23,7 @@ neroshop::Wallet::~Wallet()
 {
     if(monero_wallet_obj.get()) {
         // remove listener
-        //monero_wallet_obj->remove_listener (listener); // tx_output listener
+        monero_wallet_obj->remove_listener (*this);//int listener_count = monero_wallet_obj->get_listeners().size();if(listener_count > 0) { std::cout << NEROSHOP_TAG "still need to delete listeners (" << listener_count << ")" << std::endl; }
         // close monero wallet
         close(false);
         // reset (delete) monero wallet
@@ -397,7 +397,7 @@ bool neroshop::Wallet::daemon_connect(const std::string& ip, const std::string& 
             monero_wallet_obj->sync(0, *this);// 0 = start_height	is the start height to sync from (ignored if less than last processed block) //(sync_listener);//monero_sync_result sync_result = monero_wallet_obj->sync(sync_listener); // synchronize the wallet with the daemon as a one-time synchronous process//if(sync_result.m_received_money) {neroshop::print(std::string("blocks fetched: ") + std::to_string(sync_result.m_num_blocks_fetched));neroshop::print("you have received money");}
             monero_wallet_obj->remove_listener(*this);//(sync_listener); // remove sync_listener, since we are done getting the sync progress           
             // continue syncing in order to receive tx notifications
-            monero_wallet_obj->start_syncing(5000); // begin syncing the wallet constantly inside the background
+            monero_wallet_obj->start_syncing(5000); // begin syncing the wallet constantly in the background (every 5 seconds)
             // check if wallet's daemon is synced with the network
             if(monero_wallet_obj.get()->is_daemon_synced()) synced = true;//{std::cout << "\033[1;90;49m" << "daemon is now fully synced with the network" << "\033[0m" << std::endl;synced = true;}
         }
