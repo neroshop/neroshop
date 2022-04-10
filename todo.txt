@@ -71,6 +71,8 @@
 
 [ISSUES]
 Font crashes when loading (only a small few fonts are immune from this)
+Keyboard input is received/triggerred multiple times even with a single key press
+Application crashes on logout (this is probably due to the deletion of the user object)
 
 [HIRING]
 - hire graphics programmer to fix and optimize rendering code in "renderer.cpp"

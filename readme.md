@@ -136,7 +136,7 @@ EOF
 ## Contact
 > larteyoh@pm.me
 
-> [@layter:matrix.org](https://app.element.io/#/room/#neroshop:matrix.org)
+> [#neroshop:matrix.org](https://matrix.to/#/#neroshop:matrix.org)
 
 ### NOTE:
 ```
