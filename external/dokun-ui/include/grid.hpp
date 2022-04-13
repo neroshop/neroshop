@@ -33,6 +33,7 @@ public:
 	void set_outline_color(unsigned int red, unsigned int green, unsigned int blue, double alpha);
 	void set_outline_color(const Vector3& color);
 	void set_outline_color(const Vector4& color);
+	void set_radius(float radius);
 	// getters
 	Box * get_block(int row, int column) const;           static int get_block(lua_State *L);
 	Box * get_box(int row, int column) const;
@@ -48,6 +49,7 @@ public:
 	int get_vertical_gap() const;
 	Vector2 get_full_size() const;               static int get_full_size(lua_State *L);		
 	Vector4 get_color()const;                     static int get_color(lua_State *L); //static int _(lua_State *L);
+    float get_radius() const;
 private:
     // callbacks
     void on_highlight(int rows, int columns); // rows come first before columns
@@ -61,6 +63,8 @@ private:
 	double outline_width;
 	Vector4 outline_color;
 	bool outline_antialiased;	
+	// radius
+	float radius;
 	// highlight
 	bool highlight;
 	Vector4 highlight_color;

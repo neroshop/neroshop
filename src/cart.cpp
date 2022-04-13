@@ -8,7 +8,9 @@ neroshop::Cart::Cart() : id(0), max_items(10), max_quantity(100) {
 ////////////////////
 neroshop::Cart::~Cart() {
     contents.clear(); // this should reset (delete) all cart items
+#ifdef NEROSHOP_DEBUG
     std::cout << "\033[1;37mcart deleted\033[0m\n";
+#endif
 }
 ////////////////////
 std::unique_ptr<neroshop::Cart> neroshop::Cart::cart_obj (nullptr);

@@ -1,11 +1,15 @@
 #include "../include/user.hpp"
 
 ////////////////////
-neroshop::User::User() : logged(false), id(0), account_type(user_account_type::guest), order_list({}), favorites_list({}) // name is an empty string by default
+neroshop::User::User() : logged(false), id(0), account_type(user_account_type::guest), /*cart(nullptr), */order_list({}), favorites_list({}) // name is an empty string by default
 {}
 ////////////////////
 neroshop::User::~User()
 {
+    // destroy cart
+    if(cart.get()) {
+        cart.reset();//if(!cart.get()) std::cout << "cart deleted\n";
+    }
     // clear orders
     order_list.clear(); // will reset (delete) all orders
     // clear favorites

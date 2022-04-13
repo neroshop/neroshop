@@ -11,6 +11,7 @@
 - complete application front-end (user interface)                []
 - create messages button and a seller hub/section button         []
 - make postgresql optional                                       []
+- create a node list of trusted and verified nodes so users (sellers) do not have to sync entire blockchain []
 
 [MID PRIORITY]
 - make table names plural ('cause select * from customer seems "grammatically" incorrect to me)
@@ -41,9 +42,10 @@
 - keep number of external dependencies in "neroshop/external" at no more than 10 [x]
 - create neroshop domain name (.org preffered)                                   []
 - create neroshop onion address                                                  []
-- create neroshop matrix server                                                  [-]
+- create neroshop matrix server                                                  [x]
 - host neroshop on gitlab or something more open-source                          []
 - tor integration                                                                []
+- allow contributors to create neroshop bindings for other C-based programming languages such as lua, python, ruby, etc. [-]
 
 [UI]
 - prevent mouse press from affecting overlapped GUIs     []

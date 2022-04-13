@@ -64,7 +64,8 @@ public:
 	void set_angle(double angle);                    static int set_angle(lua_State *L);
 	void set_scale(double x, double y);             static int set_scale(lua_State *L);
 	void set_scale(const Vector2& scale);
-	void set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0);           static int set_color(lua_State *L);
+	void set_color(unsigned int red, unsigned int green, unsigned int blue);           static int set_color(lua_State *L);
+	void set_color(unsigned int red, unsigned int green, unsigned int blue, float alpha);
 	void set_color(const Vector3& color);
 	void set_color(const Vector4& color);
 	void set_alignment(const std::string& alignment);           static int set_alignment(lua_State *L);
@@ -72,7 +73,9 @@ public:
 	void set_outline(bool outline);
 	void set_outline_thickness(float outline_thickness);
 	void set_outline_color(unsigned int red, unsigned int green, unsigned int blue);
+	void set_outline_color(unsigned int red, unsigned int green, unsigned int blue, float alpha);
 	void set_outline_color(const Vector3& outline_color);
+	void set_outline_color(const Vector4& outline_color);
 	void set_outline_threshold(float outline_threshold);
 	// opengl-related
 	void set_filter(int min, int mag);                    static int set_filter(lua_State * L);
@@ -104,7 +107,7 @@ public:
 	Vector4 get_rect() const; static int get_rect(lua_State * L);
 	// outline
 	float get_outline_thickness() const;
-	Vector3 get_outline_color() const;
+	Vector4 get_outline_color() const;
 	float get_outline_threshold() const;
 	// OPENGL
 	unsigned int get_buffer()const;                 static int get_buffer(lua_State *L); // returns a texture buffer object
@@ -160,7 +163,7 @@ private:
 	// outline
 	bool outline;
 	float outline_thickness;
-	Vector3 outline_color;
+	Vector4 outline_color;
 	float outline_threshold;
 	// geometric values
 	double x, y;

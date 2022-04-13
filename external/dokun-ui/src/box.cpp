@@ -372,7 +372,7 @@ void Box::draw_tooltip() {
 	if(!is_active()) {}// add shade to color
 	if(is_active()) {}  // add tint to color    
     // Draw tooltip
-	Renderer::draw_tooltip("Hello", get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y, get_color().x, get_color().y, get_color().z, get_color().w, (!shader.get()) ? GUI::gui_shader : shader.get(), outline, outline_color.xyz, radius, tooltip_arrow_direction, tooltip_arrow_width, tooltip_arrow_height, tooltip_arrow_position/*, tooltip_arrow_color*/);
+	Renderer::draw_tooltip("Hello", get_x(), get_y(), get_width(), get_height(), get_angle(), get_scale().x, get_scale().y, get_color().x, get_color().y, get_color().z, get_color().w, (!shader.get()) ? GUI::gui_shader : shader.get(), outline, outline_color, radius, tooltip_arrow_direction, tooltip_arrow_width, tooltip_arrow_height, tooltip_arrow_position/*, tooltip_arrow_color*/);
     // Draw label (goes inside box) **********************************************************
     if(!get_label_list().empty()) // make sure Box has an "initialized" label beforehand (or else engine will crash)
     {   

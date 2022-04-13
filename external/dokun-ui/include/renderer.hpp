@@ -38,7 +38,7 @@ public:
 		double ox, double oy, double oz, 
 		const std::vector<Texture *>& texture_array, const Vector4& ambient, const Vector4& diffuse, const Vector4& specular, const Vector4& emission, double shininess, const Shader& shader);*/
 	static void draw_image(const unsigned int buffer/*Texture& texture*/, int width, int height, int depth, float x, float y, float angle, float scale_x, float scale_y, unsigned int red, unsigned int green, unsigned int blue, float alpha, int channel, Shader* shader,
-	    bool outline, float outline_thickness, const Vector3& outline_color, float outline_threshold); // complete!
+	    bool outline, float outline_thickness, const Vector4& outline_color, float outline_threshold); // complete!
     // ui -----------------------
 	static void draw_box(int x, int y, int width, int height, float angle, float scale_x, float scale_y, unsigned int red, unsigned int green, unsigned int blue, float alpha, Shader* shader, 
 		float radius, bool iconified,
@@ -162,7 +162,7 @@ public:
 	    // shader
 	    Shader* shader,
 	    // outline-border
-	    bool outline, const Vector3& outline_color,
+	    bool outline, const Vector4& outline_color,
 	    // radius
 	    float radius, 
 	    // arrow - placement("up", "down"=default, "left", "right")

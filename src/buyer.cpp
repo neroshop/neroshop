@@ -9,7 +9,7 @@ neroshop::Buyer::Buyer(const std::string& name) : Buyer() {
 }
 ////////////////////
 neroshop::Buyer::~Buyer() {
-#ifdef NEROSHOP_DEBUG
+#ifdef NEROSHOP_DEBUG0
     std::cout << "buyer deleted\n";
 #endif    
 }

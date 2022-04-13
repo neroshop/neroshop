@@ -3,7 +3,7 @@
 Image::Image() : width(0), height(0), depth(1), channel(4), data (nullptr), x(0), y(0), angle(0), scale(1, 1), color(255, 255, 255, 1.0), 
     relative_x(0), relative_y(0), alignment("none"), visible(true),
     // outline
-    outline(false), outline_thickness(0.0), outline_color(0, 0, 0), outline_threshold(0.0)
+    outline(false), outline_thickness(0.0), outline_color(0, 0, 0, 1.0), outline_threshold(0.0)
 {
 #ifdef DOKUN_OPENGL	
 	buffer          = 0;	
@@ -536,7 +536,7 @@ void Image::generate_shader(void) {
 		"\n"
 		"uniform bool outline = false;\n"
 		"uniform float outline_thickness = 0.2;\n"
-		"uniform vec3 outline_color = vec3(0, 0, 0);\n"
+		"uniform vec4 outline_color = vec4(0, 0, 0, 1.0);\n"
 		"uniform float outline_threshold = 0.5;\n"
 		"\n"
         "void main()\n"
@@ -572,7 +572,7 @@ void Image::generate_shader(void) {
                     "}\n"
                     "\n"
                     "if (sum / 9.0 >= 0.0001) {\n"
-                        "out_color = vec4(outline_color, 1);\n"
+                        "out_color = vec4(outline_color.xyz, outline_color.w);\n"
                     "}\n"
                 "}\n"
         //////////////////////////////////////////////////////
@@ -749,7 +749,11 @@ int Image::set_scale(lua_State *L)
 	return 0;
 }
 /////////////
-void Image::set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
+void Image::set_color(unsigned int red, unsigned int green, unsigned int blue) {
+    color = Vector4(red, green, blue, color.w);
+}
+/////////////
+void Image::set_color(unsigned int red, unsigned int green, unsigned int blue, float alpha)
 {
 	color = Vector4(red, green, blue, alpha);
 }
@@ -839,11 +843,19 @@ void Image::set_outline_thickness(float outline_thickness) {
 }
 /////////////
 void Image::set_outline_color(unsigned int red, unsigned int green, unsigned int blue) {
-	outline_color = Vector3(red, green, blue);
+	outline_color = Vector4(red, green, blue, outline_color.w);
+}
+/////////////
+void Image::set_outline_color(unsigned int red, unsigned int green, unsigned int blue, float alpha) {
+	outline_color = Vector4(red, green, blue, alpha);
 }
 /////////////
 void Image::set_outline_color(const Vector3& outline_color) {
     set_outline_color(outline_color.x, outline_color.y, outline_color.z);
+}
+/////////////
+void Image::set_outline_color(const Vector4& outline_color) {
+    set_outline_color(outline_color.x, outline_color.y, outline_color.z, outline_color.w);
 }
 /////////////
 void Image::set_outline_threshold(float outline_threshold) {
@@ -1333,7 +1345,7 @@ float Image::get_outline_thickness() const {
     return outline_thickness;
 }
 /////////////
-Vector3 Image::get_outline_color() const {
+Vector4 Image::get_outline_color() const {
     return outline_color;
 }
 /////////////

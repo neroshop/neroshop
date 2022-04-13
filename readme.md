@@ -4,40 +4,25 @@ An attempt to create an online marketplace for [Monero](https://getmonero.org/) 
 
 [![alt text](res/neroshop-logo.png)](https://github.com/larteyoh/neroshop "neroshop logo")
 
+# WARNING! This is an experimental project that is not operational yet. Please do not use until release!
+
 ## Table of contents
-* [The history behind neroshop](#summary)
-* [Upcoming features](#features) <!--* [Documentation](#documentation)-->
-* [Major dependencies](#dependencies)
-* [Building neroshop from source](#compiling-neroshop-from-source) <!--* [Setting up PostgreSQL](#setting-up-postgresql)--> <!--* [License](#license)-->
-* [Contact](#contact)
+- [The history behind neroshop](#about)
+- [Features](#features) <!-- - [Documentation](#documentation)-->
+- [Building neroshop](#building-neroshop)
+  - [Dependencies](#dependencies)
+  - [Compiling neroshop from source](#compiling-neroshop-from-source) <!-- - [Setting up PostgreSQL](#setting-up-postgresql)--> <!-- - [License](#license)-->
+- [Contact information](#contact)
 
 
-### Summary:
+## About
+For a more detailed summary, read <a href="https://github.com/larteyoh/neroshop/blob/main/summary.txt">summary.txt</a>
 ```
-The name neroshop comes from "nero", meaning black combined with the word "shop".
-Ever since I developed an interest for cryptocurrencies, I have become more 
-privacy-conscious and more aware of the ponzi scheme that has become of the current 
-financial system.
-This led to my desire to want to create or at least contribute to a world where 
-we can use cryptocurrency for everyday purchases rather than using it as a speculative asset
-while at the same time, protecting each individual's financial privacy without having to trust any 
-centralized entity, and without the risk of having your account surveilled, frozen, closed, or 
-limited by how much, where and when you can spend.
-
-I often use Amazon for my online purchases and it's a pain in the butt having to switch back 
-and forth from crypto to fiat just to make purchases and on top of that dealing with having 
-every crypto withdrawal subjected to taxation regardless of whether you sold at a profit or a loss.
-I started neroshop for this reason.
-
-You may wondering why I'm using C++ for this project. Well, that's because C++ is my first 
-programming language and it is the only language I know aside from Lua so I am comfortable 
-using C++ for pretty much all my "big" projects.
-And I have absolutely zero intention of using any other programming language. 
-Web development is not really my thing either.
+...
 ```
 
 
-### Features:
+## Features
 * pseudonymous economy (sellers are only identified by their usernames and trusted based on their reputation)
 * no registration required (for buyers only)
 * no KYC or AML
@@ -54,7 +39,9 @@ Web development is not really my thing either.
 * and much more ...
 
 
-## Dependencies:
+## Building neroshop
+
+### Dependencies
 |      Library                                                       | Minimum Ver.    | Package                | License                            |         Purpose                                                        |
 |--------------------------------------------------------------------|-----------------|------------------------|------------------------------------|------------------------------------------------------------------------|
 | [monero-cpp](https://github.com/monero-ecosystem/monero-cpp)       | latest          |                        | MIT                                | monero wallet and payment system                                       |
@@ -67,7 +54,7 @@ Web development is not really my thing either.
 | [dokun-ui](https://github.com/sidtheprince/dokun)                  | ?               |                        | MIT                                | graphical user interface                                               |
 
 
-# Compiling neroshop from source
+### Compiling neroshop from source
 You can either choose to build neroshop by running `./build.sh` or by following the steps below.
 
 0. Install dependencies
@@ -133,10 +120,10 @@ make
 EOF
 ```
 
+
 ## Contact
 > larteyoh@pm.me
 
-> [#neroshop:matrix.org](https://matrix.to/#/#neroshop:matrix.org)
 
 ### NOTE:
 ```
@@ -145,6 +132,6 @@ my project to life, I'd highly appreciate it (.3.) or If you have any tips and a
 I am poor but willing to compensate any contributors with Monero when I become financially stable (>.<) .
 ```
 
-[//]: # (git add build.sh CMakeLists.txt external/ include/ readme.md res/neroshop-logo.png res/wallets src/ todo.txt res/ss res/tmp_images)
+[//]: # (git add build.sh CMakeLists.txt external/ include/ readme.md res/neroshop-logo.png res/wallets src/ todo.txt res/ss res/tmp_images summary.txt)
 [//]: # (git commit -m"empty commit")
 [//]: # (git push -u origin main)

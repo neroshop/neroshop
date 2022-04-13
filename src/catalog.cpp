@@ -1,30 +1,25 @@
 #include "../include/catalog.hpp"
 
 ////////////////////
-neroshop::Catalog::Catalog() : view(nullptr), current(nullptr), tooltip(nullptr) {// list views ALWAYS have 1 column, grid views can have multiple rows and columns
+neroshop::Catalog::Catalog() : view(nullptr), current(nullptr), tooltip(nullptr), sort_box(nullptr) {
     initialize();
 }
 ////////////////////
 neroshop::Catalog::~Catalog() {
     // delete sort_box
     if(sort_box.get()) {
-        sort_box.reset();
-        if(!sort_box.get()) std::cout << "catalog sort_box deleted\n";
+        sort_box.reset();//if(!sort_box.get()) std::cout << "catalog sort_box deleted\n";
     }
     // delete tooltip
     if(tooltip.get()) { 
-        tooltip.reset();
-        if(!tooltip.get()) std::cout << "catalog tooltip deleted\n"; // confirm deletion
+        tooltip.reset();//if(!tooltip.get()) std::cout << "catalog tooltip deleted\n"; // confirm deletion
     }
     // delete page
     if(current.get()) { 
-        //delete_page_children();
-        current.reset();
-        if(!current.get()) std::cout << "catalog page deleted\n"; // confirm deletion
+        current.reset();//if(!current.get()) std::cout << "catalog page deleted\n"; // confirm deletion
     }    
     // delete view
     if(view.get()) { 
-        //delete_view_children();
         view.reset();
     }    
     std::cout << "catalog deleted\n";
@@ -45,13 +40,14 @@ void neroshop::Catalog::initialize() {
     // initialize view
     if(view.get()) {neroshop::print("catalog is already initialized", 2);return;} // if view was already initialized then exit function
     view = std::unique_ptr<Grid>(new Grid());
-    std::cout << "catalog view initialized\n";
+    //std::cout << "catalog view initialized\n";
     // set initial values // size=400,300;rows=2;columns=3 OR 
     view->set_rows(2);//(3);//(6)//(1); // we cannot have columns without rows
     view->set_columns(3);//(5)//(1);
     view->set_gap(5);//view->set_horizontal_gap(5);//view->set_vertical_gap(50);
     view->set_color(160, 160, 160, 1.0);
     view->set_highlight(true); // for testing purposes ////view->set_outline(false);
+    //view->set_radius(5);
     set_box_size(220, 220);//(220, 250);//(250, 300);//(215, 210);// also applies size to grid (view) boxes
     ////////////////////
     // initialize current page (product page)
@@ -67,8 +63,8 @@ void neroshop::Catalog::initialize() {
     tooltip->set_color(10, 10, 10);//, 1.0);//tooltip->set_tooltip_arrow_direction("down");
     // outline won't show unless it has a radius :U
     //tooltip->set_radius(10);
-    //tooltip->set_outline(true); // hint is a box, not a tooltip so why is the outline missing?
-    //tooltip->set_outline_color(255, 255, 255, 1.0);
+    tooltip->set_outline(true); // hint is a box, not a tooltip so why is the outline missing?
+    tooltip->set_outline_color(255, 255, 255, 1.0);
     tooltip->add_label(*new dokun::Label("")); // font will be auto set when label is initialized with a string
     tooltip->hide(); // hide tooltip by default
     ////////////////////

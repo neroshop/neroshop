@@ -1,8 +1,10 @@
 #include "../include/grid.hpp"
 
 Grid::Grid() : rows(0), columns(0), gap_horz(0), gap_vert(0), color(64, 64, 64, 1.0),
+// radius
+radius(0.0),
 // outline
-outline(true), 
+outline(false), 
 outline_width(2.0), 
 outline_antialiased(false),
 outline_color(255, 255, 255, 1.0),
@@ -69,7 +71,7 @@ void Grid::draw() // COMPLETE! :D
 				box_list[i][j]->set_angle(get_angle());
 				box_list[i][j]->set_scale(get_scale());
 				box_list[i][j]->set_color(box_list[i][j]->get_color()); // already the default
-				box_list[i][j]->set_radius(0.0);
+				box_list[i][j]->set_radius(radius);
 				box_list[i][j]->set_title_bar(false); // grids should NEVER have a title_bar!
 				box_list[i][j]->set_outline(outline); // outline is now the same as border
 				box_list[i][j]->set_outline_color(outline_color);
@@ -276,6 +278,10 @@ void Grid::set_outline_color(const Vector4& color) {
     set_outline_color(color.x, color.y, color.z, color.w);
 }
 ////////////////////
+void Grid::set_radius(float radius) {
+    this->radius = radius;
+}
+////////////////////
 ////////////////////
 Box * Grid::get_block(int row, int column) const
 {
@@ -377,6 +383,11 @@ int Grid::get_color(lua_State *L)
 	for(int k = 0; k < box_list.size(); k++)
 	    std::cout << "row items in box_list [" << k << "] " << box_list[k].size() << "\n";
 */
+////////////////////
+float Grid::get_radius() const {
+    return radius;
+}
+////////////////////
 ////////////////////
 void Grid::on_highlight(int rows, int cols) {
 	if(!is_visible() || is_disabled() || !is_active()) return;

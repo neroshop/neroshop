@@ -150,15 +150,15 @@ void GUI::generate_shader(void)
         "\n"
 		"out vec4 out_color;\n"
         "uniform vec4 color;\n"
-        "uniform sampler2D texture;\n"
+        "uniform sampler2D texture_obj;\n"
 		"in vec2 tex_coords;\n"
 		"uniform vec2 size;"
 		"uniform float radius;"
 		"\n"
-		"uniform bool outline = true;//false;\n"
-		"uniform float outline_thickness = 0.5;\n"
-		"uniform vec3 outline_color = vec3(255, 255, 255);\n"
-		"uniform float outline_threshold = 0.5;//0.0;\n" // starting point		
+		"uniform bool outline = false;\n"
+		"uniform float outline_thickness = 0.2;\n"
+		"uniform vec4 outline_color = vec4(255, 255, 255, 1.0);\n"
+		"uniform float outline_threshold = 0.5;\n"
 		"\n" // uniform float radius;
 		"float round_corner(vec2 p, vec2 b, float r) {\n"
 		    "return length(max(abs(p)-b+r,0.0))-r;\n" // length(max(abs(p)-b, 0.0))-r;"
@@ -191,10 +191,11 @@ void GUI::generate_shader(void)
             "vec2 half_size = 0.5 * size;\n" // half of the box_size or center of box
 			"\n"
 			"\n"
+			// outline requires a radius to work :/
             // temp ----------------------------------
             "vec2 uv_temp = abs((tex_coords/*uv*/ - vec2(0.5)) * vec2(aspect, 1.0));\n"
             "float half_width = aspect * 0.5;\n"
-            "float radius_temp = clamp((radius/100.0) , 0.0, 1.0) * min(half_width, 0.5);\n" // convert radius (int) to opengl floating point number = radius / 100; or radius * 0.01; // 100 is the max radius
+            "float radius_temp = clamp((outline && radius <= 0.00) ? 0.01 : (radius / 100.0), 0.0, 1.0) * min(half_width, 0.5);\n" // convert radius (int) to opengl floating point number = radius / 100; or radius * 0.01; // 100 is the max radius
             "vec2 center = vec2(half_width, 0.5) - vec2(radius_temp);\n"
             "// outer edge\n"
             "vec2 half_uv = uv_temp - vec2(half_width, 0.5);\n"
@@ -208,18 +209,22 @@ void GUI::generate_shader(void)
             //"{     discard;"
             //"}"
 			"\n" // size_x = (size.x / 2) * (size.x / size.y)    or  size_y = (size.y / 2) * (size.y / size.x)
-		    "float b = 1.0 - round_corner(tex_coords * size - half_res, half_res, abs(radius));  //(tex_coords - half_res, half_res, radius);\n" // position, size, radius // abs() turns a negative number into a positive number
-		    "float round = smoothstep(0.0, 1.0, b);          \n" //"vec4 pixel = texture2D(texture, tex_coords);" // if texture is present
+		    ////"float b = 1.0 - round_corner(tex_coords * size - half_res, half_res, abs(radius));  //(tex_coords - half_res, half_res, radius);\n" // position, size, radius // abs() turns a negative number into a positive number
+		    ////"float round = smoothstep(0.0, 1.0, b);          \n" //"vec4 pixel = texture2D(texture_obj, tex_coords);" // if texture is present
+		    //"if(!outline) {\n"
 		    // fragment color (default):
 		    "out_color = vec4(color.xyz, color.w);\n" //border is in percentage(%) rather than HTML pixel(px)// 1.0, 1.0, 1.0, 1.0 is default frag_color
 		    // rounded corners (radius - uses anti-aliasing via smoothstep to smoothen edges):
-		    "if(radius > 0.0) out_color = vec4(color.xyz, color.w * border);//round);\n" // smooth or linear (anti-aliasing)
+		    "if(radius_temp > 0.00) out_color = vec4(color.xyz, color.w * border);//round);\n" // smooth or linear (anti-aliasing)
 		    // setting anti-aliasing (smoothness) to gui edges without changing the radius:
 		    //"out_color = vec4(color.xyz, color.w * (smoothstep(vec2(0), fwidth(tex_coords), tex_coords) * smoothstep(vec2(0), fwidth(tex_coords), vec2(1) - tex_coords)) );\n"
+            //"}\n"
             //////////////////////////////////////////////////////
             // outline-border
-                "if (outline && out_color.a <= outline_threshold) {\n"
-                    "ivec2 size = textureSize(texture, 0);\n"
+                //"out_color = texture(texture_obj, tex_coords);\n"//makes all gui black
+            "if(outline) {\n"    
+                "if(out_color.a <= outline_threshold) {\n"
+                    "ivec2 size = textureSize(texture_obj, 0);\n"
                     "\n"
                     "float uv_x = tex_coords.x * size.x;\n"
                     "float uv_y = tex_coords.y * size.y;\n"
@@ -228,23 +233,26 @@ void GUI::generate_shader(void)
                     "for (int n = 0; n < 9; ++n) {\n"
                         "uv_y = (tex_coords.y * size.y) + (outline_thickness * float(n - 4.5));\n"
                         "float h_sum = 0.0;\n"
-                        "h_sum += texelFetch(texture, ivec2(uv_x - (4.0 * outline_thickness), uv_y), 0).a;\n"
-                        "h_sum += texelFetch(texture, ivec2(uv_x - (3.0 * outline_thickness), uv_y), 0).a;\n"
-                        "h_sum += texelFetch(texture, ivec2(uv_x - (2.0 * outline_thickness), uv_y), 0).a;\n"
-                        "h_sum += texelFetch(texture, ivec2(uv_x - outline_thickness, uv_y), 0).a;\n"
-                        "h_sum += texelFetch(texture, ivec2(uv_x, uv_y), 0).a;\n"
-                        "h_sum += texelFetch(texture, ivec2(uv_x + outline_thickness, uv_y), 0).a;\n"
-                        "h_sum += texelFetch(texture, ivec2(uv_x + (2.0 * outline_thickness), uv_y), 0).a;\n"
-                        "h_sum += texelFetch(texture, ivec2(uv_x + (3.0 * outline_thickness), uv_y), 0).a;\n"
-                        "h_sum += texelFetch(texture, ivec2(uv_x + (4.0 * outline_thickness), uv_y), 0).a;\n"
+                        "h_sum += texelFetch(texture_obj, ivec2(uv_x - (4.0 * outline_thickness), uv_y), 0).a;\n"
+                        "h_sum += texelFetch(texture_obj, ivec2(uv_x - (3.0 * outline_thickness), uv_y), 0).a;\n"
+                        "h_sum += texelFetch(texture_obj, ivec2(uv_x - (2.0 * outline_thickness), uv_y), 0).a;\n"
+                        "h_sum += texelFetch(texture_obj, ivec2(uv_x - outline_thickness, uv_y), 0).a;\n"
+                        "h_sum += texelFetch(texture_obj, ivec2(uv_x, uv_y), 0).a;\n"
+                        "h_sum += texelFetch(texture_obj, ivec2(uv_x + outline_thickness, uv_y), 0).a;\n"
+                        "h_sum += texelFetch(texture_obj, ivec2(uv_x + (2.0 * outline_thickness), uv_y), 0).a;\n"
+                        "h_sum += texelFetch(texture_obj, ivec2(uv_x + (3.0 * outline_thickness), uv_y), 0).a;\n"
+                        "h_sum += texelFetch(texture_obj, ivec2(uv_x + (4.0 * outline_thickness), uv_y), 0).a;\n"
                         "sum += h_sum / 9.0;\n"
                     "}\n"
                     "\n"
                     "if (sum / 9.0 >= 0.0001) {\n"
-                        "out_color = vec4(outline_color, color.w);\n"
-                        "if(radius > 0.0) out_color = vec4(outline_color, 1.0 * border);\n" // outline_color.w (alpha) will be 1.0 for now
+                        //"out_color = vec4(outline_color.xyz, (radius > 0.00) ? outline_color.w * border : outline_color.w);\n"
+                        "out_color = vec4(outline_color.xyz, outline_color.w);\n"
+                        "if(radius_temp > 0.00) out_color = vec4(outline_color.xyz, outline_color.w * border);\n" // outline_color.w (alpha) will be 1.0 for now
                     "}\n"
                 "}\n"
+            "}\n"
+        //////////////////////////////////////////////////////
         //////////////////////////////////////////////////////
 		    // gradient
             "if(gradient.enabled == true)\n"
@@ -254,7 +262,7 @@ void GUI::generate_shader(void)
 			    "vec4 top = vec4(color + (1.0 - color) * gradient.value);\n" // tint  (1=white)
 			    "vec4 bottom = vec4(gradient.color + (0.0 - gradient.color) * gradient.value);\n" // shade (0=black)
 			    "out_color = vec4(mix(top, bottom, position.y).xyz, color.w);\n" // position.y = top-to-bottom, position.x = left-to-right
-			    "if(radius > 0.0) out_color = vec4(mix(top, bottom, position.y).xyz, color.w * border);\n" // rounded corner with gradient
+			    "if(radius_temp > 0.00) out_color = vec4(mix(top, bottom, position.y).xyz, color.w * border);\n" // rounded corner with gradient
 			    // left-to-right gradient
 			    // ...
 			    // normal (point) gradient

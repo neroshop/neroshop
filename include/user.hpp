@@ -94,6 +94,7 @@ private:
     std::string name;
     user_account_type account_type; // seller, buyer (guest)
     bool logged; // determines whether user is logged in or not//bool online;
+    std::unique_ptr<Cart> cart;
     std::vector<std::shared_ptr<neroshop::Order>> order_list;
     std::vector<std::shared_ptr<neroshop::Item>> favorites_list; // I get errors while trying to use unqieu_ptr so I'm stuck with a shared_ptr container
     static neroshop::User * user; // singleton object

@@ -204,7 +204,7 @@ void Renderer::device_check (void)
 ////////////
 ////////////
 void Renderer::draw_image(const unsigned int buffer, int width, int height, int depth, float x, float y, float angle, float scale_x, float scale_y, unsigned int red, unsigned int green, unsigned int blue, float alpha, int channel, Shader* shader,
-    bool outline, float outline_thickness, const Vector3& outline_color, float outline_threshold) // good !
+    bool outline, float outline_thickness, const Vector4& outline_color, float outline_threshold) // good !
 {
 #ifdef DOKUN_OPENGL	// OpenGL is defined
 	context_check();
@@ -289,7 +289,7 @@ void Renderer::draw_image(const unsigned int buffer, int width, int height, int 
     shader->set_integer("outline", outline);
     shader->set_float("outline_threshold", outline_threshold);//0.5);
     shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);
 	glActiveTexture(GL_TEXTURE0 + 0);
 	glBindTexture(GL_TEXTURE_2D, buffer);  // bind texture
 	shader->set_integer("base", 0);
@@ -490,7 +490,7 @@ void Renderer::draw_box(int x, int y, int width, int height, float angle, float 
     shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);
 	/*glLineWidth(outline_width);
 	glBindVertexArray(title_bar_vertex_array_obj); // use same vao data as title_bar but this time in a line loop
 	    glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
@@ -712,7 +712,7 @@ void Renderer::draw_box(int x, int y, int width, int height, float angle, float 
     shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);
 	// restore gradient color (so outline does not copy gradient of close_button, in the case of close_button being the only button in the title_bar)
 	// outline, box : gradient
 	////shader->set_float("gradient.color", (gradient_color.x/255.0), (gradient_color.y/255.0), (gradient_color.z/255.0), gradient_color.w); // color1 will be a shade (bottom)
@@ -721,6 +721,8 @@ void Renderer::draw_box(int x, int y, int width, int height, float angle, float 
 	// box : size (I don't think size is even used in the shader :O)
 	shader->set_vector2("size", Vector2(width, height));
 	// box : radius
+	// if box has outline then it automatically has a radius
+	////if(outline && radius <= 0.0) radius = 1.0; 
 	shader->set_float("radius", radius); // set rounded_corner	
 	// box : gradient
 	shader->set_integer("gradient.enabled", gradient); // set gradient on
@@ -1278,7 +1280,7 @@ void Renderer::draw_button(int x, int y, int width, int height, float angle, flo
     shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);
 	// Draw button
 	// button : radius
 	if(shader->get_uniform("radius") != -1) shader->set_float("radius", radius);
@@ -1444,7 +1446,7 @@ void Renderer::draw_progressbar(int x, int y, int width, int height, float angle
     shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);
 	// progressbar radius
 	if(shader->get_uniform("radius") != -1) shader->set_float("radius", radius);
 	// Draw static_bar (background)
@@ -1495,7 +1497,7 @@ void Renderer::draw_progressbar(int x, int y, int width, int height, float angle
     shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);
 	// Draw moving_bar (foreground)
 	shader->set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha); //  foreground_color
     glBindVertexArray(foreground_vertex_array_obj);
@@ -1612,7 +1614,7 @@ void Renderer::draw_edit(const std::string& text, int x, int y, int width, int h
 	/*shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);*/
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);*/
 	// edit : radius
 	shader->set_float  ("radius", 0/*radius*/); // set rounded_corner	
 	// edit : gradient
@@ -1842,7 +1844,7 @@ void Renderer::draw_slider(int x, int y, int width, int height, float angle, flo
     shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);*/
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);*/
 	// Draw slider (beam)
 	shader->set_float("radius", radius);
 	shader->set_float("color", (background_color.x / 255.0), (background_color.y / 255.0), (background_color.z / 255.0), background_color.w);
@@ -1895,7 +1897,7 @@ void Renderer::draw_slider(int x, int y, int width, int height, float angle, flo
     shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);*/
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);*/
 	// Draw beam_bar (foreground)
 	////shader->set_float("radius", radius);
 	shader->set_float("color", (red/ 255.0), (green / 255.0), (blue / 255.0), alpha); //  foreground_color
@@ -2062,7 +2064,7 @@ void Renderer::draw_slider_vertical(int x, int y, int width, int height, float a
     shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);*/
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);*/
 	// Draw slider (beam)
 	shader->set_float("color", (background_color.x / 255.0), (background_color.y / 255.0), (background_color.z / 255.0), background_color.w);
     glBindVertexArray(slider_vertex_array_obj); // (vao start 2)
@@ -2114,7 +2116,7 @@ void Renderer::draw_slider_vertical(int x, int y, int width, int height, float a
     shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);*/
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);*/
 	// Draw beam_bar (foreground)
 	shader->set_float("color", (red/ 255.0), (green / 255.0), (blue / 255.0), alpha); //  foreground_color
     glBindVertexArray(bar_vertex_array_obj); // (vao start 2)
@@ -2277,7 +2279,7 @@ void Renderer::draw_switch(int x, int y, int width, int height, float angle, flo
     shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);
 	// Draw switch (background)
 	shader->set_float("radius", radius);
 	shader->set_float("color", (background_color.x / 255.0), (background_color.y / 255.0), (background_color.z / 255.0), background_color.w);
@@ -2337,7 +2339,7 @@ void Renderer::draw_switch(int x, int y, int width, int height, float angle, flo
     shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);
 	// Draw handle switch
 	shader->set_float("radius", (radius >= 50.0) ? 100.0 : radius);// when the switch toggle starts to look more round-ish, set radius to 100 %
 	shader->set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
@@ -2369,7 +2371,7 @@ void Renderer::draw_switch(int x, int y, int width, int height, float angle, flo
 }
 //////////// // Usage: Renderer::draw_tooltip("Hello", 750, 500, 100, 50, 0.0, 1, 1, 106, 106, 106, 255.0);
 void Renderer::draw_tooltip(const std::string& text, int x, int y, int width, int height, float angle, float scale_x, float scale_y, unsigned int red, unsigned int green, unsigned int blue, float alpha, Shader* shader,
-	bool outline, const Vector3& outline_color,
+	bool outline, const Vector4& outline_color,
 	float radius, 
     std::string direction, int arrow_width, int arrow_height, double arrow_offset)
 {
@@ -2449,7 +2451,7 @@ void Renderer::draw_tooltip(const std::string& text, int x, int y, int width, in
     shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);	
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);	
 	shader->set_float("radius", radius);
 	shader->set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
@@ -2623,7 +2625,7 @@ void Renderer::draw_radio(int x, int y, int width, int height, float angle, floa
     shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);
 	// Draw radio
 	shader->set_float("radius", radius); // radius should be 100%
 	shader->set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
@@ -2678,7 +2680,7 @@ void Renderer::draw_radio(int x, int y, int width, int height, float angle, floa
     shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    //shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);	
+    //shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);	
 	if(value == 0) shader->set_float("outline_color", (64.0f / 255.0), (64.0f / 255.0), (64.0f / 255.0), (255.0f / 255.0)); 
 	if(value == 1) shader->set_float("outline_color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);*/
 	// Draw inner quad
@@ -2794,7 +2796,7 @@ void Renderer::draw_checkbox(int x, int y, int width, int height, float angle, f
     shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);
 	// Draw checkbox (background)
 	shader->set_float("radius", radius);
 	shader->set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
@@ -2865,7 +2867,7 @@ void Renderer::draw_checkbox(int x, int y, int width, int height, float angle, f
     shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);	
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);	
 	if(value == 0) shader->set_float("outline_color", (64.0f / 255.0), (64.0f / 255.0), (64.0f / 255.0), (255.0f / 255.0)); 
 	if(value == 1) shader->set_float("outline_color", (outline_color.x / 255.0), (outline_color.y / 255.0), (outline_color.z / 255.0), outline_color.w);*/
 	// Draw checkmark (foreground)
@@ -2993,7 +2995,7 @@ void Renderer::draw_scrollbar(int x, int y, int width, int height, float angle, 
     shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);
 	// Draw scrollbar
     shader->set_float("color", (red/ 255.0), (green / 255.0), (blue / 255.0), alpha);
     glBindVertexArray(scrollbar_vertex_array_obj); // (vao start 2)
@@ -3045,7 +3047,7 @@ void Renderer::draw_scrollbar(int x, int y, int width, int height, float angle, 
     shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);
 	// Draw top_button
 	shader->set_float("color", (button_color.x / 255.0), (button_color.y / 255.0), (button_color.z / 255.0), button_color.w);
     glBindVertexArray(top_button_vertex_array_obj); // (vao start 2)
@@ -3104,7 +3106,7 @@ void Renderer::draw_scrollbar(int x, int y, int width, int height, float angle, 
     shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);
 	// Draw bottom_button
 	shader->set_float("color", (button_color.x / 255.0), (button_color.y / 255.0), (button_color.z / 255.0), button_color.w);
     glBindVertexArray(bottom_button_vertex_array_obj); // (vao start 2)
@@ -3168,7 +3170,7 @@ void Renderer::draw_scrollbar(int x, int y, int width, int height, float angle, 
     shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);*/	
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);*/	
 	// Draw handle
     shader->set_float("color", (handle_color.x/ 255.0), (handle_color.y/ 255.0), (handle_color.z / 255.0), handle_color.w); //  foreground_color	
     glBindVertexArray(handle_vertex_array_obj); // (vao start 2)
@@ -3308,7 +3310,7 @@ void Renderer::draw_spinner0(int x, int y, int width, int height, float angle, f
     shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);
 	// Draw _
 	shader->set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
@@ -3359,7 +3361,7 @@ void Renderer::draw_spinner0(int x, int y, int width, int height, float angle, f
     shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);
 	// Draw _
 	shader->set_float("color", (button_color.x / 255.0), (button_color.y / 255.0), (button_color.z / 255.0), button_color.w);
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
@@ -3411,7 +3413,7 @@ void Renderer::draw_spinner0(int x, int y, int width, int height, float angle, f
     shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);
 	// Draw _
 	shader->set_float("color", (button_color.x / 255.0), (button_color.y / 255.0), (button_color.z / 255.0), button_color.w);
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
@@ -3455,7 +3457,7 @@ void Renderer::draw_spinner0(int x, int y, int width, int height, float angle, f
     shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);
 	// Draw triangle
 	shader->set_float("color", (arrow_color.x / 255.0), (arrow_color.y / 255.0), (arrow_color.z / 255.0), arrow_color.w);
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
@@ -3498,7 +3500,7 @@ void Renderer::draw_spinner0(int x, int y, int width, int height, float angle, f
     shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);
 	// Draw triangle
 	shader->set_float("color", (arrow_color.x / 255.0), (arrow_color.y / 255.0), (arrow_color.z / 255.0), arrow_color.w);
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
@@ -3650,7 +3652,7 @@ void Renderer::draw_spinner(int x, int y, int width, int height, float angle, fl
     /*shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);*/
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);*/
 	// Draw _
 	shader->set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
@@ -3703,7 +3705,7 @@ void Renderer::draw_spinner(int x, int y, int width, int height, float angle, fl
     /*shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);*/
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);*/
 	// Draw _
 	shader->set_float("color", (button_color.x / 255.0), (button_color.y / 255.0), (button_color.z / 255.0), button_color.w);
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
@@ -3755,7 +3757,7 @@ void Renderer::draw_spinner(int x, int y, int width, int height, float angle, fl
     /*shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);*/
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);*/
 	// Draw _
 	shader->set_float("color", (button_color.x / 255.0), (button_color.y / 255.0), (button_color.z / 255.0), button_color.w);
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
@@ -3802,7 +3804,7 @@ void Renderer::draw_spinner(int x, int y, int width, int height, float angle, fl
     /*shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);*/
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);*/
 	// Draw lines
 	shader->set_float("color", (shape_color.x / 255.0), (shape_color.y / 255.0), (shape_color.z / 255.0), shape_color.w);
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
@@ -3849,7 +3851,7 @@ void Renderer::draw_spinner(int x, int y, int width, int height, float angle, fl
     /*shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);*/
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);*/
 	// Draw lines
 	shader->set_float("color", (shape_color.x / 255.0), (shape_color.y / 255.0), (shape_color.z / 255.0), shape_color.w);
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
@@ -3973,7 +3975,7 @@ void Renderer::draw_combobox(int x, int y, int width, int height, float angle, f
     /*shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);*/
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);*/
 	// Draw combobox
 	shader->set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
     glBindVertexArray(combo_vertex_array_obj); // (vao start 2)
@@ -4023,7 +4025,7 @@ void Renderer::draw_combobox(int x, int y, int width, int height, float angle, f
     /*shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);*/
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);*/
 	// Draw button
 	shader->set_float("color", (button_color.x / 255.0), (button_color.y / 255.0), (button_color.z / 255.0), button_color.w);//shader.set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
     glBindVertexArray(button_vertex_array_obj); // (vao start 2)
@@ -4077,7 +4079,7 @@ void Renderer::draw_combobox(int x, int y, int width, int height, float angle, f
     /*shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);*/
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);*/
 	// Draw triangle
 	shader->set_float("color", (255.0 / 255.0), (255.0 / 255.0), (255.0 / 255.0), (255.0 / 255.0));
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture
@@ -4188,7 +4190,7 @@ void Renderer::draw_tab(int x, int y, int width, int height, float angle, float 
 	// Draw outline
     /*shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
-    ////shader->set_float("outline_thickness", outline_thickness);//0.2);//shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);
+    ////shader->set_float("outline_thickness", outline_thickness);//0.2);//shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);
 	shader->set_float("outline_color", (32.0 / 255.0), (32.0 / 255.0), (32.0 / 255.0), (255.0 / 255.0));*/
 	//glEnable(GL_LINE_SMOOTH); // may slow down performance
 	glLineWidth(1.0); // outline_width
@@ -4746,7 +4748,7 @@ void Renderer::draw_triangle(float x, float y, int width, int height, float angl
     /*shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);
-    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f);*/
+    shader->set_float("outline_color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w);*/
 	// Draw _
 	shader.set_float("color", (red / 255.0), (green / 255.0), (blue / 255.0), alpha);
 	//glBindTexture(GL_TEXTURE_2D, base);  // bind texture

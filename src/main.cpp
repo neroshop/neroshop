@@ -236,7 +236,7 @@ int main() {
     Item sid_game("Sid's 3DS", "A really awesome portable game console", 10, 0.5, std::make_tuple(0, 0, 0), "new", "0000-0000-0011");
     // Seller will list some items
     // which users will be able to add to cart
-    //Cart::get_singleton()->add(ball, 1);
+    //user->get_cart()->add(ball, 1);
     // uploading item images to database
     ball.upload(File::get_current_dir() + "/res/tmp_images/monero-symbol-on-white-480.png");//ball.upload(File::get_current_dir() + "/res/icons/Flag-Japan.jpg");//Image * ball_image = ball.get_upload_image(); // segfault when allocating on stack -.-    
     candy.upload(File::get_current_dir() + "/res/tmp_images/candy-clipart-animated-2.png");
@@ -1088,11 +1088,10 @@ int main() {
                     //static_cast<Seller *>(user)->list_item(ring, 3, 1444.00, "jpy");//122.00, "usd");
                     //static_cast<Seller *>(user)->list_item(game, 7, 69.00, "usd");
                     /// 2. which users will be able to then add to cart
-                    //Cart::get_singleton()->remove(ball, 10);
                     user->add_to_cart(ball, 2);
                     user->add_to_cart(candy, 10);
-                    ////Cart::get_singleton()->add(ring, 1);
-                    //Cart::get_singleton()->add(game, 1);
+                    ////user->add_to_cart(ring, 1);
+                    //user->add_to_cart(game, 1);
                     ////if(user->is_seller()) static_cast<Seller *>(user)->get_item_id_with_most_sales();//if(user->is_seller()) static_cast<Seller *>(user)->get_item_id_with_most_orders();
                     /// 3. and finally, use the cart to make an order
                     std::string shipping_addr = "Lars Mars\n"
@@ -1104,7 +1103,7 @@ int main() {
                     // then save by attaching it to the user
                     // user->set_cart(cart_id);
                     // update cart qty everytime add, remove, or change_qty, is called
-                    ////cart_button->get_label()->set_string(std::to_string(Cart::get_singleton()->get_total_quantity(user->get_id())));                    
+                    ////cart_button->get_label()->set_string(std::to_string(user->get_cart()->get_total_quantity(user->get_id())));                    
                     // set the wallet
                     //if(user && wallet_opened) static_cast <Seller *>(user)->set_wallet(*wallet);
                     // 5. rate item you've purchased or rate the seller you purchased from
@@ -1154,7 +1153,7 @@ int main() {
                 //std::cout << "is_user_seller: " << user->is_seller() << std::endl;
                 // load the guest cart
                 // cart table in cookies.sqlite3 (stored locally or offline)
-                if(!Cart::get_singleton()->open()) {
+                if(!user->get_cart()->open()) {
                     neroshop::print("unable to open local cart for guest user", 1);
                 }
                 // create order
@@ -1496,7 +1495,7 @@ int main() {
             //------------------------------------------------------
             // to-do: make more user-customizable GUI callback functions
             // deactivates all gui at the bottom-level of the top-level gui element (this) so that bottom-level guis may not receive any input from the user while the top-level gui is visible
-            message_box.set_bottom_level_gui_list({ user_edit.get(), pw_edit.get(), login_button, guest_button, register_button, save_toggle, settings_button, daemon_button, wallet_button, wallet_edit.get(), upload_button }); // wallet_edit is readonly so it does not receive user input, but lets add it regardless
+            message_box.set_bottom_level_gui_list({ user_edit.get(), pw_edit.get(), login_button, guest_button, register_button, save_toggle, &visible_toggle, settings_button, daemon_button, wallet_button, wallet_edit.get(), upload_button }); // wallet_edit is readonly so it does not receive user input, but lets add it regardless
             ////wallet_message_box.set_bottom_level_gui_list({ user_edit.get(), pw_edit.get(), login_button, guest_button, register_button, save_toggle, settings_button, daemon_button, wallet_button, wallet_edit.get(), upload_button, message_box.get_box() }); // wallet_edit is readonly so it does not receive user input, but lets add it regardless
             //------------------------------------------------------
             // draw first message box - for general notifications
@@ -1603,8 +1602,8 @@ int main() {
             /////////////////////////////////////
             // DON'T open database in loop!!!
             // each time an item is added or removed or qty_changed from the cart, update this string 
-            //cart_button->get_label()->set_string(std::to_string(Cart::get_singleton()->get_total_quantity())); // causes crash
-            if(user->is_registered()) cart_button->get_label()->set_string(std::to_string(Cart::get_singleton()->get_total_quantity(user->get_id())));
+            //cart_button->get_label()->set_string(std::to_string(user->get_cart()->get_total_quantity())); // causes crash
+            if(user != nullptr) { if(user->is_registered()) cart_button->get_label()->set_string(std::to_string(user->get_cart()->get_total_quantity(user->get_id()))); }
             //cart_button->get_label()->set_color(); // (cart_qty >= 100) = red(255, 0, 0), (cart_qty >= (100 / 2)) = yellow(255,191,0), (cart_qty <= ((100 / 2) - 1)) = white);
             cart_button->get_label()->set_relative_position(20, (cart_button->get_height() - cart_label.get_height()) / 2);
             cart_button->get_image()->set_relative_position(cart_label.get_relative_x() + (cart_label.get_string().length() * 10) + 10, (cart_button->get_height() - cart_icon.get_height()) / 2);// "(cart_label.get_string().length() * 10)" could be replaced with the entire label's width
