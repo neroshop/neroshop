@@ -13,7 +13,7 @@ neroshop::Seller::~Seller() {
     // clear customer orders
     customer_order_list.clear(); // will reset (delete) all customer orders
     // destroy wallet
-    if(wallet.get()) wallet.reset(); // causes segfault when logging out seller twice or maybe its me :O
+    if(wallet.get()) wallet.reset();
 #ifdef NEROSHOP_DEBUG    
     std::cout << "seller deleted\n";
 #endif    
@@ -624,7 +624,7 @@ neroshop::User * neroshop::Seller::on_login(const std::string& username) { // as
     static_cast<Seller *>(user)->load_customer_orders();
     // load cart (into memory)
     if(user->is_registered()) {
-        Cart::get_singleton()->load_cart(user->get_id());
+        user->get_cart()->load_cart(user->get_id());
     }        
 #ifdef NEROSHOP_DEBUG
     std::cout << "\033[1;34m(account_type: " << String::lower(user->get_account_type_string()) << ", id: " << user->get_id() << ", reputation: " << static_cast<Seller *>(user)->get_reputation() << ")\033[0m" << std::endl; // get_reputation() also opens the database hence the warning

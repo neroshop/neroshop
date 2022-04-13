@@ -1,19 +1,16 @@
 #include "../include/cart.hpp"
 
 ////////////////////
-neroshop::Cart::Cart() : id(0), max_items(10), max_quantity(100) {
-    // cart can only hold up to 10 unique items
-    // cart items can only add up to 100 qty
-}
+neroshop::Cart::Cart() : id(0), max_items(10), max_quantity(100) {} // cart can only hold up to 10 unique items // cart items can only add up to 100 qty
 ////////////////////
 neroshop::Cart::~Cart() {
     contents.clear(); // this should reset (delete) all cart items
 #ifdef NEROSHOP_DEBUG
-    std::cout << "\033[1;37mcart deleted\033[0m\n";
+    std::cout << "cart deleted\n";
 #endif
 }
 ////////////////////
-std::unique_ptr<neroshop::Cart> neroshop::Cart::cart_obj (nullptr);
+////////////////////
 ////////////////////
 // normal
 ////////////////////
@@ -49,7 +46,7 @@ bool neroshop::Cart::open() const {
                 unsigned int item_qty = db.get_column_integer("cart", "item_qty", "item_id = " + std::to_string(cart_item));//neroshop::print("loaded cart item (id: " + std::to_string(cart_item) + ", qty: " + std::to_string(item_qty) + ")");// << std::endl;//std::cout << "found cart item with id: " << i << " (qty: " << item_qty + ")" << std::endl;
                 neroshop::Item * item = new Item(cart_item);//Item item(cart_item);//item created on stack dies at end of for loop that is why it returns invalid values
                 // if the cart is not empty, just load it, no need to add more of the same items again
-                neroshop::Cart::get_singleton()->load(*item, item_qty);
+                const_cast<Cart *>(this)->load(*item, item_qty);
             }
         }
         db.close();
@@ -74,7 +71,7 @@ void neroshop::Cart::load(const neroshop::Item& item, unsigned int quantity) { /
     if(quantity >= stock_qty) quantity = stock_qty; // quantity cannot be more than what is in stock
     // load the item and quantity ...
     std::shared_ptr<neroshop::Item> cart_item(&const_cast<neroshop::Item&>(item));
-    Cart::get_singleton()->contents.push_back(cart_item); // store existing item
+    this->contents.push_back(cart_item); // store existing item
     const_cast<neroshop::Item&>(item).set_quantity(quantity); // save existing item_qty
     NEROSHOP_TAG_OUT std::cout << "\033[1;32m" << item.get_name() << " (id: " << item.get_id() << ", qty: " << quantity << ") has been loaded into cart" << "\033[0m" << std::endl;
 }
@@ -343,10 +340,6 @@ unsigned int neroshop::Cart::get_id() const {
 }
 ////////////////////
 ////////////////////
-neroshop::Cart * neroshop::Cart::get_singleton() {
-    if(!cart_obj.get()) {neroshop::print("cart created");cart_obj = std::unique_ptr<neroshop::Cart>(new Cart());}
-    return cart_obj.get();
-}
 ////////////////////
 ////////////////////
 ////////////////////
@@ -476,7 +469,7 @@ bool neroshop::Cart::load_cart(int user_id) {
         // create the item (object) then store it in the cart(for later use) - it would be better to store the item_ids rather than the item object
         std::shared_ptr<neroshop::Item> item = std::make_shared<neroshop::Item>(item_id);//neroshop::Item * item = new Item(item_id);
         //if(std::find(contents.begin(), contents.end(), item) == contents.end()) {
-            Cart::get_singleton()->contents.push_back(item);
+            contents.push_back(item);
             neroshop::print("loaded cart item (id: " + std::to_string(item_id) + ", qty: " + std::to_string(item_qty) + ")");//NEROSHOP_TAG_OUT std::cout << "\033[1;32m" << item.get_name() << " (id: " << item.get_id() << ", qty: " << quantity << ") has been loaded into cart" << "\033[0m" << std::endl;
         //}
     }

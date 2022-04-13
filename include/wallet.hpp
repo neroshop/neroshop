@@ -103,6 +103,9 @@ public:
     std::string get_path() const; // "wallet_info"
     std::string get_description() const; // "wallet_info"    
     std::string get_type() const; // "wallet_info": Normal, HW
+    unsigned int get_daemon_height() const;
+    unsigned int get_height() const;
+    unsigned int get_height_by_date(int year, int month, int day) const;
     monero::monero_network_type get_network_type() const; // "wallet_info":  Mainnet, Testnet, Stagenet
     std::string get_network_type_str() const; // "wallet_info":  Mainnet, Testnet, Stagenet
     std::string get_status() const; // "status" - Check current status of wallet.

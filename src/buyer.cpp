@@ -58,6 +58,7 @@ neroshop::User * neroshop::Buyer::on_login(const std::string& username) { // if 
     int user_id = DB::Postgres::get_singleton()->get_integer_params("SELECT id FROM users WHERE name = $1", { username });
     dynamic_cast<Buyer *>(user)->set_id(user_id);
     dynamic_cast<Buyer *>(user)->set_account_type(user_account_type::buyer); // set the account_type    
+    //-----------------------------------------
     //DB::Postgres::get_singleton()->finish();
     // save user to global static object for easy access
     //User::set_singleton(*user);
@@ -68,7 +69,7 @@ neroshop::User * neroshop::Buyer::on_login(const std::string& username) { // if 
     dynamic_cast<Buyer *>(user)->load_favorites();
     // load cart (into memory)
     if(user->is_registered()) {
-        Cart::get_singleton()->load_cart(user->get_id());
+        user->get_cart()->load_cart(user->get_id());//Cart::get_singleton()->load_cart(user->get_id());
         //std::cout << "subtotal_price: " << Cart::get_singleton()->get_subtotal_price(user->get_id()) << std::endl;
         //std::cout << "total_weight: " << Cart::get_singleton()->get_total_weight(user->get_id()) << std::endl;
     }

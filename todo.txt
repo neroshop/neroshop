@@ -12,6 +12,7 @@
 - create messages button and a seller hub/section button         []
 - make postgresql optional                                       []
 - create a node list of trusted and verified nodes so users (sellers) do not have to sync entire blockchain []
+- remove class User singleton object and its functions
 
 [MID PRIORITY]
 - make table names plural ('cause select * from customer seems "grammatically" incorrect to me)
@@ -46,6 +47,7 @@
 - host neroshop on gitlab or something more open-source                          []
 - tor integration                                                                []
 - allow contributors to create neroshop bindings for other C-based programming languages such as lua, python, ruby, etc. [-]
+- remove "NOTE" section from readme.md
 
 [UI]
 - prevent mouse press from affecting overlapped GUIs     []

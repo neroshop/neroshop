@@ -49,7 +49,7 @@ public:
 	//Item * get_item_with_most_sales() const;
 	//Item * get_item_with_most_orders() const;
 	// boolean
-	//bool is_verified() const; // returns true if seller is verified brand owner
+	//bool is_verified() const; // returns true if seller is verified brand owner (or original manufacturer)
 	bool has_listed(unsigned int item_id) const; // returns true if this seller has listed an item
 	bool has_listed(const neroshop::Item& item) const; // returns true if this seller has listed an item
 	bool has_stock(unsigned int item_id) const; // returns true if this seller has an item in stock

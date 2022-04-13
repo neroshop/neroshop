@@ -1,19 +1,18 @@
 #include "../include/user.hpp"
 
 ////////////////////
-neroshop::User::User() : logged(false), id(0), account_type(user_account_type::guest), /*cart(nullptr), */order_list({}), favorites_list({}) // name is an empty string by default
-{}
+neroshop::User::User() : id(0), logged(false), account_type(user_account_type::guest), cart(nullptr), order_list({}), favorites_list({}) {
+    cart = std::unique_ptr<Cart>(new Cart());
+}
 ////////////////////
 neroshop::User::~User()
 {
     // destroy cart
-    if(cart.get()) {
-        cart.reset();//if(!cart.get()) std::cout << "cart deleted\n";
-    }
+    if(cart.get()) cart.reset();
     // clear orders
-    order_list.clear(); // will reset (delete) all orders
+    order_list.clear(); // this should reset (delete) all orders
     // clear favorites
-    favorites_list.clear(); // will reset (delete) all favorites
+    favorites_list.clear(); // this should reset (delete) all favorites
 #ifdef NEROSHOP_DEBUG
     std::cout << "user deleted\n";
 #endif    
@@ -374,9 +373,9 @@ void neroshop::User::delete_account() {
 ////////////////////
 void neroshop::User::add_to_cart(unsigned int item_id, int quantity) {
     //if(is_guest()) 
-    //neroshop::Cart::get_singleton()->add(item, quantity);
+    //cart->add(item, quantity);
     if(is_registered()) {
-        neroshop::Cart::get_singleton()->add(this->id, item_id, quantity);
+        cart->add(this->id, item_id, quantity);
     }
 }
 ////////////////////
@@ -385,9 +384,9 @@ void neroshop::User::add_to_cart(const neroshop::Item& item, int quantity) {
 }
 ////////////////////
 void neroshop::User::remove_from_cart(unsigned int item_id, int quantity) {
-    //neroshop::Cart::get_singleton()->remove(item, quantity);
+    //cart->remove(item, quantity);
     if(is_registered()) {
-        //neroshop::Cart::get_singleton()->remove(this->id, item_id, quantity);
+        //cart->remove(this->id, item_id, quantity);
     }
 }
 ////////////////////
@@ -396,11 +395,11 @@ void neroshop::User::remove_from_cart(const neroshop::Item& item, int quantity) 
 }
 ////////////////////
 void neroshop::User::clear_cart() {
-    if(is_registered()) neroshop::Cart::get_singleton()->empty(this->id);
+    if(is_registered()) cart->empty(this->id);
 }
 ////////////////////
 void neroshop::User::load_cart() {
-    Cart::get_singleton()->load_cart(this->id);
+    cart->load_cart(this->id);
 }
 ////////////////////
 ////////////////////
@@ -410,7 +409,7 @@ void neroshop::User::load_cart() {
 void neroshop::User::create_order(const std::string& shipping_address, std::string contact) {//const {
     // name(first, last), address1(street, p.o box, company name, etc.), address2(apt number, suite, unit, building, floor, etc.) city, zip/postal_code, state/province/region country, optional(phone, email)
     std::shared_ptr<neroshop::Order> order(std::make_shared<neroshop::Order>());//(new neroshop::Order());
-    order->create_order(this->id, shipping_address, contact); // we are using crypto, not debit/credit cards so no billing address is needed
+    order->create_order(*cart.get(), shipping_address, contact); // we are using crypto, not debit/credit cards so no billing address is needed
     order_list.push_back(order); // whether an order fails or succeeds, store it regardless
 }
 // cart->add(ball, 2);
@@ -649,7 +648,7 @@ std::string neroshop::User::get_account_type_string() const {
 ////////////////////
 ////////////////////
 neroshop::Cart * neroshop::User::get_cart() const {
-    return neroshop::Cart::get_singleton();
+    return cart.get();//cart;
 }
 ////////////////////
 ////////////////////
@@ -877,8 +876,6 @@ void neroshop::User::logout() {
     this->name.clear(); // clear name
     this->account_type = user_account_type::guest; // set account type to the default
     this->logged = false; // make sure user is no longer logged in
-    // reset (delete) cart (this will clear all items from the cart.contents_list vector. we do not want to mess with the cart db though :D)
-    if(Cart::cart_obj.get()) Cart::cart_obj.reset(); ////delete Cart::cart_obj; Cart::cart_obj = nullptr;
     // delete this user
     if(this) delete this;//this = nullptr;
     // set the singleton user object to nullptr now that user has been deleted

@@ -133,7 +133,7 @@ std::string neroshop::Wallet::address_new() const {
     if(!monero_wallet_obj.get()) throw std::runtime_error("monero_wallet_full is not opened");
     // Create a subaddress within an account (account_0 to be specific).
     monero_subaddress subaddress = monero_wallet_obj->create_subaddress(0);//monero_subaddress monero::monero_wallet_full::create_subaddress	(	uint32_t 	account_idx,const std::string & 	label = "" )
-#ifdef NEROSHOP_DEBUG0
+#ifdef NEROSHOP_DEBUG
     std::cout << "address_new: " << subaddress.m_address.get() << " (account_idx: " << subaddress.m_account_index.get() << ", subaddress_idx: " << subaddress.m_index.get() << ")" << std::endl;
 #endif
     //if subaddress has already been used
@@ -394,6 +394,11 @@ bool neroshop::Wallet::daemon_connect(const std::string& ip, const std::string& 
             // when connected to daemon, listen to sync progress (use this only on a detached daemon)
             std::cout << "\033[1;90;49m" << "sync in progress .." << "\033[0m" << std::endl;
             // it is not safe to connect to a daemon that has not fully synced, so listen to the sync progress before attempting to do anything else
+            // wallet height is 938308 (2021-10-07) - will store all txs/balances but takes longer to sync //std::cout << "syncing from wallet height: " << monero_wallet_obj->get_height() << std::endl;
+            // daemon height is 1070393 (most recent) - will only store the most recent txs/balances and syncs almost instantly //std::cout << "syncing from daemon height: " << monero_wallet_obj->get_daemon_height() << std::endl;
+            // if height is wallet's height then it will sync from the time of the wallet's creation date to the current date which takes longer to sync
+            // if height is daemon height, it will sync instantly but balances will not be updated and you will not be able to generate unique addresses
+            // if height is zero, then it will sync from 80% but will still take long to sync
             monero_wallet_obj->sync(0, *this);// 0 = start_height	is the start height to sync from (ignored if less than last processed block) //(sync_listener);//monero_sync_result sync_result = monero_wallet_obj->sync(sync_listener); // synchronize the wallet with the daemon as a one-time synchronous process//if(sync_result.m_received_money) {neroshop::print(std::string("blocks fetched: ") + std::to_string(sync_result.m_num_blocks_fetched));neroshop::print("you have received money");}
             monero_wallet_obj->remove_listener(*this);//(sync_listener); // remove sync_listener, since we are done getting the sync progress           
             // continue syncing in order to receive tx notifications
@@ -549,7 +554,7 @@ std::string neroshop::Wallet::get_last_subaddress() const
 ////////////////////
 ////////////////////
 // proof (proving the transaction was submitted) - https://web.getmonero.org/resources/user-guides/prove-payment.html
-std::string  neroshop::Wallet::get_tx_note(const std::string& txid) const {return "";} // "get_tx_note <txid>" - useful for retrieving address information
+std::string neroshop::Wallet::get_tx_note(const std::string& txid) const {return "";} // "get_tx_note <txid>" - useful for retrieving address information
 ////////////////////
 std::pair<std::string, std::string> neroshop::Wallet::get_viewkey(const std::string& password) const {
     if(!monero_wallet_obj.get()) throw std::runtime_error("monero_wallet_full is not opened");
@@ -592,6 +597,21 @@ std::string neroshop::Wallet::get_type() const {
     if(!monero_wallet_obj.get()) throw std::runtime_error("monero_wallet_full is not opened");
     return "";
 } // "wallet_info": Normal, HW
+////////////////////
+unsigned int neroshop::Wallet::get_daemon_height() const {
+    if(!monero_wallet_obj.get()) throw std::runtime_error("monero_wallet_full is not opened");
+    return monero_wallet_obj->get_daemon_height();
+}
+////////////////////
+unsigned int neroshop::Wallet::get_height() const {
+    if(!monero_wallet_obj.get()) throw std::runtime_error("monero_wallet_full is not opened");
+    return monero_wallet_obj->get_height();
+}
+////////////////////
+unsigned int neroshop::Wallet::get_height_by_date(int year, int month, int day) const {
+    if(!monero_wallet_obj.get()) throw std::runtime_error("monero_wallet_full is not opened");
+    return monero_wallet_obj->get_height_by_date(year, month, day);
+}
 ////////////////////
 monero::monero_network_type neroshop::Wallet::get_network_type() const {
     if(!monero_wallet_obj.get()) throw std::runtime_error("monero_wallet_full is not opened");

@@ -690,7 +690,7 @@ int main() {
     user_button->get_image()->resize(24, 24);
     user_button->get_image()->set_alignment("center");
     user_button->set_size(50, 40);
-    user_button->set_color(214, 46, 46);
+    user_button->set_color(205, 133, 0);//(235, 140, 0);
     // order_button
     Button * order_button = new Button();
     Image order_icon(Icon::get["order"]->get_data(), 64, 64, 1, 4);
@@ -700,6 +700,18 @@ int main() {
     order_button->set_size(50, 40);
     order_button->set_color(96, 120, 72);
     //order_button->set_position(user_button->get_x() + user_button->get_width() + 10, 10);
+    // message_button
+    Button message_button;
+    Image message_icon(Icon::get["mail"]->get_data(), 64, 64, 1, 4);
+    message_button.set_image(message_icon);
+    message_button.get_image()->resize(24, 24);
+    message_button.get_image()->set_alignment("center");
+    message_button.set_size(50, 40);
+    message_button.set_color(82, 70, 86);
+    Label message_label("0");
+    message_label.hide(); // hide label by default
+    message_button.set_label(message_label);
+    // seller_hub_button
     // login_button
     Button * logout_button = new Button();
     Image logout_icon(Icon::get["open_door"]->get_data(), 64, 64, 1, 4);
@@ -707,7 +719,7 @@ int main() {
     logout_button->get_image()->resize(24, 24);
     logout_button->get_image()->set_alignment("center");
     logout_button->set_size(50, 40);
-    //logout_button->set_color(96, 120, 72);    
+    logout_button->set_color(214, 46, 46);
     /*// status_icon
     Box * status_icon = new Box();
     status_icon->set_image( * new Image(Icon::get["trash"]->get_data(), 64, 64, 1, 4));
@@ -1097,7 +1109,7 @@ int main() {
                     std::string shipping_addr = "Lars Mars\n"
                     "12 Earth St.\n"
                     "Boston MA 02115";
-                    ////user->create_order(shipping_addr);//, "larteyoh@protonmail.com");                    
+                    if(user->is_buyer()) user->create_order(shipping_addr);//, "larteyoh@protonmail.com");                    
                     // for an online cart, you can retrieve your cart id like this:
                     // cart_id = db.get_integer_params("SELECT user_id FROM cart WHERE user_id = $1", { user->get_id() });
                     // then save by attaching it to the user
@@ -1529,76 +1541,6 @@ int main() {
             date_display.set_position(window.get_client_width() - date_display.get_width() - 10, window.get_client_height() - date_display.get_height() - 10);
             date_display.set_string(Validator::get_date("%Y-%m-%d  %l:%M:%S %p"));
             date_display.draw();
-            // TEMP---------------------------
-            /*if(favorite_button.is_pressed() && !favorite_set) {
-                favorite_set = true;
-                favorite_button.get_image()->set_color(224, 93, 93, 1.0);
-                //return;
-            }
-            else if(favorite_button.is_pressed() && favorite_set) {
-                favorite_set = false;
-                favorite_button.get_image()->set_color(128, 128, 128);
-                //return;
-            }*/            
-            //-------------------------------  
-            /*if(Mouse::is_over(cart_button->get_image()->get_rect())) cart_button->get_image()->set_color(242, 100, 17);
-            else {
-                cart_button->get_image()->set_color(default_icon_color);
-            }
-            if(Mouse::is_over(search_button->get_rect())) search_button->get_image()->set_color(242, 100, 17);
-            else search_button->get_image()->set_color(default_icon_color);
-            //if(Mouse::is_over(config_icon->get_rect())) config_icon->get_image()->set_color(242, 100, 17); else config_icon->get_image()->set_color(default_icon_color);
-            if(Mouse::is_over(user_button->get_rect())) user_button->get_image()->set_color(242, 100, 17);
-            else user_button->get_image()->set_color(default_icon_color);
-            if(Mouse::is_over(order_button->get_rect())) order_button->get_image()->set_color(242, 100, 17);
-            else order_button->get_image()->set_color(default_icon_color);
-            */
-            //if(Mouse::is_over(test_icon->get_rect())) test_icon->get_image()->copy(*Icon::get["circle"]); else test_icon->get_image()->copy(*Icon::get["circle_outline"]);
-            /*if(Mouse::is_over(test_icon->get_rect())) {
-                if(Mouse::is_pressed(1) && test_activated == false) {
-                    test_icon->get_image()->copy( * Icon::get["circle"]);
-                    test_activated = true;
-                } else if(Mouse::is_pressed(1) && test_activated == true) {
-                    test_icon->get_image()->copy( * Icon::get["circle_outline"]);
-                    test_activated = false;
-                }
-            }
-            if(Mouse::is_over(star_icon->get_rect())) {
-                if(Mouse::is_pressed(1) && star_activated == false) {
-                    star_icon->get_image()->copy( * Icon::get["star"]);
-                    star_activated = true;
-                } else if(Mouse::is_pressed(1) && star_activated == true) {
-                    star_icon->get_image()->copy( * Icon::get["star_outline"]);
-                    star_activated = false;
-                }
-            }*/
-            /*if(Mouse::is_over(_icon->get_rect())) {
-                if(Mouse::is_pressed(1) && _activated == false) {
-                    _icon->get_image()->copy(*Icon::get[""]);
-                    _activated = true;
-                }
-                else if(Mouse::is_pressed(1) && _activated == true) {
-                    _icon->get_image()->copy(*Icon::get["_outline"]);
-                    _activated = false;
-                }
-            }*/
-            //if(Mouse::is_over(_icon->get_rect())) _icon->get_image()->set_color(242, 100, 17); else _icon->get_image()->set_color(default_icon_color);
-            //cart_button->draw();
-            ////////////////
-            //unsigned int height = (unsigned int)wallet->get_monero_wallet()->get_height_by_date (2021, 10, 01);
-            //std::cout << "Restore height by date: " << height << std::endl;
-            // returns the current daemon height
-            //std::cout << "Daemon height: " << wallet->get_monero_wallet()->get_daemon_height 	( 		) << std::endl;
-            //std::cout << "Last height processed: " << wallet->get_monero_wallet()->get_height 	( 		) << std::endl;
-            //std::cout << "balance: " << wallet->get_balance() << std::endl;
-            //if(!synced) {
-            //    //std::cout << "daemon is not fully synced with the network\n";
-            //    if(wallet->get_monero_wallet()->is_daemon_synced ()) { 
-            //        std::cout << "daemon is now fully synced with the network\n"; // WTF?
-            //        synced = true;    
-            //    }
-            //}
-            /////////////////////////////////////
             /////////////////////////////////////
             // DON'T open database in loop!!!
             // each time an item is added or removed or qty_changed from the cart, update this string 
@@ -1613,6 +1555,21 @@ int main() {
             user_button->draw(cart_button->get_x() - user_button->get_width() - 1, 20); //(600, 250);                
             /////////////////////////////////////
             order_button->draw(user_button->get_x() - order_button->get_width() - 1, 20);            
+            /////////////////////////////////////
+            if(std::stoi(message_label.get_string()) == 0) {
+                message_button.get_label()->hide();
+                message_button.get_image()->set_alignment("center");
+                message_button.set_size(50, 40);
+            } else {
+                message_button.get_label()->show();
+                message_button.get_label()->set_relative_position(20, (message_button.get_height() - message_label.get_height()) / 2);
+                message_button.get_image()->set_alignment("none");
+                message_button.get_image()->set_relative_position(message_label.get_relative_x() + message_label.get_width() + 10, (message_button.get_height() - message_icon.get_height()) / 2);
+                message_button.set_size(100, 40);                
+            }
+            message_button.draw(order_button->get_x() - message_button.get_width() - 1, 20);
+            /////////////////////////////////////
+            /////////////////////////////////////
             /////////////////////////////////////
             // on logout_button pressed, return to the login menu
             if(logout_button->is_pressed()) {
@@ -1642,7 +1599,7 @@ int main() {
                 login_menu = true;
                 std::cout << "home_menu loop doesnt end here, sadly\n";
             }
-            logout_button->draw(order_button->get_x() - logout_button->get_width() - 1, 20);
+            logout_button->draw(message_button.get_x() - logout_button->get_width() - 1, 20);
             /////////////////////////////////////
             /////////////////////////////////////
             daemon_button->draw(search_button->get_x() + search_button->get_width() + 10, search_button->get_y());
@@ -1656,6 +1613,7 @@ int main() {
             slider2->draw();// temp
             slider3->draw(slider2->get_x(), slider2->get_y() + 50);
             //->set_color(color_slider_r.get_value(), color_slider_g.get_value(), color_slider_b.get_value());
+            ////message_button.set_text(std::to_string(static_cast<int>(slider2->get_value())));
             ////////catalog->get_page()->get_gui(0/*add_cart_button*/)->set_color(color_slider_r.get_value(), color_slider_g.get_value(), color_slider_b.get_value());
             //std::cout << "slider2 factory index: " << Factory::get_gui_factory()->get_location(&slider2) << std::endl;
             //catalog->get_box(0, 0)->set_radius(slider2->get_value());//set_width(slider2->get_value() * 10); // temp
@@ -1711,6 +1669,14 @@ int main() {
 	            hint->set_position(user_button->get_x() + (user_button->get_width() - hint->get_width()) / 2, user_button->get_y() + user_button->get_height() + 5);//, ?->get_y() - (hint->get_height() + hint->get_tooltip_arrow_height()) - 5);	            
 	            hint->show();
             }
+            if(Mouse::is_over(message_button.get_rect()) && message_button.is_visible()) {
+            	std::string message = "messages";
+	            hint->get_label(0)->set_string(message);
+	            hint->get_label(0)->set_alignment("center");
+	            hint->set_size(hint->get_label(0)->get_width() + 20, 50);
+	            hint->set_position(message_button.get_x() + (message_button.get_width() - hint->get_width()) / 2, message_button.get_y() + message_button.get_height() + 5);//, message_button.get_y() - (hint->get_height() + hint->get_tooltip_arrow_height()) - 5);	            
+	            hint->show();
+            }
             if(Mouse::is_over(logout_button->get_rect()) && logout_button->is_visible()) {
             	std::string message = "logout";
 	            hint->get_label(0)->set_string(message);
@@ -1734,7 +1700,8 @@ int main() {
             int seconds = 60;//300;//600; //1800secs = 30mins; 1200secs = 20mins; 900secs = 15mins; 600secs = 10mins; 300secs = 5mins;
             if(order_listener_timer.increment() >= seconds) { 
                 if(user->is_seller()) {
-                    std::cout << seconds << " seconds has passed" << std::endl;
+                    ////std::cout << seconds << " seconds has passed" << std::endl;
+                    std::cout << "listening to incoming customer orders ..." << std::endl;
                     // maybe add a notification icon
                     // listen for any incoming customer orders (pending)
                     static_cast<Seller *>(user)->update_customer_orders();

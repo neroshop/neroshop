@@ -1,11 +1,10 @@
 #include "../include/order.hpp"
 
 ////////////////////
-neroshop::Order::Order() : id(0)
-{}
+neroshop::Order::Order() : id(0) {}
 ////////////////////
 neroshop::Order::Order(unsigned int id) {
-    set_id(id); // once an order has a valid id, then it means it is already in the database
+    this->id = id; // once an order has a valid id, then it means it is already in the database
 }
 ////////////////////
 neroshop::Order::~Order() {
@@ -14,22 +13,24 @@ neroshop::Order::~Order() {
 #endif    
 }
 ////////////////////
-void neroshop::Order::create_order(unsigned int user_id, const std::string& shipping_address, std::string contact_info) {
-    if(user_id < 1) { // invalid id or zero
+void neroshop::Order::create_order(const neroshop::Cart& cart, const std::string& shipping_address, std::string contact_info) {
+    if(cart.get_id() < 1) { // invalid id or zero
         neroshop::print("creating a guest user order ...", 3);
-        create_guest_order(0, shipping_address, contact_info);
+        create_guest_order(cart, shipping_address, contact_info);
         return; // exit function
     }
     neroshop::print("creating a registered user order ...", 4);
-    create_registered_user_order(user_id, shipping_address, contact_info);
+    create_registered_user_order(cart, shipping_address, contact_info);
 }
 ////////////////////
-void neroshop::Order::create_guest_order(unsigned int user_id, const std::string& shipping_address, std::string contact_info) // order: order_id, [order_date], product, SKU, quantity, price (subtotal), discount (optional), shipping_cost/estimated_delivery, payment method:monero[xmr], total
+void neroshop::Order::create_guest_order(const neroshop::Cart& cart, const std::string& shipping_address, std::string contact_info) // order: order_id, [order_date], product, SKU, quantity, price (subtotal), discount (optional), shipping_cost/estimated_delivery, payment method:monero[xmr], total
 {
     // check if order is not already in the database
     if(this->id > 0) { neroshop::print("This order (id: " + std::to_string(this->id) + ") already exists"); return; }
-    neroshop::Cart cart = *neroshop::Cart::get_singleton();
+    // check if cart is empty
     if(cart.is_empty()) {neroshop::print("You cannot place an order: (Cart is empty)", 1);return;}// if cart is empty, exit function
+    // this is a guest cart so the user id will be zero by default
+    unsigned int user_id = 0;
     // seller_id cannot buy from him or her self
     // if(user_id == seller_id) { neroshop::print("You cannot buy from yourself") return; }
     // seller get all details of an order from buyer
@@ -164,7 +165,7 @@ void neroshop::Order::create_guest_order(unsigned int user_id, const std::string
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
-    double weight = cart.get_total_weight();
+    float weight = cart.get_total_weight();
     ////////////////////////////////
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
     // begin transaction
@@ -312,7 +313,7 @@ void neroshop::Order::create_guest_order(unsigned int user_id, const std::string
         item->set_quantity(0); // reset all item quantity to 0 (now that order has been completed) // db.update("Cart", "item_qty", std::to_string(quantity), "item_id = " + std::to_string(item_id));
     }
     // empty cart after completing order
-    cart.empty();
+    const_cast<neroshop::Cart&>(cart).empty();
     // if a user loses internet connection, libcurl cannot get the exchange rate so the order will fail
     // todo: find a way to check if user has internet connection
     set_status(order_status::failed); // set order status to failed by default
@@ -347,22 +348,25 @@ void neroshop::Order::create_guest_order(unsigned int user_id, const std::string
 ////////////////////
 ////////////////////
 ////////////////////
-void neroshop::Order::create_registered_user_order(unsigned int user_id, const std::string& shipping_address, std::string contact_info) {
+void neroshop::Order::create_registered_user_order(const neroshop::Cart& cart, const std::string& shipping_address, std::string contact_info) {
     // check if order is already in the database
     if(id != 0) {
         neroshop::print("This order (id: " + std::to_string(id) + ") already exists"); 
         return; 
     }
     // check if id is valid first
-    if(neroshop::Cart::get_singleton()->get_id() == 0) {
+    if(cart.get_id() == 0) {
         neroshop::print("No cart found on account", 1);
         // use local cart instead
         //create_guest_order(user_id, shipping_address);
         return; // exit current function
     }
-    std::cout << "cart_id: " << neroshop::Cart::get_singleton()->get_id() << std::endl;
+    std::cout << "cart_id: " << cart.get_id() << std::endl;
+    // get user id that this cart belongs to
+    int user_id = DB::Postgres::get_singleton()->get_integer_params("SELECT user_id FROM cart WHERE id = $1;", { std::to_string(cart.get_id()) });
+    std::cout << "cart belongs to user_id: " << user_id << std::endl;
     // then check if cart is empty or not
-    if(neroshop::Cart::get_singleton()->is_empty(user_id)) {
+    if(cart.is_empty(user_id)) {
         neroshop::print("You cannot place an order: (Cart is empty)", 1);
         return; // if cart is empty, exit function
     }
@@ -390,7 +394,7 @@ void neroshop::Order::create_registered_user_order(unsigned int user_id, const s
     ////DB::Postgres::get_singleton()->execute("SAVEPOINT order_creation_savepoint;");
     // set order date (timestamp) to the current date (timestamp) // timestamp includes both date and time instead of the time only
     std::string date = DB::Postgres::get_singleton()->get_text("SELECT CURRENT_TIMESTAMP;"); // SELECT NOW(), CURRENT_TIMESTAMP; // both now() and current_timestamp are the same thing and both include the timezone: https://dba.stackexchange.com/questions/63548/difference-between-now-and-current-timestamp    // NOW() is postgresql's version; CURRENT_TIMESTAMP is an SQL-standard
-    double weight = neroshop::Cart::get_singleton()->get_total_weight(user_id);
+    double weight = cart.get_total_weight(user_id);
     std::cout << "order_weight: " << weight << std::endl;
     // insert new order
     int order_id = DB::Postgres::get_singleton()->get_integer_params("INSERT INTO orders (user_id, creation_date, status, weight, subtotal, discount, shipping_cost, total, payment_method, currency, notes) "
@@ -419,11 +423,11 @@ void neroshop::Order::create_registered_user_order(unsigned int user_id, const s
     double subtotal = 0.00, discount = 0.00, shipping_cost = 0.00;
     std::string seller_currency;
     //if(!neroshop::Converter::is_supported_currency(currency)) currency = "usd"; // default
-    for(int i = 0; i < neroshop::Cart::get_singleton()->get_contents_count(); i++) {
-        neroshop::Item * item = neroshop::Cart::get_singleton()->get_item(i);
+    for(int i = 0; i < cart.get_contents_count(); i++) {
+        neroshop::Item * item = cart.get_item(i);
         unsigned int item_id  = item->get_id();
         std::string item_name = DB::Postgres::get_singleton()->get_text_params("SELECT name FROM item WHERE id = $1", { std::to_string(item_id) });
-        unsigned int item_qty = DB::Postgres::get_singleton()->get_integer_params("SELECT item_qty FROM cart_item WHERE cart_id = $1 AND item_id = $2", { std::to_string(neroshop::Cart::get_singleton()->get_id()), std::to_string(item_id) });
+        unsigned int item_qty = DB::Postgres::get_singleton()->get_integer_params("SELECT item_qty FROM cart_item WHERE cart_id = $1 AND item_id = $2", { std::to_string(cart.get_id()), std::to_string(item_id) });
         // if seller_id is not specified (0), then choose a random seller who is selling the same product, but it MUST be in stock!!
         int seller_id = DB::Postgres::get_singleton()->get_integer_params("SELECT seller_id FROM inventory WHERE item_id = $1 AND stock_qty > 0", { std::to_string(item_id) });
         if(seller_id == 0) { std::cout << "item_id is: " << item_id << "\n";std::cout << "item seller not found" << std::endl; DB::Postgres::get_singleton()->execute("ROLLBACK;"); return; }//DB::Postgres::get_singleton()->finish(); return; }
@@ -499,15 +503,15 @@ void neroshop::Order::create_registered_user_order(unsigned int user_id, const s
     // print order message
     neroshop::print("Thank you for using neroshop.");
     neroshop::io_write("You have ordered: ");
-    for(int i = 0; i < neroshop::Cart::get_singleton()->get_contents_count(); i++) {
-        neroshop::Item * item = neroshop::Cart::get_singleton()->get_item(i);
+    for(int i = 0; i < cart.get_contents_count(); i++) {
+        neroshop::Item * item = cart.get_item(i);
         std::string item_name = DB::Postgres::get_singleton()->get_text_params("SELECT name FROM item WHERE id = $1", { std::to_string(item->get_id()) });//unsigned int item_qty = db.get_column_integer("Cart", "item_qty", "item_id = " + std::to_string(item_id));
-        int item_qty = DB::Postgres::get_singleton()->get_integer_params("SELECT item_qty FROM cart_item WHERE cart_id = $1 AND item_id = $2", { std::to_string(neroshop::Cart::get_singleton()->get_id()), std::to_string(item->get_id()) });
+        int item_qty = DB::Postgres::get_singleton()->get_integer_params("SELECT item_qty FROM cart_item WHERE cart_id = $1 AND item_id = $2", { std::to_string(cart.get_id()), std::to_string(item->get_id()) });
         std::cout << ((i > 0) ? "                              " : "") << "\033[0;94m" + item_name << " (x" << item_qty << ")\033[0m" << std::endl;
-        DB::Postgres::get_singleton()->execute_params("UPDATE cart_item SET item_qty = $1 WHERE cart_id = $2 AND item_id = $3", { std::to_string(0), std::to_string(neroshop::Cart::get_singleton()->get_id()), std::to_string(item->get_id()) }); // reset all item quantity to 0 (now that order has been completed)
+        DB::Postgres::get_singleton()->execute_params("UPDATE cart_item SET item_qty = $1 WHERE cart_id = $2 AND item_id = $3", { std::to_string(0), std::to_string(cart.get_id()), std::to_string(item->get_id()) }); // reset all item quantity to 0 (now that order has been completed)
     }
     // empty cart after completing order
-    neroshop::Cart::get_singleton()->empty(user_id);
+    const_cast<neroshop::Cart&>(cart).empty(user_id);
     // if a user loses internet connection, libcurl cannot get the exchange rate so the order will fail
     // todo: find a way to check if user has internet connection
     this->set_status(order_status::failed); // set order status to failed by default

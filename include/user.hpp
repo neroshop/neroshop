@@ -21,7 +21,7 @@ public:
     void rate_item(unsigned int item_id, int stars, std::string comments = ""); // star ratings (1-5)    
     void convert(); // converts buyer to seller //void revert(); // I don't see the reason for degrading your account after an upgrade hehe ... //void report_user(const User& user, const std::string& reason); // report a user
     void delete_account();
-    void logout(); // wipe data on logout
+    void logout();
     // cart-related stuff (50% complete - cart class still needs some more work)
     void add_to_cart(unsigned int item_id, int quantity = 1);
     void add_to_cart(const neroshop::Item& item, int quantity = 1); // use int and NOT unsigned int 'cause unsigned int assumes the arg will never be negative number, but when arg is negative, it converts it to some random positive number
@@ -41,26 +41,27 @@ public:
     void delete_avatar();
     // setters
     // getters
+    // account-related stuff - getters
     unsigned int get_id() const;
     std::string get_name() const;
     user_account_type get_account_type() const;
     std::string get_account_type_string() const;
-    // buyer functions (getters)
-    neroshop::Cart * get_cart() const; // uses default cart (singleton)
+    // buyer-related stuff - getters
+    neroshop::Cart * get_cart() const;
     neroshop::Order * get_order(unsigned int index) const;
     unsigned int get_order_count() const;
     neroshop::Item * get_favorites(unsigned int index) const;
     unsigned int get_favorites_count() const;
     // boolean
-    bool is_guest() const; // return (user_account_type == "guest") // 
-    bool is_buyer() const; // return (user_account_type == "buyer") // 
-    bool is_seller() const;  // return (user_account_type == "seller")
-    bool is_online() const; // online does not mean logged_in
+    bool is_guest() const;
+    bool is_buyer() const;
+    bool is_seller() const;
+    bool is_online() const; // online does not mean logged in
     bool is_registered() const;
     static bool is_registered(const std::string& name);
     bool is_logged() const; // the same for every derived class // user has entered their login information
     bool has_email() const;
-    // boolean (item and order related)
+    // item-related stuff - boolean
     bool has_purchased(unsigned int item_id); // checks if an item was previously purchased or not
     bool has_purchased(const neroshop::Item& item); // checks if an item was previously purchased or not
     bool has_favorited(unsigned int item_id); // checks if an item is in a user's favorites or wishlist
@@ -84,7 +85,6 @@ protected: // can only be accessed by classes that inherit from class User (even
     void set_account_type(user_account_type account_type); // either buyer or seller // the same for every derived class 
     void set_logged(bool logged); // the same for every derived class
     void set_online(bool online);
-    
     // loading into memory so we don't always have to fetch from the database within the same session
     void load_cart();
     void load_orders(); // on login, load all orders this user has made so far (this function is called only once per login)

@@ -32,6 +32,7 @@ public: // can be accessed by any class or function
 	void checkout(); // user's cart contents impact inventory availability. Only after purchase will actual inventory decrease
 	static bool create_guest_cart();
 	//static bool create_offline_db();
+	// setters
 	// getters
 	double get_seller_subtotal_price(unsigned int seller_id = 0) const;
 	double get_subtotal_price() const; // This is the total price for each product in the cart (combined)
@@ -45,8 +46,6 @@ public: // can be accessed by any class or function
 	unsigned int get_contents_count() const; // returns number of items in cart.contents
 	neroshop::Item * get_item(unsigned int index) const; //unsigned int get_id() const;//static std::string get_file();
 	std::vector<std::shared_ptr<neroshop::Item>> get_contents_list() const;
-	// singleton
-	static Cart * get_singleton();
 	// boolean
 	bool is_empty() const;
     bool is_full() const; // cart is full (has reached max items)
@@ -74,13 +73,12 @@ public: // can be accessed by any class or function
 	// friends
 	friend class User;//Buyer; // buyer can access cart's private members
 	friend class Order;
-private: // can be accessed by only this class (cannot even be inherited)
+private: // can be accessed by only this class and its friends (cannot even be inherited)
     int id; // 0 by default
     std::vector<std::shared_ptr<neroshop::Item>> contents;//protected: // cannot be accessed outside of class but by a derived class (subclass)
     unsigned int max_items; // cart can only hold up to 10 items
     unsigned int max_quantity; // the max quantity each item can add up to is 100, so 10 items can have 10 quantity each, making the total number of items 100 //unsigned int id;
-    static std::unique_ptr<Cart> cart_obj; // singleton object
-    static void load(const neroshop::Item& item, unsigned int quantity); // loads cart.db on app start
+    void load(const neroshop::Item& item, unsigned int quantity); // loads cart.db on app start
     static void add_db(unsigned int item_id); // adds item to cart table for first time
     static void remove_db(unsigned int item_id); // removes item from cart table
 private:	    
