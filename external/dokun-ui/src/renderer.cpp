@@ -709,6 +709,14 @@ void Renderer::draw_box(int x, int y, int width, int height, float angle, float 
 	// What is drawn last should appear on top, according to openGL, but we want to HIDE the diagonal line shown by the outline, so outline should appear at the bottom
 	// Modern OpenGL defines only points, lines or triangles; there are no 4-vertex primitive types, so you can't draw a quad without triangles, which is why you see the diagonal line across the box
 	// Draw outline
+	// temporary
+	/*if(outline) {
+	    glLineWidth(outline_width);
+	    shader->set_float("color", outline_color.x / 255.0f, outline_color.y / 255.0f, outline_color.z / 255.0f, outline_color.w); // top color (tint)
+        glBindVertexArray(box_vertex_array_obj);
+            glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
+	    glBindVertexArray(0);
+	}*/
     shader->set_integer("outline", outline);
     ////shader->set_float("outline_threshold", outline_threshold);//0.5);
     ////shader->set_float("outline_thickness", outline_thickness);//0.2);

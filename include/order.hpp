@@ -53,7 +53,6 @@ private:
 	// invoice: seller_username:layter, seller_receiver_subaddress:Axxxxxx, tx_status:processing(yellow),complete(green[paid]), confirmations:#, product_name:"Playstation 5" total_price:#xmr(#usd), currency:xmr, exchange_rate:1xmr=???usd, created_timestamp:YYYY-MM-DD HH:MM:SS, tx_speed:low,med,high shipping_to:10 rocket st boston ma 02115, tracking_number:####, carrier:usps, delivery_status:shipping_now|out_for_delivery|delivered|
 	// options:cancel_order|change_shipping_address,
 	void set_status(order_status status);
-	void set_id(unsigned int id);
 };
 }
 #endif

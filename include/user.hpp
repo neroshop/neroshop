@@ -69,8 +69,6 @@ public:
     // a virtual function can be overridden in a derived class
     // a pure virtual function means derived class must have its own definition
     // final can only be used on a virtual function, even one that is inherited // https://en.cppreference.com/w/cpp/language/final
-    // singleton
-    static User * get_singleton();      
     // callbacks
     void on_registration(const std::string& name); // on registering an account
     //virtual User * on_login(const std::string& username);// = 0; // load all data: orders, reputation/ratings, settings // for all users
@@ -78,7 +76,6 @@ public:
     virtual void on_order_received(); // for sellers only
     // friends
     // ...
-    static void set_singleton(const User& user); // should be under protected:
 protected: // can only be accessed by classes that inherit from class User (even instants of the bass class User cannot call these functions unless you dynamically cast them into a derived class)
     void set_id(unsigned int id);
     void set_name(const std::string& name); // the same for every derived class 
@@ -97,7 +94,6 @@ private:
     std::unique_ptr<Cart> cart;
     std::vector<std::shared_ptr<neroshop::Order>> order_list;
     std::vector<std::shared_ptr<neroshop::Item>> favorites_list; // I get errors while trying to use unqieu_ptr so I'm stuck with a shared_ptr container
-    static neroshop::User * user; // singleton object
 };
 }
 #endif // check if user has internet, and user is logged_in

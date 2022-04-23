@@ -102,7 +102,7 @@ public:
 	Vector2 get_relative_position() const;           static int get_relative_position(lua_State *L);	
 	double get_angle()     const;                    static int get_angle(lua_State *L);
 	Vector2 get_scale()    const;                    static int get_scale(lua_State *L);
-	double get_aspect_ratio_correction(int rect_x, int rect_y) const;     static int get_aspect_ratio_correction(lua_State * L);
+	double get_aspect_ratio_correction(int rect_width, int rect_height);     static int get_aspect_ratio_correction(lua_State * L);
 	std::string get_alignment() const;               static int get_alignment(lua_State *L);
 	Vector4 get_rect() const; static int get_rect(lua_State * L);
 	// outline
@@ -134,9 +134,9 @@ public:
 		copy(texture);
 		return (*this);
 	}	
-private:
     // friends
-	friend class Widget;
+	friend class Box;	
+private:
     bool  load_png(std::string file_name);
     bool  load_bmp(std::string file_name);
     bool  load_jpeg(std::string file_name);

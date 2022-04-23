@@ -310,19 +310,27 @@ Box * Grid::get_box(int index) const {
     return box_list_1d[index];
 }
 ////////////////////
-std::vector<std::vector<std::shared_ptr<Box>>> Grid::get_box_list_2d() const {
-    return box_list;
-}
-////////////////////
 std::vector<Box *> Grid::get_box_list_1d() const {
     std::vector<Box *> box_list_1d = {};
-    for(auto r : box_list)//for(int r = 0; r < box_list.size(); r++) // block.size() = rows
+    for(auto r : box_list)//for(int r = 0; r < box_list.size(); r++) 
 	{
-		for(auto c : r) {//for(int c = 0; c < box_list[r].size(); c++) { // block[r] = items in row r	
+		for(auto c : r) {//for(int c = 0; c < box_list[r].size(); c++) {
             box_list_1d.push_back(c.get());//box_list_1d.push_back(box_list[r][c].get());
         }
     }
     return box_list_1d;
+}
+////////////////////
+std::vector<std::vector<Box *>> Grid::get_box_list_2d() const { // not tested yet
+    std::vector<std::vector<Box *>> box_list_2d = {};
+    for(auto r : box_list)//for(int r = 0; r < box_list.size(); r++) {
+    {
+        box_list_2d.push_back(std::vector<Box *>()); // empty rows
+        for(auto c : r) {//for(int c = 0; c < box_list[r].size(); c++) {
+            box_list_2d[box_list_2d.size() - 1].push_back(c.get());//box_list_2d[r].push_back(box_list[r][c].get());
+        }
+    }
+    return box_list_2d;
 }
 ////////////////////
 int Grid::get_row_count()const

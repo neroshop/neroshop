@@ -78,6 +78,8 @@ class Entity // or GameObject; base abtract class that acts as parent for Sprite
 		Script * get_script() const;                        static int get_script(lua_State *L);   		
 		int get_polygon_mode()const;                        static int get_polygon_mode(lua_State *L);
 		int get_count(const std::string& what)const;        static int get_count(lua_State *L);
+		// getting entities by their "name" component
+		static Entity * get_entity_by_name(const std::string& name);
 		// other getters
 		virtual std::string get_name();
 		virtual int get_id();

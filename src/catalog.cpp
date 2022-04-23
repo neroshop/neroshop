@@ -1,7 +1,7 @@
 #include "../include/catalog.hpp"
 
 ////////////////////
-neroshop::Catalog::Catalog() : view(nullptr), current(nullptr), tooltip(nullptr), sort_box(nullptr) {
+neroshop::Catalog::Catalog() : view(nullptr), current(nullptr), tooltip(nullptr), sort_box(nullptr), cart(nullptr) {
     initialize();
 }
 ////////////////////
@@ -27,17 +27,7 @@ neroshop::Catalog::~Catalog() {
 ////////////////////
 ////////////////////
 void neroshop::Catalog::initialize() {
-    ////////////////////
-    /*// create box
-    std::shared_ptr<Box> box = std::make_shared<Box>();
-    // store box
-    box_list.push_back(box); // box 0
-    ////////////////////
-    // set initial box properties
-    box_list[0]->set_size(width / box_list.size(), height);//height / box_list.size());
-    ////////////////////
-    */
-    // initialize view
+    // initialize catalog view or display
     if(view.get()) {neroshop::print("catalog is already initialized", 2);return;} // if view was already initialized then exit function
     view = std::unique_ptr<Grid>(new Grid());
     //std::cout << "catalog view initialized\n";
@@ -50,11 +40,11 @@ void neroshop::Catalog::initialize() {
     //view->set_radius(5);
     set_box_size(220, 220);//(220, 250);//(250, 300);//(215, 210);// also applies size to grid (view) boxes
     ////////////////////
-    // initialize current page (product page)
+    // initialize current product page
     if(current.get()) {neroshop::print("catalog is already initialized", 2);return;}
     current = std::unique_ptr<Box>(new Box());
     setup_page();
-    current->hide(); // hide product page by default
+    current->hide(); // hide current product page by default
     ////////////////////
     // initialize tooltip
     if(tooltip.get()) {neroshop::print("catalog is already initialized", 2);return;}
@@ -62,9 +52,9 @@ void neroshop::Catalog::initialize() {
     tooltip->set_tooltip(true);
     tooltip->set_color(10, 10, 10);//, 1.0);//tooltip->set_tooltip_arrow_direction("down");
     // outline won't show unless it has a radius :U
-    //tooltip->set_radius(10);
-    tooltip->set_outline(true); // hint is a box, not a tooltip so why is the outline missing?
-    tooltip->set_outline_color(255, 255, 255, 1.0);
+    tooltip->set_radius(10);
+    //tooltip->set_outline(true); // hint is a box, not a tooltip so why is the outline missing?
+    //tooltip->set_outline_color(255, 255, 255, 1.0);
     tooltip->add_label(*new dokun::Label("")); // font will be auto set when label is initialized with a string
     tooltip->hide(); // hide tooltip by default
     ////////////////////
@@ -94,7 +84,7 @@ void neroshop::Catalog::initialize() {
 void neroshop::Catalog::update() {
     if(!view.get()) throw std::runtime_error("catalog view is not initialized");
     // update box sizes on call to Catalog::set_box_width and Catalog::set_box_height and Catalog::set_box_size
-	std::vector<std::vector<std::shared_ptr<Box>>> box_list = view->get_box_list_2d();
+	std::vector<std::vector<Box *>> box_list = view->get_box_list_2d();
 	if(box_list.empty()) return;// if no rows, exit function
 	for(auto rows : box_list) {
 	    for(auto boxes : rows) {
@@ -103,40 +93,11 @@ void neroshop::Catalog::update() {
 	}
 }
 ////////////////////
-void neroshop::Catalog::delete_view_children() {
-    //std::vector<std::vector<std::shared_ptr<Box>>> box_list = view->get_box_list_2d();
-	if(view->get_box_list_2d().empty()) return;//if(box_list.empty()) return;// if no rows, exit function
-	for(auto rows : view->get_box_list_2d()) {
-	    for(auto boxes : rows) {
-	        // delete (reset) box children
-	        for(auto box_guis : boxes->get_gui_list()) {
-	            if(box_guis.use_count() > 0) box_guis.reset();
-	        }
-	        for(auto box_images : boxes->get_image_list()) {
-	            if(box_images.use_count() > 0) box_images.reset();
-	        }
-	        ////if(boxes.use_count() > 0) boxes.reset(); // delete (reset) boxes (will also reset children)
-	    }
-	}
-}
-////////////////////
-void neroshop::Catalog::delete_page_children() {
-    // delete (reset) page children
-    for(auto page_guis : current->get_gui_list()) {
-        if(page_guis.use_count() > 0) page_guis.reset();
-    }
-    for(auto page_images : current->get_image_list()) {
-        if(page_images.use_count() > 0) page_images.reset();
-    }   
-    // delete (reset) the page itself (will also reset children)
-    ////if(current.get()) current.reset();
-}
-////////////////////
 void neroshop::Catalog::draw() {
     //std::cout << "view_pos: " << view->get_position() << std::endl;
     tooltip->hide(); // hide tooltip by default, unless mouse is over icon
     // put this in "on_draw" function
-	std::vector<std::vector<std::shared_ptr<Box>>> box_list = view->get_box_list_2d();
+	std::vector<std::vector<Box *>> box_list = view->get_box_list_2d();
 	if(box_list.empty()) return;// if no rows, exit function
 	for(auto rows : box_list) {
 	    for(auto boxes : rows) {
@@ -227,6 +188,18 @@ void neroshop::Catalog::draw() {
     current->set_width(window_width - 40); // edge must line up with cart_button's edge
     current->set_height(window_height - 100 - 10); // - 10 to not block the date display and sync status label
     current->set_position((window_width / 2) - (current->get_width() / 2), view->get_y() - 10);//90// - 10 to cover the grid outline
+    /////////////////////////////////
+    // if cart_add_button is pressed
+    GUI * cart_add_button = current->get_gui(current->get_gui_count() - 1);
+    if(cart_add_button->is_pressed()) {
+        // get the current item_id and the quantity specified by the user
+        Spinner * quantity_spinner = dynamic_cast<Spinner *>(Entity::get_entity_by_name("quantity_spinner"));
+        int current_item_id = current->get_component("current_item_id")->to_integer();
+        int quantity = quantity_spinner->get_value();
+        // add the item to the cart
+        cart->add(current_item_id, quantity);
+    }
+    /////////////////////////////////
     // if ESCAPE is pressed, hide the product page
     if(dokun::Keyboard::is_pressed(DOKUN_KEY_C/*DOKUN_KEY_ESCAPE*/)) current->hide();
     /////////////////////////////////
@@ -251,100 +224,125 @@ void neroshop::Catalog::setup_page() {
     // 1. catalog view (contains only the product image, name, and price)
     // 2. product page (contains product image, name, price, stars, favorite_button and info_iconcart_add_button, quantity_spinner, etc.)
     // 3. cart / checkout page
+    // give the current page a default component "item_id" or "current_item_id" of value zero
+    current->add_component(*new Component("current_item_id", static_cast<int>(0)));
+    std::cout << "component 'current_item_id' (" << current->get_component("current_item_id")->to_integer() << ") added to page\n";
     // product_page ------------------------------------------------------------------
     // PRODUCT IMAGE BORDER BOX
-    /*Box * product_image_border_box = new Box();
-    product_image_border_box->set_outline(true);
-    product_image_border_box->set_size(500, 500);
-    product_image_border_box->set_relative_position(10, 10);
+    Box * product_image_box = new Box();
+    ////product_image_box->set_color(255, 255, 255, 1.0);
+    product_image_box->set_outline(true);
+    product_image_box->set_outline_color(0, 0, 0, 1.0);
+    product_image_box->set_size(500, 500);
+    product_image_box->set_relative_position(20, 20);
     // PRODUCT IMAGE
     Image * product_image = new Image(Icon::get["image_gallery"]->get_data(), 64, 64, 1, 4);
-    ////product_image->set_relative_position((product_image_border_box->get_width() - product_image->get_width()) / 2, (product_image_border_box->get_height() - product_image->get_height()) / 2);//product_image->set_relative_position((current->get_width() - product_image->get_width()) / 2, 10);//(10, 10);
+    ////product_image->set_relative_position((product_image_box->get_width() - product_image->get_width()) / 2, (product_image_box->get_height() - product_image->get_height()) / 2);//product_image->set_relative_position((current->get_width() - product_image->get_width()) / 2, 10);//(10, 10);
     // dont resize product_image unless it exceeds maximum image size limits or is below minimum image size limits
-    product_image_border_box->add_image(*product_image);
-    current->add_gui(*product_image_border_box);/////current->add_image(*product_image);
+    product_image_box->add_image(*product_image);
+    product_image_box->add_component(*new Component("name", std::string("product_image_box")));
+    current->add_gui(*product_image_box);/////current->add_image(*product_image);
     // MORE PRODUCT IMAGE BORDER BOXES
-    std::vector<Box *> product_image_border_boxes = {};
+    /*std::vector<Box *> product_image_border_boxes = {};
     product_image_border_boxes.push_back(new Box());
     product_image_border_boxes.push_back(new Box());
     int box_gap = 10;
     // MORE PRODUCT IMAGES 
     //std::vector<Image *> product_images;
     //product_images.push_back(new Image());
-    ////product_image_border_boxes[0]->set_relative_position(10, product_image_border_box->get_relative_y() + product_image_border_box->get_height() + box_gap);
+    ////product_image_border_boxes[0]->set_relative_position(10, product_image_box->get_relative_y() + product_image_box->get_height() + box_gap);
     for(int i = 0; i < product_image_border_boxes.size(); i++) {
         product_image_border_boxes[i]->set_outline(true);
-        product_image_border_boxes[i]->set_size((product_image_border_box->get_width() - box_gap) / product_image_border_boxes.size(), 128);
+        product_image_border_boxes[i]->set_size((product_image_box->get_width() - box_gap) / product_image_border_boxes.size(), 128);
     
         current->add_gui(*product_image_border_boxes[i]);
         if(i == 0) continue; // skip first product image border sub box
         ////product_image_border_boxes[i]->set_relative_position(product_image_border_boxes[i - 1]->get_relative_x() + product_image_border_boxes[i - 1]->get_width() + box_gap, product_image_border_boxes[0]->get_relative_y());
     }*/
-    // NAVIGATION ARROWS (add to main product_image_border_box)
-    /*// PRODUCT NAME LABEL
-    dokun::Label product_name_label("Monero Ball"); // place at bottom of image or next to image
-    product_name_label.set_color(0, 0, 0, 1.0);
-    product_name_label.set_relative_position(10, product_image->get_relative_y() + product_image->get_height() + 10);//((current->get_width() - product_name_label.get_width()) / 2, product_image->get_relative_y() + product_image->get_height() + 10);//(product_image->get_relative_x(), product_image->get_relative_y() + product_image_height + 10);
-    //////current->add_gui(product_name_label);
+    // NAVIGATION ARROWS (add to main product_image_box)
+    // PRODUCT NAME LABEL
+    dokun::Label * product_name_label = new dokun::Label("Product name goes here"); // place at bottom of image or next to image
+    product_name_label->set_color(0, 0, 0, 1.0);
+    product_name_label->set_relative_position(product_image_box->get_relative_x() + product_image_box->get_width() + 20, product_image_box->get_relative_y() + 10);//((current->get_width() - product_name_label->get_width()) / 2, product_image->get_relative_y() + product_image->get_height() + 10);//(product_image->get_relative_x(), product_image->get_relative_y() + product_image_height + 10);
+    product_name_label->add_component(*new Component("name", std::string("product_name_label")));
+    current->add_gui(*product_name_label);
     // BRAND NAME LABEL
     // ...
     // STARS (FROM THE CALCULATED AVERAGE STARS - 5)
-    std::vector<std::shared_ptr<Image>> product_stars; // size will be 5    //std::cout << "number of stars: " << product_stars.size() << std::endl;
-    product_stars.push_back(std::make_shared<Image>()); // 0
-    product_stars.push_back(std::make_shared<Image>()); // 1
-    product_stars.push_back(std::make_shared<Image>()); // 2
-    product_stars.push_back(std::make_shared<Image>()); // 3
-    product_stars.push_back(std::make_shared<Image>()); // 4
+    std::vector<Image *> product_stars;//std::vector<std::unique_ptr<Image>> product_stars; // size will be 5    //std::cout << "number of stars: " << product_stars.size() << std::endl;
+    product_stars.push_back(new Image());//(std::unique_ptr<Image>(new Image())); // 0
+    product_stars.push_back(new Image());//(std::unique_ptr<Image>(new Image())); // 1
+    product_stars.push_back(new Image());//(std::unique_ptr<Image>(new Image())); // 2
+    product_stars.push_back(new Image());//(std::unique_ptr<Image>(new Image())); // 3
+    product_stars.push_back(new Image());//(std::unique_ptr<Image>(new Image())); // 4
     for(int i = 0; i < 5; i++) {
         // load stars
         product_stars[i]->load(Icon::get["star"]->get_data(), 64, 64, 1, 4);//"star_half"
         product_stars[i]->resize(20, 20);//(16, 16);
-        product_stars[i]->set_color(255, 179, 68, 1.0);
-        product_stars[i]->set_outline(true); // gives the star an illusion of depth
-        product_stars[i]->set_outline_thickness(0.6);//(1.0);
-        product_stars[i]->set_outline_color(230, 136, 0);// shades = rgb(230, 136, 0) = THE perfect outline color, rgb(179, 106, 0) = looks really bad//product_stars[i]->set_outline_threshold(0.0);
-        //////current->add_image(*product_stars[i].get());// same as: current->set_image(*product_stars[0].get(), i); // except that Box::set_image uses insert() rather than push_back(). This is the only difference between Box::add_image and Box::set_image
+        product_stars[i]->set_color(128, 128, 128, 1.0);////(255, 179, 68, 1.0);
+        product_stars[i]->set_outline(false);////(true); // gives the star an illusion of depth
+        ////product_stars[i]->set_outline_thickness(0.6);//(1.0);
+        ////product_stars[i]->set_outline_color(230, 136, 0);// shades = rgb(230, 136, 0) = THE perfect outline color, rgb(179, 106, 0) = looks really bad//product_stars[i]->set_outline_threshold(0.0);
+        // image is not an entity. I totally forget :X
+        //product_stars[i]->add_component(*new Component("name", std::string("product_star_" + std::to_string(i))));std::cout << "product star 'name' component: " << product_stars[i]->get_component("name") << std::endl;
+        current->add_image(*product_stars[i]/*.get()*/);// same as: current->set_image(*product_stars[0].get(), i); // except that Box::set_image uses insert() rather than push_back(). This is the only difference between Box::add_image and Box::set_image
         if(i == 0) { 
-            product_stars[0]->set_relative_position(product_name_label.get_relative_x(), product_name_label.get_relative_y() + product_name_label.get_height() + 10);//5); // set position of the first star (other stars will follow it)
+            product_stars[0]->set_relative_position(product_name_label->get_relative_x(), product_name_label->get_relative_y() + product_name_label->get_height() + 10);//5); // set position of the first star (other stars will follow it)
             continue; // skip the first star for now
         }
         // update positions of stars
         product_stars[i]->set_relative_position(product_stars[i - 1]->get_relative_x() + product_stars[i - 1]->get_width() + 1, product_stars[0]->get_relative_y()); // same y_rel_pos as first star
     }
     // STARS LABEL (FROM THE CALCULATED AVERAGE STARS)
-    dokun::Label product_reviews_label("(0 ratings)");//(star_ratings > 0) ? std::to_string(star_ratings)+" ratings" : "No ratings yet");
-    product_reviews_label.set_color(16, 16, 16, 1.0);
-    //int last_star_width = (product_stars[product_stars.size() - 1]->is_resized()) ? product_stars[product_stars.size() - 1]->get_width() : product_stars[product_stars.size() - 1]->get_width();
-    //int star_height = (product_stars[0]->is_resized()) ? product_stars[0]->get_height() : product_stars[0]->get_height();//std::cout << "star_height: " << star_height << std::endl;
-    product_reviews_label.set_relative_position(product_stars[product_stars.size() - 1]->get_relative_x() + product_stars[product_stars.size() - 1]->get_width() + 1, product_stars[product_stars.size() - 1]->get_relative_y() + (product_stars[0]->get_height() - product_reviews_label.get_height()) / 2);
-    //////current->add_gui(product_reviews_label);
+    float ratings_count = 0; // star rating/review count
+    dokun::Label * product_reviews_label = new dokun::Label((ratings_count > 0) ? std::to_string(ratings_count) + " ratings" : "No ratings yet");//("(0 ratings)");
+    product_reviews_label->set_color(16, 16, 16, 1.0);
+    product_reviews_label->set_relative_position(product_stars[product_stars.size() - 1]->get_relative_x() + product_stars[product_stars.size() - 1]->get_width() + 10, product_stars[product_stars.size() - 1]->get_relative_y() + (product_stars[0]->get_height() - product_reviews_label->get_height()) / 2);
+    product_reviews_label->add_component(*new Component("name", std::string("product_reviews_label")));
+    current->add_gui(*product_reviews_label);
     // PRICE LABEL
-    dokun::Label price_label("$" + String::to_string_with_precision(0.00, 2)); // size should be made large to emphasize price
-    price_label.set_color(32, 32, 32, 1.0);
-    price_label.set_scale(1.2, 1.2);
-    price_label.set_relative_position(product_stars[0]->get_relative_x(), product_stars[0]->get_relative_y() + product_stars[0]->get_height() + 10);
-    //////current->add_gui(price_label);//add_gui//add_label    
+    dokun::Label * price_label = new dokun::Label("$" + String::to_string_with_precision(0.00, 2)); // size should be made large to emphasize price
+    price_label->set_color(32, 32, 32, 1.0);//price_label->set_scale(1.2, 1.2);
+    price_label->set_relative_position(product_stars[0]->get_relative_x(), product_stars[0]->get_relative_y() + product_stars[0]->get_height() + 10);
+    price_label->add_component(*new Component("name", std::string("price_label")));
+    current->add_gui(*price_label);
+    // STOCK STATUS
+    dokun::Label * stock_status_label = new dokun::Label("Out of stock.");
+    stock_status_label->set_color(214, 31, 31, 1.0);
+    stock_status_label->set_relative_position(price_label->get_relative_x(), price_label->get_relative_y() + price_label->get_height() + 10);
+    stock_status_label->add_component(*new Component("name", std::string("stock_status_label")));
+    current->add_gui(*stock_status_label);
+    // PRODUCT SELLER(S)
+    dokun::Label * seller_label = new dokun::Label("sold by: unknown");
+    seller_label->set_color(0, 0, 0, 1.0);
+    seller_label->set_relative_position(stock_status_label->get_relative_x(), stock_status_label->get_relative_y() + stock_status_label->get_height() + 10);
+    seller_label->add_component(*new Component("name", std::string("seller_label")));
+    current->add_gui(*seller_label);
+    // CONTACT SELLER OPTION
+    // RATE SELLER OPTION
     // COLOR PALETTE - UP TO 12
-    // TYPE/MODEL, SIZE COMBOBOX
+    // TYPE/MODEL/STYLE/SIZE PICKER
+    // ESTIMATED DELIVERY DATE
     // PACKAGING/QUANTITY - SPINNER BOX - THIS SHOULD BE FOR WHEN CHECKING OUT AS WELL
-    dokun::Label quantity_spinner_label;
-    quantity_spinner_label.set_font(*dokun::Font::get_system_font());
-    quantity_spinner_label.set_color(0, 0, 0, 1.0);
-    Spinner quantity_spinner;
-    quantity_spinner.set_range(1, 100);
-    quantity_spinner.set_color(128, 128, 128, 0.0); // full transparency
-    quantity_spinner.set_button_color(64, 64, 64, 1.0);
-    //quantity_spinner.set_shape_color(255, 102, 0, 1.0); // cyan :O
-    //quantity_spinner.set_separator(true);
-    //quantity_spinner.set_separator_size(5);        
-    quantity_spinner.set_label(quantity_spinner_label);
-    //////current->add_gui(quantity_spinner);
+    dokun::Label * quantity_spinner_label = new dokun::Label("1");//quantity_spinner_label->set_font(*font);
+    quantity_spinner_label->set_color(0, 0, 0, 1.0);    
+    Spinner * quantity_spinner = new Spinner();
+    quantity_spinner->set_range(1, 100);
+    quantity_spinner->set_color(128, 128, 128, 0.0); // full transparency
+    quantity_spinner->set_button_color(64, 64, 64, 1.0);
+    //quantity_spinner->set_shape_color(255, 102, 0, 1.0); // cyan :O
+    //quantity_spinner->set_separator(true);
+    //quantity_spinner->set_separator_size(5);    
+    quantity_spinner->set_label(*quantity_spinner_label);
+    quantity_spinner->add_component(*new Component("name", std::string("quantity_spinner")));
+    current->add_gui(*quantity_spinner);
     // TRASHCAN ICON + BUTTON - FOR REMOVING ITEM FROM CART (this will only be shown in the cart menu, not in the catalogue)
     // INFO ICON - TO GET DETAILS ABOUT A PRODUCT (place at left side of box opposite to heart icon)
-    Image info_icon(Icon::get["info_colored"]->get_data(), 64, 64, 1, 4);
+    /*Image info_icon(Icon::get["info_colored"]->get_data(), 64, 64, 1, 4);
     info_icon.resize(24, 24);//(32, 32);
     //info_icon.set_color(30, 80, 155); //155 or 255
     info_icon.set_relative_position(10, 10);
+    //->add_component(*new Component("name", std::string("?")));
     //////current->add_image(info_icon);
     // HEART ICON + BUTTON (FAVORITES / WISHLIST) - add white outline to button 
     Image heart_icon(Icon::get["heart"]->get_data(), 64, 64, 1, 4); // CRASHES HERE
@@ -358,6 +356,7 @@ void neroshop::Catalog::setup_page() {
     favorite_button.set_outline_color(255, 255, 255, 1.0);
     favorite_button.set_relative_position(current->get_width() - favorite_button.get_width() - 10, 10);
     favorite_button.set_image(heart_icon);
+    //->add_component(*new Component("name", std::string("?")));
     //////current->add_gui(favorite_button);//current->set_();    
     // BELL ICON + BUTTON - FOR PRICE-RELATED (SALES AND DEALS) NOTIFICATIONS OR SET REMINDER FOR WHEN ITEM IS BACK IN STOCK
     Image bell_icon(Icon::get["bell"]->get_data(), 64, 64, 1, 4);
@@ -370,51 +369,68 @@ void neroshop::Catalog::setup_page() {
     notif_button.set_outline(true); // white by default
     notif_button.set_relative_position(favorite_button.get_relative_x() - favorite_button.get_width() - 5, favorite_button.get_relative_y());
     notif_button.set_image(bell_icon);
-    //////current->add_gui(notif_button);
+    //->add_component(*new Component("name", std::string("?")));
+    //////current->add_gui(notif_button);*/
     // ADD TO CART BUTTON
-    Button cart_add_button("Add to cart");
-    cart_add_button.set_width(current->get_width());//(200);
-    cart_add_button.set_color(82, 70, 86);*/ //(55, 25, 255);//bluish-purple//(42, 25, 255);//(50, 25, 255);//(30, 30, 255);
-    //////current->add_gui(cart_add_button);    
+    Button * cart_add_button = new Button("Add to cart");
+    cart_add_button->set_width(500); // same width as product_image_box
+    cart_add_button->set_color(82, 70, 86); //(55, 25, 255);//bluish-purple//(42, 25, 255);//(50, 25, 255);//(30, 30, 255);
+    cart_add_button->add_component(*new Component("name", std::string("cart_add_button"))); // if you don't specificy the datatype of the component then you will run into some errors later on
+    current->add_gui(*cart_add_button);
     // place all set_pos() and set_rel_pos() functions in loop for it to be frequently updated in real-time!
-    // cart_button position
-    //////cart_add_button.set_relative_position((current->get_width() - cart_add_button.get_width()) / 2, current->get_height() - cart_add_button.get_height()/* - 10*/); // center x, lower y
-    //std::cout << "catalog size: " << catalog->get_size() << std::endl;
-    //std::cout << "catalog box size: " << current->get_size() << std::endl;
-    // qty_spinner position
-    //////quantity_spinner.set_relative_position((current->/*cart_add_button.*/get_width() / 2) - (quantity_spinner.get_full_width() / 2), current->get_height() - cart_add_button.get_height() - quantity_spinner.get_height() - 10);
 }
 ////////////////////
 void neroshop::Catalog::update_page(int item_id) {
-    /*Item product(item_id); // temporary (will die at end of scope)
-    // get product_image_border_box's image
-    Box * product_image_border_box = static_cast<Box *>(current->get_gui(0));
+    Item product(item_id); // temporary (will die at end of scope)
+    //////////////////////////////////////////////////////////////
+    // update current page's "current_item_id" component
+    current->set_component("current_item_id", static_cast<int>(item_id));//std::cout << "component 'current_item_id' has been updated (" << current->get_component("current_item_id")->to_integer() << ")" << std::endl;
+    //////////////////////////////////////////////////////////////
+    // get product_image_box's image
+    Box * product_image_box = static_cast<Box *>(current->get_gui(0));
     Image * product_image_0 = static_cast<Box *>(current->get_gui(0))->get_image(0);//current->get_image(0)->
-    // delete old page image and assign it to the grid box image
-    std::shared_ptr<Image> product_image_0_copy(product_image_0);//std::cout << "use_count(before reset): " << product_image_0_copy.use_count() << std::endl;
-    product_image_0_copy.reset();//std::cout << "use_count(after reset): " << product_image_0_copy.use_count() << std::endl;    
-    // get product thumbnail image
-    Image product_image_temp = *product.get_upload_image(1);*/ // first image in array
+    Button * cart_add_button = dynamic_cast<Button *>(Entity::get_entity_by_name("cart_add_button"));if(!cart_add_button) throw std::runtime_error("cart_add_button is nullptr");//current->get_gui(current->get_gui_count() - 1);
+    Spinner * quantity_spinner = dynamic_cast<Spinner *>(Entity::get_entity_by_name("quantity_spinner"));
+    //////////////////////////////////////////////////////////////
+    // copy product thumbnail image to page
+    Box * box = get_box_by_item_id(item_id);
+    product_image_0->copy(*box->get_image(2));
+    product_image_0->set_alignment("center");
+    product_image_0->scale_to_fit(product_image_box->get_width(), product_image_box->get_height()); // if image is larger than box, scale it to fit box//product_image_0->resize(128, 128);//std::cout << "page_image size: " << product_image_0->get_size() << std::endl;//std::cout << "page_image scale: " << product_image_0->get_scale() << std::endl;
+    //////////////////////////////////////////////////////////////
+    // update properties (including relative positions in case window is resized)
+    // property - label strings
+    current->get_label(0)->set_string(box->get_label(0)->get_string());//(product.get_name());
+    current->get_label(1)->set_string((product.get_ratings_count() <= 0) ? "No ratings yet" : std::to_string(product.get_ratings_count()) + " ratings");
+    current->get_label(2)->set_string(box->get_label(2)->get_string());//(String::to_string_with_precision(product.get_price(), 2));
+    current->get_label(3)->set_string((product.in_stock()) ? "In stock." : "Out of stock." );
+    // to-do: find a way to get the sellers with the best reputations
+    std::string seller_name = DB::Postgres::get_singleton()->get_text_params("SELECT name FROM users WHERE id = $1", { std::to_string(product.get_seller_id()) });
+    int seller_count = product.get_seller_count();//Item::get_seller_ids(item_id);//product.get_seller_ids();// TEMPORARY DELETE SOON
+    current->get_label(4)->set_string((seller_count > 1) ? "sold by: " + seller_name + " and " + std::to_string(seller_count - 1) + " other seller(s)" : "sold by: " + seller_name);
+    // property - color
+    current->get_label(3)->set_color((product.in_stock()) ? Vector4(49, 101, 44, 1.0) : Vector4(214, 31, 31, 1.0));
+    // property - quantity
+    // reset the quantity_spinner's value to the default: 1
+    quantity_spinner->set_value(1);
+    //////////////////////////////////////////////////////////////
+    // update relative positions
+    // relative_position - cart_add_button
+    cart_add_button->set_relative_position(((current->get_width() + (product_image_box->get_relative_x() + product_image_box->get_width())) - cart_add_button->get_width()) / 2, current->get_height() - cart_add_button->get_height() - 20);    
+    // relative_position - quantity_spinner
+    quantity_spinner->set_relative_position(cart_add_button->get_relative_x() + (cart_add_button->get_width() / 2) - (quantity_spinner->get_full_width() / 2), cart_add_button->get_relative_y() - quantity_spinner->get_height() - 10);
+    //////////////////////////////////////////////////////////////
+    ////Image product_image_temp = *product.get_upload_image(1);*/ // first image in array // will use this later
     /*if(!product_image_temp) {
         product_image_0 = new Image(Icon::get["image_gallery"]->get_data(), 64, 64, 1, 4);
-    }*/    
-    // copy grid box image to page image
-    /*std::cout << "image buffer: " << static_cast<Box *>(current->get_gui(0))->get_image(0)->get_buffer() << std::endl;
-    if(product_image_border_box->get_image_count() > 0) {
-    product_image_0->copy((&product_image_temp) ? product_image_temp : *Icon::get["image_gallery"] );//// (product_image_temp) ? *product_image_temp//load(product_image.get_data(), product_image.get_width(), product_image.get_height(), product_image.get_depth(), product_image.get_channel());
-    // if image size is greater than border size, scale the image
-    if(product_image_0->get_width() > product_image_border_box->get_width() || product_image_0->get_height() > product_image_border_box->get_height()) {
-        std::cout << "image is too large, but we will scale it for you!\n";
-        product_image_0->resize(128, 128);
-        // "corrupted double-linked list. Aborted(core dumped)" error somewhere around here
-    }
-    // set relative position
-    product_image_0->set_relative_position((product_image_border_box->get_width() - product_image_0->get_width()) / 2, (product_image_border_box->get_height() - product_image_0->get_height()) / 2);
+    }*/
+    /*// set relative position
+    product_image_0->set_relative_position((product_image_box->get_width() - product_image_0->get_width()) / 2, (product_image_box->get_height() - product_image_0->get_height()) / 2);
   }
   //--------------------------------------------------
   int box_gap = 10;
   Box * product_image_border_boxes_1 = static_cast<Box *>(current->get_gui(1));
-  product_image_border_boxes_1->set_relative_position(10, product_image_border_box->get_relative_y() + product_image_border_box->get_height() + box_gap);
+  product_image_border_boxes_1->set_relative_position(10, product_image_box->get_relative_y() + product_image_box->get_height() + box_gap);
   Box * product_image_border_boxes_2 = static_cast<Box *>(current->get_gui(2));
   product_image_border_boxes_2->set_relative_position(product_image_border_boxes_1->get_relative_x() + product_image_border_boxes_1->get_width() + box_gap, product_image_border_boxes_1->get_relative_y());
   ////product_image_border_boxes_?->set_relative_position(product_image_border_boxes_?->get_relative_x() + product_image_border_boxes_?->get_width() + 10, product_image_border_boxes_1->get_relative_y());
@@ -430,6 +446,7 @@ void neroshop::Catalog::populate() {
     //fetch_items();
     fetch_inventory();
     //fetch_best_sellers();
+    //fetch_most_favorited();
     //-----------------------------------
     neroshop::print("catalog populated");
 }
@@ -457,7 +474,8 @@ void neroshop::Catalog::fetch_items() {
 }
 ////////////////////
 void neroshop::Catalog::fetch_inventory() {
-    std::string command = "SELECT * FROM inventory ORDER BY item_id ASC LIMIT $1;"; //WHERE stock_qty > 0;";// "ORDER BY item_id ASC" = place in ascending order by item_id (lowest to highest). DESC would be from highest to lowest
+    // here, we use DISTINCT ON to ignore duplicate items with the same item_id
+    std::string command = "SELECT DISTINCT ON (item_id) * FROM inventory ORDER BY item_id ASC LIMIT $1;";//WHERE stock_qty > 0;";// "ORDER BY item_id ASC" = place in ascending order by item_id (lowest to highest). DESC would be from highest to lowest
     int box_count = view->get_row_count() * view->get_column_count(); // rows x columns
     std::vector<const char *> param_values = { std::to_string(box_count).c_str() };
     PGresult * result = PQexecParams(DB::Postgres::get_singleton()->get_handle(), command.c_str(), 1, nullptr, param_values.data(), nullptr, nullptr, 0);
@@ -485,7 +503,7 @@ void neroshop::Catalog::fetch_inventory() {
 	////{
 		////for(int c = 0; c < view->get_box_list_2d()[r].size(); c++) { // block[r] = items in row r	
             Box * box = view->get_box(i);//(r, c);
-            int item_id = std::stoi(PQgetvalue(result, i, 1)); //std::cout << "item_ids: " << item_id << std::endl;       
+            int item_id = std::stoi(PQgetvalue(result, i, 1)); //std::cout << "item_ids: " << item_id << std::endl;
             // I guess we dont need to use smart pointers all the time, but when creating an object with "new", it should be immediately stored in a smart pointer so that it will be automatically deleted at the appropriate time: https://stackoverflow.com/questions/26473733/using-smart-pointers-as-a-class-member#comment41585405_26473733
             // verified_purchase_icon - maybe replace this with tickers (e.g "recommended", "new", "best seller"), etc. (verified purchase icon cannot be pressed but is only shown to let the user know whether they have previously purchased this item or not)
             Image * verified_purchase_icon = new Image(Icon::get["paid"]->get_data(), 64, 64, 1, 4); // image is still alive outside of scope :D
@@ -507,7 +525,7 @@ void neroshop::Catalog::fetch_inventory() {
             Item item(item_id); // temporary (will die at end of scope)
             Image * product_image = item.get_upload_image(1); // first image is thumbnail
             if(!product_image) product_image = new Image(Icon::get["image_gallery"]->get_data(), 64, 64, 1, 4); // if no image uploaded for this item, use a placeholder image instead
-            product_image->resize(128, 128);//scale_to_fit(view->get_size());
+            product_image->scale_to_fit(128, 128);//resize(128, 128);//scale_to_fit(view->get_size());
             product_image->set_relative_position(box->get_x() + (box->get_width() - product_image->get_width()) / 2, heart_icon->get_relative_y() + heart_icon->get_height() + 10);//44//or 50);//box->get_y() + (box->get_height() - product_image->get_height()) / 2);//set_alignment("center"); // actual relative position is set in the draw call
             box->add_image(*product_image);
             // save the item_id as a component so we know which item_id belongs to which box
@@ -596,13 +614,17 @@ void neroshop::Catalog::fetch_inventory() {
             if(box->get_image_count() > 0) continue; // skip boxes that already have product images
             // product_image (thumbnail)
             Image * product_image = new Image(Icon::get["image_gallery"]->get_data(), 64, 64, 1, 4);
-            product_image->resize(128, 128);
+            product_image->scale_to_fit(128, 128);
             product_image->set_alignment("center");
             box->add_image(*product_image);
         }
     }
     ////////////////////
     PQclear(result); // free result
+}
+////////////////////
+void neroshop::Catalog::fetch_items_and_inventory() {
+    std::string command = "SELECT DISTINCT ON (item.id) * FROM item JOIN inventory ON item.id = inventory.item_id ORDER BY item.id ASC LIMIT $1;";
 }
 ////////////////////
 void neroshop::Catalog::fetch_best_sellers() {
@@ -665,9 +687,12 @@ void neroshop::Catalog::fetch_most_favorited() {
     PQclear(result); // free result when done using it
 }
 ////////////////////
-// refresh content without allocating new objects
-void neroshop::Catalog::refresh() {
-    std::vector<std::vector<std::shared_ptr<Box>>> box_list = view->get_box_list_2d();
+// refresh content (when user logs in or performs an item search) without allocating new objects
+void neroshop::Catalog::refresh(const neroshop::User& user) {
+    // retrieve the cart from the user and store it (for reading only)
+    if(!cart) cart = user.get_cart();
+    // refresh catalog with updated information
+    std::vector<std::vector<Box *>> box_list = view->get_box_list_2d();
 	if(box_list.empty()) return;// if no rows, exit function
 	for(auto rows : box_list) {
 	    for(auto boxes : rows) {
@@ -676,13 +701,13 @@ void neroshop::Catalog::refresh() {
             // check if user has previously purchased this item
             // verified purchase image - change color if previously purchased
             Image * verified_purchase_icon = boxes->get_image(0);
-            bool purchased = User::get_singleton()->has_purchased(item_id); // won't work with guests since their purchases are not stored
+            bool purchased = const_cast<neroshop::User&>(user).has_purchased(item_id); // won't work with guests since their purchases are not stored
             verified_purchase_icon->set_color((purchased) ? Vector4(30, 80, 155, 1.0) : Vector4(128, 128, 128, 1.0));//(30, 80, 155); //155 or 255    
             verified_purchase_icon->set_visible((purchased) ? true : false); // show, since it is hidden by default
             // check if this item is in user's favorites list (heart icon cannot be pressed but is only shown to let the user know whether the item is in their favorites/wishlist/saved_items or not)
             // heart icon - change color if item is in favorites
             Image * heart_icon = boxes->get_image(1);
-            bool favorited = User::get_singleton()->has_favorited(item_id);
+            bool favorited = const_cast<neroshop::User&>(user).has_favorited(item_id);
             heart_icon->set_color((favorited) ? Vector4(224, 93, 93, 1.0) : Vector4(128, 128, 128, 1.0));//;        
             heart_icon->set_visible((favorited) ? true : false); // show if hidden by default
             // check whether image has been loaded or not
@@ -738,6 +763,23 @@ Box * neroshop::Catalog::get_box(int index) const {
     std::vector<Box *> box_list_1d = view->get_box_list_1d();
     if(box_list_1d.empty()) throw std::runtime_error("The catalog is empty!");
     return box_list_1d[index];
+}
+////////////////////
+Box * neroshop::Catalog::get_box_by_item_id(unsigned int item_id) const {
+    if(!view.get()) throw std::runtime_error("catalog view is not initialized");
+    // get box with a specific item_id
+	std::vector<std::vector<Box *>> box_list = view->get_box_list_2d();
+	if(box_list.empty()) return nullptr;// if no rows, exit function
+	for(auto rows : box_list) {
+	    for(auto boxes : rows) {
+	        Box * box = boxes;//.get();
+	        if(!box->has_component("item_id")) continue;
+	        if(box->get_component("item_id")->to_integer() == item_id) {
+	            return box;
+	        }
+	    }
+	}
+	return nullptr;
 }
 ////////////////////
 Grid * neroshop::Catalog::get_view() const {

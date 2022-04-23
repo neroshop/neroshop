@@ -242,6 +242,56 @@ int main() {
     candy.upload(File::get_current_dir() + "/res/tmp_images/candy-clipart-animated-2.png");
     ring.upload(File::get_current_dir() + "/res/tmp_images/ring-309550_960_720.png");
     //ball.delete_upload_image(1);
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////	    
+    std::string public_key =
+    "-----BEGIN PUBLIC KEY-----\n"
+    "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4IcJNHFqOofSOaZaijI8\n"
+    "AvDA+cYwUEpUWSXZ+NA2AtVObX2htLa3PhSSToQVUABbwPySgaHWL2xGSr/0b0Z4\n"
+    "zauCK/VGidYkx85nDsOm0YjcsDUwc5t3WrRKG5+gzqxJi9g5iLaLjVzK2iPqhCTQ\n"
+    "R45XtP7XBEIimZltfFW20TPC/jLIMqqKl/tkVQ1aHxqOP9k2DPPswa2JFqXF1Lnk\n"
+    "nmKLKHbmn/34CMbbPBwZssailxM+hJOa+KfTRO9nP03m8z0mvRRnxu0oZFx632L9\n"
+    "QX8eTHrYwYs6svbWOWE5wmfPKBAkhr94C8ricZXf8B/PAEQrF+aWrjgsLt0xtMtm\n"
+    "QQIDAQAB\n"
+    "-----END PUBLIC KEY-----";
+    // the private key
+    std::string private_key =
+    "-----BEGIN PRIVATE KEY-----\n"
+    "MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDghwk0cWo6h9I5\n"
+    "plqKMjwC8MD5xjBQSlRZJdn40DYC1U5tfaG0trc+FJJOhBVQAFvA/JKBodYvbEZK\n"
+    "v/RvRnjNq4Ir9UaJ1iTHzmcOw6bRiNywNTBzm3datEobn6DOrEmL2DmItouNXMra\n"
+    "I+qEJNBHjle0/tcEQiKZmW18VbbRM8L+MsgyqoqX+2RVDVofGo4/2TYM8+zBrYkW\n"
+	"pcXUueSeYosoduaf/fgIxts8HBmyxqKXEz6Ek5r4p9NE72c/TebzPSa9FGfG7Shk\n"
+	"XHrfYv1Bfx5MetjBizqy9tY5YTnCZ88oECSGv3gLyuJxld/wH88ARCsX5pauOCwu\n"
+	"3TG0y2ZBAgMBAAECggEBALWrLTx8o+o16VhyDIITAVGTwWCYBpGAgt0a7lIPDhSe\n"
+	"yPV4mHWi/YNCm9rhrmjr0VHGSziOXMJERl/HDx1WFPq80feFXwy580qj6+kbT4fs\n"
+	"yDve3ZQ874a5p9jQAQoYhu2bB3ph0WqQ8SUtuFwxeUDcoIS3SfyNEnfbl6XpqKF9\n"
+	"TrnDINBlWDxc9clvs/3RauJMMPjlOLmtARbBQaZJQYp3LQGRn82/IFTUFxQLBpAJ\n"
+	"Q7iaPthg8Rc0rrLqScejg6sNRJXUVJiTfODCcfOCCDq4hKF9aDmp+YCK6KBN04O4\n"
+	"TEc9PL9o10CTrQww2qmt/Ci76w8GxrW0VAN5ZZU2kQ0CgYEA/PYMEM+/snsuX1O3\n"
+	"Nd83ubnRzf7Me2i6lRcT2OpQoSicHIKAc0VtKYww1iFL+yrFXsgYFBnmkeP4DsPK\n"
+	"ZN5mm4XoHeTC4AaH1SSRVdT7nEg6GVK1NbjFtbbEQaz7eKqnnpVniDK3RE3iOLjB\n"
+	"nHVWcsZJZlVJjcKAkw5vacGJ6Q8CgYEA4zmLYGXY1qpkc0EQonzBxXUkI8pwfPal\n"
+	"6w2/VUdmBmLD0DVRrugnVHnGNLmNk2QXoMqN40vhgD9tdY3BMVBmoRyZLgDpEhXz\n"
+	"0XlLiONRkEWsqgzYoC0IG4fSvAsFlPqrXiTg34H/s74CtJ+nLF3hO/HfSkfulM/C\n"
+	"dj9OFPgHm68CgYBr4ct3iAJrbhly0lM6iH5NmTAfOGGg6CNa3kK6qgPFF3qstgNu\n"
+	"JdfOdlmFmSG8dptCNvf96qXo5l6ufVXd+vOrtEowJZXu0RoxDq1k+7ZrCmqszhc2\n"
+	"WB0JyG6ey9VbuvxNp85FyctbOBQYuMLppSk/Pc2j9Q+vg5ouHWPqqH3WhQKBgCF+\n"
+	"8SHjwaRbd/VZiRc65uGx1AMGq7BwN6M/4o2yucKFOrJtub3b8ThNvz80fz9UCPum\n"
+	"AGaaYAKk1wD2RZ18abSkX5xde/4ziD6/77edMv/elYZ34FM0cDaGvjUENu1wSmTV\n"
+	"cOTh6AzaHNH9mwo6SKKqlC0CD5SWT+dYi60hpxV3AoGBAKJbh7ApcUzTvEKofrS7\n"
+	"xhzvnwW44cRdHNF25KMD+xkmw/4nrmifDrt+ZT5Zfa2PPBGRNDLP79mpxBnpaNLs\n"
+	"LMl2fZN7vg2xY/WurhSmQjl1OmW+wFbYU2Kfmsej1tmtaO4A9xpE5jsu+L5fmrt+\n"
+	"y/gd8YWuIVtUTY/HEOWneR/i\n"
+	"-----END PRIVATE KEY-----";
+    /*if(!Encryptor::generate_key_pair()) {
+        neroshop::print("failed to generate key pair", 1);
+    }*/
+    // cipher text
+    std::string cipher_text = Encryptor::public_encrypt(public_key, "Dude I'm kind of a lolicon, but don't tell anybody pls");
+    std::cout << "message (encrypted): " << cipher_text << std::endl;
+    // plain text
+    std::string plain_text = Encryptor::private_decrypt(private_key, cipher_text);
+    std::cout << "message (decrypted): " << plain_text << std::endl;
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////	
     // Monero	
     // get config: network_type, ip, port, data_dir, etc.
@@ -656,7 +706,10 @@ int main() {
     //search_button->set_position(search_bar->get_x() + search_bar->get_width()/* + 10*/, search_bar->get_y());
     // search_suggestion_list // A search suggest drop-down list is a query feature used in computing to show the searcher shortcuts, while the query is typed into a text box. Before the query is complete, a drop-down list with the suggested completions appears to provide options to select
     List * search_suggestion_list = new List(); // or seach_suggest_list for short
-    //search_suggestion_list->set_size(search_bar->get_width(), 20);
+    search_suggestion_list->set_size(search_bar->get_width(), search_bar->get_height());
+    int max_suggestions = 10;
+    search_suggestion_list->add_items(max_suggestions);//add_item(*new Box());//search_suggestion_list->get_item(0)->set_
+    search_suggestion_list->hide(); // hidden by default
     /*// search_query function:
     std::string str = "123456789abc";
     // get first n characters
@@ -720,6 +773,7 @@ int main() {
     logout_button->get_image()->set_alignment("center");
     logout_button->set_size(50, 40);
     logout_button->set_color(214, 46, 46);
+    logout_button->hide();// TEMPORARY
     /*// status_icon
     Box * status_icon = new Box();
     status_icon->set_image( * new Image(Icon::get["trash"]->get_data(), 64, 64, 1, 4));
@@ -891,7 +945,7 @@ int main() {
                     // clear all GUI focus
                     GUI::clear_all();
                     // refresh catalog
-                    catalog->refresh();
+                    catalog->refresh(*user);
                     // leave the register_menu
                     register_menu = false;
                     // go to the home_menu
@@ -1028,12 +1082,10 @@ int main() {
                     }
                     if(account_type_id == 1) user = Buyer::on_login(user_edit->get_text());
                     if(account_type_id == 2) user = Seller::on_login(user_edit->get_text());
-                    // save user to global static object for easy access
-                    if(user) User::set_singleton(*user);
                     // broadcast messages to server
                     if(client->is_connected()) client->write(user->get_name() + " has logged in "); // temporary
                     // refresh catalog (in case anything changes after user login)
-                    catalog->refresh();
+                    catalog->refresh(*user);
                     // set wallet
                     if(user->is_seller()) {
                         // wallet gets deleted on logout (since the seller_user gets deleted) so we must re-create the wallet again in case the seller re-logins
@@ -1128,10 +1180,11 @@ int main() {
                     std::cout << "Ball star count (" << star_num << "): " << ball.get_star_count(star_num) << std::endl;
                     std::cout << "Ball average stars: " << ball.get_average_stars() << std::endl;*/
                     // rate seller (from 0-1)
-                    /*int seller_id = 4;
-                    if(user->get_name() == "jack") user->rate_seller(seller_id, 1, "This seller is awesome!");
-                    if(user->get_name() == "dude") user->rate_seller(seller_id, 0, "This seller sucks!");
+                    int seller_id = 4;
+                    /*if(user->get_name() == "jack") user->rate_seller(seller_id, 1, "This seller is awesome!");
+                    if(user->get_name() == "dude") user->rate_seller(seller_id, 0, "This seller sucks!");//1, "This seller dope.");
                     if(user->get_name() == "mike") user->rate_seller(seller_id, 1, "This seller is rocks!");*/
+                    neroshop::Seller::get_top_rated_sellers();
                     //////////////////////////
                     // add an item to favorites
                     //user->add_to_favorites(ball);//(1); // item_id // index 0
@@ -1155,7 +1208,6 @@ int main() {
                 // create user		        
                 if(!user) { 
                     user = new Buyer("Guest");
-                    User::set_singleton(*user);
                 }
                 std::cout << "Hello, " << user->get_name() << std::endl;
                 //std::cout << "is_user_logged_in: " << user->is_logged() << std::endl;
@@ -1168,6 +1220,8 @@ int main() {
                 if(!user->get_cart()->open()) {
                     neroshop::print("unable to open local cart for guest user", 1);
                 }
+                // refresh catalog
+                catalog->refresh(*user);
                 // create order
                 user->create_order("My crib");
                 // clear all GUI focus
@@ -1627,7 +1681,7 @@ int main() {
             ////catalog->set_box_size((int)slider2->get_value(), (int)slider3->get_value());
             ////std::cout << "catalog box_size: " << catalog->get_grid()->get_size() << std::endl;
             /////////////////////////////////////
-            ////search_suggestion_list->draw(search_bar->get_x(), search_bar->get_y() + search_bar->get_height());
+            search_suggestion_list->draw(search_bar->get_x(), search_bar->get_y() + search_bar->get_height() + 0);
             //std::cout << "search_bar cursor position: " << search_bar->get_cursor_position() << std::endl;
             /////////////////////////////////////
             // on search_button pressed

@@ -3,8 +3,6 @@
 Entity::Entity() : visible(true), mode(0), component_list({}), shader(nullptr), script(nullptr)
 {
 	Factory::get_entity_factory()->store(this);
-#ifdef DOKUN_DEBUG
-#endif	
 }
 ///////////
 Entity::Entity(const std::string& name) : Entity()
@@ -16,16 +14,16 @@ Entity::Entity(const std::string& name) : Entity()
 ///////////
 Entity::~Entity()
 {
-    // no need to delete components now that we are using shared_ptrs
-	/*for(auto components : component_list) {//for(int i = 0; i < component_list.size(); i++) {
-		if(components)//if(component_list[i]) 
-		    delete components;//delete component_list[i];
-	}*/
-	// no need to delete shader and script objects now that we are using shared_ptrs
-	//if(shader) delete shader; // shader object containing multiple shaders and a single program
-    //if(script) delete script;
+    // delete (reset) all components
+	for(auto components : component_list) {
+		if(components.get()) components.reset(); // to-do: erasing each component from the component_list would be better if we want to avoid a double free error
+	}
+	// delete (reset) shader and script
+	if(shader.get()) shader.reset(); // shader object containing multiple shaders and a single program
+    if(script.get()) script.reset();
 	Factory::get_entity_factory()->release(this);
 #ifdef DOKUN_DEBUG
+    std::cout << "entity deleted\n";
 #endif		
 }
 ///////////
@@ -355,14 +353,12 @@ Component * Entity::get_component(int index)const
 {
     if(component_list.empty()) return nullptr;
     if(index > (component_list.size() - 1)) throw std::out_of_range("invalid or out of range container index");
-    //////////////////////////
     return component_list[index].get();
 }
 ///////////
 Component * Entity::get_component(const std::string& name)const
 {
     if(component_list.empty()) return nullptr;
-    //////////////////////////
 	for(auto components : component_list) 
 	{
 		if(components->get_name() == name) 
@@ -460,6 +456,16 @@ int Entity::get_count(lua_State *L)
 	return 1;
 }
 ///////////
+Entity * Entity::get_entity_by_name(const std::string& name) {
+    for(auto entities : Factory::get_entity_factory()->get_storage()) {
+        Entity * entity = static_cast<Entity *>(entities);
+        if(!entity->has_component("name")) continue; // skip entities that do not have a "name" component
+        if(entity->get_component("name")->to_string() == name) {//std::cout << DOKUN_UI_TAG "found entity with name: " << entity->get_component("name")->to_string() << std::endl;
+            return entity;
+        }
+    }
+    return nullptr;
+}
 ///////////
 ///////////
 ///////////
@@ -467,8 +473,7 @@ int Entity::get_count(lua_State *L)
 ///////////
 std::string Entity::get_name()
 {
-	if (has_component("name"))
-	{
+	if(has_component("name")) {
 		return get_component("name")->to_string();
 	}
     return "Entity" + std::to_string(Factory::get_entity_factory()->get_location(this));
@@ -482,7 +487,7 @@ int Entity::get_id()
 ///////////
 bool Entity::is_entity()const
 {
-	return ((this != 0) && (dokun::instanceof<Entity>(this) != 0));
+	return ((this != nullptr) && (dokun::instanceof<Entity>(this) != 0));
 }
 ///////////
 int Entity::is_entity(lua_State *L)

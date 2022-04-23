@@ -59,6 +59,13 @@ public:
     static std::string get_seller_condition(unsigned int item_id, unsigned int seller_id);     
     unsigned int get_stock_quantity() const;
     static unsigned int get_stock_quantity(unsigned int item_id);
+    // added 2022-04-19
+    unsigned int get_seller_id() const; // returns the id of a seller that has listed this item
+    static unsigned int get_seller_id(unsigned int item_id);
+    std::vector<unsigned int> get_seller_ids() const; // returns the ids of sellers that have listed this item
+    static std::vector<unsigned int> get_seller_ids(unsigned int item_id);
+    unsigned int get_seller_count() const; // returns the number of sellers that have listed this item
+    static unsigned int get_seller_count(unsigned int item_id);
     // ratings / reviews - added 2022-02-15
     int get_ratings_count() const; // or get_reviews_count(); // returns total ratings   
     static int get_ratings_count(unsigned int item_id);

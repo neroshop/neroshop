@@ -9,7 +9,7 @@
 #include "icon.hpp"
 #include "item.hpp" // item price, details, and upload images
 #include "converter.hpp" // currency conversion
-#include "user.hpp" // for users' favorites/wishlist and verified purchases
+#include "user.hpp" // for users' favorites/wishlist and verified purchases // cart is included here
 // dokun-ui
 #include <grid.hpp>
 #include <spinner.hpp>
@@ -40,6 +40,7 @@ public:
     Grid * get_grid() const; // contains all the boxes
     Box * get_box(int row, int column) const;
     Box * get_box(int index) const;
+    Box * get_box_by_item_id(unsigned int item_id) const;
     Grid * get_view() const; // same as get_grid
     Box * get_page() const; // returns current page
     Box * get_tooltip() const; // returns tooltip
@@ -57,20 +58,20 @@ private:
     std::unique_ptr<Grid> view; // shows catalog_page (item listings)
     std::unique_ptr<Box> tooltip;
     std::unique_ptr<Box> sort_box; // sort and filter by brand, color, size, type, price_range, customer reviews (ratings), etc.
+    neroshop::Cart * cart; // the cart that is currently being served by the catalog // will copy the user's cart (we don't have to delete the cart since the User::cart's unique_ptr owns it)
     void initialize();
     void update(); // updates size and width of boxes
-public:    
-    void delete_view_children(); // deprecated
-    void delete_page_children(); // deprecated
+public:
     // catalog view (grid) functions -----------------------------
     void populate(); // fills / populates category view with items in inventory
     //populate_by_category, populate_by_best_seller (check table order_item -> item_id)
     // populate_by_latest,  populate_by_best_deals_and_promo
     // we can show featured items, best sellers, 
-    void refresh(); // refresh the contents
+    void refresh(const neroshop::User& user); // refresh the contents
     // fetching product information from the database ------------
     void fetch_items(); // fetches all items that have been registered
     void fetch_inventory(); // fetches all inventory items (regardless of whether they are in stock or not)
+    void fetch_items_and_inventory(); // fetches joined tables item and inventory
     void fetch_best_sellers(); // fetches the best-selling items
     void fetch_most_favorited(); // fetches the most favorited items
     // catalog current product page (box) functions --------------

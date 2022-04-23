@@ -18,7 +18,6 @@ neroshop::User::~User()
 #endif    
 }
 ////////////////////
-neroshop::User * neroshop::User::user (nullptr);
 ////////////////////
 ////////////////////
 // buyers can only rate seller they have purchased from!!
@@ -323,6 +322,14 @@ void neroshop::User::convert() {
 }
 // if(user->is_buyer()) user->convert(); // convert buyer to seller
 ////////////////////
+/*void neroshop::User::revert() {
+    // convert user from seller to buyer
+    UPDATE users SET account_type_id = 1 WHERE id = $1;
+    // remove all items listed by this user
+    DELETE FROM inventory WHERE id = $1;
+}
+*/
+////////////////////
 void neroshop::User::delete_account() {
     if(!is_logged()) {neroshop::print("You are not logged in", 2);return;} // must be logged in to delete your account
     /*DB::Sqlite3 db("neroshop.db");
@@ -372,11 +379,7 @@ void neroshop::User::delete_account() {
 // cart-related stuff here
 ////////////////////
 void neroshop::User::add_to_cart(unsigned int item_id, int quantity) {
-    //if(is_guest()) 
-    //cart->add(item, quantity);
-    if(is_registered()) {
-        cart->add(this->id, item_id, quantity);
-    }
+    cart->add(item_id, quantity);
 }
 ////////////////////
 void neroshop::User::add_to_cart(const neroshop::Item& item, int quantity) {
@@ -384,10 +387,7 @@ void neroshop::User::add_to_cart(const neroshop::Item& item, int quantity) {
 }
 ////////////////////
 void neroshop::User::remove_from_cart(unsigned int item_id, int quantity) {
-    //cart->remove(item, quantity);
-    if(is_registered()) {
-        //cart->remove(this->id, item_id, quantity);
-    }
+    cart->remove(item_id, quantity);
 }
 ////////////////////
 void neroshop::User::remove_from_cart(const neroshop::Item& item, int quantity) {
@@ -567,7 +567,7 @@ void neroshop::User::upload_avatar(const std::string& filename) {
     // begin transaction (required when dealing with large objects)
     DB::Postgres::get_singleton()->execute("BEGIN;");
     /////////////////////////////////////////////////
-    
+    // ...
     /////////////////////////////////////////////////
     // end transaction
     DB::Postgres::get_singleton()->execute("COMMIT;");        
@@ -618,9 +618,6 @@ void neroshop::User::set_logged(bool logged) { // protected function, so only de
     if(!logged) logout(); // call on_logout() (callback)
 }
 ////////////////////
-void neroshop::User::set_singleton(const User& user) {
-    User::user = &const_cast<User&>(user);
-}
 ////////////////////
 ////////////////////
 ////////////////////
@@ -648,7 +645,7 @@ std::string neroshop::User::get_account_type_string() const {
 ////////////////////
 ////////////////////
 neroshop::Cart * neroshop::User::get_cart() const {
-    return cart.get();//cart;
+    return cart.get();
 }
 ////////////////////
 ////////////////////
@@ -672,10 +669,6 @@ unsigned int neroshop::User::get_favorites_count() const {
 }
 ////////////////////
 ////////////////////
-neroshop::User * neroshop::User::get_singleton() {
-    if(!user) neroshop::print("user singleton is nullptr", 1); // temp
-    return User::user;
-}
 ////////////////////
 ////////////////////
 ////////////////////
@@ -877,9 +870,7 @@ void neroshop::User::logout() {
     this->account_type = user_account_type::guest; // set account type to the default
     this->logged = false; // make sure user is no longer logged in
     // delete this user
-    if(this) delete this;//this = nullptr;
-    // set the singleton user object to nullptr now that user has been deleted
-    ////User::user = nullptr;
+    if(this) delete this;//this = nullptr;//fails
     // disconnect from server
     // print message    
     neroshop::print("You have logged out");

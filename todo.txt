@@ -12,7 +12,8 @@
 - create messages button and a seller hub/section button         []
 - make postgresql optional                                       []
 - create a node list of trusted and verified nodes so users (sellers) do not have to sync entire blockchain []
-- remove class User singleton object and its functions
+- fix mouse input functions and replace presses with clicks
+- If neroshop 1.0 ends up being centralized, work on a fully decentralized version called neroshop 2.0 
 
 [MID PRIORITY]
 - make table names plural ('cause select * from customer seems "grammatically" incorrect to me)
@@ -28,7 +29,7 @@
 - learn to backup database
 - add auction system
 - remove login as guest option (for now, since I don't know how guest data will be stored in main database)
-- make neroshop p2p (peer-to-peer)
+- make neroshop p2p (peer-to-peer) forever (every neromon node will maintain a copy of the "database" or "blockchain" or whatever it may be)
 - validate addresses before sending it out to buyer
 - add e2e encrypted chat/messaging and forum
 - best-seller/best vendor sections
@@ -37,6 +38,13 @@
 - multisignature wallet support
 - encrypt sensative data before storing it in database
 - create help/support section                                    []
+- offer big sum of bounty to hackers to hack and find bugs and other vulnerabilities within the code/software in order to make neroshop impossible to hack []
+- do some scalibality and stress testing of the code/software []
+- make neroshop quantum resistant []
+- allow all items to be sold on neroshop (there will be no restrictions for listing products and absolutely no censorship) []
+- switch from RSA-2048 to RSA-3072 then RSA-4096 then RSA-7680 then RSA-15360 bit keys when most CPUs can handle and support it
+- switch from SHA-256 to SHA-512 then SHA-3 when most CPUs can handle and support it
+- increase bcrypt workfactor from 12 to 14 when most CPUs can handle and support it
 
 [LOW PRIORITY]
 - keep number of source files in "neroshop/src" at no more than 20               [x]
@@ -46,8 +54,8 @@
 - create neroshop matrix server                                                  [x]
 - host neroshop on gitlab or something more open-source                          []
 - tor integration                                                                []
+- transfer ownership of neroshop to a team github account                        []
 - allow contributors to create neroshop bindings for other C-based programming languages such as lua, python, ruby, etc. [-]
-- remove "NOTE" section from readme.md
 
 [UI]
 - prevent mouse press from affecting overlapped GUIs     []
@@ -72,6 +80,8 @@
 - work on combobox gui                                   []
 - work on scrollbar and scrollarea                       []
 - work on tab gui                                        []
+- create catalog combo_box next to search_bar (or maybe place it in filter/sorting box)           []
+- display monero price and exchange rate in home menu for all to see []
 
 [ISSUES]
 Font crashes when loading (only a small few fonts are immune from this)
@@ -84,26 +94,38 @@ Application crashes on logout (this is probably due to the deletion of the user 
 - hire web developer to help develop website ()
 
 [ENCRYPTION TOOLS AND ALGORITHMS]
-hashing (pw)   : [bcrypt], scrypt, argon2, PBKDF2
-hashing (email): [SHA256], MD5, SHA1
-encryption library: [openssl], crypto++ (cryptopp), libsodium
+encryption libraries: [openssl], crypto++ (cryptopp), libsodium
+slow cryptographic hash functions (pw): [bcrypt], scrypt, argon2, PBKDF2
+fast cryptographic hash functions (email): SHA2(SHA512, [SHA256]), MD5, SHA1
+asymmetric encryption algorithms (messages): [RSA], ECDSA
+symmetric encryption algorithms (key pairs): [AES]
+quantum-resistant encryption: ???
 DB/file hosting: siacoin / SkyDB, filecoin, ipfs, bittorent
-asymmetric encryption: [RSA]
+
+** [] = means that this algorithm is currently being used in neroshop
 
 [NOTES]
 Since monero uses openssl as a dependency (https://github.com/monero-project/monero#dependencies), I will use openssl's sha-256 for hashing emails.
 Passwords will be salted and hashed with bcrypt.
 RSA will be used for end-to-end encrypting short notes, messages, and mailing addresses.
 Though asymmetric encryption algorithms like RSA may be slower than symmetric encryption algorithms, they are more secure than symmetric encryption algorithms.
-
+PGP (Pretty Good Privacy) also uses RSA for asymmetric/public-and-private key encryption.
+* The RSA algorithm will generate a pair of public and private keys that are mathematically linked to each other.  Public keys are used to encrypt data, and only the corresponding private key can be used to decrypt it.
+Quantum computers are based on Shor's algorithm which can possibly break asymmetric cryptography in the future.
+RSA can possibly be broken with a Quantum computer that has about 4000 qubits. I will need to upgrade the encryption when that time comes.
+ECDSA which is used by Bitcoin would take 2500 qubits to break. ECDSA is smaller and faster than RSA while providing the same security as RSA.
+source: https://www.amarchenkova.com/posts/quantum-secure-cryptocurrencies-qrl-mochimo-iota-cardano
+reasons to use ECDSA: https://www.leaderssl.com/articles/484-rsa-ecc-ecdsa-which-algorithm-is-better-to-choose-when-ordering-a-digital-certificate-in-leaderssl
+                      https://security.stackexchange.com/questions/230708/should-i-be-using-ecdsa-keys-instead-of-rsa
+                      
 I realize that I need an online database that is scalable like MySQL or PostgreSQL 
 and I cannot use SQLite since its only for offline use :(
 I had to choose between MySQL and PostgreSQL so I went with PostgreSQL since the license is more free than
 MySQL's license.
 Also, I found out that Postgres has built-in NoSQL with JSON/JSONB so there may not be a need for an alternative NoSQL database.
 
-For the user interface, I will be using dokun-ui. "dokun-ui" is a custom-made user interface library that takes some inspiration from QT Creator and HTML/CSS and is forked from dokun (https://github.com/sidtheprince/dokun), an abandoned project.
+For the user interface, I will be using dokun-ui. "dokun-ui" is a custom-made user interface library that takes some inspiration from QT Creator and HTML/CSS and is forked from dokun, an abandoned project.
 The long-term goals that I am aiming for neroshop in order are privacy and decentralization then user-friendly UI/UX, and finally, scalability.
 
-In the future, I may consider supporting other private-by-default coins such as wownero, dero, and piratechain.
+In the future, I may consider supporting other private-by-default coins such as wownero and piratechain. Maybe I will even use dero for escrow smart contracts.
 

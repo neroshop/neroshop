@@ -14,14 +14,14 @@
 #include <iomanip> //std::put_time, std::setfill, std::setw
 // neroshop
 #include "db.hpp"
+////extern "C" {
 // libbcrypt
-extern "C" {
 #include "bcrypt.h"
-#include "crypt_blowfish/ow-crypt.h" // for hashing pw (bcrypt)
-}
-// openssl
-#include <openssl/sha.h> // for hashing email (sha256) // -lssl -lcrypto
-#include <openssl/evp.h> // recommended for sha256, sha512, etc. // https://stackoverflow.com/questions/2262386/generate-sha256-with-openssl-and-c#comment67577990_10632725
+#include "crypt_blowfish/ow-crypt.h" // used to salt and hash passwords (with bcrypt)
+// openssl - monero uses openssl so we just have to link this code to monero
+#include <openssl/evp.h> // used to hash email addresses (with SHA-256) for the purpose of hiding it from prying eyes
+#include <openssl/err.h>
+////}
 
 namespace neroshop {
 class Validator {
@@ -40,8 +40,7 @@ public:
     static bool generate_bcrypt_salt(unsigned int workfactor, char salt[BCRYPT_HASHSIZE]);
     static bool generate_bcrypt_hash(const std::string& password, const char salt[BCRYPT_HASHSIZE], char hash[BCRYPT_HASHSIZE]);
     static bool validate_sha256_hash(const std::string& email, const std::string& hash); // emails do not need to be salted since they are not required for logins
-    static bool generate_sha256_hash(const std::string& email, std::string& hashed); // legacy
-    static bool generate_sha256_hash_evp(const std::string& email, std::string& hashed);
+    static bool generate_sha256_hash(const std::string& email, std::string& hash_out);
 private:
 };
 }

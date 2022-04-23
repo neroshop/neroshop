@@ -13,6 +13,7 @@
 using std::uint8_t;
 using qrcodegen::QrCode;
 using qrcodegen::QrSegment;
+// I would prefer to use fukuchi's libqrencode but its LGPL-2.1 License does not allow me to sublicense neroshop, which forces me to make my project open-source (LGPL) and requires me to include their code in my project
 // nayuki tinypngout-c (libpng is statically built into neroshop so TinyPngOut will be used for now until I find help from other programmers)
 //#include <TinyPngOut.hpp>
 // dokun-ui

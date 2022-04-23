@@ -16,12 +16,18 @@ class Cart {
 public: // can be accessed by any class or function 
     Cart();
     ~Cart();
-    // normal
+    ////////////////////////////////////////////////////////////////////////
+    void add(unsigned int item_id, int quantity = 1);
+    void add(const neroshop::Item& item, int quantity = 1);//static void add(unsigned int cart_id, unsigned int item_id, int quantity = 1);
+    void remove(unsigned int item_id, int quantity = 1);
+    void remove(const neroshop::Item& item, int quantity = 1);//static void remove(unsigned int cart_id, unsigned int item_id, int quantity = 1);
+    ////////////////////////////////////////////////////////////////////////
     bool open() const;
-    void add(const neroshop::Item& item, int quantity = 1); // quantity is 1 by default // Item * get_item(index);
-    //void add_new(unsigned int item_id, unsigned int quantity = 1);
-    void remove(const neroshop::Item& item, int quantity = 1); // use int and NOT unsigned int 'cause unsigned int assumes the arg will never be negative number, but when arg is negative, it converts it to some random positive number
-    void remove(unsigned int index, int quantity = 1);
+    void add_to_guest_cart(unsigned int item_id, int quantity = 1);
+    void add_to_guest_cart(const neroshop::Item& item, int quantity = 1); // quantity is 1 by default // Item * get_item(index);
+    void remove_from_guest_cart(unsigned int item_id, int quantity = 1);
+    void remove_from_guest_cart(const neroshop::Item& item, int quantity = 1); // use int and NOT unsigned int 'cause unsigned int assumes the arg will never be negative number, but when arg is negative, it converts it to some random positive number
+    ////void remove_from_guest_cart(unsigned int index, int quantity = 1);
     void empty(); // remove all items from cart
     void move_to_wishlist();
     void save_for_later();
@@ -56,16 +62,18 @@ public: // can be accessed by any class or function
 	///////////////////////////////////////////////////////
     // postgresql version - registered user cart
     bool load_cart(int user_id); // loads existing cart from the database server into memory
-    void add(int user_id, unsigned int item_id, int quantity = 1);
-    void add(int user_id, const neroshop::Item& item, int quantity = 1);
-    void remove(int user_id, unsigned int item_id, int quantity = 1);
-    void remove(int user_id, const neroshop::Item& item, int quantity = 1);
+    void add_to_registered_user_cart(int user_id, unsigned int item_id, int quantity = 1);
+    void add_to_registered_user_cart(int user_id, const neroshop::Item& item, int quantity = 1);
+    void remove_from_registered_user_cart(int user_id, unsigned int item_id, int quantity = 1);
+    void remove_from_registered_user_cart(int user_id, const neroshop::Item& item, int quantity = 1);
     void empty(int user_id); // empties the cart
     // getters - user
     int get_total_quantity(int user_id) const;
     double get_subtotal_price(int user_id) const;
     float get_total_weight(int user_id) const;
     unsigned int get_id() const;
+	unsigned int get_owner_id() const; // returns the id of the user who owns this cart
+	static unsigned int get_owner_id(unsigned int cart_id); // returns the id of the user who owns this cart
 	// boolean - user
 	bool is_empty(int user_id) const;
     bool is_full(int user_id) const; // cart is full (has reached max items)

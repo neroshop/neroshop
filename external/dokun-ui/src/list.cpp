@@ -3,7 +3,7 @@
 // each section or part of the list (quad) will all share the same width of course
 // but each part of the quad can have their own height, say a height of 10 
 // so each of their contents will be separated by a unit of 10 - we will call this variable, separator_unit(10)
-List::List() : color(106, 106, 106, 1.0), selection(nullptr), image(nullptr),
+List::List() : color(106, 106, 106, 1.0), selection(nullptr), //image(nullptr),
 // outline
 outline(true),
 outline_width(1.0),
@@ -16,20 +16,17 @@ gradient_color(color)
 	set_position(0, 0);
 	set_size(80, 20);
 	set_orientation(0);
-	//label = new dokun::Label();
 }
 ////////////////////
 List::List(int x, int y) : List()
 {
 	set_position(x, y);
-	//label = new dokun::Label();
 }
 ////////////////////
 List::List(int x, int y, int width, int height) : List()
 {
 	set_position(x, y);
 	set_size(width, height);
-	//label = new dokun::Label();	
 }
 ////////////////////
 int List::new_(lua_State *L)
@@ -42,16 +39,21 @@ List::~List()
 ////////////////////		
 void List::draw()
 {
-    //on_draw(); // sets position relative to parent, regardless of visibility
+    on_draw(); // sets position relative to parent, regardless of visibility
 	if(!is_visible()) return;
-	    for(int i = 0; i < item_list.size(); i++)
-	    {
-			Box * item = item_list[i];
-			if(i == 0) item->set_position(get_position()); // first item is set at position of list (this)
-		    if(i != 0) {item->previous = item_list[i - 1];  item->set_position(get_position().x, item->previous->get_position().y + item->previous->get_height());} // item[0] is the first item so it won't have any previous
+	for(int i = 0; i < box_list.size(); i++)
+	{
+		Box * item = box_list[i].get();
+		/////////////////
+		if(i == 0) item->set_position(get_position()); // first item is set at position of list (this)
+		if(i != 0) {
+		    item->previous = box_list[i - 1].get();
+		    item->set_position(get_position().x, item->previous->get_position().y + item->previous->get_height());
+		} // item[0] is the first item so it won't have any previous
+        /////////////////
             on_item(item, i);
 			// Draw box (multiple)
-		    Renderer::draw_box(item->get_x(), item->get_y(), item->get_width(), item->get_height(), 
+		    /*Renderer::draw_box(item->get_x(), item->get_y(), item->get_width(), item->get_height(), 
 			    get_angle(), get_scale().x, get_scale().y, 
 			    item->get_color().x, item->get_color().y, item->get_color().z, item->get_color().w,
 			    (!shader.get()) ? GUI::gui_shader : shader.get(),
@@ -60,9 +62,11 @@ void List::draw()
 			    item->has_border(), 0, color,
 			    item->has_gradient(), item->gradient_color, item->gradient_value,
 			    item->has_shadow()
-			);
-			// Draw image
-			Image * image = item->get_image();
+			);*/
+			item->draw();
+		/////////////////
+		// Draw image
+			/*Image * image = item->get_image();
             if(image != nullptr)
 			{
 				int image_width  = image->get_width();
@@ -84,8 +88,8 @@ void List::draw()
                 if(label->get_alignment() == "none"  ) {} // with this you are free to set the label's relative position to whatever you want         
                 label->set_position(item->get_x() + label->get_relative_x(), item->get_y() + label->get_relative_y()); // set actual position
                 label->draw(); // draw label manually since we are drawing from List::draw and NOT Box::draw  
-			}			
-	    }
+			}*/			
+	}
 }
 /////////////
 void List::draw(double x, double y)
@@ -104,26 +108,44 @@ int List::draw(lua_State *L)
 {
     return 0;
 }
-void List::add(const Box& item)
+////////////////
+void List::add_item(const Box& item)
 {
-	item_list.push_back(&const_cast<Box&>(item));
-	if(item_list.size() == 1) const_cast<Box&>(item).set_position(get_position());
+    std::unique_ptr<Box> list_item (&const_cast<Box&>(item));
+	box_list.push_back(std::move(list_item));
+	//////////////////////////////
+	if(box_list.size() == 1) const_cast<Box&>(item).set_position(get_position());
 	const_cast<Box&>(item).set_size(get_width(), get_height());
 	const_cast<Box&>(item).set_outline(outline);
 	const_cast<Box&>(item).set_outline_width(outline_width);
-	const_cast<Box&>(item).set_outline_color(outline_color);
-	const_cast<Box&>(item).set_outline_antialiased(outline_antialiased);
+	const_cast<Box&>(item).set_outline_color(outline_color);//const_cast<Box&>(item).set_outline_antialiased(outline_antialiased);
 }
-int List::add(lua_State *L)
+////////////////
+void List::add_items(int items_count) {
+    for(int i = 0; i < items_count; i++) {
+        std::unique_ptr<Box> list_item (std::unique_ptr<Box>(new Box()));
+        box_list.push_back(std::move(list_item));
+        /////////////////////////////////////////
+        if(box_list.size() == 1) box_list[0]->set_position(get_position());
+        box_list[i]->set_size(get_width(), get_height());
+        box_list[i]->set_outline(outline);
+        box_list[i]->set_outline_width(outline_width);
+        box_list[i]->set_outline_color(outline_color);
+    }
+}
+////////////////
+int List::add_item(lua_State *L)
 {
     return 0;
 }
 ////////////////
-void List::set_label(const dokun::Label& label)
+/*void List::set_label(const dokun::Label& label)
 {
-	this->label = &const_cast<dokun::Label&>(label);
-	//this->label->set_parent(*this);
-}
+    std::unique_ptr<dokun::Label> list_label(&const_cast<dokun::Label&>(label));
+	this->label = std::move(list_label);
+	this->label->set_parent(*this);
+}*/
+////////////////
 void List::set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {
 	color = Vector4(red, green, blue, alpha);
@@ -145,31 +167,32 @@ int List::set_selection(lua_State * L)
     return 0;
 }
 ///////////////
-dokun::Label * List::get_label() const
-{
-	return label;
-}
+/*dokun::Label * List::get_label() const {
+	return label.get();
+}*/
+///////////////
 Vector4 List::get_color() const
 {
 	return color;
 }
+///////////////
 Box * List::get_item(int index) const
 {
-	if(item_list.size() < index + 1)
-	{
-		dokun::Logger("List::get_item : Attempting to access invalid item location", "error");
-		return nullptr;
-	}
-	return item_list[index];
+    if(box_list.empty()) return nullptr;
+	if(box_list.size() < index + 1) throw std::out_of_range("attempt to access invalid index at List::box_list");
+	return box_list[index].get();
 }
+///////////////
 int List::get_item_count()const // returns number of items added to list
 {
-	return item_list.size();
+	return box_list.size();
 }
+///////////////
 Box * List::get_selection() const
 {
 	return selection;
 }
+///////////////
 int List::get_selection(lua_State * L)
 {
     return 1;

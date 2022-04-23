@@ -226,7 +226,7 @@ void neroshop::Order::create_guest_order(const neroshop::Cart& cart, const std::
     std::cout << "Ball discount exp_date: \033[0;35m" << discount_exp << "\033[0m" << std::endl;
     std::cout << "Ball discount exp_date (UTC): \033[0;35m" << DB::Postgres::get_singleton()->localtimestamp_to_utc(discount_exp) << "\033[0m" << std::endl;*/
     /////////////////
-    set_id(order_id); // save the order_id
+    this->id = order_id; // save the order_id
     double subtotal = 0.00, discount = 0.00, shipping_cost = 0.00;
     std::string seller_currency;
     //if(!neroshop::Converter::is_supported_currency(currency)) currency = "usd"; // default
@@ -555,9 +555,6 @@ void neroshop::Order::change_order()
 ////////////////////
 ////////////////////
 ////////////////////
-void neroshop::Order::set_id(unsigned int id) {
-    this->id = id;
-}
 ////////////////////
 void neroshop::Order::set_status(order_status status) { this->status = status;}
 ////////////////////

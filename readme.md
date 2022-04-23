@@ -4,7 +4,6 @@ An attempt to create an online marketplace for [Monero](https://getmonero.org/) 
 
 [![alt text](res/neroshop-logo.png)](https://github.com/larteyoh/neroshop "neroshop logo")
 
-# WARNING! This is an experimental project that is not operational yet. Please do not use until release!
 
 ## Table of contents
 - [The history behind neroshop](#about)
@@ -16,7 +15,7 @@ An attempt to create an online marketplace for [Monero](https://getmonero.org/) 
 
 
 ## About
-For a more detailed summary, read <a href="https://github.com/larteyoh/neroshop/blob/main/summary.txt">summary.txt</a>
+See <a href="https://github.com/larteyoh/neroshop/blob/main/about.txt">about.txt</a>.
 ```
 ...
 ```
@@ -45,13 +44,14 @@ For a more detailed summary, read <a href="https://github.com/larteyoh/neroshop/
 |      Library                                                       | Minimum Ver.    | Package                | License                            |         Purpose                                                        |
 |--------------------------------------------------------------------|-----------------|------------------------|------------------------------------|------------------------------------------------------------------------|
 | [monero-cpp](https://github.com/monero-ecosystem/monero-cpp)       | latest          |                        | MIT                                | monero wallet and payment system                                       |
-| [libbcrypt](https://github.com/rg3/libbcrypt)                      | ?               |                        | public domain                      | password hashing                                                       |
-| [sqlite3](https://sqlite.org/)                                     | ?               |                        | public domain                      | database management                                                    |
+| [libbcrypt](https://github.com/rg3/libbcrypt)                      | ?               |                        | public domain (CC0-1.0)            | password hashing                                                       |
+| [sqlite3](https://sqlite.org/)                                     | ?               |                        | public domain (Unlicense)          | database management                                                    |
 | [QR Code generator](https://github.com/nayuki/QR-Code-generator)   | ?               |                        | MIT                                | qr code generation                                                     |
 | [json](https://github.com/nlohmann/json/)                          | ?               |                        | MIT                                | json parsing (used in conjunction with libcurl)                        |
 | [curl](https://github.com/curl/curl)                               | ?               | `libcurl4-openssl-dev` | curl (inspired by MIT)             | multiprotocol file transfer (used to retrieve currency exchange rates) |
+| [openssl](https://github.com/openssl/openssl)                      | 1.1.1           | `libssl-dev`           | OpenSSL-SSLeay or Apache-2.0       | required by curl for http over ssl (https) connections; email hashing (SHA-2) and message encryption (RSA) |
 | [postgresql](https://www.postgresql.org/)                          | ?               | `postgresql`           | PostgreSQL (similar to BSD or MIT) | client-server database management                                      |
-| [dokun-ui](https://github.com/sidtheprince/dokun)                  | ?               |                        | MIT                                | graphical user interface                                               |
+| [dokun-ui](external/dokun-ui)                                      | ?               |                        | MIT                                | graphical user interface                                               |
 
 
 ### Compiling neroshop from source
@@ -85,7 +85,7 @@ cd ../
 
 3. Build monero-project twice to create libwallet_merged.a and other .a libraries
 ```sh
-cd external/monero-cpp/external/monero-project && make release-static -j8 && make release-static -j8
+cd external/monero-cpp/external/monero-project && make release-static -j$(nproc) && make release-static -j$(nproc)
 cd ../../../../
 ```
 
@@ -93,9 +93,6 @@ cd ../../../../
 ```sh
 sudo -s -- << EOF
 cd external/curl
-# build with cmake (libcurl.so will be installed in: neroshop/external/curl/lib/)
-#cmake -G"Unix Makefiles"
-#make
 # build with ./configure (libcurl.a will be installed in both: neroshop/external/curl/lib/.libs/ and /usr/local/lib/)
 autoreconf -fi
 ./configure --with-openssl
@@ -125,13 +122,6 @@ EOF
 > larteyoh@pm.me
 
 
-### NOTE:
-```
-I am an awful programmer and still consider myself a noob at this since I don't know what I'm doing half of the time, so if there's anyone out there who has experience with C++ and can help me bring
-my project to life, I'd highly appreciate it (.3.) or If you have any tips and advice that can help me become a better programmer, that would be great too (^-^) !
-I am poor but willing to compensate any contributors with Monero when I become financially stable (>.<) .
-```
-
-[//]: # (git add build.sh CMakeLists.txt external/ include/ readme.md res/neroshop-logo.png res/wallets src/ todo.txt res/ss res/tmp_images summary.txt)
+[//]: # (git add build.sh CMakeLists.txt external/ include/ readme.md res/neroshop-logo.png res/wallets src/ todo.txt res/ss res/tmp_images about.txt)
 [//]: # (git commit -m"empty commit")
 [//]: # (git push -u origin main)

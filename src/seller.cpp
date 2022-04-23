@@ -318,6 +318,7 @@ void neroshop::Seller::update_customer_orders() { // this function is faster (I 
 ////////////////////
 ////////////////////
 ////////////////////
+// setters - item and inventory-related stuff
 ////////////////////
 void neroshop::Seller::set_stock_quantity(unsigned int item_id, unsigned int stock_qty) {
     // seller must be logged in
@@ -351,6 +352,7 @@ void neroshop::Seller::set_stock_quantity(const neroshop::Item& item, unsigned i
 ////////////////////
 ////////////////////
 ////////////////////
+// setters - wallet-related stuff
 ////////////////////
 void neroshop::Seller::set_wallet(const neroshop::Wallet& wallet) {
     std::unique_ptr<neroshop::Wallet> seller_wallet(&const_cast<neroshop::Wallet&>(wallet));
@@ -365,7 +367,7 @@ void neroshop::Seller::set_wallet(const neroshop::Wallet& wallet) {
 ////////////////////
 ////////////////////
 ////////////////////
-// getters
+// getters - seller rating system
 ////////////////////
 unsigned int neroshop::Seller::get_good_ratings() const {
     /*DB::Sqlite3 db("neroshop.db");
@@ -453,11 +455,47 @@ unsigned int neroshop::Seller::get_reputation() const {
 	////////////////////////////////
 }
 ////////////////////
+std::vector<unsigned int> neroshop::Seller::get_top_rated_sellers(unsigned int limit) {
+    // get n seller_ids with the most positive (good) ratings
+    // ISSUE: both seller_4 and seller_1 have the same number of 1_score_values but seller_1 has the highest reputation and it places seller_4 first [solved - by using reputation in addition]
+    std::string command = "SELECT users.id FROM users JOIN seller_ratings ON users.id = seller_ratings.seller_id WHERE score > 0 GROUP BY users.id ORDER BY COUNT(score) DESC LIMIT $1;";
+    std::vector<const char *> param_values = { std::to_string(limit).c_str() };
+    PGresult * result = PQexecParams(DB::Postgres::get_singleton()->get_handle(), command.c_str(), 1, nullptr, param_values.data(), nullptr, nullptr, 0);
+    if (PQresultStatus(result) != PGRES_TUPLES_OK) {
+        neroshop::print("Seller::get_top_rated_sellers(): No sellers found", 2);        
+        PQclear(result);
+        return {}; // exit so that we don't double free "result"
+    }
+    int rows = PQntuples(result);
+    std::vector<unsigned int> top_rated_seller_ids = {};
+    for(int i = 0; i < rows; i++) {
+        int seller_id = std::stoi(PQgetvalue(result, i, 0));
+        // calculate the reputation of each seller_id
+        unsigned int ratings_count = DB::Postgres::get_singleton()->get_integer_params("SELECT COUNT(*) FROM seller_ratings WHERE seller_id = $1", { std::to_string(seller_id) });
+        if(ratings_count == 0) continue; // seller has not yet been rated so his or her reputation will be 0%. Skip this seller
+        int good_ratings = DB::Postgres::get_singleton()->get_integer_params("SELECT COUNT(score) FROM seller_ratings WHERE seller_id = $1 AND score = $2", { std::to_string(seller_id), std::to_string(1) });
+        double reputation = (good_ratings / static_cast<double>(ratings_count)) * 100;        
+        // store the top rated seller_ids (only if they have a certain high reputation)
+        if(reputation >= 90) { // a reputation of 90 and above makes you a top rated seller (maybe I will reduce it to 85 just to be more fair or nah)
+            top_rated_seller_ids.push_back(seller_id);
+            if(std::find(top_rated_seller_ids.begin(), top_rated_seller_ids.end(), seller_id) != top_rated_seller_ids.end()) std::cout << "top rated sellers: " << seller_id << " (reputation: " << static_cast<int>(reputation) << ")" << std::endl;
+        }
+    }
+    PQclear(result); // free result
+    return top_rated_seller_ids;
+}
+////////////////////
+////////////////////
+////////////////////
+// getters - wallet-related stuff
 ////////////////////
 neroshop::Wallet * neroshop::Seller::get_wallet() const {
     return wallet.get();
 }
 ////////////////////
+////////////////////
+////////////////////
+// getters - order-related stuff
 ////////////////////
 unsigned int neroshop::Seller::get_customer_order(unsigned int index) const {
     if(customer_order_list.empty()) return 0;//return nullptr;
@@ -514,6 +552,9 @@ std::vector<int> neroshop::Seller::get_pending_customer_orders() {
 }
 ////////////////////
 ////////////////////
+////////////////////
+// getters - sales and statistics-related stuff
+////////////////////
 unsigned int neroshop::Seller::get_sales_count() const {
     // should item not be considered sold until the order is done processing or nah ?
 	int items_sold = DB::Postgres::get_singleton()->get_integer_params("SELECT SUM(item_qty) FROM order_item WHERE seller_id = $1;", { std::to_string(get_id()) });
@@ -563,6 +604,9 @@ unsigned int neroshop::Seller::get_item_id_with_most_orders() const {
 #endif    
     return item_with_most_occurrences;
 }
+////////////////////
+////////////////////
+////////////////////
 ////////////////////
 ////////////////////
 ////////////////////

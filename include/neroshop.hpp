@@ -31,5 +31,6 @@
 #include "catalog.hpp"
 //#include "server.hpp" // for daemon to use
 #include "client.hpp"
+#include "encryptor.hpp"
 
 #endif

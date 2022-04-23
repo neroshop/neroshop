@@ -1726,6 +1726,73 @@ unsigned int neroshop::Item::get_stock_quantity(unsigned int item_id) {
     return stock_qty;
 }
 ////////////////////
+unsigned int neroshop::Item::get_seller_count() const {
+    int seller_count = DB::Postgres::get_singleton()->get_integer_params("SELECT COUNT(seller_id) FROM inventory WHERE item_id = $1;", { std::to_string(this->id) });
+    return seller_count;
+}
+////////////////////
+unsigned int neroshop::Item::get_seller_count(unsigned int item_id) {
+    int seller_count = DB::Postgres::get_singleton()->get_integer_params("SELECT COUNT(seller_id) FROM inventory WHERE item_id = $1;", { std::to_string(item_id) });
+    return seller_count;
+}
+////////////////////
+unsigned int neroshop::Item::get_seller_id() const { // might need a little more work
+    // prioritize the seller with the most positive (or good) ratings that sells this item
+    int seller_id = DB::Postgres::get_singleton()->get_integer_params("SELECT inventory.seller_id FROM inventory JOIN seller_ratings ON inventory.seller_id = seller_ratings.seller_id WHERE inventory.item_id = $1 AND score > 0 GROUP BY inventory.seller_id ORDER BY COUNT(score) DESC LIMIT 1;", { std::to_string(this->id) });//int seller_id = DB::Postgres::get_singleton()->get_integer_params("SELECT seller_id FROM inventory WHERE item_id = $1 AND stock_qty > 0;", { std::to_string(this->id) });
+    // if the seller_ratings table does not exist yet or the seller has not yet been rated then we can just get any random seller (or maybe I should get the first seller to list this item??)
+    if(seller_id == 0) seller_id = DB::Postgres::get_singleton()->get_integer_params("SELECT seller_id FROM inventory WHERE item_id = $1;", { std::to_string(this->id) });//int seller_id = DB::Postgres::get_singleton()->get_integer_params("SELECT seller_id FROM inventory WHERE item_id = $1 AND stock_qty > 0;", { std::to_string(this->id) });
+    return seller_id;
+}
+////////////////////
+unsigned int neroshop::Item::get_seller_id(unsigned int item_id) { // might need a little more work
+    // prioritize the seller with the most positive (or good) ratings that sells this item
+    int seller_id = DB::Postgres::get_singleton()->get_integer_params("SELECT inventory.seller_id FROM inventory JOIN seller_ratings ON inventory.seller_id = seller_ratings.seller_id WHERE inventory.item_id = $1 AND score > 0 GROUP BY inventory.seller_id ORDER BY COUNT(score) DESC LIMIT 1;", { std::to_string(item_id) });//int seller_id = DB::Postgres::get_singleton()->get_integer_params("SELECT seller_id FROM inventory WHERE item_id = $1 AND stock_qty > 0;", { std::to_string(this->id) });
+    // if the seller_ratings table does not exist yet or the seller has not yet been rated then we can just get any random seller (or maybe I should get the first seller to list this item??)
+    if(seller_id == 0) seller_id = DB::Postgres::get_singleton()->get_integer_params("SELECT seller_id FROM inventory WHERE item_id = $1;", { std::to_string(item_id) });//int seller_id = DB::Postgres::get_singleton()->get_integer_params("SELECT seller_id FROM inventory WHERE item_id = $1 AND stock_qty > 0;", { std::to_string(item_id) });
+    return seller_id;
+}
+////////////////////
+std::vector<unsigned int> neroshop::Item::get_seller_ids() const {
+    // DISTINCT is used here to make sure that each seller_id is unique (is stored only once)
+    std::string command = "SELECT DISTINCT seller_id FROM inventory WHERE item_id = $1";// AND stock_qty > 0;";
+    std::vector<const char *> param_values = { std::to_string(this->id).c_str() };
+    PGresult * result = PQexecParams(DB::Postgres::get_singleton()->get_handle(), command.c_str(), 1, nullptr, param_values.data(), nullptr, nullptr, 0);
+    if (PQresultStatus(result) != PGRES_TUPLES_OK) {
+        neroshop::print("Item::get_seller_ids(): No sellers found", 2);        
+        PQclear(result);
+        return {}; // exit so that we don't double free "result"
+    }
+    int rows = PQntuples(result);
+    std::vector<unsigned int> seller_ids = {};
+    for(int i = 0; i < rows; i++) {
+        int seller_id = std::stoi(PQgetvalue(result, i, 0));
+        seller_ids.push_back(seller_id);//std::cout << "sellers that have listed this item: " << seller_id << std::endl;
+    }
+    PQclear(result); // free result
+    return seller_ids;
+}
+////////////////////
+std::vector<unsigned int> neroshop::Item::get_seller_ids(unsigned int item_id) {
+    // DISTINCT is used here to make sure that each seller_id is unique (is stored only once)
+    std::string command = "SELECT DISTINCT seller_id FROM inventory WHERE item_id = $1";// AND stock_qty > 0;";
+    std::vector<const char *> param_values = { std::to_string(item_id).c_str() };
+    PGresult * result = PQexecParams(DB::Postgres::get_singleton()->get_handle(), command.c_str(), 1, nullptr, param_values.data(), nullptr, nullptr, 0);
+    if (PQresultStatus(result) != PGRES_TUPLES_OK) {
+        neroshop::print("Item::get_seller_ids(): No sellers found", 2);        
+        PQclear(result);
+        return {}; // exit so that we don't double free "result"
+    }
+    int rows = PQntuples(result);
+    std::vector<unsigned int> seller_ids = {};
+    for(int i = 0; i < rows; i++) {
+        int seller_id = std::stoi(PQgetvalue(result, i, 0));
+        seller_ids.push_back(seller_id);//std::cout << "sellers that have listed this item: " << seller_id << std::endl;
+    }
+    PQclear(result); // free result
+    return seller_ids;
+}
+////////////////////
+////////////////////
 ////////////////////
 bool neroshop::Item::is_registered() const {
     /*DB::Sqlite3 db;if(!db.open("neroshop.db")) {std::cout << "Could not open sql database" << std::endl; return false;}

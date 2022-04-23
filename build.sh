@@ -30,16 +30,14 @@ git clone --recurse-submodules https://github.com/curl/curl.git
 # adding a new submodule to the project:
 # git submodule add https://github.com/rg3/libbcrypt.git external/libbcrypt
 cd ../
-# Building libcurl - https://curl.se/docs/install.html
+# Building libcurl - https://curl.se/docs/install.html 
 cd external/curl
-# github version
-#cmake -G"Unix Makefiles"    #cmake -G"Unix Makefiles" -DBUILD_SHARED_LIBS=OFF -DCURL_STATICLIB=ON
+# build with cmake (libcurl.so will be installed in: neroshop/external/curl/lib/)
+#cmake -G"Unix Makefiles"
 #make
-# libcurl.so will be installed in: neroshop/external/curl/lib/
-# website version
-# configure can be created using "autoreconf -fi" or "autoreconf --install"
-# sudo apt install dh-autoreconf
-autoreconf -fi
+# build with ./configure (libcurl.a will be installed in both: neroshop/external/curl/lib/.libs/ and /usr/local/lib/)
+#sudo apt install dh-autoreconf
+autoreconf -fi    # or "autoreconf --install" to create configure
 ./configure --with-openssl
 make
 sudo make install
@@ -51,7 +49,7 @@ cd ../../
 # modify "external/monero-cpp/external/monero-project/CMakeLists.txt":
 # option(BUILD_GUI_DEPS "Build GUI dependencies." ON) # this is probably not necessary at all, I think :O
 # build monero-project twice to create libwallet_merged.a and other .a libraries
-cd external/monero-cpp/external/monero-project && make release-static -j8 && make release-static -j8
+cd external/monero-cpp/external/monero-project && make release-static -j$(nproc) && make release-static -j$(nproc)
 cd ../../../../
 # Build dokun-ui (static library)
 # make sure CMakeCache.txt, cmake_install.cmake, and Makefile have all been deleted if not

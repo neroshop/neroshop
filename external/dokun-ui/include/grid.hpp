@@ -38,8 +38,8 @@ public:
 	Box * get_block(int row, int column) const;           static int get_block(lua_State *L);
 	Box * get_box(int row, int column) const;
 	Box * get_box(int index) const; // for 1D index positions of grid boxes
-	std::vector<std::vector<std::shared_ptr<Box>>> get_box_list_2d() const;
 	std::vector<Box *> get_box_list_1d() const;
+	std::vector<std::vector<Box *>> get_box_list_2d() const;
 	int get_row_count()const;                     static int get_row_count(lua_State *L);
 	int get_column_count()const;                  static int get_column_count(lua_State *L);
 	int get_box_count() const;

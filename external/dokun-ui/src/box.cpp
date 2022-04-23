@@ -195,9 +195,9 @@ int Box::add(lua_State *L)
 	return 0;
 }
 /////////////
-void Box::remove_gui(const GUI& gui) // for box widgets only
+void Box::remove_gui(const GUI& gui) // not tested yet
 {
-    if(gui.get_parent() == this) {
+    /*if(gui.get_parent() == this) {
         const_cast<GUI&>(gui).set_parent(nullptr);
         // remove child gui from child_list
         // ...
@@ -205,14 +205,34 @@ void Box::remove_gui(const GUI& gui) // for box widgets only
         //                     (GUI * child){return child == &gui;});
         //if (iter != child_list.end()) child_list.erase(iter);
         //if(std::find(contents.begin(), contents.end(), &const_cast<neroshop::Item&>(item)) != contents.end());
-        std::cout << "child removed from box (parent)" << std::endl;
+        std::cout << "child gui removed from box (parent)" << std::endl;
+    }*/
+    std::shared_ptr<GUI> gui_copy(&const_cast<GUI&>(gui));
+    if(std::find(child_list.begin(), child_list.end(), gui_copy) != child_list.end()) {
+        auto it = std::find(child_list.begin(), child_list.end(), gui_copy);
+        int gui_index = it - child_list.begin();
+        // erase gui from std::vector
+        if(child_list[gui_index].get() != nullptr) {
+            child_list.erase(child_list.begin() + gui_index);
+            if(std::find(child_list.begin(), child_list.end(), gui_copy) == child_list.end()) std::cout << "child gui removed from box (parent)" << std::endl;
+        }
     }
 }
 /////////////
 void Box::remove_label(const dokun::Label& label) {
 }
 /////////////
-void Box::remove_image(const Image& image) {
+void Box::remove_image(const Image& image) { // not tested yet
+    std::shared_ptr<Image> image_copy(&const_cast<Image&>(image));
+    if(std::find(image_list.begin(), image_list.end(), image_copy) != image_list.end()) {
+        auto it = std::find(image_list.begin(), image_list.end(), image_copy);
+        int image_index = it - image_list.begin();
+        // erase image from std::vector
+        if(image_list[image_index].get() != nullptr) {
+            image_list.erase(image_list.begin() + image_index);
+            if(std::find(image_list.begin(), image_list.end(), image_copy) == image_list.end()) std::cout << "image removed from box (parent)" << std::endl;
+        }
+    }
 }
 /////////////
 void Box::draw(void) 
@@ -315,19 +335,12 @@ void Box::draw_box() { // other boxes: list, grid
 				    // get image size whether its original or resized or scaled
 				    int image_width = images->get_width();
 			        int image_height = images->get_height();
-                    // set image alignment and position relative to GUI	
+                    // set image alignment and position relative to GUI
 				    if(images->get_alignment() == "left"  ) {images->set_relative_position(0, 0);}					
                     if(images->get_alignment() == "center") {images->set_relative_position((get_width() - image_width) / 2, (get_height() - image_height) / 2);}
 				    if(images->get_alignment() == "right" ) {images->set_relative_position(get_width() - image_width, 0);}
                     if(images->get_alignment() == "none"  ) {}
 				    images->set_position(get_x() + images->get_relative_x(), get_y() + images->get_relative_y());
-				    // if image is larger than box, scale it to fit box
-				    if(image_width > get_width () || image_height > get_height()) {
-				        // resize works well for now
-				        images->resize(get_width(), get_height());//std::cout << "scaling to fit image inside box\n";
-				        // Image::scale_to_fit does not work like it used to :/
-				        ////images->scale_to_fit(get_width(), get_height());// if image is wider than widget, make width equal or if image is taller than widget, make height equal
-				    }
 				    // and finally, draw the image ...	
 				    images->draw(); // Image is not a GUI so you cannot set its parent which means it must be drawn manually
 			    //-----------------------------------

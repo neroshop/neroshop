@@ -6,13 +6,13 @@ Image::Image() : width(0), height(0), depth(1), channel(4), data (nullptr), x(0)
     outline(false), outline_thickness(0.0), outline_color(0, 0, 0, 1.0), outline_threshold(0.0)
 {
 #ifdef DOKUN_OPENGL	
-	buffer          = 0;	
-    mag_filter      = GL_LINEAR; // texture should use nearest while image use linear since image to intended to be used for GUI so it has to look smooth
-    min_filter      = GL_LINEAR;
-    wrap_s          = GL_CLAMP_TO_BORDER;
- 	wrap_t          = GL_CLAMP_TO_BORDER;
+	buffer = 0;	
+    mag_filter = GL_LINEAR; // texture should use nearest while image use linear since image is to intended to be used for GUI so it has to look smooth
+    min_filter = GL_LINEAR;
+    wrap_s = GL_CLAMP_TO_BORDER;
+ 	wrap_t = GL_CLAMP_TO_BORDER;
     internal_format = GL_RGBA;
-	format          = GL_RGBA;
+	format = GL_RGBA;
 #endif			
 	Factory::get_image_factory()->store(this);
 }
@@ -170,90 +170,51 @@ int Image::save(lua_State *L)
 /////////////
 void Image::copy(const Image& image) // copies another image's texture pixels - no need to copy the position, angle, scale, color, relative_position, nor alignment - or it will just mess up everything
 {
-    data    = image.data;//static_cast<unsigned char *>(image.data); // copy the pixel data as well
-	width   = image.width; // must be original width
-	height  = image.height; // must be original height
-	depth   = image.depth;
+    data = image.data;//static_cast<unsigned char *>(image.data);
+	width = image.width; // must be original width
+	height = image.height; // must be original height
+	depth = image.depth;
 	channel = image.channel;
-	file    = image.file; // this is not neccessary but whatever ...//set_scale(image.scale.x, image.scale.y);// ...
+	file = image.file; // this is not neccessary but whatever ...// copy geometric transformations or nah ?//set_scale(image.scale.x, image.scale.y);
 #ifdef DOKUN_OPENGL
-    //buffer          = image.get_buffer(); // buffer must be unique like the Image itself
-	min_filter      = image.get_filter().x;
-	mag_filter      = image.get_filter().y;
-	wrap_s          = image.get_wrap().x;
-	wrap_t          = image.get_wrap().y;
+    // buffer must be unique like the Image itself
+	min_filter = image.get_filter().x;
+	mag_filter = image.get_filter().y;
+	wrap_s = image.get_wrap().x;
+	wrap_t = image.get_wrap().y;
 	internal_format = image.get_internal_format();
-	format          = image.get_format();
+	format = image.get_format();
     // check for opengl context
     Renderer::context_check();
-    // delete old buffer
-    /*if(glIsTexture(buffer) && buffer != 0) {
-        destroy();
-    }
-    // copy buffer from other image
-    //this->buffer = image.get_buffer();
-    // OR*/
-    // generate a new buffer if image object does not yet have one
-    /*if(!glIsTexture(buffer) && buffer == 0) { 
-        generate();
-        std::cout << "Image::copy(const Image&): buffer_id " << buffer << " (generated)\n";
-    }*/
-    /////////////////////////////////////////
-    /*glBindTexture(GL_TEXTURE_2D, buffer); // bind buffer
-        glGetTexImage(GL_TEXTURE_2D,//target
-  	        0, // level
-  	        GL_RGBA, // format
-  	        GL_UNSIGNED_BYTE, // type
-  	        (GLvoid*)0);//static_cast<GLvoid *>(image.get_data()));
-        ////glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, static_cast<GLsizei>(width), static_cast<GLsizei>(height), 0, static_cast<GLenum>(format), GL_UNSIGNED_BYTE, static_cast<GLvoid *>(image.data)); // pass texture width, height, and data to OpenGL
-	glBindTexture(GL_TEXTURE_2D, 0);*/
-    /////////////////////////////////////////
-    /*glBindTexture(GL_TEXTURE_2D, buffer); // bind buffer
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, static_cast<GLint>(min_filter));
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, static_cast<GLint>(mag_filter));
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, static_cast<GLint>(wrap_s));
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, static_cast<GLint>(wrap_t));
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, static_cast<GLsizei>(width), static_cast<GLsizei>(height), 0, static_cast<GLenum>(format), GL_UNSIGNED_BYTE, static_cast<GLvoid *>(image.data)); // pass texture width, height, and data to OpenGL
-        glGenerateMipmap(GL_TEXTURE_2D); // generate mipmaps
-	glBindTexture(GL_TEXTURE_2D, 0);*/	
-#ifdef DOKUN_DEBUG0
-	std::cout << "Image::copy(const Image&): buffer " << buffer << " (updated)" << std::endl;
-#endif
+    // delete old buffer (so we can re-create a new buffer with the copied image's data)
+    destroy();
+    // generate a new buffer that takes in the copied image's data (this may not be needed since the draw call can also generate a texture automatically)
+    generate();
 #endif
 }
 /////////////
 void Image::copy(const Texture& texture) // same as Image:copy_texture in Lua
 {
-    data    = static_cast<unsigned char *>(texture.get_data   ()); // copy the pixel data as well
-    width   = texture.width; // must be original width
-	height  = texture.height; // must be original height
-	depth   = texture.get_depth  ();
+    data = static_cast<unsigned char *>(texture.get_data()); // copy the pixel data as well
+    width = texture.width; // must be original width
+	height = texture.height; // must be original height
+	depth = texture.get_depth();
 	channel = texture.get_channel();
-	file    = texture.get_file   (); // this is not neccessary but whatever ...
+	file = texture.get_file(); // this is not neccessary but whatever ...
 #ifdef DOKUN_OPENGL
 	//buffer     = texture.get_buffer(); // buffer must be unique like the Image itself (so DO NOT copy!!)
 	min_filter = texture.get_filter().x;
 	mag_filter = texture.get_filter().y;
-	wrap_s     = texture.get_wrap  ().x;
-	wrap_t     = texture.get_wrap  ().y;
+	wrap_s = texture.get_wrap().x;
+	wrap_t = texture.get_wrap().y;
 	internal_format = texture.get_internal_format();
 	format = texture.get_format();	
     // check for opengl context
     Renderer::context_check();
-    // generate texture buffer if it not a valid OpenGL texture and it did not previously exist
-    if(buffer == 0) glGenTextures(1, &buffer);
-	// update existing texture buffer without having to generate a new one
-    glBindTexture(GL_TEXTURE_2D, buffer); // bind buffer
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, static_cast<GLint>(min_filter));
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, static_cast<GLint>(mag_filter));
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, static_cast<GLint>(wrap_s));
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, static_cast<GLint>(wrap_t));
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, static_cast<GLsizei>(width), static_cast<GLsizei>(height), 0, static_cast<GLenum>(format), GL_UNSIGNED_BYTE, static_cast<GLvoid *>(texture.data/*data*/)); // pass texture width, height, and data to OpenGL
-        glGenerateMipmap(GL_TEXTURE_2D); // generate mipmaps
-	glBindTexture(GL_TEXTURE_2D, 0);
-#ifdef DOKUN_DEBUG0
-	std::cout << "Image::copy(const Texture&): buffer " << buffer << " (updated)" << std::endl;
-#endif
+    // delete old buffer (so we can re-create a new buffer with the copied image's data)
+    destroy();
+    // generate a new buffer that takes in the copied image's data (this may not be needed since the draw call can also generate a texture automatically)
+    generate();
 #endif
 }               
 /////////////
@@ -315,9 +276,9 @@ int Image::flip(lua_State *L)
 /////////////
 void Image::resize(int width, int height)
 {
-	int old_width  = this->width; // must be original width
+	int old_width = this->width; // must be original width
 	int old_height = this->height; // must be original height
-	set_scale(width / (double)old_width, height / (double)old_height);
+	set_scale(width / static_cast<double>(old_width), height / static_cast<double>(old_height));
 }
 /////////////
 void Image::resize(const Vector2& size)
@@ -339,15 +300,15 @@ int Image::resize(lua_State *L)
     return 0;	
 }
 /////////////
-void Image::scale_to_fit(int width, int height)
+void Image::scale_to_fit(int rect_width, int rect_height)
 {
-	float aspect = get_aspect_ratio_correction(width, height);
+	double aspect = get_aspect_ratio_correction(rect_width, rect_height);
 	set_scale(aspect, aspect);
 }
 /////////////
-void Image::scale_to_fit(const Vector2& size)
+void Image::scale_to_fit(const Vector2& rect_size)
 {
-	scale_to_fit(size.x, size.y);
+	scale_to_fit(rect_size.x, rect_size.y);
 }
 /////////////
 void Image::generate()
@@ -366,8 +327,8 @@ void Image::generate()
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, static_cast<GLsizei>(width), static_cast<GLsizei>(height), 0, static_cast<GLenum>(format), GL_UNSIGNED_BYTE, static_cast<GLvoid *>(data)); // pass texture width, height, and data to OpenGL
         glGenerateMipmap(GL_TEXTURE_2D); // generate mipmaps
 		glBindTexture(GL_TEXTURE_2D, 0); // unbind buffer
-	#ifdef DOKUN_DEBUG0
-	    dokun::Logger("Image" + String(Factory::get_image_factory()->get_location(this)).str() + " buffer " + std::to_string(buffer) + " generated");
+	#ifdef DOKUN_DEBUG
+	    if(glIsTexture(buffer)) std::cout << "image buffer_id " << buffer << " generated\n";//dokun::Logger("Image" + String(Factory::get_image_factory()->get_location(this)).str() + " buffer " + std::to_string(buffer) + " generated");
     #endif	
 	}
 #endif	
@@ -390,26 +351,17 @@ void Image::destroy()
 #ifdef DOKUN_OPENGL	
     // check for opengl context first to prevent a crash
     ////Renderer::context_check(); // message keeps spamming which is annoying xD
-    if(glIsTexture(buffer) && buffer != 0)
-	{
-	    int buffer_temp = buffer;
-        glDeleteTextures(1, static_cast<GLuint *>(&buffer)); // delete old texture buffer obj
-        buffer = 0;	// to ensure its deleted
+    if(glIsTexture(buffer) && buffer != 0) {
+	    unsigned int buffer_temp = buffer;
+        glDeleteTextures(1, static_cast<GLuint *>(&buffer));
+        buffer = 0;	// set to null so that we know the buffer is deleted for sure
 	#ifdef DOKUN_DEBUG
-	    if(!glIsTexture(buffer)) std::cout << "Image::destroy(): buffer_id " << buffer_temp << " destroyed\n";//dokun::Logger("Image::destroy(): " + String(Factory::get_image_factory()->get_location(this)).str() + " buffer destroyed");
+	    if(!glIsTexture(buffer_temp)) std::cout << "image buffer_id " << buffer_temp << " destroyed\n";// confirm that buffer is really deleted//dokun::Logger("Image::destroy(): " + String(Factory::get_image_factory()->get_location(this)).str() + " buffer destroyed");
     #endif
 #endif	
-	}
-	// delete image pixel data as well ..
-	/*if(data != nullptr) 
-	{
-        if(is_png()) delete [] static_cast<png_byte *>(data); // array allocated with "new", so I guess I have to delete it this way???
-        data = nullptr; // set image pixel data to nullptr
-#ifdef DOKUN_DEBUG0
-        if(!data) std::cout << "Image_" << String(Factory::get_texture_factory()->get_location(this)) << ": data deleted." << std::endl;
-#endif
-	}*/			
+	}// how to delete image pixel data hmm ...
 }
+/////////////
 int Image::destroy(lua_State *L)
 {
     luaL_checktype(L, 1, LUA_TTABLE);
@@ -719,9 +671,9 @@ int Image::set_angle(lua_State *L)
 void Image::set_scale(double sx, double sy)
 {
 	scale = Vector2(sx, sy);
-	resized = true;
+	resized = (sx == 1.0 && sy == 1.0) ? false : true;
 #ifdef  DOKUN_DEBUG0
-	std::cout << "New size after scale: " << get_size_scaled() << "" << std::endl;
+	std::cout << "New size after scale: " << get_size() << "" << std::endl;
 #endif		
 }            
 ///////////// 
@@ -919,6 +871,7 @@ int Image::set_param(lua_State *L)
 /////////////
 // GETTERS
 /////////////
+// if the scale is zero, then the size will also be zero, so scale must always be 1
 int Image::get_width () const
 {
     return width * scale.x; // in case of set_scale, will return scaled width else original width
@@ -1291,17 +1244,24 @@ int Image::get_scale(lua_State *L)
 	return 2;	
 }
 /////////////
-double Image::get_aspect_ratio_correction(int rect_width, int rect_height) const // scale to fit inside a rect
+double Image::get_aspect_ratio_correction(int rect_width, int rect_height) //const // scale to fit inside a rect
 {
-	float image_aspect = width / height; // use the raw width and height. Do not use (size * scale) to get aspect ratio or it will screw everything up!!
-	float rect_aspect  = rect_width  / rect_height;
-    float scale_factor = 0.0;
-   	if(rect_aspect > image_aspect) {
-		scale_factor = rect_height / (float)height;
+	double image_aspect = width / height; // use the raw width and height. Do not use (size * scale) to get aspect ratio or it will screw everything up!!
+	double rect_aspect = rect_width / rect_height;
+    double scale_factor = 1.0; // default
+    // calculate scale factor from aspect ratio
+   	if(rect_aspect >= image_aspect) {
+		scale_factor = rect_height / static_cast<double>(height);
 	} 
-	else if(image_aspect < rect_aspect) {
-	    scale_factor = rect_width  / (float)width;
+	else if(image_aspect <= rect_aspect) {// what if both aspect ratios are equal (this just mean image's width and height are the same value; same goes for the rect)
+	    scale_factor = rect_width / static_cast<double>(width);
 	}
+#ifdef DOKUN_DEBUG0
+	std::cout << "image original size: " << Vector2(width, height) << std::endl;
+	std::cout << "image ascpect: " << image_aspect << std::endl;
+	std::cout << "box ascpect: " << rect_aspect << std::endl;
+	std::cout << "aspect_ratio: " << scale_factor << std::endl;
+#endif	
 	return scale_factor;
 }
 /////////////

@@ -32,12 +32,14 @@ public:
 	unsigned int get_ratings_count() const; // returns the total number of ratings given to this seller by their customers (includes both good and bad ratings)
 	unsigned int get_total_ratings() const; // same as get_ratings_count
 	unsigned int get_reputation() const; // returns a percentage of good ratings
+	static std::vector<unsigned int> get_top_rated_sellers(unsigned int limit = 50); // returns a container of n seller_ids with the most positive (good) ratings // the default value of n is 50
 	// getters - wallet-related stuff
 	neroshop::Wallet * get_wallet() const;
-	// getters - order and sales-related stuff
+	// getters - order-related stuff
     unsigned int get_customer_order(unsigned int index) const;
     unsigned int get_customer_order_count() const;
     std::vector<int> get_pending_customer_orders();
+    // getters - sales and statistics-related stuff
     unsigned int get_sales_count() const; // returns the total number of items sold by this seller
     unsigned int get_units_sold(unsigned int item_id) const; // returns the total number of a specific item sold by this seller
     unsigned int get_units_sold(const neroshop::Item& item) const;
