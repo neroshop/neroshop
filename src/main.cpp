@@ -2,7 +2,7 @@
 // neroshop
 #include "../include/neroshop.hpp" //#include "../include/wallet.hpp" // aparrently this file is causing the "error: unknown type name"
 using namespace neroshop; // namespace comes after including the header files
-// dokun
+// dokun-ui
 #include <build.hpp>
 #include DOKUN_HEADER
 using namespace dokun;
@@ -115,10 +115,10 @@ void create_local_database() {
     /////////////////////////////////////////
     // cookies.sqlite3 - used to store guest user cart
     //#ifdef DOKUN_LINUX
-    std::string cache_file_name = std::string(NEROSHOP_PATH) + "/cookies.sqlite3"; //https://www.geeksforgeeks.org/difference-between-session-and-cookies/
-    if(!File::exists(cache_file_name)) {
+    std::string local_db_file_name = std::string(NEROSHOP_PATH) + "/cookies.sqlite3"; //https://www.geeksforgeeks.org/difference-between-session-and-cookies/
+    if(!File::exists(local_db_file_name)) {
         // create "cookies.sqlite3" if it does not yet exist
-        DB::Sqlite3 db;if(db.open(cache_file_name)) {
+        DB::Sqlite3 db;if(db.open(local_db_file_name)) {
             db.execute("PRAGMA journal_mode = WAL;"); // to prevent database from being locked
             // create table "account" if it does not yet exist
             if(!db.table_exists("account")) {
@@ -129,7 +129,7 @@ void create_local_database() {
             // insert ONLY one row to table
             db.insert("account", "save, username", "false, ''");
             // print message then close the database
-            neroshop::print("created \"" + cache_file_name + "\"", 3);
+            neroshop::print("created \"" + local_db_file_name + "\"", 3);
             db.close();
         }
     }
@@ -167,7 +167,7 @@ namespace neroshop {
         //////////////////////////////////////////////////
         // dokun-ui
         if(!Engine::open()) {
-            NEROSHOP_TAG_OUT std::cout << DOKUN_UI_TAG std::string("engine failed to initialize");
+            neroshop::print(DOKUN_UI_TAG "engine failed to initialize");
             return false;
         }
         //////////////////////////////////////////////////
@@ -289,8 +289,24 @@ int main() {
     // cipher text
     std::string cipher_text = Encryptor::public_encrypt(public_key, "Dude I'm kind of a lolicon, but don't tell anybody pls");
     std::cout << "message (encrypted): " << cipher_text << std::endl;
+    // store cipher text in file
+    std::ofstream wfile ("cipher_text.txt", std::ios::binary);//std::ifstream file ("cipher_text.txt", std::ios::binary);
+    if(wfile.is_open()) {
+        // write to file
+        wfile << cipher_text;
+    }
+    wfile.close();
+    //-----------------------------------
+    // load cipher text from file
+    std::ifstream rfile ("cipher_text.txt", std::ios::binary);
+    std::stringstream cipher_text_ss;
+    if(rfile.is_open()) {
+        // read from file
+        cipher_text_ss << rfile.rdbuf(); // dump file contents //std::cout << "message (encrypted - file): " << cipher_text_ss.str() << std::endl;
+    }
+    rfile.close();
     // plain text
-    std::string plain_text = Encryptor::private_decrypt(private_key, cipher_text);
+    std::string plain_text = Encryptor::private_decrypt(private_key, cipher_text_ss.str());
     std::cout << "message (decrypted): " << plain_text << std::endl;
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////	
     // Monero	
@@ -1249,7 +1265,7 @@ int main() {
             // settings_button		    
             if(settings_button->is_pressed()) {
                 std::string cfg_file = NEROSHOP_PATH + "/config.lua";
-                NEROSHOP_TAG_OUT std::cout << "opening: " << cfg_file << std::endl;
+                neroshop::print("opening: " + cfg_file);
                 std::system(std::string("gedit " + cfg_file).c_str()); // ubuntu
             }
             /////////////////////

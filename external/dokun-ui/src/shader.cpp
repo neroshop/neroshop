@@ -653,7 +653,7 @@ bool Shader::is_compiled(unsigned int shader) const {
 	    glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength );
 	    GLchar *strInfoLog = new GLchar[infoLogLength + 1];
 	    glGetShaderInfoLog(shader, infoLogLength, nullptr, strInfoLog );
-	    std::cout << DOKUN_UI_TAG "\033[1;92m[glsl]: \033[1;37m" + String(strInfoLog) << "\033[0m" << std::endl;
+	    std::cout << DOKUN_UI_TAG "\033[1;92m[glsl]: \033[1;37m" << String(strInfoLog) << "\033[0m" << std::endl;
 	    delete[] strInfoLog;
 	}
 	return (status == GL_TRUE);
@@ -670,7 +670,7 @@ bool Shader::is_linked(void) const {
 	if(status != GL_TRUE) {
 	    char buffer[512];
         glGetProgramInfoLog(program, 512, nullptr, buffer);
-        std::cout << DOKUN_UI_TAG "\033[1;92m[glsl]: \033[1;37m" + buffer << "\033[0m" << std::endl;
+        std::cout << std::string(DOKUN_UI_TAG "\033[1;92m[glsl]: \033[1;37m") + buffer << "\033[0m" << std::endl;
     }
     return (status == GL_TRUE);
 #endif	

@@ -11,8 +11,8 @@
 //#include "resource.hpp"
 
 #ifdef __cplusplus
-////#include <memory> // std::enable_shared_from_this, shared_from_this(),  weak_from_this()
 #include <iostream>
+#include <memory> // std::enable_shared_from_this, shared_from_this(),  weak_from_this()
 #include <lua.hpp>
 
 class GUI: public Entity////, std::enable_shared_from_this<GUI> // note: public inheritance 

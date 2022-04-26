@@ -3,7 +3,7 @@ Ever since I developed an interest for cryptocurrencies, I have become more
 privacy-conscious and more aware of the ponzi scheme that has become of the current 
 financial system.
 This led to my desire to want to create or at least contribute to a world where 
-we can use cryptocurrency for everyday purchases rather than using it as a speculative asset
+we can use cryptocurrency for everyday purchases rather than using it solely as a speculative asset
 while at the same time, protecting each individual's financial privacy without having to trust any 
 centralized entity, and without the risk of having your account surveilled, frozen, closed, or 
 limited by how much, where and when you can spend.

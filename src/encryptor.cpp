@@ -277,6 +277,40 @@ std::pair<std::string, std::string> neroshop::Encryptor::get_key_pair(const EVP_
     return key_pair;
 }
 ////////////////////
+void neroshop::Encryptor::public_encrypt_fp(const std::string& public_key, const std::string& plain_text, std::ofstream& file) {
+    // encrypt plain text
+    std::string cipher_text = Encryptor::public_encrypt(public_key, plain_text);
+#ifdef NEROSHOP_DEBUG    
+    std::cout << "message (encrypted): " << cipher_text << std::endl;
+#endif    
+    // store cipher text in file
+    ////std::ofstream file ("cipher_text.txt", std::ios::binary);
+    if(!file.is_open()) {
+        neroshop::print("public_encrypt_fp error: failed to open file", 1);
+        return;
+    }
+    // write to file
+    file << cipher_text;
+    file.close();
+}
+////////////////////
+std::string neroshop::Encryptor::private_decrypt_fp(const std::string& private_key, std::ifstream& file) {
+    // load cipher text from file    
+    ////std::ifstream file ("cipher_text.txt", std::ios::binary);
+    if(!file.is_open()) { 
+        neroshop::print("private_decrypt_fp error: failed to open file", 1); 
+        return "";
+    }
+    // read from file
+    std::stringstream cipher_text_ss;
+    cipher_text_ss << file.rdbuf(); // dump file contents
+    file.close();
+    std::string cipher_text = cipher_text_ss.str();//std::cout << "message (encrypted - file): " << cipher_text << std::endl;
+    // decrypt cipher text then return plain text
+    std::string plain_text = Encryptor::private_decrypt(private_key, cipher_text);
+    return plain_text;
+}
+////////////////////
 ////////////////////
 ////////////////////
 ////////////////////

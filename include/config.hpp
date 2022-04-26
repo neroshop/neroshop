@@ -23,7 +23,7 @@ namespace neroshop {
         std::string neroshop_config_name = neroshop_config_path + "/config.lua";
         Script script;
         if(!script.load(lua_state, neroshop_config_name)) {return false;}
-        NEROSHOP_TAG_OUT std::cout << "\033[1;94;49m" << "loaded script \"" << script.get_file() << "\"" << "\033[0m" << std::endl;
+        neroshop::print("\033[1;94mloaded script \"" + script.get_file() + "\"");
         return true; // default return-value
 	}
 	//////////////////////////////
@@ -62,16 +62,16 @@ namespace neroshop {
         if(File::exists(neroshop_config_name)) return false; // false because it will not be created // if true then it will cause "PANIC: unprotected error in call to Lua API (attempt to index a nil value)" error
         // check if script works before saving
         if(luaL_dostring(lua_state, text.c_str()) != 0) {
-		    NEROSHOP_TAG_OUT std::cout << LUA_TAG << "\033[0;91m" << "invalid Lua code" << "\033[0m" << std::endl;
+		    neroshop::print(LUA_TAG "\033[0;91minvalid Lua code");
 		    lua_error(lua_state);
 		    return false; // exit function so it does not save text
 	    }
         // if path does not exist
         if(!File::is_directory(neroshop_config_path)) 
         {   // create the path
-            NEROSHOP_TAG_OUT std::cout << "\033[0;33m" << "path \"" << neroshop_config_path << "\" does not exist, but we'll create it for you :)" << "\033[0m" << std::endl;
-            if(!File::make_dir(neroshop_config_path)) {NEROSHOP_TAG_OUT std::cout << "\033[0;31m" << "failed to make the path :(" << "\033[0m" << std::endl; return false;}
-            NEROSHOP_TAG_OUT std::cout << "\033[1;97;49m" << "created path \"" << neroshop_config_path << "\"" << "\033[0m" << std::endl;
+            neroshop::print("directory \"" + neroshop_config_path + "\" does not exist, but I will create it for you (^_^)", 2);
+            if(!File::make_dir(neroshop_config_path)) { neroshop::print("create_config error: failed to make the path. Sorry (ᵕ人ᵕ)! ...", 1); return false; }
+            neroshop::print("\033[1;97;49mcreated path \"" + neroshop_config_path + "\"");
         }
         // if path exists, but the file is missing or deleted
         if(!File::exists(neroshop_config_name)) {
@@ -80,7 +80,7 @@ namespace neroshop {
             cfg.open (neroshop_config_name, std::ios::out | std::ios::trunc);
             cfg << text << "\n"; // write to file
             cfg.close();
-            NEROSHOP_TAG_OUT std::cout << "\033[1;97;49m" << "created file \"" << neroshop_config_name << "\"" << "\033[0m" << std::endl;  
+            neroshop::print("\033[1;97;49mcreated file \"" + neroshop_config_name + "\"\033[0m");  
         }
         return true;		
 	}

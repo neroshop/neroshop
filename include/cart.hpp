@@ -4,12 +4,16 @@
 #ifndef CART_HPP_NEROSHOP // recommended to add unique identifier like _NEROSHOP to avoid naming collision with other libraries
 #define CART_HPP_NEROSHOP
 
-#include "item.hpp"
-#include "db.hpp"
+#include <iostream>
+#include <memory>    // std::shared_ptr, std::unique_ptr
 #include <algorithm> // for std::find
 #include <chrono>    // std::put_time
 #include <sstream>   // std::stringstream
 #include <iomanip>   // std::put_time
+// neroshop
+#include "item.hpp"
+#include "db.hpp"
+
 
 namespace neroshop {
 class Cart {

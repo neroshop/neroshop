@@ -1048,7 +1048,7 @@ void Edit::on_mouse_press()
                     std::cout << "mouse is unlocked from edit\n";
                 }*/
             #ifdef DOKUN_DEBUG
-	            if(Edit::focused) std::cout << DOKUN_UI_TAG String(String::no_digit(typeid(*this).name())).str() << ":" << String(Edit::focused) << " gained focus" << std::endl; // #include <typeinfo>
+	            if(Edit::focused) std::cout << DOKUN_UI_TAG + String(String::no_digit(typeid(*this).name())).str() << ":" << String(Edit::focused) << " gained focus" << std::endl; // #include <typeinfo>
             #endif                
             //}
         }

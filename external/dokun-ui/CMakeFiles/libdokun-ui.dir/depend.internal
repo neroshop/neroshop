@@ -437,6 +437,8 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/autofit/autofit.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/autofit/aftypes.h
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/autofit/afwrtsys.h
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/autofit/autofit.c
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
  external/freetype/include/freetype/config/public-macros.h
  external/freetype/include/freetype/freetype.h
@@ -448,6 +450,7 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/autofit/autofit.c.o
  external/freetype/include/freetype/ftimage.h
  external/freetype/include/freetype/ftincrem.h
  external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlogging.h
  external/freetype/include/freetype/ftmodapi.h
  external/freetype/include/freetype/ftmoderr.h
  external/freetype/include/freetype/ftoutln.h
@@ -491,83 +494,717 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftbase.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftutil.c
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/md5.c
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/md5.h
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/ftadvanc.h
+ external/freetype/include/freetype/ftbitmap.h
+ external/freetype/include/freetype/ftcolor.h
+ external/freetype/include/freetype/ftdriver.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftfntfmt.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlist.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftmm.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftoutln.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsnames.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttrigon.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/cffotypes.h
+ external/freetype/include/freetype/internal/cfftypes.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/fthash.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftpsprop.h
+ external/freetype/include/freetype/internal/ftrfork.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/ftstream.h
+ external/freetype/include/freetype/internal/fttrace.h
+ external/freetype/include/freetype/internal/ftvalid.h
+ external/freetype/include/freetype/internal/psaux.h
+ external/freetype/include/freetype/internal/pshints.h
+ external/freetype/include/freetype/internal/services/svfntfmt.h
+ external/freetype/include/freetype/internal/services/svgldict.h
+ external/freetype/include/freetype/internal/services/svkern.h
+ external/freetype/include/freetype/internal/services/svpostnm.h
+ external/freetype/include/freetype/internal/services/svprop.h
+ external/freetype/include/freetype/internal/services/svpscmap.h
+ external/freetype/include/freetype/internal/services/svsfnt.h
+ external/freetype/include/freetype/internal/services/svttcmap.h
+ external/freetype/include/freetype/internal/services/svtteng.h
+ external/freetype/include/freetype/internal/sfnt.h
+ external/freetype/include/freetype/internal/t1types.h
+ external/freetype/include/freetype/internal/tttypes.h
+ external/freetype/include/freetype/internal/wofftypes.h
+ external/freetype/include/freetype/t1tables.h
+ external/freetype/include/freetype/ttnameid.h
+ external/freetype/include/freetype/tttables.h
+ external/freetype/include/freetype/tttags.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftbbox.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftbbox.c
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/ftbbox.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftoutln.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/fttrace.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftbdf.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftbdf.c
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/ftbdf.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/fttrace.h
+ external/freetype/include/freetype/internal/services/svbdf.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftbitmap.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftbitmap.c
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/ftbitmap.h
+ external/freetype/include/freetype/ftcolor.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/fttrace.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftcid.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftcid.c
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/ftcid.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/services/svcid.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftdebug.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftdebug.c
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/fttrace.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftfstype.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftfstype.c
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/fthash.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/pshints.h
+ external/freetype/include/freetype/internal/services/svpscmap.h
+ external/freetype/include/freetype/internal/services/svpsinfo.h
+ external/freetype/include/freetype/internal/t1types.h
+ external/freetype/include/freetype/t1tables.h
+ external/freetype/include/freetype/tttables.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftgasp.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftgasp.c
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/ftcolor.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftgasp.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftmm.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/tttypes.h
+ external/freetype/include/freetype/t1tables.h
+ external/freetype/include/freetype/tttables.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftglyph.c.o
+ /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftbase.h
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftglyph.c
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/ftbitmap.h
+ external/freetype/include/freetype/ftcolor.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftoutln.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/fttrace.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftgxval.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftgxval.c
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftgxval.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/fttrace.h
+ external/freetype/include/freetype/internal/ftvalid.h
+ external/freetype/include/freetype/internal/services/svgxval.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftinit.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftinit.c
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/fttrace.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftmm.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftmm.c
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftmm.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/fttrace.h
+ external/freetype/include/freetype/internal/services/svmetric.h
+ external/freetype/include/freetype/internal/services/svmm.h
+ external/freetype/include/freetype/t1tables.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftotval.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftotval.c
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftotval.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/fttrace.h
+ external/freetype/include/freetype/internal/ftvalid.h
+ external/freetype/include/freetype/internal/services/svotval.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftpatent.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftpatent.c
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/ftstream.h
+ external/freetype/include/freetype/internal/services/svsfnt.h
+ external/freetype/include/freetype/internal/services/svttglyf.h
+ external/freetype/include/freetype/tttables.h
+ external/freetype/include/freetype/tttags.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftpfr.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftpfr.c
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftpfr.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/fttrace.h
+ external/freetype/include/freetype/internal/services/svpfr.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftstroke.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftstroke.c
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftoutln.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftstroke.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttrigon.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/fttrace.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftsynth.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftsynth.c
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/ftbitmap.h
+ external/freetype/include/freetype/ftcolor.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftoutln.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsynth.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/fttrace.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftsystem.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftsystem.c
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/ftstream.h
+ external/freetype/include/freetype/internal/fttrace.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/fttype1.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/fttype1.c
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/fthash.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/fttrace.h
+ external/freetype/include/freetype/internal/pshints.h
+ external/freetype/include/freetype/internal/services/svpscmap.h
+ external/freetype/include/freetype/internal/services/svpsinfo.h
+ external/freetype/include/freetype/internal/t1types.h
+ external/freetype/include/freetype/t1tables.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/base/ftwinfnt.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/base/ftwinfnt.c
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/ftwinfnt.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/fttrace.h
+ external/freetype/include/freetype/internal/services/svwinfnt.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/bdf/bdf.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/bdf/bdf.c
@@ -576,11 +1213,75 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/bdf/bdf.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/bdf/bdfdrivr.h
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/bdf/bdferror.h
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/bdf/bdflib.c
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/ftbdf.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/fthash.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/ftstream.h
+ external/freetype/include/freetype/internal/fttrace.h
+ external/freetype/include/freetype/internal/services/svbdf.h
+ external/freetype/include/freetype/internal/services/svfntfmt.h
+ external/freetype/include/freetype/ttnameid.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/bzip2/ftbzip2.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/bzip2/ftbzip2.c
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/ftbzip2.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/ftstream.h
+ external/freetype/include/freetype/internal/fttrace.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/cache/ftcache.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/cache/ftcache.c
@@ -600,7 +1301,36 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/cache/ftcache.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/cache/ftcmru.h
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/cache/ftcsbits.c
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/cache/ftcsbits.h
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/ftcache.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/fttrace.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/cff/cff.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/cff/cff.c
@@ -618,7 +1348,66 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/cff/cff.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/cff/cffparse.c
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/cff/cffparse.h
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/cff/cfftoken.h
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/ftcolor.h
+ external/freetype/include/freetype/ftdriver.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlist.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftmm.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftoutln.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/cffotypes.h
+ external/freetype/include/freetype/internal/cfftypes.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/fthash.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftpsprop.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/ftstream.h
+ external/freetype/include/freetype/internal/fttrace.h
+ external/freetype/include/freetype/internal/psaux.h
+ external/freetype/include/freetype/internal/pshints.h
+ external/freetype/include/freetype/internal/services/svcfftl.h
+ external/freetype/include/freetype/internal/services/svcid.h
+ external/freetype/include/freetype/internal/services/svfntfmt.h
+ external/freetype/include/freetype/internal/services/svgldict.h
+ external/freetype/include/freetype/internal/services/svmetric.h
+ external/freetype/include/freetype/internal/services/svmm.h
+ external/freetype/include/freetype/internal/services/svpostnm.h
+ external/freetype/include/freetype/internal/services/svprop.h
+ external/freetype/include/freetype/internal/services/svpscmap.h
+ external/freetype/include/freetype/internal/services/svpsinfo.h
+ external/freetype/include/freetype/internal/services/svttcmap.h
+ external/freetype/include/freetype/internal/sfnt.h
+ external/freetype/include/freetype/internal/t1types.h
+ external/freetype/include/freetype/internal/tttypes.h
+ external/freetype/include/freetype/internal/wofftypes.h
+ external/freetype/include/freetype/t1tables.h
+ external/freetype/include/freetype/ttnameid.h
+ external/freetype/include/freetype/tttables.h
+ external/freetype/include/freetype/tttags.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/cid/type1cid.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/cid/ciderrs.h
@@ -634,7 +1423,56 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/cid/type1cid.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/cid/cidriver.h
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/cid/cidtoken.h
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/cid/type1cid.c
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/ftcolor.h
+ external/freetype/include/freetype/ftdriver.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftmm.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftoutln.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/cffotypes.h
+ external/freetype/include/freetype/internal/cfftypes.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/fthash.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftpsprop.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/ftstream.h
+ external/freetype/include/freetype/internal/fttrace.h
+ external/freetype/include/freetype/internal/psaux.h
+ external/freetype/include/freetype/internal/pshints.h
+ external/freetype/include/freetype/internal/services/svcid.h
+ external/freetype/include/freetype/internal/services/svfntfmt.h
+ external/freetype/include/freetype/internal/services/svpostnm.h
+ external/freetype/include/freetype/internal/services/svprop.h
+ external/freetype/include/freetype/internal/services/svpscmap.h
+ external/freetype/include/freetype/internal/services/svpsinfo.h
+ external/freetype/include/freetype/internal/t1types.h
+ external/freetype/include/freetype/internal/tttypes.h
+ external/freetype/include/freetype/t1tables.h
+ external/freetype/include/freetype/tttables.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/dlg/dlg.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/dlg/dlg.c
@@ -669,7 +1507,37 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/gzip/ftgzip.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/gzip/infutil.h
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/gzip/zutil.c
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/gzip/zutil.h
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftgzip.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/ftstream.h
+ external/freetype/include/freetype/internal/fttrace.h
  external/freetype/include/ft2build.h
  external/zlib/zconf.h
  external/zlib/zlib.h
@@ -677,7 +1545,37 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/lzw/ftlzw.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/lzw/ftlzw.c
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/lzw/ftzopen.c
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/lzw/ftzopen.h
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftlzw.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/ftstream.h
+ external/freetype/include/freetype/internal/fttrace.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/pcf/pcf.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/pcf/pcf.c
@@ -689,7 +1587,45 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/pcf/pcf.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/pcf/pcfread.h
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/pcf/pcfutil.c
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/pcf/pcfutil.h
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/ftbdf.h
+ external/freetype/include/freetype/ftbzip2.h
+ external/freetype/include/freetype/ftdriver.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftgzip.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftlzw.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/ftstream.h
+ external/freetype/include/freetype/internal/fttrace.h
+ external/freetype/include/freetype/internal/services/svbdf.h
+ external/freetype/include/freetype/internal/services/svfntfmt.h
+ external/freetype/include/freetype/internal/services/svprop.h
+ external/freetype/include/freetype/ttnameid.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/pfr/pfr.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/pfr/pfr.c
@@ -707,7 +1643,41 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/pfr/pfr.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/pfr/pfrsbit.c
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/pfr/pfrsbit.h
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/pfr/pfrtypes.h
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftoutln.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftpfr.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/ftstream.h
+ external/freetype/include/freetype/internal/fttrace.h
+ external/freetype/include/freetype/internal/services/svfntfmt.h
+ external/freetype/include/freetype/internal/services/svpfr.h
+ external/freetype/include/freetype/ttnameid.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/psaux/psaux.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/psaux/afmparse.c
@@ -747,7 +1717,51 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/psaux/psaux.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/psaux/t1cmap.h
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/psaux/t1decode.c
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/psaux/t1decode.h
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/ftcolor.h
+ external/freetype/include/freetype/ftdriver.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftmm.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftoutln.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/cffotypes.h
+ external/freetype/include/freetype/internal/cfftypes.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/fthash.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/fttrace.h
+ external/freetype/include/freetype/internal/psaux.h
+ external/freetype/include/freetype/internal/pshints.h
+ external/freetype/include/freetype/internal/services/svcfftl.h
+ external/freetype/include/freetype/internal/services/svmm.h
+ external/freetype/include/freetype/internal/services/svpscmap.h
+ external/freetype/include/freetype/internal/t1types.h
+ external/freetype/include/freetype/internal/tttypes.h
+ external/freetype/include/freetype/t1tables.h
+ external/freetype/include/freetype/tttables.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/pshinter/pshinter.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/pshinter/pshalgo.c
@@ -756,10 +1770,41 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/pshinter/pshinter.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/pshinter/pshglob.h
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/pshinter/pshinter.c
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/pshinter/pshmod.c
+ /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/pshinter/pshmod.h
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/pshinter/pshnterr.h
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/pshinter/pshrec.c
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/pshinter/pshrec.h
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/fttrace.h
+ external/freetype/include/freetype/internal/pshints.h
+ external/freetype/include/freetype/t1tables.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/psnames/psnames.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/psnames/psmodule.c
@@ -767,7 +1812,36 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/psnames/psnames.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/psnames/psnamerr.h
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/psnames/psnames.c
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/psnames/pstables.h
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/fttrace.h
+ external/freetype/include/freetype/internal/services/svpscmap.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/raster/raster.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/raster/ftmisc.h
@@ -777,8 +1851,36 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/raster/raster.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/raster/ftrend1.h
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/raster/raster.c
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/raster/rasterrs.h
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
  external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftoutln.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/fttrace.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/sdf/ftbsdf.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/sdf/ftbsdf.c
@@ -940,6 +2042,8 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/sfnt/sfnt.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/sfnt/sfobjs.h
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/sfnt/sfwoff.c
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/sfnt/sfwoff.h
+ /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/sfnt/sfwoff2.c
+ /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/sfnt/sfwoff2.h
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/sfnt/ttbdf.c
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/sfnt/ttbdf.h
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/sfnt/ttcmap.c
@@ -959,7 +2063,61 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/sfnt/sfnt.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/sfnt/ttpost.h
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/sfnt/ttsbit.c
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/sfnt/ttsbit.h
+ /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/sfnt/woff2tags.c
+ /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/sfnt/woff2tags.h
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/integer-types.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/ftbdf.h
+ external/freetype/include/freetype/ftbitmap.h
+ external/freetype/include/freetype/ftcolor.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftgzip.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftmm.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsnames.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/ftstream.h
+ external/freetype/include/freetype/internal/fttrace.h
+ external/freetype/include/freetype/internal/ftvalid.h
+ external/freetype/include/freetype/internal/services/svbdf.h
+ external/freetype/include/freetype/internal/services/svgldict.h
+ external/freetype/include/freetype/internal/services/svmetric.h
+ external/freetype/include/freetype/internal/services/svmm.h
+ external/freetype/include/freetype/internal/services/svpostnm.h
+ external/freetype/include/freetype/internal/services/svpscmap.h
+ external/freetype/include/freetype/internal/services/svsfnt.h
+ external/freetype/include/freetype/internal/services/svttcmap.h
+ external/freetype/include/freetype/internal/sfnt.h
+ external/freetype/include/freetype/internal/tttypes.h
+ external/freetype/include/freetype/internal/wofftypes.h
+ external/freetype/include/freetype/t1tables.h
+ external/freetype/include/freetype/ttnameid.h
+ external/freetype/include/freetype/tttables.h
+ external/freetype/include/freetype/tttags.h
  external/freetype/include/ft2build.h
  external/png/png.h
  external/png/pngconf.h
@@ -971,8 +2129,36 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/smooth/smooth.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/smooth/ftsmooth.c
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/smooth/ftsmooth.h
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/smooth/smooth.c
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
  external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftoutln.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/fttrace.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/truetype/truetype.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/truetype/truetype.c
@@ -991,7 +2177,55 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/truetype/truetype.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/truetype/ttpload.h
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/truetype/ttsubpix.c
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/truetype/ttsubpix.h
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/ftcolor.h
+ external/freetype/include/freetype/ftdriver.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlist.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftmm.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftoutln.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttrigon.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/ftstream.h
+ external/freetype/include/freetype/internal/fttrace.h
+ external/freetype/include/freetype/internal/services/svfntfmt.h
+ external/freetype/include/freetype/internal/services/svmetric.h
+ external/freetype/include/freetype/internal/services/svmm.h
+ external/freetype/include/freetype/internal/services/svprop.h
+ external/freetype/include/freetype/internal/services/svtteng.h
+ external/freetype/include/freetype/internal/services/svttglyf.h
+ external/freetype/include/freetype/internal/sfnt.h
+ external/freetype/include/freetype/internal/tttypes.h
+ external/freetype/include/freetype/internal/wofftypes.h
+ external/freetype/include/freetype/t1tables.h
+ external/freetype/include/freetype/ttnameid.h
+ external/freetype/include/freetype/tttables.h
+ external/freetype/include/freetype/tttags.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/type1/type1.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/type1/t1afm.c
@@ -1009,7 +2243,59 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/type1/type1.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/type1/t1parse.h
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/type1/t1tokens.h
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/type1/type1.c
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/ftcolor.h
+ external/freetype/include/freetype/ftdriver.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftmm.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftoutln.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/cffotypes.h
+ external/freetype/include/freetype/internal/cfftypes.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/fthash.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftpsprop.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/ftstream.h
+ external/freetype/include/freetype/internal/fttrace.h
+ external/freetype/include/freetype/internal/psaux.h
+ external/freetype/include/freetype/internal/pshints.h
+ external/freetype/include/freetype/internal/services/svfntfmt.h
+ external/freetype/include/freetype/internal/services/svgldict.h
+ external/freetype/include/freetype/internal/services/svkern.h
+ external/freetype/include/freetype/internal/services/svmm.h
+ external/freetype/include/freetype/internal/services/svpostnm.h
+ external/freetype/include/freetype/internal/services/svprop.h
+ external/freetype/include/freetype/internal/services/svpscmap.h
+ external/freetype/include/freetype/internal/services/svpsinfo.h
+ external/freetype/include/freetype/internal/t1types.h
+ external/freetype/include/freetype/internal/tttypes.h
+ external/freetype/include/freetype/t1tables.h
+ external/freetype/include/freetype/ttnameid.h
+ external/freetype/include/freetype/tttables.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/type42/type42.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/type42/t42drivr.c
@@ -1021,13 +2307,93 @@ CMakeFiles/libdokun-ui.dir/external/freetype/src/type42/type42.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/type42/t42parse.h
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/type42/t42types.h
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/type42/type42.c
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/ftcolor.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlist.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftmm.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/cffotypes.h
+ external/freetype/include/freetype/internal/cfftypes.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/fthash.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/ftstream.h
+ external/freetype/include/freetype/internal/fttrace.h
+ external/freetype/include/freetype/internal/psaux.h
+ external/freetype/include/freetype/internal/pshints.h
+ external/freetype/include/freetype/internal/services/svfntfmt.h
+ external/freetype/include/freetype/internal/services/svgldict.h
+ external/freetype/include/freetype/internal/services/svpostnm.h
+ external/freetype/include/freetype/internal/services/svpscmap.h
+ external/freetype/include/freetype/internal/services/svpsinfo.h
+ external/freetype/include/freetype/internal/t1types.h
+ external/freetype/include/freetype/internal/tttypes.h
+ external/freetype/include/freetype/t1tables.h
+ external/freetype/include/freetype/ttnameid.h
+ external/freetype/include/freetype/tttables.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/freetype/src/winfonts/winfnt.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/winfonts/fnterrs.h
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/winfonts/winfnt.c
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/freetype/src/winfonts/winfnt.h
+ external/freetype/include/dlg/dlg.h
+ external/freetype/include/dlg/output.h
  external/freetype/include/freetype/config/ftheader.h
+ external/freetype/include/freetype/config/public-macros.h
+ external/freetype/include/freetype/freetype.h
+ external/freetype/include/freetype/fterrdef.h
+ external/freetype/include/freetype/fterrors.h
+ external/freetype/include/freetype/ftglyph.h
+ external/freetype/include/freetype/ftimage.h
+ external/freetype/include/freetype/ftincrem.h
+ external/freetype/include/freetype/ftlcdfil.h
+ external/freetype/include/freetype/ftlogging.h
+ external/freetype/include/freetype/ftmodapi.h
+ external/freetype/include/freetype/ftmoderr.h
+ external/freetype/include/freetype/ftparams.h
+ external/freetype/include/freetype/ftrender.h
+ external/freetype/include/freetype/ftsizes.h
+ external/freetype/include/freetype/ftsystem.h
+ external/freetype/include/freetype/fttypes.h
+ external/freetype/include/freetype/ftwinfnt.h
+ external/freetype/include/freetype/internal/autohint.h
+ external/freetype/include/freetype/internal/compiler-macros.h
+ external/freetype/include/freetype/internal/ftcalc.h
+ external/freetype/include/freetype/internal/ftdebug.h
+ external/freetype/include/freetype/internal/ftdrv.h
+ external/freetype/include/freetype/internal/ftgloadr.h
+ external/freetype/include/freetype/internal/ftmemory.h
+ external/freetype/include/freetype/internal/ftobjs.h
+ external/freetype/include/freetype/internal/ftserv.h
+ external/freetype/include/freetype/internal/ftstream.h
+ external/freetype/include/freetype/internal/fttrace.h
+ external/freetype/include/freetype/internal/services/svfntfmt.h
+ external/freetype/include/freetype/internal/services/svwinfnt.h
+ external/freetype/include/freetype/ttnameid.h
  external/freetype/include/ft2build.h
 CMakeFiles/libdokun-ui.dir/external/gif/lib/dgif_lib.c.o
  /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/external/gif/lib/dgif_lib.c

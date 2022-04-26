@@ -19,7 +19,7 @@
 #include "bcrypt.h"
 #include "crypt_blowfish/ow-crypt.h" // used to salt and hash passwords (with bcrypt)
 // openssl - monero uses openssl so we just have to link this code to monero
-#include <openssl/evp.h> // used to hash email addresses (with SHA-256) for the purpose of hiding it from prying eyes
+#include <openssl/evp.h> // used to hash email addresses (with SHA-2) for the purpose of hiding it from prying eyes
 #include <openssl/err.h>
 ////}
 

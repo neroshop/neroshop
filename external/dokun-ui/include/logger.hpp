@@ -7,7 +7,7 @@
 #define DOKUN_DATE      String(__DATE__).str()
 #define DOKUN_TIME      String(__TIME__).str()
 #define DOKUN_TAG       String("[dokun]: ") +
-#define DOKUN_UI_TAG    String("\033[1;90m[dokun-ui]:\033[0m ") +
+#define DOKUN_UI_TAG    "\033[1;90m[dokun-ui]:\033[0m "
 #define DOKUN_LOGTAG    "dokun: " + DOKUN_FILE.substr(DOKUN_FILE.find_last_of("\\/") + 1) + " (" + DOKUN_LINE + "): "      //+ "function (" + DOKUN_FUNCTION + "): "  // added on 10-1-2018
 #define DOKUN_CLASS     String(typeid(*this).name()).str()
 #define DOKUN_LOGFILE   "doklog.txt"

@@ -45,6 +45,7 @@
 - switch from RSA-2048 to RSA-3072 then RSA-4096 then RSA-7680 then RSA-15360 bit keys when most CPUs can handle and support it
 - switch from SHA-256 to SHA-512 then SHA-3 when most CPUs can handle and support it
 - increase bcrypt workfactor from 12 to 14 when most CPUs can handle and support it
+- tor integration                                                                []
 
 [LOW PRIORITY]
 - keep number of source files in "neroshop/src" at no more than 20               [x]
@@ -53,9 +54,9 @@
 - create neroshop onion address                                                  []
 - create neroshop matrix server                                                  [x]
 - host neroshop on gitlab or something more open-source                          []
-- tor integration                                                                []
 - transfer ownership of neroshop to a team github account                        []
 - allow contributors to create neroshop bindings for other C-based programming languages such as lua, python, ruby, etc. [-]
+- revise neroshop logo
 
 [UI]
 - prevent mouse press from affecting overlapped GUIs     []
@@ -87,6 +88,7 @@
 Font crashes when loading (only a small few fonts are immune from this)
 Keyboard input is received/triggerred multiple times even with a single key press
 Application crashes on logout (this is probably due to the deletion of the user object)
+EVP_PKEY_encrypt() and EVP_PKEY_decrypt() fail 50% of the time and succeeds 50% of the time
 
 [HIRING]
 - hire graphics programmer to fix and optimize rendering code in "renderer.cpp"

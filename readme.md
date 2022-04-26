@@ -10,7 +10,8 @@ An attempt to create an online marketplace for [Monero](https://getmonero.org/) 
 - [Features](#features) <!-- - [Documentation](#documentation)-->
 - [Building neroshop](#building-neroshop)
   - [Dependencies](#dependencies)
-  - [Compiling neroshop from source](#compiling-neroshop-from-source) <!-- - [Setting up PostgreSQL](#setting-up-postgresql)--> <!-- - [License](#license)-->
+  - [Compiling neroshop from source](#compiling-neroshop-from-source)
+  - [Setting up PostgreSQL](#setting-up-postgresql) <!-- - [License](#license)-->
 - [Contact information](#contact)
 
 
@@ -50,19 +51,19 @@ See <a href="https://github.com/larteyoh/neroshop/blob/main/about.txt">about.txt
 | [json](https://github.com/nlohmann/json/)                          | ?               |                        | MIT                                | json parsing (used in conjunction with libcurl)                        |
 | [curl](https://github.com/curl/curl)                               | ?               | `libcurl4-openssl-dev` | curl (inspired by MIT)             | multiprotocol file transfer (used to retrieve currency exchange rates) |
 | [openssl](https://github.com/openssl/openssl)                      | 1.1.1           | `libssl-dev`           | OpenSSL-SSLeay or Apache-2.0       | required by curl for http over ssl (https) connections; email hashing (SHA-2) and message encryption (RSA) |
-| [postgresql](https://www.postgresql.org/)                          | ?               | `postgresql`           | PostgreSQL (similar to BSD or MIT) | client-server database management                                      |
+| [postgresql](https://www.postgresql.org/)                          | ?               | `libpq-dev`            | PostgreSQL (similar to BSD or MIT) | client-server database management                                      |
 | [dokun-ui](external/dokun-ui)                                      | ?               |                        | MIT                                | graphical user interface                                               |
 
 
 ### Compiling neroshop from source
-You can either choose to build neroshop by running `./build.sh` or by following the steps below.
+You can build neroshop by following the steps below.
 
 0. Install dependencies
 ```sh
 sudo -s -- << EOF
 # neroshop, dokun-ui
 sudo apt install libx11-dev libgl1-mesa-dev libglu1-mesa-dev
-sudo apt install postgresql
+sudo apt install libpq-dev postgresql
 # monero, monero-cpp
 sudo apt install git libboost-all-dev cmake g++ make libssl-dev libzmq3-dev libhidapi-dev libudev-dev libusb-1.0-0-dev libfox-1.6-dev # copied from https://github.com/monero-ecosystem/monero-cpp#using-this-library-in-your-project
 sudo apt update && sudo apt install build-essential cmake pkg-config libssl-dev libzmq3-dev libunbound-dev libsodium-dev libunwind8-dev liblzma-dev libreadline6-dev libldns-dev libexpat1-dev libpgm-dev qttools5-dev-tools libhidapi-dev libusb-1.0-0-dev libprotobuf-dev protobuf-compiler libudev-dev libboost-chrono-dev libboost-date-time-dev libboost-filesystem-dev libboost-locale-dev libboost-program-options-dev libboost-regex-dev libboost-serialization-dev libboost-system-dev libboost-thread-dev ccache doxygen graphviz # copied from https://github.com/monero-project/monero#dependencies
@@ -85,7 +86,7 @@ cd ../
 
 3. Build monero-project twice to create libwallet_merged.a and other .a libraries
 ```sh
-cd external/monero-cpp/external/monero-project && make release-static -j$(nproc) && make release-static -j$(nproc)
+cd external/monero-cpp/external/monero-project && make release-static && make release-static
 cd ../../../../
 ```
 
@@ -118,10 +119,16 @@ EOF
 ```
 
 
+### Setting up PostgreSQL
+```
+Coming soon ...
+```
+
+
 ## Contact
 > larteyoh@pm.me
 
 
-[//]: # (git add build.sh CMakeLists.txt external/ include/ readme.md res/neroshop-logo.png res/wallets src/ todo.txt res/ss res/tmp_images about.txt)
+[//]: # (git add CMakeLists.txt external/ include/ readme.md res/neroshop-logo.png res/wallets src/ todo.txt res/ss res/tmp_images about.txt)
 [//]: # (git commit -m"empty commit")
 [//]: # (git push -u origin main)

@@ -326,7 +326,7 @@ void neroshop::User::convert() {
     // convert user from seller to buyer
     UPDATE users SET account_type_id = 1 WHERE id = $1;
     // remove all items listed by this user
-    DELETE FROM inventory WHERE id = $1;
+    DELETE FROM inventory WHERE seller_id = $1;
 }
 */
 ////////////////////

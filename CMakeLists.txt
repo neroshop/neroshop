@@ -360,7 +360,7 @@ set(dokun_ui_src ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/src/libdokun-ui.a
 # neroshop
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include) # includes (.hpp)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/dependencies) # dependencies (dokun, etc.)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/dependencies) # dependencies (monero-cpp, dokun-ui, etc.)
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/src) # sources (.cpp, .a)
 set(neroshop_src src/buyer.cpp #[[src/carrier.cpp]] src/cart.cpp src/catalog.cpp src/client.cpp src/converter.cpp src/db.cpp src/encryptor.cpp src/icon.cpp src/item.cpp src/main.cpp src/message.cpp src/order.cpp src/qr.cpp src/seller.cpp src/server.cpp src/user.cpp src/validator.cpp src/wallet.cpp)
 add_definitions(-DNEROSHOP_DEBUG) # for more detailed debugging, use -DNEROSHOP_DEBUG0
@@ -368,11 +368,13 @@ add_executable(neroshop ${neroshop_src} ${monero_cpp_src} ${bcrypt_src} ${sqlite
 target_link_libraries(neroshop ${curl_src})
 target_link_libraries(neroshop ${monero_src})
 target_link_libraries(neroshop ${dokun_ui_src})
-# daemon (change name to neromon = nero+daemon :D)
+######################################
+# daemon
 add_executable(daemon src/daemon.cpp src/server.cpp) # server-daemon
 #target_link_libraries(daemon ${curl_src} ${OPENSSL_LIBRARIES}) # curl requires both openssl(used in monero) and zlib(used in dokun-ui)
 target_link_libraries(daemon ${dokun_ui_src})
 #set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -ldl") # fixes undefined reference to symbol 'dlsym@@GLIBC_2.2.5' error
+# change name to neromon (nero + daemon :D)
 set_target_properties(daemon PROPERTIES OUTPUT_NAME "neromon")
 ######################################
 # linking

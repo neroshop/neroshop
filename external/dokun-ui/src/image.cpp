@@ -7,7 +7,7 @@ Image::Image() : width(0), height(0), depth(1), channel(4), data (nullptr), x(0)
 {
 #ifdef DOKUN_OPENGL	
 	buffer = 0;	
-    mag_filter = GL_LINEAR; // texture should use nearest while image use linear since image is to intended to be used for GUI so it has to look smooth
+    mag_filter = GL_LINEAR; // texture should use nearest while image use linear since image is intended to be used for GUI so it has to look smooth
     min_filter = GL_LINEAR;
     wrap_s = GL_CLAMP_TO_BORDER;
  	wrap_t = GL_CLAMP_TO_BORDER;

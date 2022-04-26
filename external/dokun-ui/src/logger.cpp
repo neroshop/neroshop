@@ -30,7 +30,7 @@ dokun::Logger::Logger(const String& message, std::string type) // Usage: Logger(
     if(String::lower(type) == "special") std::cout << "\033[0;34m"; // 34=blue
     if(String::lower(type) == "dark"   ) std::cout << "\033[0;30m"; // 30=black
 #endif
-	std::cout << DOKUN_UI_TAG message << std::endl; // print message on console // std::clog, std::cerr - for errors and info, std::cout - for actual program output //Console::write(message.str());
+	std::cout << DOKUN_UI_TAG << message << std::endl; // print message on console // std::clog, std::cerr - for errors and info, std::cout - for actual program output //Console::write(message.str());
 #ifdef DOKUN_LINUX
 	std::cout << "\033[0m"; // restore console color
 #endif
@@ -47,7 +47,7 @@ dokun::Logger::Logger(const String& message, /*const std::string& function,*/ co
     if(String::lower(logger_ptr->type) == "special") std::cout << "\033[0;34m"; // 34=blue
     if(String::lower(logger_ptr->type) == "dark"   ) std::cout << "\033[0;30m"; // 30=black
 #endif
-	std::cout << DOKUN_UI_TAG message << std::endl; // print message on console // std::clog, std::cerr - for errors and info, std::cout - for actual program output //Console::write(message.str());
+	std::cout << DOKUN_UI_TAG << message << std::endl; // print message on console // std::clog, std::cerr - for errors and info, std::cout - for actual program output //Console::write(message.str());
 #ifdef DOKUN_LINUX
 	std::cout << "\033[0m"; // restore console color
 #endif

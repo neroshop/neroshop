@@ -3,6 +3,8 @@
 #define ENCRYPTOR_HPP_NEROSHOP
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
 // neroshop
 #include "debug.hpp"
 ////extern "C" {
@@ -21,8 +23,12 @@ public:
     static bool save_public_key(const EVP_PKEY * pkey);
     static bool save_private_key(const EVP_PKEY * pkey);
     static bool save_key_pair(const EVP_PKEY * pkey);
-    static std::string public_encrypt(const std::string& public_key, const std::string& plain_text); // encrypts plain text with a receiver's public key then returns a cipher text
-    static std::string private_decrypt(const std::string& private_key, const std::string& cipher_text); // decrypts cipher text using the receiver's private key then returns a plain text
+    static std::string public_encrypt(const std::string& public_key, const std::string& plain_text); // encrypts plain text with a receiver's public key then returns a cipher text otherwise it returns an empty string on failure
+    static std::string private_decrypt(const std::string& private_key, const std::string& cipher_text); // decrypts cipher text using the receiver's private key then returns a plain text otherwise it returns an empty string on failure
+    //-----------------------------------------------------------
+    static void public_encrypt_fp(const std::string& public_key, const std::string& plain_text, std::ofstream& file);
+    static std::string private_decrypt_fp(const std::string& private_key, std::ifstream& file);
+    //-----------------------------------------------------------
     static std::string encrypt_message(const EVP_PKEY * key, const std::string& plain_in); // returns encrypted text
     static std::string decrypt_message(const EVP_PKEY * key, const std::string& cipher_in); // returns decrypted text
     // getters
@@ -36,6 +42,7 @@ private:
 // 1. alice sends bob a message that is encrypted using bob's public key
 // 2. bob receives the encrypted message and must decrpyt the message using his own private key
 /* Usage:
+Example 1:
     // the public key
     std::string public_key =
     "-----BEGIN PUBLIC KEY-----\n"
@@ -82,5 +89,15 @@ private:
     std::cout << "message (encrypted): " << cipher_text << std::endl;
     // plain text
     std::string plain_text = Encryptor::private_decrypt(private_key, cipher_text);
+    std::cout << "message (decrypted): " << plain_text << std::endl;
+
+
+Example 2:
+    // write plain text to file in cipher text form
+    std::ofstream wfile ("cipher_text.txt", std::ios::binary);
+    Encryptor::public_encrypt_fp(public_key, "Monero is the king of privacy coins!", wfile);
+    // read cipher text from file in plain text form
+    std::ifstream rfile ("cipher_text.txt", std::ios::binary);
+    std::string plain_text = Encryptor::private_decrypt_fp(private_key, rfile);
     std::cout << "message (decrypted): " << plain_text << std::endl;
 */

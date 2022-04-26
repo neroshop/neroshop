@@ -1,6 +1,8 @@
 #ifndef ICON_HPP_NEROSHOP
 #define ICON_HPP_NEROSHOP
 
+#include <memory> // std::shared_ptr, std::unique_ptr
+// dokun-ui
 #include "image.hpp"
 
 // icons8.com/icon/set/ecommerce/material--white

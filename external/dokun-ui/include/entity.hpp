@@ -15,6 +15,7 @@
 
 #ifdef __cplusplus // if c++
 #include <iostream>
+#include <memory> // std::shared_ptr, std::unique_ptr
 #include <type_traits>
 #include <string> // std::to_string
 #include <lua.hpp>
