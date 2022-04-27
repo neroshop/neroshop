@@ -691,6 +691,8 @@ void neroshop::Catalog::fetch_most_favorited() {
 void neroshop::Catalog::refresh(const neroshop::User& user) {
     // retrieve the cart from the user and store it (for reading only)
     if(!cart) cart = user.get_cart();
+    // if catalog is empty (all boxes without any content), populate it
+    if(view->is_empty()) populate();
     // refresh catalog with updated information
     std::vector<std::vector<Box *>> box_list = view->get_box_list_2d();
 	if(box_list.empty()) return;// if no rows, exit function

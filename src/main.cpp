@@ -287,7 +287,7 @@ int main() {
         neroshop::print("failed to generate key pair", 1);
     }*/
     // cipher text
-    std::string cipher_text = Encryptor::public_encrypt(public_key, "Dude I'm kind of a lolicon, but don't tell anybody pls");
+    std::string cipher_text = Encryptor::public_encrypt(public_key, "Mandatory privacy is true privacy.");
     std::cout << "message (encrypted): " << cipher_text << std::endl;
     // store cipher text in file
     std::ofstream wfile ("cipher_text.txt", std::ios::binary);//std::ifstream file ("cipher_text.txt", std::ios::binary);
@@ -1167,6 +1167,8 @@ int main() {
                     //static_cast<Seller *>(user)->list_item(game, 10, 8.50, "usd"); // temp
                     //static_cast<Seller *>(user)->list_item(ring, 3, 1444.00, "jpy");//122.00, "usd");
                     //static_cast<Seller *>(user)->list_item(game, 7, 69.00, "usd");
+                    // refresh catalog again after listing items (so that product images will appear)
+                    catalog->refresh(*user);
                     /// 2. which users will be able to then add to cart
                     user->add_to_cart(ball, 2);
                     user->add_to_cart(candy, 10);

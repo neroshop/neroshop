@@ -292,24 +292,24 @@ set(monero_cpp_src
     external/monero-cpp/src/wallet/monero_wallet_full.cpp
 )
 ######################################
-# bcrypt
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/libbcrypt) # openwall-bcrypt wrapper (https://github.com/libbcrypt/ | https://www.openwall.com/crypt/) - public domain (CC0/no "license")
+# libbcrypt
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/libbcrypt) # (wrapper for https://www.openwall.com/crypt/)
 set(bcrypt_src external/libbcrypt/crypt_blowfish/crypt_blowfish.c external/libbcrypt/crypt_blowfish/crypt_gensalt.c external/libbcrypt/crypt_blowfish/wrapper.c external/libbcrypt/crypt_blowfish/x86.S external/libbcrypt/bcrypt.c)
 ######################################
 # sqlite3
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/sqlite) # v3.36.0 (https://www.sqlite.org/download.html) - public domain (CC0/no "license")
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/sqlite) # v3.36.0 (https://www.sqlite.org/download.html)
 set(sqlite_src ${CMAKE_CURRENT_SOURCE_DIR}/external/sqlite/sqlite3.c)
 ######################################
 # QR-Code-generator
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/QR-Code-generator/cpp) # v1.7.0 - MIT :D
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/QR-Code-generator/cpp) # v1.7.0
 set(qr_code_generator_src ${CMAKE_CURRENT_SOURCE_DIR}/external/QR-Code-generator/cpp/qrcodegen.cpp) # or ${CMAKE_CURRENT_SOURCE_DIR}/external/QR-Code-generator/c/qrcodegen.c
 ######################################
 # json
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/json/single_include) # v3.10.3 (https://github.com/nlohmann/json/releases/) = MIT :)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/json/single_include) # v3.10.3
 ######################################
 # curl
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/curl/include ${CMAKE_CURRENT_SOURCE_DIR}/external/curl/lib) #include_directories(${CURL_INCLUDE_DIRS}) # where to find curl/curl.h, etc.
-set(curl_src ${CMAKE_CURRENT_SOURCE_DIR}/external/curl/lib/.libs/libcurl.a)# or #/usr/local/lib/libcurl.a) #${CMAKE_CURRENT_SOURCE_DIR}/src/libcurl.a) #${CURL_LIBRARIES})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/curl/include ${CMAKE_CURRENT_SOURCE_DIR}/external/curl/lib) # or include_directories(${CURL_INCLUDE_DIRS}) # where to find curl/curl.h, etc.
+set(curl_src /usr/local/lib/libcurl.a) # or ${CMAKE_CURRENT_SOURCE_DIR}/external/curl/lib/.libs/libcurl.a) # or ${CURL_LIBRARIES})
 add_definitions(-DCURL_STATICLIB)
 ######################################
 # postgresql
@@ -354,7 +354,7 @@ set(x11_src    libX11.a libxcb.a libXau.a libXdmcp.a)
 endif() # -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo
 ######################################
 # dokun-ui
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/include) # include
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/include)
 set(dokun_ui_src ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/src/libdokun-ui.a)#libdokun-ui.a) # definitions added: DOKUN_OPENGL, DOKUN_BUILD_LIBRARY#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui)
 ######################################
 # neroshop
@@ -370,7 +370,7 @@ target_link_libraries(neroshop ${monero_src})
 target_link_libraries(neroshop ${dokun_ui_src})
 ######################################
 # daemon
-add_executable(daemon src/daemon.cpp src/server.cpp) # server-daemon
+add_executable(daemon src/daemon.cpp src/server.cpp)
 #target_link_libraries(daemon ${curl_src} ${OPENSSL_LIBRARIES}) # curl requires both openssl(used in monero) and zlib(used in dokun-ui)
 target_link_libraries(daemon ${dokun_ui_src})
 #set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -ldl") # fixes undefined reference to symbol 'dlsym@@GLIBC_2.2.5' error

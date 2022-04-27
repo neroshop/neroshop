@@ -734,7 +734,7 @@ bool neroshop::User::is_registered() const {
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
 	// if table Users does not exist, that means no accounts are registered
 	if(!DB::Postgres::get_singleton()->table_exists("users")) {
-	    neroshop::print("Failed to retrieve data (Database is ether missing or corrupted or table users simply does not exist)", 1);
+	    ////neroshop::print("Failed to retrieve data (Database is ether missing or corrupted or table users simply does not exist)", 1);
 	    /*DB::Postgres::get_singleton()->finish();*/
 	    return false; // failed to retrieve username
 	}

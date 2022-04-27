@@ -3,12 +3,14 @@
 
 #ifndef CONVERTER_HPP_NEROSHOP // recommended to add unique identifier like _NEROSHOP to avoid naming collision with other libraries
 #define CONVERTER_HPP_NEROSHOP
+
+#include <iostream>
 // curl
 #include <curl/curl.h>
 // nlohmann-json
 #include <nlohmann/json.hpp>
-#include <iostream>
-#include "string.hpp" // dokun-ui
+// dokun-ui
+#include <string.hpp>
 
 //namespace neroshop {
 //enum class tracker {coinmarketcap, coincodex, coingecko};

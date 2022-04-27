@@ -397,6 +397,23 @@ float Grid::get_radius() const {
 }
 ////////////////////
 ////////////////////
+////////////////////
+// boolean
+////////////////////
+bool Grid::is_empty() const {
+    for(auto grid : box_list) {
+        for(auto boxes : grid) {
+            if(boxes->get_gui_count() > 0 || boxes->get_image_count() > 0)
+                return false;
+        }
+    }
+    return true;
+}
+////////////////////
+////////////////////
+////////////////////
+// callbacks
+////////////////////
 void Grid::on_highlight(int rows, int cols) {
 	if(!is_visible() || is_disabled() || !is_active()) return;
 	///////////////////
