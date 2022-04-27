@@ -31,10 +31,9 @@ See <a href="https://github.com/larteyoh/neroshop/blob/main/about.txt">about.txt
 * no other fees (except for miner transaction fees and shipping costs)
 * buy and sell products with monero (and possibly other private-by-default crypto in the near future)
 * automatic subaddress generator (a unique monero address is generated from seller's account each time a buyer places an order)
-* address watcher that tracks incoming txs and notifies both the user and seller
-("awaiting payment ..."[red], "payment incoming"[yellow], "payment received!"[green])
-* seller reputation system (score rating ranging from 0-1)
-* product rating system (star rating ranging from 1-5)
+* wallet listener that listens to incoming txs and notifies both the user and seller ("awaiting payment ..."[red], "payment incoming"[yellow], "payment received!"[green])
+* seller reputation system
+* product rating system
 * centralized database (for now, since I don't know how to implement a decentralized database or p2p network)
 * and much more ...
 
@@ -49,9 +48,9 @@ See <a href="https://github.com/larteyoh/neroshop/blob/main/about.txt">about.txt
 | [sqlite3](https://sqlite.org/)                                     | ?               |                        | public domain                      | database management                                                    |
 | [QR Code generator](https://github.com/nayuki/QR-Code-generator)   | ?               |                        | MIT                                | qr code generation                                                     |
 | [json](https://github.com/nlohmann/json/)                          | ?               |                        | MIT                                | json parsing                                                           |
-| [curl](https://github.com/curl/curl)                               | ?               | `libcurl4-openssl-dev` | curl (inspired by MIT)             | multiprotocol file transfer (used to retrieve currency exchange rates) |
-| [openssl](https://github.com/openssl/openssl)                      | 1.1.1           | `libssl-dev`           | OpenSSL-SSLeay or Apache-2.0       | for curl and monero, sha256 sum and message encryption                 |
-| [postgresql](https://www.postgresql.org/)                          | ?               | `libpq-dev`            | PostgreSQL (similar to BSD or MIT) | client-server database management                                      |
+| [curl](https://github.com/curl/curl)                               | ?               | `libcurl4-openssl-dev` | curl                               | multiprotocol file transfer (used to retrieve currency exchange rates) |
+| [openssl](https://github.com/openssl/openssl)                      | 1.1.1           | `libssl-dev`           | OpenSSL-SSLeay or Apache-2.0       | for curl, sha256 sum and message encryption                            |
+| [postgresql](https://www.postgresql.org/)                          | ?               | `libpq-dev`            | PostgreSQL                         | client-server database management                                      |
 | [dokun-ui](external/dokun-ui)                                      | ?               |                        | MIT                                | graphical user interface                                               |
 
 
@@ -62,7 +61,7 @@ You can build neroshop by following the steps below.
 ```sh
 sudo -s -- << EOF
 # neroshop, dokun-ui
-sudo apt install libx11-dev libgl1-mesa-dev libglu1-mesa-dev libpq-dev postgresql
+sudo apt install libx11-dev libgl1-mesa-dev libglu1-mesa-dev libssl-dev libpq-dev postgresql
 # monero, monero-cpp
 sudo apt install git libboost-all-dev cmake g++ make libssl-dev libzmq3-dev libhidapi-dev libudev-dev libusb-1.0-0-dev libfox-1.6-dev # copied from https://github.com/monero-ecosystem/monero-cpp#using-this-library-in-your-project
 sudo apt update && sudo apt install build-essential cmake pkg-config libssl-dev libzmq3-dev libunbound-dev libsodium-dev libunwind8-dev liblzma-dev libreadline6-dev libldns-dev libexpat1-dev libpgm-dev qttools5-dev-tools libhidapi-dev libusb-1.0-0-dev libprotobuf-dev protobuf-compiler libudev-dev libboost-chrono-dev libboost-date-time-dev libboost-filesystem-dev libboost-locale-dev libboost-program-options-dev libboost-regex-dev libboost-serialization-dev libboost-system-dev libboost-thread-dev ccache doxygen graphviz # copied from https://github.com/monero-project/monero#dependencies
@@ -134,14 +133,14 @@ psql user=postgres
     
 # Change the password of postgres (within the psql shell)
 ALTER USER postgres PASSWORD 'postgres';
+
+# Create a test database
+CREATE DATABASE neroshoptest;
     
 # Leave the psql shell
-\q    
+\q
 
 # You may restore the "pg_hba.conf" values back to the defaults if you wish
-
-# Create the database
-createdb neroshoptest
 ```
 
 
