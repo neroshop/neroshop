@@ -53,6 +53,7 @@ This is currently a work in progress. There is nothing to see here :)
 
 ### Compiling neroshop from source
 1. Install dependencies
+Debian/Ubuntu
 ```sh
 sudo -s -- << EOF
 # prerequisites
@@ -60,8 +61,17 @@ sudo apt install build-essential cmake git
 # neroshop, dokun-ui
 sudo apt install libx11-dev libgl1-mesa-dev libglu1-mesa-dev libssl-dev libpq-dev postgresql
 # monero-cpp (monero)
-sudo apt update && sudo apt install pkg-config libssl-dev libzmq3-dev libunbound-dev libsodium-dev libunwind8-dev liblzma-dev libreadline6-dev libldns-dev libexpat1-dev libpgm-dev qttools5-dev-tools libhidapi-dev libusb-1.0-0-dev libprotobuf-dev protobuf-compiler libudev-dev libboost-chrono-dev libboost-date-time-dev libboost-filesystem-dev libboost-locale-dev libboost-program-options-dev libboost-regex-dev libboost-serialization-dev libboost-system-dev libboost-thread-dev python3 ccache doxygen graphviz # copied from https://github.com/monero-project/monero#dependencies
+sudo apt update && sudo apt install pkg-config libssl-dev libzmq3-dev libunbound-dev libsodium-dev libunwind8-dev liblzma-dev libreadline6-dev libldns-dev libexpat1-dev libpgm-dev qttools5-dev-tools libhidapi-dev libusb-1.0-0-dev libprotobuf-dev protobuf-compiler libudev-dev libboost-chrono-dev libboost-date-time-dev libboost-filesystem-dev libboost-locale-dev libboost-program-options-dev libboost-regex-dev libboost-serialization-dev libboost-system-dev libboost-thread-dev python3 ccache doxygen graphviz
 EOF
+```
+Arch
+```sh
+# prerequisites
+sudo pacman -Sy --needed base-devel cmake git
+# neroshop, dokun-ui
+sudo pacman -Sy --needed libx11 lib32-mesa lib32-glu openssl postgresql
+# monero-cpp (monero)
+sudo pacman -Syu --needed boost openssl zeromq libpgm unbound libsodium libunwind xz readline ldns expat gtest python3 ccache doxygen graphviz qt5-tools hidapi libusb protobuf systemd
 ```
 
 2. Clone submodules and nested submodules
