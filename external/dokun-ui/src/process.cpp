@@ -19,7 +19,7 @@ Process::Process(const std::string& program, const std::string& arg) : Process()
 Process::~Process()
 {
 #ifdef DOKUN_LINUX
-#ifdef DOKUN_DEBUG
+#ifdef DOKUN_DEBUG0
     std::cout << DOKUN_UI_TAG "process (" << name << ") has been deallocated" << std::endl;
 #endif	
 #endif
@@ -117,7 +117,7 @@ bool Process::terminate()
     // this doesn't work either LOL
     //std::system(std::string("kill " + std::to_string(handle)).c_str());    
     handle = -1;// set handle to default value so we know its been properly deleted
-    std::cout << DOKUN_UI_TAG "process (" << name << ") terminated\n";
+    ////std::cout << DOKUN_UI_TAG "process (" << name << ") terminated\n";
     return true;
 #endif	
     return false;

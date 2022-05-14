@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <utility> // std::pair
 // neroshop
 #include "debug.hpp"
 ////extern "C" {

@@ -896,34 +896,32 @@ void neroshop::Item::set_id(unsigned int id) {
     this->id = id;
 }
 ////////////////////
-void neroshop::Item::set_quantity(unsigned int quantity) {
-    std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cart.db";
-    DB::Sqlite3 db(cart_file);
-    if(!db.table_exists("Cart")) {db.close(); return;}
-    db.update("Cart", "item_qty", std::to_string(quantity), "item_id = " + std::to_string(this->id));
-    db.close();
-    ////////////////////////////////
-    // postgresql
-    ////////////////////////////////
-    /*//DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
-    
-    //DB::Postgres::get_singleton()->finish();*/
-    ////////////////////////////////    
+void neroshop::Item::set_quantity(unsigned int quantity, unsigned int cart_id) {
+    // guest cart
+    if(cart_id == 0) {
+        std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cookies.sqlite3";
+        DB::Sqlite3 db(cart_file);
+        if(!db.table_exists("Cart")) {db.close(); return;}
+        db.update("Cart", "item_qty", std::to_string(quantity), "item_id = " + std::to_string(this->id));
+        db.close();
+        return; // exit function
+    }
+    // registered_user cart
+    DB::Postgres::get_singleton()->execute_params("UPDATE cart_item SET item_qty = $1 WHERE cart_id = $2 AND item_id = $3", { std::to_string(quantity), std::to_string(cart_id), std::to_string(this->id) });
 }
 ////////////////////
-void neroshop::Item::set_quantity(unsigned int item_id, unsigned int quantity) {
-    std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cart.db";
-    DB::Sqlite3 db(cart_file);
-    if(!db.table_exists("Cart")) {db.close(); return;}
-    db.update("Cart", "item_qty", std::to_string(quantity), "item_id = " + std::to_string(item_id));
-    db.close();
-    ////////////////////////////////
-    // postgresql
-    ////////////////////////////////
-    /*//DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
-    
-    //DB::Postgres::get_singleton()->finish();*/
-    ////////////////////////////////    
+void neroshop::Item::set_quantity(unsigned int item_id, unsigned int quantity, unsigned int cart_id) {
+    // guest cart
+    if(cart_id == 0) {
+        std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cookies.sqlite3";
+        DB::Sqlite3 db(cart_file);
+        if(!db.table_exists("Cart")) {db.close(); return;}
+        db.update("Cart", "item_qty", std::to_string(quantity), "item_id = " + std::to_string(item_id));
+        db.close();
+        return; // exit function
+    }
+    // registered_user cart
+    DB::Postgres::get_singleton()->execute_params("UPDATE cart_item SET item_qty = $1 WHERE cart_id = $2 AND item_id = $3", { std::to_string(quantity), std::to_string(cart_id), std::to_string(item_id) });
 }
 ////////////////////
 void neroshop::Item::set_name(const std::string& name) {
@@ -1336,36 +1334,34 @@ double neroshop::Item::get_price(unsigned int item_id) { // original price (list
     return item_price;
 }
 ////////////////////
-unsigned int neroshop::Item::get_quantity() const {
-    std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cart.db";
-    DB::Sqlite3 db(cart_file);
-    if(!db.table_exists("Cart")) {db.close(); return 0;}
-    unsigned int item_qty = db.get_column_integer("Cart", "item_qty", "item_id = " + std::to_string(this->id));//std::cout << "item_id: " << item_id << " has a quantity of " << item_qty << std::endl;   
-    db.close();
-    ////////////////////////////////
-    // postgresql
-    ////////////////////////////////
-    /*//DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
-    
-    //DB::Postgres::get_singleton()->finish();*/
-    ////////////////////////////////    
-    return item_qty;
+unsigned int neroshop::Item::get_quantity(unsigned int cart_id) const {
+    // guest cart
+    if(cart_id == 0) {
+        std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cookies.sqlite3";
+        DB::Sqlite3 db(cart_file);
+        if(!db.table_exists("Cart")) {db.close(); return 0;}
+        unsigned int quantity = db.get_column_integer("Cart", "item_qty", "item_id = " + std::to_string(this->id));//std::cout << "item_id: " << item_id << " has a quantity of " << item_qty << std::endl;   
+        db.close();
+        return quantity; // return item_qty then exit function
+    }
+    // registered_user cart
+    unsigned int quantity = DB::Postgres::get_singleton()->get_integer_params("SELECT item_qty FROM cart_item WHERE cart_id = $1 AND item_id = $2", { std::to_string(cart_id), std::to_string(this->id) });
+    return quantity;
 }
 ////////////////////
-unsigned int neroshop::Item::get_quantity(unsigned int item_id) {
-    std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cart.db";
-    DB::Sqlite3 db(cart_file);
-    if(!db.table_exists("Cart")) {db.close(); return 0;}
-    unsigned int item_qty = db.get_column_integer("Cart", "item_qty", "item_id = " + std::to_string(item_id));//std::cout << "item_id: " << item_id << " has a quantity of " << item_qty << std::endl;
-    db.close();
-    ////////////////////////////////
-    // postgresql
-    ////////////////////////////////
-    /*//DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
-    
-    //DB::Postgres::get_singleton()->finish();*/
-    ////////////////////////////////    
-    return item_qty;
+unsigned int neroshop::Item::get_quantity(unsigned int item_id, unsigned int cart_id) {
+    // guest cart
+    if(cart_id == 0) {
+        std::string cart_file = std::string("/home/" + System::get_user() + "/.config/neroshop/") + "cookies.sqlite3";
+        DB::Sqlite3 db(cart_file);
+        if(!db.table_exists("Cart")) {db.close(); return 0;}
+        unsigned int quantity = db.get_column_integer("Cart", "item_qty", "item_id = " + std::to_string(item_id));//std::cout << "item_id: " << item_id << " has a quantity of " << item_qty << std::endl;   
+        db.close();
+        return quantity; // return item_qty then exit function
+    }
+    // registered_user cart
+    unsigned int quantity = DB::Postgres::get_singleton()->get_integer_params("SELECT item_qty FROM cart_item WHERE cart_id = $1 AND item_id = $2", { std::to_string(cart_id), std::to_string(item_id) });
+    return quantity;
 }
 ////////////////////
 ////////////////////
@@ -1738,7 +1734,7 @@ unsigned int neroshop::Item::get_seller_count(unsigned int item_id) {
 ////////////////////
 unsigned int neroshop::Item::get_seller_id() const { // might need a little more work
     // prioritize the seller with the most positive (or good) ratings that sells this item
-    int seller_id = DB::Postgres::get_singleton()->get_integer_params("SELECT inventory.seller_id FROM inventory JOIN seller_ratings ON inventory.seller_id = seller_ratings.seller_id WHERE inventory.item_id = $1 AND score > 0 GROUP BY inventory.seller_id ORDER BY COUNT(score) DESC LIMIT 1;", { std::to_string(this->id) });//int seller_id = DB::Postgres::get_singleton()->get_integer_params("SELECT seller_id FROM inventory WHERE item_id = $1 AND stock_qty > 0;", { std::to_string(this->id) });
+    int seller_id = DB::Postgres::get_singleton()->get_integer_params("SELECT inventory.seller_id FROM inventory JOIN seller_ratings ON inventory.seller_id = seller_ratings.seller_id WHERE inventory.item_id = $1 AND score = 1 GROUP BY inventory.seller_id ORDER BY COUNT(score) DESC LIMIT 1;", { std::to_string(this->id) });//int seller_id = DB::Postgres::get_singleton()->get_integer_params("SELECT seller_id FROM inventory WHERE item_id = $1 AND stock_qty > 0;", { std::to_string(this->id) });
     // if the seller_ratings table does not exist yet or the seller has not yet been rated then we can just get any random seller (or maybe I should get the first seller to list this item??)
     if(seller_id == 0) seller_id = DB::Postgres::get_singleton()->get_integer_params("SELECT seller_id FROM inventory WHERE item_id = $1;", { std::to_string(this->id) });//int seller_id = DB::Postgres::get_singleton()->get_integer_params("SELECT seller_id FROM inventory WHERE item_id = $1 AND stock_qty > 0;", { std::to_string(this->id) });
     return seller_id;
@@ -1746,7 +1742,7 @@ unsigned int neroshop::Item::get_seller_id() const { // might need a little more
 ////////////////////
 unsigned int neroshop::Item::get_seller_id(unsigned int item_id) { // might need a little more work
     // prioritize the seller with the most positive (or good) ratings that sells this item
-    int seller_id = DB::Postgres::get_singleton()->get_integer_params("SELECT inventory.seller_id FROM inventory JOIN seller_ratings ON inventory.seller_id = seller_ratings.seller_id WHERE inventory.item_id = $1 AND score > 0 GROUP BY inventory.seller_id ORDER BY COUNT(score) DESC LIMIT 1;", { std::to_string(item_id) });//int seller_id = DB::Postgres::get_singleton()->get_integer_params("SELECT seller_id FROM inventory WHERE item_id = $1 AND stock_qty > 0;", { std::to_string(this->id) });
+    int seller_id = DB::Postgres::get_singleton()->get_integer_params("SELECT inventory.seller_id FROM inventory JOIN seller_ratings ON inventory.seller_id = seller_ratings.seller_id WHERE inventory.item_id = $1 AND score = 1 GROUP BY inventory.seller_id ORDER BY COUNT(score) DESC LIMIT 1;", { std::to_string(item_id) });//int seller_id = DB::Postgres::get_singleton()->get_integer_params("SELECT seller_id FROM inventory WHERE item_id = $1 AND stock_qty > 0;", { std::to_string(this->id) });
     // if the seller_ratings table does not exist yet or the seller has not yet been rated then we can just get any random seller (or maybe I should get the first seller to list this item??)
     if(seller_id == 0) seller_id = DB::Postgres::get_singleton()->get_integer_params("SELECT seller_id FROM inventory WHERE item_id = $1;", { std::to_string(item_id) });//int seller_id = DB::Postgres::get_singleton()->get_integer_params("SELECT seller_id FROM inventory WHERE item_id = $1 AND stock_qty > 0;", { std::to_string(item_id) });
     return seller_id;
@@ -1861,7 +1857,7 @@ bool neroshop::Item::in_stock(unsigned int item_id) {
 ////////////////////
 bool neroshop::Item::in_cart(/*unsigned int cart_id*/) const {
     std::string user = System::get_user();
-    std::string cart_file = std::string("/home/" + user + "/.config/neroshop/") + "cart.db";
+    std::string cart_file = std::string("/home/" + user + "/.config/neroshop/") + "cookies.sqlite3";
     DB::Sqlite3 db; if(!db.open(cart_file)) {std::cout << "Could not open sql database" << std::endl; return false;}
     if(!db.table_exists("Cart")) {db.close(); return false;} // make sure table exists first
     int id = db.get_column_integer("Cart", "item_id", "item_id = " + std::to_string(this->id));
@@ -1873,7 +1869,7 @@ bool neroshop::Item::in_cart(/*unsigned int cart_id*/) const {
 ////////////////////
 bool neroshop::Item::in_cart(unsigned int item_id/*, unsigned int cart_id*/) {
     std::string user = System::get_user();
-    std::string cart_file = std::string("/home/" + user + "/.config/neroshop/") + "cart.db";
+    std::string cart_file = std::string("/home/" + user + "/.config/neroshop/") + "cookies.sqlite3";
     DB::Sqlite3 db; if(!db.open(cart_file)) {std::cout << "Could not open sql database" << std::endl; return false;}
     if(!db.table_exists("Cart")) {db.close(); return false;} // make sure table exists first
     int id = db.get_column_integer("Cart", "item_id", "item_id = " + std::to_string(item_id));

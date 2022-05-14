@@ -28,7 +28,12 @@ bool neroshop::Validator::register_user(const std::string& username, const std::
     // saving (save user information to database)
     save_user(username, pw_hash, (!opt_email.empty()) ? email_hash : "");
 #ifdef NEROSHOP_DEBUG
-    NEROSHOP_TAG_OUT std::cout << get_date() << "\033[1;32;49m" << " account registered" << "\033[0m" << std::endl;
+	auto now = std::chrono::system_clock::now();
+    auto in_time_t = std::chrono::system_clock::to_time_t(now);
+	std::stringstream ss;
+	std::string format = "%Y-%m-%d  %H:%M:%S %p";
+	ss << std::put_time(std::localtime(&in_time_t), format.c_str());
+    NEROSHOP_TAG_OUT std::cout << ss.str() << "\033[1;32;49m" << " account registered" << "\033[0m" << std::endl;
 #endif    
     neroshop::print((!username.empty()) ? std::string("Welcome to neroshop, " + username) : "Welcome to neroshop", 4);
     return true;
@@ -155,7 +160,12 @@ bool neroshop::Validator::login(const std::string& username, const std::string& 
         return false;
     }
 #ifdef NEROSHOP_DEBUG
-    NEROSHOP_TAG_OUT std::cout << get_date() << "\033[1;32;49m" << " successfully logged in" << "\033[0m" << std::endl;
+	auto now = std::chrono::system_clock::now();
+    auto in_time_t = std::chrono::system_clock::to_time_t(now);
+	std::stringstream ss;
+	std::string format = "%Y-%m-%d  %H:%M:%S %p";
+	ss << std::put_time(std::localtime(&in_time_t), format.c_str());
+    NEROSHOP_TAG_OUT std::cout << ss.str() << "\033[1;32;49m" << " successfully logged in" << "\033[0m" << std::endl;
 #endif
     neroshop::print((!username.empty()) ? std::string("Welcome back, " + username) : "Welcome back", 4);
 	return true; // default value
@@ -203,7 +213,12 @@ bool neroshop::Validator::login_with_email(const std::string& email, const std::
     }	
     // save the raw email within the application (for later use)
 #ifdef NEROSHOP_DEBUG
-    NEROSHOP_TAG_OUT std::cout << get_date() << "\033[1;32;49m" << " successfully logged in" << "\033[0m" << std::endl;
+	auto now = std::chrono::system_clock::now();
+    auto in_time_t = std::chrono::system_clock::to_time_t(now);
+	std::stringstream ss;
+	std::string format = "%Y-%m-%d  %H:%M:%S %p";
+	ss << std::put_time(std::localtime(&in_time_t), format.c_str());
+    NEROSHOP_TAG_OUT std::cout << ss.str() << "\033[1;32;49m" << " successfully logged in" << "\033[0m" << std::endl;
 #endif
     neroshop::print((!username.empty()) ? std::string("Welcome back, " + username) : "Welcome back", 4);
 	return true; // default value
@@ -212,14 +227,6 @@ bool neroshop::Validator::login_with_email(const std::string& email, const std::
 void neroshop::Validator::change_pw(const std::string& old_pw, const std::string& new_pw/*, const std::string& confirm_new_pw*/) 
 {}
 ////////////////////
-std::string neroshop::Validator::get_date(std::string format) // get current time and date
-{
-	auto now = std::chrono::system_clock::now();
-    auto in_time_t = std::chrono::system_clock::to_time_t(now);
-	std::stringstream ss;
-	ss << std::put_time(std::localtime(&in_time_t), format.c_str());
-	return ss.str();
-}
 ////////////////////
 bool neroshop::Validator::validate_username(const std::string& username) 
 {

@@ -18,6 +18,15 @@ void test_function() {
     neroshop::print("THIS BUTTON IS PRESSED", 4);
 }
 ////////////////////
+static std::string get_date(std::string format) // get current time and date
+{
+	auto now = std::chrono::system_clock::now();
+    auto in_time_t = std::chrono::system_clock::to_time_t(now);
+	std::stringstream ss;
+	ss << std::put_time(std::localtime(&in_time_t), format.c_str());
+	return ss.str();
+}
+////////////////////
 // neromon (daemon-server) functions
 Process * server_process;
 void start_neromon_server() {
@@ -308,6 +317,7 @@ int main() {
     // plain text
     std::string plain_text = Encryptor::private_decrypt(private_key, cipher_text_ss.str());
     std::cout << "message (decrypted): " << plain_text << std::endl;
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////	
     // Monero	
     // get config: network_type, ip, port, data_dir, etc.
@@ -738,7 +748,7 @@ int main() {
     // date and time
     Label date_display;
     date_display.set_font(*new dokun::Font(DOKUN_DEFAULT_FONT_PATH));
-    date_display.set_string(Validator::get_date("%Y-%m-%d  %H:%M:%S %p"));
+    date_display.set_string(get_date("%Y-%m-%d  %H:%M:%S %p"));
     date_display.set_position(window.get_client_width() - date_display.get_width(), window.get_client_height() - date_display.get_height());
     // icon_settings
     Vector4 default_icon_color = Vector4(255, 255, 255, 1.0); // will get image's color instead if box_type is an icon
@@ -1154,7 +1164,7 @@ int main() {
                     }*/
                     std::cout << "**********************************************************\n";
                     /// 0. Convert to a seller and register an item
-                    user->convert(); // convert to seller
+                    ////user->convert(); // convert to seller
                     //Item::register(...);
                     /// 1. Seller will list some items or increase stock (for already listed items)
                     //static_cast<Seller *>(user)->set_stock_quantity(1, 250);
@@ -1167,8 +1177,6 @@ int main() {
                     //static_cast<Seller *>(user)->list_item(game, 10, 8.50, "usd"); // temp
                     //static_cast<Seller *>(user)->list_item(ring, 3, 1444.00, "jpy");//122.00, "usd");
                     //static_cast<Seller *>(user)->list_item(game, 7, 69.00, "usd");
-                    // refresh catalog again after listing items (so that product images will appear)
-                    catalog->refresh(*user);
                     /// 2. which users will be able to then add to cart
                     user->add_to_cart(ball, 2);
                     user->add_to_cart(candy, 10);
@@ -1211,6 +1219,9 @@ int main() {
                     //user->remove_from_favorites(ball);//(.get_id());//(1);
                     //user->remove_from_favorites(candy.get_id());//(.get_id());//(1);
                     //user->clear_favorites();
+                    //////////////////////////
+                    // refresh catalog again after listing items (so that product images will appear) or after purchasing an item (so that verified_purchase_icon will appear)
+                    catalog->refresh(*user);                    
                     //////////////////////////
                     std::cout << "**********************************************************\n";
                     // clear all GUI focus
@@ -1611,7 +1622,7 @@ int main() {
             monero_icon->draw();
             // date and time
             date_display.set_position(window.get_client_width() - date_display.get_width() - 10, window.get_client_height() - date_display.get_height() - 10);
-            date_display.set_string(Validator::get_date("%Y-%m-%d  %l:%M:%S %p"));
+            date_display.set_string(get_date("%Y-%m-%d  %l:%M:%S %p"));
             date_display.draw();
             /////////////////////////////////////
             // DON'T open database in loop!!!
@@ -1706,12 +1717,14 @@ int main() {
             if(search_button->is_pressed()) {
                 if(!search_bar->is_empty()) std::cout << "searching for \033[1;93m" << search_bar->get_text() << "\033[0m" << std::endl;
                 if(search_bar->has_focus()) search_bar->set_focus(false);
+                //catalog->get_page()->hide();
             }
             // on enter pressed (with focus on search_bar)
             // will search for products, users (sellers), etc.
             if(search_bar->has_focus() && Keyboard::is_pressed(DOKUN_KEY_RETURN)) {
                 if(!search_bar->is_empty()) std::cout << "searching for \033[1;93m" << search_bar->get_text() << "\033[0m" << std::endl;
                 search_bar->set_focus(false);
+                //catalog->get_page()->hide();
             }
             // adjust search_bar size on window resize
             // edit has a bug when its resized - everytime the edit's size changes, the cursor positions gets messed up and everything is ruined :/

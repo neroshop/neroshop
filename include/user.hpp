@@ -1,6 +1,4 @@
-// filename: .hpp
-//#pragma once // use #ifndef _HPP, #define _HPP, and #endif instead for portability
-
+// filename: user.hpp
 #ifndef USER_HPP_NEROSHOP // recommended to add unique identifier like _NEROSHOP to avoid naming collision with other libraries
 #define USER_HPP_NEROSHOP
 
@@ -9,7 +7,7 @@
 #include "order.hpp"
 #include "client.hpp"
 
-enum class user_account_type : unsigned int { guest, buyer, seller }; // guest is 0 by default // enum classes help avoid polluting the scope (either global or namespace) //https://stackoverflow.com/a/32953854 // https://stackoverflow.com/questions/9630744/should-you-declare-enums-inside-or-outside-a-class // user_account_type ut = user_account_type::buyer;
+enum class user_account_type : unsigned int { guest, buyer, seller }; // guest is 0 by default
 
 namespace neroshop {
 class User { // base class of seller and buyer // sellers can buy and sell while buyers (including guests) can only buy but cannot sell
@@ -50,13 +48,15 @@ public:
     neroshop::Cart * get_cart() const;
     neroshop::Order * get_order(unsigned int index) const;
     unsigned int get_order_count() const;
+    std::vector<neroshop::Order *> get_order_list() const;
     neroshop::Item * get_favorites(unsigned int index) const;
     unsigned int get_favorites_count() const;
+    std::vector<neroshop::Item *> get_favorites_list() const;
     // boolean
     bool is_guest() const;
     bool is_buyer() const;
     bool is_seller() const;
-    bool is_online() const; // online does not mean logged in
+    bool is_online() const; // online does not mean logged in // checks if user has internet, and user is logged_in
     bool is_registered() const;
     static bool is_registered(const std::string& name);
     bool is_logged() const; // the same for every derived class // user has entered their login information
@@ -66,9 +66,6 @@ public:
     bool has_purchased(const neroshop::Item& item); // checks if an item was previously purchased or not
     bool has_favorited(unsigned int item_id); // checks if an item is in a user's favorites or wishlist
     bool has_favorited(const neroshop::Item& item); // checks if an item is in a user's favorites or wishlist
-    // a virtual function can be overridden in a derived class
-    // a pure virtual function means derived class must have its own definition
-    // final can only be used on a virtual function, even one that is inherited // https://en.cppreference.com/w/cpp/language/final
     // callbacks
     void on_registration(const std::string& name); // on registering an account
     //virtual User * on_login(const std::string& username);// = 0; // load all data: orders, reputation/ratings, settings // for all users
@@ -93,18 +90,7 @@ private:
     bool logged; // determines whether user is logged in or not//bool online;
     std::unique_ptr<Cart> cart;
     std::vector<std::shared_ptr<neroshop::Order>> order_list;
-    std::vector<std::shared_ptr<neroshop::Item>> favorites_list; // I get errors while trying to use unqieu_ptr so I'm stuck with a shared_ptr container
+    std::vector<std::shared_ptr<neroshop::Item>> favorites_list; // I get the error "/usr/include/c++/9/bits/stl_uninitialized.h:127:72: error: static assertion failed: result type must be constructible from value type of input range" while trying to use unique_ptr so I'm stuck with a shared_ptr container for now
 };
 }
-#endif // check if user has internet, and user is logged_in
-/*
-// converting a user to a seller
-        db->column("Users", "account_type", "TEXT", "ADD");
-        db->update("Users", "account_type", "'Seller'", "id = 3");
- 
-                //std::cout << "is_user_logged_in: " << user->is_logged() << std::endl;
-                //std::cout << "is_user_registered: " << user->is_registered() << std::endl;
-                //std::cout << "is_user_guest: " << user->is_guest() << std::endl;
-                //std::cout << "is_user_buyer: " << user->is_buyer() << std::endl;
-                //std::cout << "is_user_seller: " << user->is_seller() << std::endl;           
-*/
+#endif

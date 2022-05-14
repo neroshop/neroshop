@@ -31,8 +31,8 @@ public:
     Image * get_upload_image(int index) const;
     int get_image_count() const;
     // getters
- 	unsigned int get_quantity() const;
-	static unsigned int get_quantity(unsigned int item_id);
+ 	unsigned int get_quantity(unsigned int cart_id) const;
+	static unsigned int get_quantity(unsigned int item_id, unsigned int cart_id);
     unsigned int get_id() const; // product id
     std::string get_name() const;
     static std::string get_name(unsigned int item_id);
@@ -129,8 +129,8 @@ private:
     //void set_seller_price(unsigned int seller_id, double seller_price);
     //static void set_seller_price(unsigned int item_id, unsigned int seller_id, double seller_price); // seller_price is set by the seller
     // (all setters should be private)
-    void set_quantity(unsigned int quantity);
-    static void set_quantity(unsigned int item_id, unsigned int quantity); // item qty is managed by cart
+    void set_quantity(unsigned int quantity, unsigned int cart_id);
+    static void set_quantity(unsigned int item_id, unsigned int quantity, unsigned int cart_id); // item qty is managed by cart
     void set_name(const std::string& name);
     static void set_name(unsigned int item_id, const std::string& name);      
     void set_description(const std::string& description);

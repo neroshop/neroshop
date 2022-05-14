@@ -286,9 +286,7 @@ void GUI::generate_shader(void)
 		gui_shader->link();*/
 		// Shader::prepare() is equivalent to the code after the last "shader->set_source(src, shader_idx)" and does all three: compile() + attach() + link()
 	    ////std::cout << DOKUN_UI_TAG "GUI shaders have been generated (" << gui_shader->get_program() << ")" << std::endl;//std::cout << "number of shaders attached to shader object program: " << gui_shader->get_shader_count() << std::endl;
-	}		
-	// assign the shader to the object
-	//gui_element->set_shader(*GUI::gui_shader);
+	}
 }
 /////////////  
 /////////////  

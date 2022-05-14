@@ -234,7 +234,7 @@ void neroshop::Order::create_guest_order(const neroshop::Cart& cart, const std::
         neroshop::Item * item = cart.get_item(i);
         unsigned int item_id  = cart.get_item(i)->get_id();
         std::string item_name = DB::Postgres::get_singleton()->get_text_params("SELECT name FROM item WHERE id = $1", { std::to_string(item_id) });//cart.get_item(i)->get_name();
-        unsigned int item_qty = cart.get_item(i)->get_quantity();//DB::Postgres::get_singleton()->get_integer("SELECT item_qty FROM cart or cart_item WHERE item_id = $1", { std::to_string(item_id) });
+        unsigned int item_qty = cart.get_item(i)->get_quantity(0);//DB::Postgres::get_singleton()->get_integer("SELECT item_qty FROM cart or cart_item WHERE item_id = $1", { std::to_string(item_id) });
         // if seller_id is not specified (0), then choose a random seller who is selling the same product, but it MUST be in stock!!
         int seller_id = DB::Postgres::get_singleton()->get_integer_params("SELECT seller_id FROM inventory WHERE item_id = $1 AND stock_qty > 0", { std::to_string(item_id) });
         if(seller_id == 0) { std::cout << "item seller not found"; DB::Postgres::get_singleton()->execute("ROLLBACK TO before_order_creation_savepoint;"); /*DB::Postgres::get_singleton()->finish();*/ return; }
@@ -309,8 +309,8 @@ void neroshop::Order::create_guest_order(const neroshop::Cart& cart, const std::
     for(int i = 0; i < cart.get_contents_count(); i++) {
         neroshop::Item * item = cart.get_item(i);
         std::string item_name = DB::Postgres::get_singleton()->get_text_params("SELECT name FROM item WHERE id = $1", { std::to_string(item->get_id()) });//unsigned int item_qty = db.get_column_integer("Cart", "item_qty", "item_id = " + std::to_string(item_id));
-        std::cout << ((i > 0) ? "                              " : "") << "\033[0;94m" + item_name << " (x" << item->get_quantity() << ")\033[0m" << std::endl;
-        item->set_quantity(0); // reset all item quantity to 0 (now that order has been completed) // db.update("Cart", "item_qty", std::to_string(quantity), "item_id = " + std::to_string(item_id));
+        std::cout << ((i > 0) ? "                              " : "") << "\033[0;94m" + item_name << " (x" << item->get_quantity(0) << ")\033[0m" << std::endl;
+        item->set_quantity(0, 0); // reset all item quantity to 0 (now that order has been completed) // db.update("Cart", "item_qty", std::to_string(quantity), "item_id = " + std::to_string(item_id));
     }
     // empty cart after completing order
     const_cast<neroshop::Cart&>(cart).empty();

@@ -1,6 +1,4 @@
-// filename: .hpp
-//#pragma once // use #ifndef _HPP, #define _HPP, and #endif instead for portability
-
+// filename: converter.hpp
 #ifndef CONVERTER_HPP_NEROSHOP // recommended to add unique identifier like _NEROSHOP to avoid naming collision with other libraries
 #define CONVERTER_HPP_NEROSHOP
 
@@ -12,7 +10,6 @@
 // dokun-ui
 #include <string.hpp>
 
-//namespace neroshop {
 //enum class tracker {coinmarketcap, coincodex, coingecko};
 // https://www.coingecko.com/api/documentations/v3
 namespace neroshop {

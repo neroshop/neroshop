@@ -61,6 +61,7 @@ void neroshop::Catalog::initialize() {
     // initialize sorting and filtering box
     if(sort_box.get()) {neroshop::print("catalog is already initialized", 2);return;}
     sort_box = std::unique_ptr<Box>(new Box());
+    setup_filters();
     // add labels, check boxes, radios, etc.
     // department or category
     // release date: newer, older
@@ -76,8 +77,9 @@ void neroshop::Catalog::initialize() {
     // condition: new, used
     // price: <$10, <$20, <$30, <$40
     // deals
+    // seller
     // availability: include out of stock [x]
-    sort_box->hide(); // only show when user looks up an item using the search bar
+    ////sort_box->hide(); // only show when user looks up an item using the search bar
     ////////////////////
 }
 ////////////////////
@@ -95,10 +97,10 @@ void neroshop::Catalog::update() {
 ////////////////////
 void neroshop::Catalog::draw() {
     //std::cout << "view_pos: " << view->get_position() << std::endl;
-    tooltip->hide(); // hide tooltip by default, unless mouse is over icon
+    tooltip->hide(); // hide tooltip by default, and only show when mouse is over icon
     // put this in "on_draw" function
 	std::vector<std::vector<Box *>> box_list = view->get_box_list_2d();
-	if(box_list.empty()) return;// if no rows, exit function
+	if(box_list.empty()) return; // if no rows, exit function
 	for(auto rows : box_list) {
 	    for(auto boxes : rows) {
 	        // so long as product page is visible, grid boxes cannot be active or maybe I could hide the grid boxes?
@@ -115,7 +117,7 @@ void neroshop::Catalog::draw() {
 	        ////Image * product_star_2 = boxes->get_image(5); // image 6
 	        ////Image * product_star_3 = boxes->get_image(6); // image 7
 	        ////Image * product_star_4 = boxes->get_image(7); // image 8
-	        ////Image * monero_ticker = boxes->get_image(8); // image 9
+	        ////Image * monero_symbol = boxes->get_image(8); // image 9
 	        ///////////////////// temporary code below
 	        // WORKS! :D
 	        // set stars' color on mouse hover
@@ -146,7 +148,7 @@ void neroshop::Catalog::draw() {
 	        ////GUI * price_label = boxes->get_gui(2);
 	        ////price_label->set_relative_position(10, product_star_0->get_relative_y() + product_star_0->get_height() + 10);
 	        // monero ticker
-	        ////monero_ticker->set_relative_position(10, price_label->get_relative_y() + price_label->get_height() + 8);
+	        ////monero_symbol->set_relative_position(10, price_label->get_relative_y() + price_label->get_height() + 8);
 	        // price label xmr
 	        ////GUI * price_label_xmr = boxes->get_gui(2); // third gui
 	        ////price_label_xmr->set_relative_position();
@@ -179,29 +181,106 @@ void neroshop::Catalog::draw() {
 	    }
 	}    
     /////////////////////////////////
-    // set filter box size and position
-    sort_box->set_size(sort_box->get_width(), view->get_full_height());
-    sort_box->set_position(50, view->get_y());
+    // set sorting/filter box size and position
+    sort_box->set_size(250, view->get_full_height()); //h=450 // height is random but should be long enough to fit all text
+    sort_box->set_position(20, 90);
     /////////////////////////////////
+    // to-do: set a minimum size for the window (there's no maximum)
+    // set current page size and position
     int window_width = static_cast<dokun::Window *>(Factory::get_window_factory()->get_object(0))->get_client_width();
     int window_height = static_cast<dokun::Window *>(Factory::get_window_factory()->get_object(0))->get_client_height();
-    current->set_width(window_width - 40); // edge must line up with cart_button's edge
-    current->set_height(window_height - 100 - 10); // - 10 to not block the date display and sync status label
+    // make sure current_page is not smaller than its contents
+    current->set_size(std::max<int>(850, window_width - 40), // edge must line up with cart_button's edge
+        std::max<int>(500, window_height - 100 - 10)); // - 10 to not block the date display and sync status label//std::cout << "page size: " << current->get_size() << std::endl;
     current->set_position((window_width / 2) - (current->get_width() / 2), view->get_y() - 10);//90// - 10 to cover the grid outline
     /////////////////////////////////
     // if cart_add_button is pressed
-    GUI * cart_add_button = current->get_gui(current->get_gui_count() - 1);
+    Button * cart_add_button = dynamic_cast<Button *>(Entity::get_entity_by_name("cart_add_button"));//GUI * cart_add_button = current->get_gui(current->get_gui_count() - 1);
+    Spinner * quantity_spinner = dynamic_cast<Spinner *>(Entity::get_entity_by_name("quantity_spinner"));
     if(cart_add_button->is_pressed()) {
         // get the current item_id and the quantity specified by the user
-        Spinner * quantity_spinner = dynamic_cast<Spinner *>(Entity::get_entity_by_name("quantity_spinner"));
         int current_item_id = current->get_component("current_item_id")->to_integer();
         int quantity = quantity_spinner->get_value();
         // add the item to the cart
         cart->add(current_item_id, quantity);
     }
+    // if close_button is pressed
+    Button * close_button = dynamic_cast<Button *>(Entity::get_entity_by_name("close_button"));
+    if(close_button->is_pressed()) {
+        current->hide();
+    }
+    /////////////////////////////////
+    // when the image_box has a width of 305, the image is restored to its original size for some reason ...
+    // it most likely has something to do with the aspect ratio we get from the Image::scale_to_fit and Image::get_aspect_ratio functions
+    // this only happens with images whose width and height are equal in value
+    GUI * product_image_box = current->get_gui(0);
+    /*product_image_box->set_size(
+        std::max<int>(250, current->get_width() / 3),
+        std::max<int>(250, current->get_height() / 2)
+    );
+    std::cout << "image_box size: " << product_image_box->get_size() << std::endl;*/
+    // product_image
+    Image * product_image_0 = static_cast<Box *>(current->get_gui(0))->get_image(0);//current->get_image(0);
+    //product_image_0->scale_to_fit(product_image_box->get_width(), product_image_box->get_height());
+    /////////////////////////////////
+    // update current child guis' relative positions here
+    // rather than updating it in Catalog::update_page - only when product image is pressed
+    // ...
+    //////////////////////////////////////////////////////////////
+    // update relative positions - place this before "draw" call (inside loop)
+    // relative_position - <gui-name>
+    // relative_position - product_image_box
+    product_image_box->set_relative_position(20, 20);
+    // relative_position - product_name_label
+    dokun::Label * product_name_label = dynamic_cast<dokun::Label *>(Entity::get_entity_by_name("product_name_label"));
+    product_name_label->set_relative_position(product_image_box->get_relative_x() + product_image_box->get_width() + 20, product_image_box->get_relative_y() + 10);
+    // relative_position - product_stars
+    Image * star_0 = current->get_image(0);//star_0->set_color(0, 54, 89);
+    star_0->set_relative_position(product_name_label->get_relative_x(), product_name_label->get_relative_y() + product_name_label->get_height() + 10);
+    Image * star_1 = current->get_image(1);
+    star_1->set_relative_position(star_0->get_relative_x() + star_0->get_width() + 1, star_0->get_relative_y()); // same y_rel_pos as first star
+    Image * star_2 = current->get_image(2);
+    star_2->set_relative_position(star_1->get_relative_x() + star_1->get_width() + 1, star_0->get_relative_y()); // same y_rel_pos as first star
+    Image * star_3 = current->get_image(3);
+    star_3->set_relative_position(star_2->get_relative_x() + star_2->get_width() + 1, star_0->get_relative_y()); // same y_rel_pos as first star
+    Image * star_4 = current->get_image(4);
+    star_4->set_relative_position(star_3->get_relative_x() + star_3->get_width() + 1, star_0->get_relative_y()); // same y_rel_pos as first star*/
+    // relative_position - product_reviews_label
+    dokun::Label * product_reviews_label = dynamic_cast<dokun::Label *>(Entity::get_entity_by_name("product_reviews_label"));
+    product_reviews_label->set_relative_position(star_4->get_relative_x() + star_4->get_width() + 10, star_4->get_relative_y() + (star_4->get_height() - product_reviews_label->get_height()) / 2);
+    // relative_position - price_label
+    dokun::Label * price_label = dynamic_cast<dokun::Label *>(Entity::get_entity_by_name("price_label"));
+    price_label->set_relative_position(star_0->get_relative_x(), star_0->get_relative_y() + star_0->get_height() + 10);
+    // relative_position - monero_symbol
+    // monero_symbol should be index 5 if there's only 1 product image, otherwise ?
+    Image * monero_symbol = current->get_image(5);
+    ////monero_symbol->set_relative_position(price_label->get_relative_x() + price_label->get_width()/* + 10*/, price_label->get_relative_y() + (price_label->get_height() - monero_symbol->get_height()) / 2); // next to price_label
+    monero_symbol->set_relative_position(price_label->get_relative_x(), price_label->get_relative_y() + price_label->get_height() + 8); // under price_label
+    // relative_position - price_label_xmr
+    dokun::Label * price_label_xmr = dynamic_cast<dokun::Label *>(Entity::get_entity_by_name("price_label_xmr"));
+    price_label_xmr->set_relative_position(monero_symbol->get_relative_x() + monero_symbol->get_width() + 5, monero_symbol->get_relative_y() + (monero_symbol->get_height() - price_label_xmr->get_height()) / 2); // next to monero_symbol // <= use this if monero_symbol is visible
+    //price_label_xmr->set_relative_position(price_label->get_relative_x(), price_label->get_relative_y() + price_label->get_height() + 10); // under price_label, assuming that monero_symbol is not present
+    // relative_position - stock_status_label
+    dokun::Label * stock_status_label = dynamic_cast<dokun::Label *>(Entity::get_entity_by_name("stock_status_label"));
+    ////stock_status_label->set_relative_position(price_label->get_relative_x(), price_label->get_relative_y() + price_label->get_height() + 10); // under price label
+    stock_status_label->set_relative_position(price_label->get_relative_x(), price_label_xmr->get_relative_y() + price_label_xmr->get_height() + 10); // under monero symbol and price_label_xmr
+    // relative_position - seller_label
+    dokun::Label * seller_label = dynamic_cast<dokun::Label *>(Entity::get_entity_by_name("seller_label"));
+    seller_label->set_relative_position(stock_status_label->get_relative_x(), stock_status_label->get_relative_y() + stock_status_label->get_height() + 10);
+    // relative_position - condition_label
+    dokun::Label * condition_label = dynamic_cast<dokun::Label *>(Entity::get_entity_by_name("condition_label"));
+    condition_label->set_relative_position(seller_label->get_relative_x(), seller_label->get_relative_y() + seller_label->get_height() + 10);
+    // relative_position - cart_add_button
+    // make sure cart button is not wider than the page
+    cart_add_button->set_width(std::min<int>(current->get_width() - 20, 500));
+    cart_add_button->set_relative_position((current->get_width() - cart_add_button->get_width()) / 2, current->get_height() - cart_add_button->get_height() - 20);//(((current->get_width() + (product_image_box->get_relative_x() + product_image_box->get_width())) - cart_add_button->get_width()) / 2, current->get_height() - cart_add_button->get_height() - 20);
+    // relative_position - quantity_spinner
+    quantity_spinner->set_relative_position(cart_add_button->get_relative_x() + (cart_add_button->get_width() / 2) - (quantity_spinner->get_full_width() / 2), cart_add_button->get_relative_y() - quantity_spinner->get_height() - 10);
+    // relative_position - close_button
+    close_button->set_relative_position(current->get_width() - close_button->get_width() - 20, 20);    
     /////////////////////////////////
     // if ESCAPE is pressed, hide the product page
-    if(dokun::Keyboard::is_pressed(DOKUN_KEY_C/*DOKUN_KEY_ESCAPE*/)) current->hide();
+    ////if(dokun::Keyboard::is_pressed(DOKUN_KEY_ESCAPE)) current->hide();
     /////////////////////////////////
     view->draw();
     tooltip->draw();
@@ -224,16 +303,14 @@ void neroshop::Catalog::setup_page() {
     // 1. catalog view (contains only the product image, name, and price)
     // 2. product page (contains product image, name, price, stars, favorite_button and info_iconcart_add_button, quantity_spinner, etc.)
     // 3. cart / checkout page
+    ////current->set_color(100, 100, 100, 1.0);
     // give the current page a default component "item_id" or "current_item_id" of value zero
-    current->add_component(*new Component("current_item_id", static_cast<int>(0)));
-    std::cout << "component 'current_item_id' (" << current->get_component("current_item_id")->to_integer() << ") added to page\n";
+    current->add_component(*new Component("current_item_id", static_cast<int>(0)));//std::cout << "component current_item_id (" << current->get_component("current_item_id")->to_integer() << ") added to page\n";
     // product_page ------------------------------------------------------------------
     // PRODUCT IMAGE BORDER BOX
     Box * product_image_box = new Box();
-    ////product_image_box->set_color(255, 255, 255, 1.0);
-    product_image_box->set_outline(true);
-    product_image_box->set_outline_color(0, 0, 0, 1.0);
-    product_image_box->set_size(500, 500);
+    product_image_box->set_color(220, 220, 220, 1.0);//product_image_box->set_outline(true);product_image_box->set_outline_color(0, 0, 0, 1.0);
+    product_image_box->set_size(250, 250);//(500, 500);//
     product_image_box->set_relative_position(20, 20);
     // PRODUCT IMAGE
     Image * product_image = new Image(Icon::get["image_gallery"]->get_data(), 64, 64, 1, 4);
@@ -293,7 +370,7 @@ void neroshop::Catalog::setup_page() {
         // update positions of stars
         product_stars[i]->set_relative_position(product_stars[i - 1]->get_relative_x() + product_stars[i - 1]->get_width() + 1, product_stars[0]->get_relative_y()); // same y_rel_pos as first star
     }
-    // STARS LABEL (FROM THE CALCULATED AVERAGE STARS)
+    // PRODUCT RATINGS LABEL (FROM THE CALCULATED AVERAGE STARS)
     float ratings_count = 0; // star rating/review count
     dokun::Label * product_reviews_label = new dokun::Label((ratings_count > 0) ? std::to_string(ratings_count) + " ratings" : "No ratings yet");//("(0 ratings)");
     product_reviews_label->set_color(16, 16, 16, 1.0);
@@ -306,20 +383,35 @@ void neroshop::Catalog::setup_page() {
     price_label->set_relative_position(product_stars[0]->get_relative_x(), product_stars[0]->get_relative_y() + product_stars[0]->get_height() + 10);
     price_label->add_component(*new Component("name", std::string("price_label")));
     current->add_gui(*price_label);
+    // CRYPTOCURRENCY SYMBOL
+    Image * monero_symbol = new Image(Icon::get["monero_symbol_white"]->get_data(), 64, 64, 1, 4);
+    monero_symbol->set_outline(true);
+    monero_symbol->set_outline_thickness(0.9);
+    monero_symbol->set_outline_color(255, 255, 255, 1.0);
+    monero_symbol->resize(16, 16);//monero_symbol->set_visible(false);//monero_symbol->add_component(*new Component("name", std::string("monero_symbol")));//images aren't entities so they cannot have components
+    current->add_image(*monero_symbol);
+    // PRICE LABEL (XMR)
+    dokun::Label * price_label_xmr = new dokun::Label(String::to_string_with_precision("0.000000000000", 12) + " XMR");
+    price_label_xmr->set_color(32, 32, 32, 1.0);//(0, 0, 0, 1.0);//price_label_xmr->set_visible(false);
+    price_label_xmr->add_component(*new Component("name", std::string("price_label_xmr")));
+    current->add_gui(*price_label_xmr);
     // STOCK STATUS
     dokun::Label * stock_status_label = new dokun::Label("Out of stock.");
     stock_status_label->set_color(214, 31, 31, 1.0);
-    stock_status_label->set_relative_position(price_label->get_relative_x(), price_label->get_relative_y() + price_label->get_height() + 10);
     stock_status_label->add_component(*new Component("name", std::string("stock_status_label")));
     current->add_gui(*stock_status_label);
     // PRODUCT SELLER(S)
     dokun::Label * seller_label = new dokun::Label("sold by: unknown");
     seller_label->set_color(0, 0, 0, 1.0);
-    seller_label->set_relative_position(stock_status_label->get_relative_x(), stock_status_label->get_relative_y() + stock_status_label->get_height() + 10);
     seller_label->add_component(*new Component("name", std::string("seller_label")));
     current->add_gui(*seller_label);
     // CONTACT SELLER OPTION
     // RATE SELLER OPTION
+    // CONDITION LABEL
+    dokun::Label * condition_label = new dokun::Label("NEW");
+    condition_label->set_color(0, 0, 0, 1.0);
+    condition_label->add_component(*new Component("name", std::string("condition_label")));
+    current->add_gui(*condition_label);
     // COLOR PALETTE - UP TO 12
     // TYPE/MODEL/STYLE/SIZE PICKER
     // ESTIMATED DELIVERY DATE
@@ -377,6 +469,13 @@ void neroshop::Catalog::setup_page() {
     cart_add_button->set_color(82, 70, 86); //(55, 25, 255);//bluish-purple//(42, 25, 255);//(50, 25, 255);//(30, 30, 255);
     cart_add_button->add_component(*new Component("name", std::string("cart_add_button"))); // if you don't specificy the datatype of the component then you will run into some errors later on
     current->add_gui(*cart_add_button);
+    // CLOSE BUTTON
+    Button * close_button = new Button("X");
+    close_button->get_label()->set_alignment("center");
+    close_button->set_color(214, 31, 31, 1.0);
+    close_button->set_size(40, 36);
+    close_button->add_component(*new Component("name", std::string("close_button")));
+    current->add_gui(*close_button);
     // place all set_pos() and set_rel_pos() functions in loop for it to be frequently updated in real-time!
 }
 ////////////////////
@@ -388,37 +487,48 @@ void neroshop::Catalog::update_page(int item_id) {
     //////////////////////////////////////////////////////////////
     // get product_image_box's image
     Box * product_image_box = static_cast<Box *>(current->get_gui(0));
-    Image * product_image_0 = static_cast<Box *>(current->get_gui(0))->get_image(0);//current->get_image(0)->
+    Image * product_image_0 = static_cast<Box *>(current->get_gui(0))->get_image(0);//current->get_image(0)
     Button * cart_add_button = dynamic_cast<Button *>(Entity::get_entity_by_name("cart_add_button"));if(!cart_add_button) throw std::runtime_error("cart_add_button is nullptr");//current->get_gui(current->get_gui_count() - 1);
     Spinner * quantity_spinner = dynamic_cast<Spinner *>(Entity::get_entity_by_name("quantity_spinner"));
+    dokun::Label * product_name_label = dynamic_cast<dokun::Label *>(Entity::get_entity_by_name("product_name_label"));
+    dokun::Label * product_reviews_label = dynamic_cast<dokun::Label *>(Entity::get_entity_by_name("product_reviews_label"));
+    Button * close_button = dynamic_cast<Button *>(Entity::get_entity_by_name("close_button"));
+    dokun::Label * price_label = dynamic_cast<dokun::Label *>(Entity::get_entity_by_name("price_label"));
+    dokun::Label * price_label_xmr = dynamic_cast<dokun::Label *>(Entity::get_entity_by_name("price_label_xmr"));
+    dokun::Label * stock_status_label = dynamic_cast<dokun::Label *>(Entity::get_entity_by_name("stock_status_label"));
+    // class * _ = dynamic_cast<class *>(Entity::get_entity_by_name("?"));
     //////////////////////////////////////////////////////////////
-    // copy product thumbnail image to page
+    // copy product thumbnail image from view to current page
     Box * box = get_box_by_item_id(item_id);
     product_image_0->copy(*box->get_image(2));
     product_image_0->set_alignment("center");
     product_image_0->scale_to_fit(product_image_box->get_width(), product_image_box->get_height()); // if image is larger than box, scale it to fit box//product_image_0->resize(128, 128);//std::cout << "page_image size: " << product_image_0->get_size() << std::endl;//std::cout << "page_image scale: " << product_image_0->get_scale() << std::endl;
     //////////////////////////////////////////////////////////////
-    // update properties (including relative positions in case window is resized)
-    // property - label strings
-    current->get_label(0)->set_string(box->get_label(0)->get_string());//(product.get_name());
-    current->get_label(1)->set_string((product.get_ratings_count() <= 0) ? "No ratings yet" : std::to_string(product.get_ratings_count()) + " ratings");
-    current->get_label(2)->set_string(box->get_label(2)->get_string());//(String::to_string_with_precision(product.get_price(), 2));
-    current->get_label(3)->set_string((product.in_stock()) ? "In stock." : "Out of stock." );
-    // to-do: find a way to get the sellers with the best reputations
-    std::string seller_name = DB::Postgres::get_singleton()->get_text_params("SELECT name FROM users WHERE id = $1", { std::to_string(product.get_seller_id()) });
+    // update properties (excluding relative positions)
+    // update product name label
+    product_name_label->set_string(box->get_label(0)->get_string());//(product.get_name());
+    // update product stars
+    // ...
+    // update product ratings label
+    product_reviews_label->set_string((product.get_ratings_count() <= 0) ? "No ratings yet" : std::to_string(product.get_ratings_count()) + " ratings");
+    // update product price label
+    price_label->set_string(box->get_label(2)->get_string());// + " | ");//(String::to_string_with_precision(product.get_price(), 2));
+    // update price_label_xmr
+    ////price_label_xmr->set_string();
+    // update stock status label
+    stock_status_label->set_string((product.in_stock()) ? "In stock." : "Out of stock.");
+    stock_status_label->set_color((product.in_stock()) ? Vector4(49, 101, 44, 1.0) : Vector4(214, 31, 31, 1.0));
+    // update seller label
+    // gets the seller_id with the most positive reviews
+    int seller_id = product.get_seller_id();
+    std::string seller_name = DB::Postgres::get_singleton()->get_text_params("SELECT name FROM users WHERE id = $1", { std::to_string(seller_id) });
     int seller_count = product.get_seller_count();//Item::get_seller_ids(item_id);//product.get_seller_ids();// TEMPORARY DELETE SOON
-    current->get_label(4)->set_string((seller_count > 1) ? "sold by: " + seller_name + " and " + std::to_string(seller_count - 1) + " other seller(s)" : "sold by: " + seller_name);
-    // property - color
-    current->get_label(3)->set_color((product.in_stock()) ? Vector4(49, 101, 44, 1.0) : Vector4(214, 31, 31, 1.0));
-    // property - quantity
-    // reset the quantity_spinner's value to the default: 1
-    quantity_spinner->set_value(1);
-    //////////////////////////////////////////////////////////////
-    // update relative positions
-    // relative_position - cart_add_button
-    cart_add_button->set_relative_position(((current->get_width() + (product_image_box->get_relative_x() + product_image_box->get_width())) - cart_add_button->get_width()) / 2, current->get_height() - cart_add_button->get_height() - 20);    
-    // relative_position - quantity_spinner
-    quantity_spinner->set_relative_position(cart_add_button->get_relative_x() + (cart_add_button->get_width() / 2) - (quantity_spinner->get_full_width() / 2), cart_add_button->get_relative_y() - quantity_spinner->get_height() - 10);
+    current->get_label(5)->set_string((seller_count > 1) ? "sold by: " + seller_name + " and " + std::to_string(seller_count - 1) + " other seller(s)" : "sold by: " + seller_name);
+    // update condition label
+    std::string condition = DB::Postgres::get_singleton()->get_text_params("SELECT condition FROM inventory WHERE item_id = $1 AND seller_id = $2", { std::to_string(item_id), std::to_string(seller_id) });
+    current->get_label(6)->set_string("condition: " + condition);
+    // update quantity spinner
+    quantity_spinner->set_value(1); // reset the quantity_spinner's value to the default: 1
     //////////////////////////////////////////////////////////////
     ////Image product_image_temp = *product.get_upload_image(1);*/ // first image in array // will use this later
     /*if(!product_image_temp) {
@@ -437,6 +547,58 @@ void neroshop::Catalog::update_page(int item_id) {
   //--------------------------------------------------
   //--------------------------------------------------
 */  
+}
+////////////////////
+void neroshop::Catalog::setup_filters() {
+    // SORT_BOX
+    sort_box->set_color(32, 32, 32, 1.0);
+    // CATEGORY
+    // ...
+    // CONDITION LABEL
+    dokun::Label * condition_label = new dokun::Label("Condition");
+    condition_label->set_relative_position(20, 20);
+    sort_box->add_gui(*condition_label);
+    // CONDITION (NEW)
+    Toggle * condition_new_checkbox = new Toggle();
+    condition_new_checkbox->set_checkbox();//condition_new_checkbox->set_size(20, 20); // checkmark looks ugly at (15, 15)  :U
+    //condition_new_checkbox->set_foreground_color(sort_box->get_color()); //checkmark_color
+    //condition_new_checkbox->set_radius(10);
+    //condition_new_checkbox->set_outline(true);//condition_new_checkbox->set_outline_thickness(1);
+    //condition_new_checkbox->set_outline_color(192, 192, 192, 1.0);
+    condition_new_checkbox->set_relative_position(condition_label->get_relative_x(), condition_label->get_relative_y() + condition_label->get_height() + 10); // put in loop as well
+    sort_box->add_gui(*condition_new_checkbox);
+    dokun::Label * condition_new_label = new dokun::Label("New");
+    condition_new_label->set_relative_position(condition_new_checkbox->get_relative_x() + condition_new_checkbox->get_width() + 5, condition_new_checkbox->get_relative_y() + (condition_new_checkbox->get_height() - condition_new_label->get_height()) / 2);
+    sort_box->add_gui(*condition_new_label);
+    // CONDITION (USED)
+    Toggle * condition_used_checkbox = new Toggle(); // coming soon: renewed or refurbished
+    condition_used_checkbox->set_checkbox();
+    condition_used_checkbox->set_relative_position(condition_label->get_relative_x(), condition_new_checkbox->get_relative_y() + condition_new_checkbox->get_height() + 5);
+    sort_box->add_gui(*condition_used_checkbox);
+    dokun::Label * condition_used_label = new dokun::Label("Used");
+    condition_used_label->set_relative_position(condition_used_checkbox->get_relative_x() + condition_used_checkbox->get_width() + 5, condition_used_checkbox->get_relative_y() + (condition_used_checkbox->get_height() - condition_used_label->get_height()) / 2);
+    sort_box->add_gui(*condition_used_label);
+    // PRICE
+    dokun::Label * price_label = new dokun::Label("Price");
+    price_label->set_relative_position(20, sort_box->get_gui(sort_box->get_gui_count() - 2)->get_relative_y() + sort_box->get_gui(sort_box->get_gui_count() - 2)->get_height() + 20);
+    sort_box->add_gui(*price_label);
+    // 5 price options
+    // AVAILABILITY - include out of stock
+    /*// sort_by tag
+    dokun::Label * _label = new dokun::Label("?");
+    _label->set_relative_position(20, sort_box->get_gui(sort_box->get_gui_count() - 2)->get_relative_y() + sort_box->get_gui(sort_box->get_gui_count() - 2)->get_height() + 20);
+    sort_box->add_gui(*_label);
+    // sort_by tag options
+    Toggle * checkbox_ = new Toggle();
+    ->set_checkbox();
+    //->set_size(15, 15);
+    ->set_relative_position(, ); // put in loop as well
+    sort_box->add_gui(*);
+    // sort_by tag option label
+    dokun::Label * _label = new dokun::Label("?");
+    _label->set_relative_position(_checkbox->get_relative_x() + _checkbox->get_width() + 5, _checkbox->get_relative_y() + (_checkbox->get_height() - _label->get_height()) / 2);
+    sort_box->add_gui(*_label);
+    */
 }
 ////////////////////
 ////////////////////
@@ -583,17 +745,17 @@ void neroshop::Catalog::fetch_inventory() {
             if(!product_stars[0]->is_visible()) price_label->set_relative_position(10, product_name_label->get_relative_y() + product_name_label->get_height() + 10);//15);
             box->add_gui(*price_label);
             // cryptocurrency ticker (symbol)
-            Image * monero_ticker = new Image(Icon::get["monero_symbol_white"]->get_data(), 64, 64, 1, 4);
-            monero_ticker->set_outline(true);
-            monero_ticker->set_outline_thickness(0.2);//(1.2);
-            monero_ticker->resize(16, 16);
-            monero_ticker->set_visible(false);
-            monero_ticker->set_relative_position(10, price_label->get_relative_y() + price_label->get_height() + 8);
-            box->add_image(*monero_ticker);
+            Image * monero_symbol = new Image(Icon::get["monero_symbol_white"]->get_data(), 64, 64, 1, 4);
+            monero_symbol->set_outline(true);
+            monero_symbol->set_outline_thickness(0.2);//(1.2);
+            monero_symbol->resize(16, 16);
+            monero_symbol->set_visible(false);
+            monero_symbol->set_relative_position(10, price_label->get_relative_y() + price_label->get_height() + 8);
+            box->add_image(*monero_symbol);
             // price display xmr
             dokun::Label * price_label_xmr = new dokun::Label(String::to_string_with_precision(sales_price_xmr, 12) + " XMR");
-            if(!monero_ticker->is_visible()) price_label_xmr->set_relative_position(10, price_label->get_relative_y() + price_label->get_height() + 10 );//(monero_ticker->get_relative_x() + monero_ticker->get_width() + 5, monero_ticker->get_relative_y() + (monero_ticker->get_height() - price_label->get_height()) / 2);// <= use this if monero_symbol is visible
-            if(monero_ticker->is_visible()) price_label_xmr->set_relative_position(monero_ticker->get_relative_x() + monero_ticker->get_width() + 5, monero_ticker->get_relative_y() + (monero_ticker->get_height() - price_label->get_height()) / 2);
+            if(!monero_symbol->is_visible()) price_label_xmr->set_relative_position(10, price_label->get_relative_y() + price_label->get_height() + 10 );//(monero_symbol->get_relative_x() + monero_symbol->get_width() + 5, monero_symbol->get_relative_y() + (monero_symbol->get_height() - price_label->get_height()) / 2);// <= use this if monero_symbol is visible
+            if(monero_symbol->is_visible()) price_label_xmr->set_relative_position(monero_symbol->get_relative_x() + monero_symbol->get_width() + 5, monero_symbol->get_relative_y() + (monero_symbol->get_height() - price_label->get_height()) / 2);
             price_label_xmr->set_color(0, 0, 0, 1.0);
             price_label_xmr->set_visible(false);
             box->add_gui(*price_label_xmr);
@@ -756,15 +918,12 @@ Grid * neroshop::Catalog::get_grid() const {
 ////////////////////
 Box * neroshop::Catalog::get_box(int row, int column) const {
     if(!view.get()) throw std::runtime_error("catalog view is not initialized");
-    if(view->get_box_list_2d().empty()) throw std::runtime_error("The catalog is empty!");
     return view->get_box(row, column);
 }
 ////////////////////
 Box * neroshop::Catalog::get_box(int index) const {
     if(!view.get()) throw std::runtime_error("catalog view is not initialized");
-    std::vector<Box *> box_list_1d = view->get_box_list_1d();
-    if(box_list_1d.empty()) throw std::runtime_error("The catalog is empty!");
-    return box_list_1d[index];
+    return view->get_box(index);
 }
 ////////////////////
 Box * neroshop::Catalog::get_box_by_item_id(unsigned int item_id) const {

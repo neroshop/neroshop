@@ -1,6 +1,4 @@
-// filename: .hpp
-//#pragma once // use #ifndef _HPP, #define _HPP, and #endif instead for portability
-
+// filename: neroshop.hpp
 #ifndef NEROSHOP_HPP
 #define NEROSHOP_HPP
 #define APP_NAME      "neroshop"
@@ -11,8 +9,7 @@
 #define APP_VERSION_MINOR "1"
 #define APP_VERSION_PATCH "0"
 #define APP_VERSION APP_VERSION_MAJOR "." APP_VERSION_MINOR "." APP_VERSION_PATCH
-// https://web.getmonero.org/legal/#copyright
-// the neroshop team are in no way affiliated with the monero team
+
 #include "debug.hpp"
 #include "wallet.hpp" // causes error depending on where you place this header
 #include "config.hpp"
@@ -29,8 +26,7 @@
 #include "order.hpp"
 #include "message.hpp"
 #include "catalog.hpp"
-//#include "server.hpp" // for daemon to use
+//#include "server.hpp" // for neroshop daemon to use
 #include "client.hpp"
 #include "encryptor.hpp"
-
 #endif

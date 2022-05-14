@@ -22,7 +22,10 @@ extern "C" {       // run as c code
 #define DOKUN_DEFAULT_FONT_PATH "C:/Windows/Fonts/ariblk.ttf"
 #endif
 #ifdef __gnu_linux__
+// Debian/Ubuntu
 #define DOKUN_DEFAULT_FONT_PATH "/usr/share/fonts/X11/Type1/c0583bt_.pfb"//"/usr/share/fonts/X11/Type1/c0419bt_.pfb"//"/usr/share/fonts/X11/Type1/c0582bt_.pfb"
+// Arch
+////#define DOKUN_DEFAULT_FONT_PATH "/usr/share/fonts/liberation/LiberationMono-Regular.ttf"
 #endif
 #ifdef __macosx__
 #define DOKUN_DEFAULT_FONT_PATH "System/Library/Fonts/HelveticaNeue.dfont"

@@ -23,23 +23,44 @@ public:
     #endif
 	    return current;
 	}
+	// home dir
+	static std::string get_home_dir() {
+	#ifdef __gnu_linux__
+	    std::string home_dir = getenv("HOME"); // /home/bob // in #include <stdlib.h>
+	    if(home_dir.empty()) {
+	        // if getenv fails, try getpwuid
+	        std::cout << "::getenv failed. Trying ::getpwuid" << std::endl;
+	        std::string user = get_user();
+	        if(user.empty()) return ""; // return empty string if ::getpwuid fails too
+	        home_dir = "/home/" + user;
+	    }
+	    return home_dir;
+	#endif    
+	    return ""; // return empty string by default
+	}
     // user
 	static std::string get_user()
 	{
 	#ifdef DOKUN_WIN32 // ??
 	    char username[UNLEN+1];
         DWORD username_len = UNLEN+1;
-        if(GetUserName(username, &username_len) == 0)
-			std::cerr << "Failure to get username" << std::endl;
+        if(GetUserName(username, &username_len) == 0) {
+			std::cerr << "::GetUserName failed" << std::endl;
+		    return ""; // return empty string if ::GetUserName fails
+		}
 		return std::string(username);
 	#endif
 	#ifdef __gnu_linux__ // works!
 	    uid_t uid = geteuid();
 		struct passwd * pw = getpwuid(uid);
         if(!pw) {
+            std::cout << "::getpwuid failed. Trying ::getlogin" << std::endl;
 			// try a different function if getpwuid() fails
 			std::string username = getlogin();
-			if(username.empty()) { std::cerr << "Failure to get username" << std::endl; return ""; } // return empty string
+			if(username.empty()) { 
+			    std::cerr << "::getlogin failed" << std::endl; 
+			    return ""; // return empty string if ::getlogin fails
+			}
 			return username;
 			// or
 			//char username_r[256];
@@ -49,7 +70,7 @@ public:
 	    }
         return std::string(pw->pw_name);
 	#endif
-	    return std::string("");
+	    return ""; // return empty string by default
 	}
 	// visual
 	static int get_display_count()

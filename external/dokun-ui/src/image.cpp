@@ -327,7 +327,7 @@ void Image::generate()
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, static_cast<GLsizei>(width), static_cast<GLsizei>(height), 0, static_cast<GLenum>(format), GL_UNSIGNED_BYTE, static_cast<GLvoid *>(data)); // pass texture width, height, and data to OpenGL
         glGenerateMipmap(GL_TEXTURE_2D); // generate mipmaps
 		glBindTexture(GL_TEXTURE_2D, 0); // unbind buffer
-	#ifdef DOKUN_DEBUG
+	#ifdef DOKUN_DEBUG0
 	    if(glIsTexture(buffer)) std::cout << "image buffer_id " << buffer << " generated\n";//dokun::Logger("Image" + String(Factory::get_image_factory()->get_location(this)).str() + " buffer " + std::to_string(buffer) + " generated");
     #endif	
 	}
@@ -355,7 +355,7 @@ void Image::destroy()
 	    unsigned int buffer_temp = buffer;
         glDeleteTextures(1, static_cast<GLuint *>(&buffer));
         buffer = 0;	// set to null so that we know the buffer is deleted for sure
-	#ifdef DOKUN_DEBUG
+	#ifdef DOKUN_DEBUG0
 	    if(!glIsTexture(buffer_temp)) std::cout << "image buffer_id " << buffer_temp << " destroyed\n";// confirm that buffer is really deleted//dokun::Logger("Image::destroy(): " + String(Factory::get_image_factory()->get_location(this)).str() + " buffer destroyed");
     #endif
 #endif	

@@ -14,6 +14,7 @@
 #include <grid.hpp>
 #include <spinner.hpp>
 #include <button.hpp>
+#include <toggle.hpp>
 //#include <.hpp>
 // STL
 #include <iostream>
@@ -61,6 +62,7 @@ private:
     neroshop::Cart * cart; // the cart that is currently being served by the catalog // will copy the user's cart (we don't have to delete the cart since the User::cart's unique_ptr owns it)
     void initialize();
     void update(); // updates size and width of boxes
+    //void on_draw();
 public:
     // catalog view (grid) functions -----------------------------
     void populate(); // fills / populates category view with items in inventory
@@ -77,6 +79,8 @@ public:
     // catalog current product page (box) functions --------------
     void setup_page();
     void update_page(int item_id);
+    // sorting/filtering box functions ---------------------------
+    void setup_filters();
     // views: list_view (1 column, multiple rows), grid_view (multiple rows, multiple columns)
 };
 }

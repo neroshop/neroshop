@@ -1,16 +1,13 @@
-// filename: .hpp
-//#pragma once // use #ifndef _HPP, #define _HPP, and #endif instead for portability
-
+// filename: validator.hpp
 #ifndef VALIDATOR_HPP_NEROSHOP // recommended to add unique identifier like _NEROSHOP to avoid naming collision with other libraries
 #define VALIDATOR_HPP_NEROSHOP
 
 #include <iostream>
 #include <string>
-#include <utility> // std::pair
-#include <regex>   // std::regex
-#include <cctype>  // isspace, isalpha, isalnum, etc.
-#include <fstream> // std::ofstream, std::ifstream
-#include <chrono>  // std::chrono
+#include <regex> // std::regex
+#include <cctype> // isspace, isalpha, isalnum, etc.
+//#include <fstream> // std::ofstream, std::ifstream
+#include <chrono> // std::chrono
 #include <iomanip> //std::put_time, std::setfill, std::setw
 // neroshop
 #include "db.hpp"
@@ -31,7 +28,6 @@ public:
     static bool login_with_email(const std::string& email, const std::string& password);
     static void save_user(const std::string& username, const char pw_hash[BCRYPT_HASHSIZE], std::string email_hash = "");
     static void change_pw(const std::string& old_pw, const std::string& new_pw/*, const std::string& confirm_new_pw*/);
-    static std::string get_date(std::string format="[%Y-%m-%d  %l:%M:%S %p]"); // %H changed to %l
     // boolean
     static bool validate_username(const std::string& username); // for registration
     static bool validate_password(const std::string& password); // for registration
@@ -62,16 +58,4 @@ passwords:
 // at least one digit, (?=.*?[0-9])
 // at least one special character, (?=.*?[#?!@$%^&*-])
 // minimum eight in length .{8,} (with the anchors) 
-
-examples:
-	std::string email = "layter@pm.me";
-	std::string hash0;
-	Validator::generate_sha256_hash("layter@pm.me", hash0);
-	std::cout << "sha256_hash (legacy): " << hash0 << std::endl;
-	//=> b4055e9e571ea8acf49e937c102901f3f29f50046c9157c4b1849b05bc050bd8
-	std::string hash1;
-    Validator::generate_sha256_hash_evp(email, hash1);
-    std::cout << "sha256_hash (EVP): " << hash1 << std::endl;
-    //=> b4055e9e571ea8acf49e937c102901f3f29f50046c9157c4b1849b05bc050bd8
-    std::cout << "verify email: " << Validator::validate_sha256_hash(email, "b4055e9e571ea8acf49e937c102901f3f29f50046c9157c4b1849b05bc050bd8") << std::endl;
 */

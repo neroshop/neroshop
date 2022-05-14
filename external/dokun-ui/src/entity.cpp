@@ -153,8 +153,7 @@ void Entity::remove_component(const Component& component)
 {
 	for (int i = 0; i < component_list.size(); i++)
 	{
-		if(component_list[i].get() == &const_cast<Component&>(component)) 
-		{
+		if(component_list[i].get() == &const_cast<Component&>(component)) {
 			component_list.erase(component_list.begin() + i);
 		}
 	}
@@ -164,8 +163,7 @@ void Entity::remove_component(const std::string& name)
 {
 	for (int i = 0; i < component_list.size(); i++)
 	{
-		if(component_list[i]->get_name() == name) 
-		{	
+		if(component_list[i]->get_name() == name) {	
 			component_list.erase(component_list.begin() + i);
 		}
 	}	
@@ -349,18 +347,15 @@ int Entity::set_polygon_mode(lua_State *L)
 }
 ///////////
 ///////////
-Component * Entity::get_component(int index)const
+Component * Entity::get_component(int index) const
 {
-    if(component_list.empty()) return nullptr;
-    if(index > (component_list.size() - 1)) throw std::out_of_range("invalid or out of range container index");
+    if(index > (component_list.size() - 1)) throw std::out_of_range("Entity::get_component: invalid or out of range container index");
     return component_list[index].get();
 }
 ///////////
-Component * Entity::get_component(const std::string& name)const
+Component * Entity::get_component(const std::string& name) const
 {
-    if(component_list.empty()) return nullptr;
-	for(auto components : component_list) 
-	{
+	for(auto components : component_list) {
 		if(components->get_name() == name) 
 			return components.get();
 	}
@@ -435,9 +430,9 @@ int Entity::get_count(const std::string& what)const
 	if(String::lower(what).find("component") != std::string::npos)
 		return component_list.size();
 	if(String::lower(what).find("shader") != std::string::npos)
-		return (shader != nullptr); // should return 1 ... I think :O
+		return (shader.get() != nullptr); // should return 1 ... I think :O
 	if(String::lower(what).find("script") != std::string::npos)
-		return 1;
+		return (script.get() != nullptr);
 	return 0;
 }
 ///////////
@@ -525,8 +520,7 @@ int Entity::is_visible(lua_State *L)
 ///////////
 bool Entity::has_component(const std::string& name)const
 {
-	for(auto components : component_list) 
-	{
+	for(auto components : component_list) {
 		if(components->get_name() == name) 
 			return true;
 	}
@@ -535,8 +529,7 @@ bool Entity::has_component(const std::string& name)const
 ///////////
 bool Entity::has_component(const Component& component)const
 {
-	for(auto components : component_list) 
-	{
+	for(auto components : component_list) {
 		if(components.get() == &const_cast<Component&>(component)) 
 			return true;
 	}

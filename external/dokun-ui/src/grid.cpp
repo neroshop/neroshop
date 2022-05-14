@@ -294,19 +294,19 @@ int Grid::get_block(lua_State *L)
 }
 ////////////////////
 Box * Grid::get_box(int row, int column) const {
-    if(box_list.empty()) return nullptr; // if no rows, return nullptr
-	if(box_list.size() < row + 1) throw std::out_of_range("Attempt to access invalid location in grid::get_box(int, int)");
+	if(box_list.size() < row + 1) throw std::out_of_range("Grid::get_box: invalid or out of range row index"); // or if(row > (box_list.size() - 1))
+	if(box_list[row].size() < column + 1) throw std::out_of_range("Grid::get_box: invalid or out of range column index"); // or if(column > (box_list[row].size() - 1))
 	return box_list[row][column].get();
 }
 ////////////////////
 Box * Grid::get_box(int index) const {
     std::vector<Box *> box_list_1d = {};
-    for(auto r : box_list)//for(int r = 0; r < this->rows/*or box_list.size()*/; r++) // block.size() = rows
-	{
+    for(auto r : box_list) {//for(int r = 0; r < this->rows/*or box_list.size()*/; r++) { // block.size() = rows
 		for(auto c : r) {//for(int c = 0; c < this->columns/*or box_list[r].size()*/; c++) { // block[r] = items in row r	
             box_list_1d.push_back(c.get());//(box_list[r][c].get());  
         }
     }
+    if(index > (box_list_1d.size() - 1)) throw std::out_of_range("Grid::get_box: invalid or out of range index");
     return box_list_1d[index];
 }
 ////////////////////

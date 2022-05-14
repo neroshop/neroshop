@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.4.1)
 
-project(neroshop) # tested on Ubuntu 20.04 LTS (focal) with gcc (Ubuntu 9.3.0-17ubuntu1~20.04) 9.3.0
+project(neroshop) # tested on Ubuntu 20.04 LTS (focal) with gcc (Ubuntu 9.3.0-17ubuntu1~20.04) 9.3.0, manjaro-xfce-21.2.6-220416-linux515 with gcc 11
 
 set(VERSION_MAJOR "0")
 set(VERSION_MINOR "1")
@@ -18,7 +18,8 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     set(CMAKE_CXX_COMPILER /usr/bin/g++)
     set(CMAKE_CXX_FLAGS    "-no-pie"   ) # no position independent executable (PIE) # NEROSHOP_GCC 
     include_directories(/usr/include/          )
-    link_directories(/usr/lib/x86_64-linux-gnu/)
+    link_directories(/usr/lib/x86_64-linux-gnu/) # Debian/Ubuntu
+    link_directories(/usr/lib/                 ) # Arch
 endif()
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     set(MACOSX TRUE)
@@ -35,7 +36,7 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang") # check if clang is set as the 
     set(CMAKE_C_COMPILER   /usr/bin/clang  )
     set(CMAKE_CXX_COMPILER /usr/bin/clang++)
     set(CMAKE_CXX_FLAGS    "-w"            ) #-w=ignores all warnings
-    set(CMAKE_CXX_FLAGS    "-fno-PIE"      ) #-fPIE, -fno-PIE, -fPIC, -fno-PIC, -nopie, -no-pie
+    #set(CMAKE_CXX_FLAGS    "-fno-PIE"      ) #-fPIE, -fno-PIE, -fPIC, -fno-PIC, -nopie, -no-pie
     message("using clang")
     include_directories(/usr/include/          )
     link_directories(/usr/lib/x86_64-linux-gnu/)    
@@ -54,7 +55,6 @@ set(MONERO_PROJECT "${CMAKE_SOURCE_DIR}/external/monero-cpp/external/monero-proj
 set(MONERO_PROJECT_SRC "${MONERO_PROJECT}/src")
 
 # header includes
-include_directories(src/)
 include_directories("${MONERO_PROJECT}/contrib/epee/include")
 include_directories("${MONERO_PROJECT}/external/")
 include_directories("${MONERO_PROJECT}/external/easylogging++")
@@ -106,21 +106,6 @@ find_package(Boost 1.58 QUIET REQUIRED COMPONENTS chrono date_time filesystem pr
 message(STATUS "Using Boost include dir at ${Boost_INCLUDE_DIR}")
 include_directories(${Boost_INCLUDE_DIR})
 add_definitions(-DBOOST_BIND_GLOBAL_PLACEHOLDERS) # to ignore warnings
-
-if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    set(pthread_src /usr/lib/x86_64-linux-gnu/libpthread.so) # has to be linked dynamically or will cause "undefined reference to `_dl_stack_flags'" error
-    set(boost_src 
-        /usr/lib/x86_64-linux-gnu/libboost_chrono.a 
-        /usr/lib/x86_64-linux-gnu/libboost_date_time.a 
-        /usr/lib/x86_64-linux-gnu/libboost_filesystem.a 
-        /usr/lib/x86_64-linux-gnu/libboost_program_options.a 
-        /usr/lib/x86_64-linux-gnu/libboost_regex.a 
-        /usr/lib/x86_64-linux-gnu/libboost_serialization.a 
-        /usr/lib/x86_64-linux-gnu/libboost_wserialization.a 
-        /usr/lib/x86_64-linux-gnu/libboost_system.a 
-        /usr/lib/x86_64-linux-gnu/libboost_thread.a 
-        ${pthread_src}) # /usr/lib/ also contains these files
-endif()
 ######################################
 # OpenSSL - sudo apt-get install libssl-dev
 if (APPLE AND NOT IOS)
@@ -170,15 +155,19 @@ if (APPLE AND NOT IOS)
   endif()
 endif()
 
-#find_package(HIDAPI REQUIRED)
-
-message(STATUS "Using HIDAPI include dir at ${HIDAPI_INCLUDE_DIR}")
-add_definitions(-DHAVE_HIDAPI)
-include_directories(${HIDAPI_INCLUDE_DIR})
-
-if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    set(udev_src /usr/lib/x86_64-linux-gnu/libudev.so) # only dynamic library is available
-    set(hidapi_src ${udev_src} /usr/lib/x86_64-linux-gnu/libhidapi-libusb.so) # has to be dynamically linked or you'll get "undefined reference to `libusb_get_device_address'" error # /usr/lib/x86_64-linux-gnu/libhidapi-hidraw.so
+find_package(HIDAPI) # this NEVER works :/
+if(HIDAPI_Found)
+    message(STATUS "Using HIDAPI include dir at ${HIDAPI_INCLUDE_DIR}")
+    add_definitions(-DHAVE_HIDAPI)
+    include_directories(${HIDAPI_INCLUDE_DIR})
+    link_directories(${LIBHIDAPI_LIBRARY_DIRS})
+endif()
+if(NOT HIDAPI_Found)
+    message("HIDAPI.cmake not found!")
+    if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+        set(udev_src libudev.so)
+        set(hidapi_src ${udev_src} libhidapi-libusb.so) # or libhidapi-hidraw.so # has to be dynamically linked or you'll get "undefined reference to `libusb_get_device_address'" error
+    endif()
 endif()
 ######################################
 # Monero (monero-0.17.2.3 contents pasted in "monero-cpp/external/monero-project")
@@ -278,9 +267,9 @@ set_target_properties(randomx PROPERTIES IMPORTED_LOCATION
     ${MONERO_PROJECT_BUILD}/external/randomx/librandomx.a)   
 ######################################
 set(monero_src wallet_merged wallet_crypto #[[wallet_api]] wallet lmdb epee unbound easylogging cryptonote_core cryptonote_basic cryptonote_format_utils_basic mnemonics ringct ringct_basic common cncrypto blockchain_db blocks checkpoints device device_trezor multisig version randomx 
-${boost_src} ${Protobuf_LIBRARY} ${LibUSB_LIBRARIES} ${OPENSSL_LIBRARIES} ${SODIUM_LIBRARY} ${hidapi_src} ${EXTRA_LIBRARIES}) #${Boost_LIBRARIES} #${HIDAPI_LIBRARIES}
+${Boost_LIBRARIES} ${Protobuf_LIBRARY} ${LibUSB_LIBRARIES} ${OPENSSL_LIBRARIES} ${SODIUM_LIBRARY} ${hidapi_src}#[[${HIDAPI_LIBRARIES}]] ${EXTRA_LIBRARIES})
 ######################################
-# monero-cpp (wrapper) v0.5.1 => v0.5.5 => v0.5.10 => v0.6.4
+# monero-cpp (wrapper) v0.5.1 => v0.5.5 => v0.5.10 => v0.6.4 => v0.7.0
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/monero-cpp/src/)
 set(monero_cpp_src
     external/monero-cpp/src/utils/gen_utils.cpp
@@ -294,7 +283,7 @@ set(monero_cpp_src
 ######################################
 # libbcrypt
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/libbcrypt) # (wrapper for https://www.openwall.com/crypt/)
-set(bcrypt_src external/libbcrypt/crypt_blowfish/crypt_blowfish.c external/libbcrypt/crypt_blowfish/crypt_gensalt.c external/libbcrypt/crypt_blowfish/wrapper.c external/libbcrypt/crypt_blowfish/x86.S external/libbcrypt/bcrypt.c)
+set(bcrypt_src external/libbcrypt/crypt_blowfish/crypt_blowfish.c external/libbcrypt/crypt_blowfish/crypt_gensalt.c external/libbcrypt/crypt_blowfish/wrapper.c external/libbcrypt/bcrypt.c)
 ######################################
 # sqlite3
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/sqlite) # v3.36.0 (https://www.sqlite.org/download.html)
@@ -308,9 +297,18 @@ set(qr_code_generator_src ${CMAKE_CURRENT_SOURCE_DIR}/external/QR-Code-generator
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/json/single_include) # v3.10.3
 ######################################
 # curl
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/curl/include ${CMAKE_CURRENT_SOURCE_DIR}/external/curl/lib) # or include_directories(${CURL_INCLUDE_DIRS}) # where to find curl/curl.h, etc.
-set(curl_src /usr/local/lib/libcurl.a) # or ${CMAKE_CURRENT_SOURCE_DIR}/external/curl/lib/.libs/libcurl.a) # or ${CURL_LIBRARIES})
-add_definitions(-DCURL_STATICLIB)
+find_package(CURL) # if curl is found on the system, use the system default shared library, otherwise use the curl that we've built from source
+if(CURL_FOUND)
+    message("-- Using CURL: ${CURL_LIBRARIES} (v${CURL_VERSION_STRING})")
+    include_directories(${CURL_INCLUDE_DIRS})
+    set(curl_src ${CURL_LIBRARIES})
+endif()
+if(NOT CURL_FOUND)
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/curl/include ${CMAKE_CURRENT_SOURCE_DIR}/external/curl/lib)
+    set(curl_src /usr/local/lib/libcurl.a) # or ${CMAKE_CURRENT_SOURCE_DIR}/external/curl/lib/.libs/libcurl.a)
+    add_definitions(-DCURL_STATICLIB)
+    set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -lldap -llber -lnghttp2 -lpsl -lidn2 -lbrotlidec -lzstd -lrtmp") # I guess if we build curl statically we need all libs to also be static, which is unrealistic since most libs on linux-gnu are shared libs # https://stackoverflow.com/questions/68368557/linking-nghttp2-static-library#comment120830125_68368557
+endif()
 ######################################
 # postgresql
 include_directories(${PostgreSQL_INCLUDE_DIRS}) # v14.1
@@ -341,26 +339,20 @@ include_directories(#[[${CMAKE_CURRENT_SOURCE_DIR}/external/flac]] # config.h
    ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/flac/src/libFLAC/include) # for "private/cpu.h"
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/glm)
 if(WIN32)
-set(opengl_src    opengl32.lib glu32.lib)
-set(openal_src    OpenAL32.lib          ) # not currently in use
 set(winsocket_src ws2_32.lib            ) # -lglfw3 -lgdi32 -lopengl32 -limm32
 endif()
 if(LINUX)
-set(opengl_src libGL.so libGLU.so                   )
 set(OpenGL_GL_PREFERENCE "LEGACY"                   ) # LEGACY(libGL.so) OR GLVND(libOpenGL.so and libGLX.so)
-set(openal_src libopenal.so                         ) # not currently in use
 set(posix_src  libpthread.so libdl.so libm.so       )
-set(x11_src    libX11.a libxcb.a libXau.a libXdmcp.a)
 endif() # -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo
 ######################################
 # dokun-ui
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/include)
-set(dokun_ui_src ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/src/libdokun-ui.a)#libdokun-ui.a) # definitions added: DOKUN_OPENGL, DOKUN_BUILD_LIBRARY#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui)
+set(dokun_ui_src ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/src/libdokun-ui.a) # definitions added: DOKUN_OPENGL, DOKUN_BUILD_LIBRARY#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui)
 ######################################
 # neroshop
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external) # external dependencies (monero-cpp, dokun-ui, etc.)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include) # includes (.hpp)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/dependencies) # dependencies (monero-cpp, dokun-ui, etc.)
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/src) # sources (.cpp, .a)
 set(neroshop_src src/buyer.cpp #[[src/carrier.cpp]] src/cart.cpp src/catalog.cpp src/client.cpp src/converter.cpp src/db.cpp src/encryptor.cpp src/icon.cpp src/item.cpp src/main.cpp src/message.cpp src/order.cpp src/qr.cpp src/seller.cpp src/server.cpp src/user.cpp src/validator.cpp src/wallet.cpp)
 add_definitions(-DNEROSHOP_DEBUG) # for more detailed debugging, use -DNEROSHOP_DEBUG0
@@ -369,7 +361,7 @@ target_link_libraries(neroshop ${curl_src})
 target_link_libraries(neroshop ${monero_src})
 target_link_libraries(neroshop ${dokun_ui_src})
 ######################################
-# daemon
+# neroshop-daemon
 add_executable(daemon src/daemon.cpp src/server.cpp)
 #target_link_libraries(daemon ${curl_src} ${OPENSSL_LIBRARIES}) # curl requires both openssl(used in monero) and zlib(used in dokun-ui)
 target_link_libraries(daemon ${dokun_ui_src})
@@ -383,17 +375,18 @@ if(LINUX)
     target_link_libraries(daemon ${posix_src})
     find_package(X11 REQUIRED)
     if(X11_FOUND)
-	    target_link_libraries(neroshop ${x11_src})
-	    target_link_libraries(daemon ${x11_src})
+	    target_link_libraries(neroshop ${X11_LIBRARIES})
+	    target_link_libraries(daemon ${X11_LIBRARIES})
     endif()
 endif()
 find_package(OpenGL REQUIRED)
 if(OPENGL_FOUND)
-	target_link_libraries(neroshop ${opengl_src})
-	target_link_libraries(daemon ${opengl_src})
+	target_link_libraries(neroshop ${OPENGL_LIBRARIES})
+	target_link_libraries(daemon ${OPENGL_LIBRARIES})
 endif()
 find_package(PostgreSQL) # -DPostgreSQL_TYPE_INCLUDE_DIR=/usr/include/postgresql/
-if(PostgreSQL_FOUND) #message("-- Using PostgreSQL: ${PostgreSQL_LIBRARIES} (v${PostgreSQL_VERSION_STRING})")
+if(PostgreSQL_FOUND) #
+    message("-- Using PostgreSQL: ${PostgreSQL_LIBRARIES} (v${PostgreSQL_VERSION_STRING})")
     target_link_libraries(neroshop ${PostgreSQL_LIBRARIES})
     target_link_libraries(daemon ${PostgreSQL_LIBRARIES})
 endif()

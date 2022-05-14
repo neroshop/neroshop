@@ -2,7 +2,7 @@
 - replace inappropriate doubles with floats                      []
 - discard all raw pointers and replace them with smart pointers  []
 - use delegating constructor for every class                     []
-- use shared_ptr for vectors of objects and use unique_ptr for single class private member objects []
+- use unique_ptr for single class private member objects and stl containers whenever possible []
 - give orders a unique uuid with "ns" prepended to it            []
 - fix bug where server only reads once and then does not ever read again []
 - create a sorting box on the left side of the application and create PREVIOUS/NEXT or SHOW_MORE buttons for the catalog view []
@@ -14,6 +14,7 @@
 - create a node list of trusted and verified nodes so users (sellers) do not have to sync entire blockchain []
 - fix mouse input functions and replace presses with clicks
 - If neroshop 1.0 ends up being centralized, work on a fully decentralized version called neroshop 2.0 
+- figure out how to generate an appimage
 
 [MID PRIORITY]
 - make table names plural ('cause select * from customer seems "grammatically" incorrect to me)
@@ -28,10 +29,9 @@
 - learn to encrypt and decrypt database
 - learn to backup database
 - add auction system
-- remove login as guest option (for now, since I don't know how guest data will be stored in main database)
-- make neroshop p2p (peer-to-peer) forever (every neromon node will maintain a copy of the "database" or "blockchain" or whatever it may be)
+- make neroshop p2p forever (every neroshop node (neromon) will maintain a copy of the "database" or "blockchain" or whatever it may be)
 - validate addresses before sending it out to buyer
-- add e2e encrypted chat/messaging and forum
+- add e2e encrypted chat/messaging
 - best-seller/best vendor sections
 - dispute and report system
 - wipe orders (and their order_items) within a certain time frame (30 days)
@@ -57,6 +57,9 @@
 - transfer ownership of neroshop to a team github account                        []
 - allow contributors to create neroshop bindings for other C-based programming languages such as lua, python, ruby, etc. [-]
 - revise neroshop logo
+- hire graphics programmer to fix and optimize rendering code in "renderer.cpp"
+- hire network programmer to implement communication between applications and servers or implement peer-to-peer system.
+- hire web developer to help develop website
 
 [UI]
 - prevent mouse press from affecting overlapped GUIs     []
@@ -86,14 +89,11 @@
 
 [ISSUES]
 Font crashes when loading (only a small few fonts are immune from this)
-Keyboard input is received/triggerred multiple times even with a single key press
+Keyboard input is received/triggered multiple times even with a single key press
+Server only reads once and then it does not ever read again
 Application crashes on logout (this is probably due to the deletion of the user object)
-EVP_PKEY_encrypt() and EVP_PKEY_decrypt() fail 50% of the time and succeeds 50% of the time
+EVP_PKEY_encrypt() and EVP_PKEY_decrypt() fail 50% of the time and succeeds 50% of the time (This may be caused by the encoding)
 
-[HIRING]
-- hire graphics programmer to fix and optimize rendering code in "renderer.cpp"
-- hire network programmer to implement communication between applications and servers or implement peer-to-peer system.
-- hire web developer to help develop website ()
 
 [ENCRYPTION TOOLS AND ALGORITHMS]
 encryption libraries: [openssl], crypto++ (cryptopp), libsodium

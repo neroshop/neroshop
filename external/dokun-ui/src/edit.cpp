@@ -1037,7 +1037,7 @@ void Edit::on_mouse_press()
                 // make sure boundless_cursor_x does not exceed characters_x //std::cout << "CANNOT EXCEED: " << (character_data.size() * cursor_space) << std::endl;
                 // if width is an even number this works
                 if(boundless_cursor_x > (character_data.size() * cursor_space)) boundless_cursor_x = character_data.size() * cursor_space;//character_data.size() * cursor_space;//if(cursor_x >= (string_length * cursor_space)) cursor_x = string_length * cursor_space;
-                std::cout << "edit on_mouse_press(): cursor_x (boundless): " << boundless_cursor_x << std::endl;                
+                ////std::cout << "edit on_mouse_press(): cursor_x (boundless): " << boundless_cursor_x << std::endl;                
                 // but if width is an odd number, this boundless_cursor_x is not accurate
                 // then set focus to the edit
                 set_focus(true);
@@ -1047,7 +1047,7 @@ void Edit::on_mouse_press()
                 if(Mouse::is_released(1) && has_focus()) {
                     std::cout << "mouse is unlocked from edit\n";
                 }*/
-            #ifdef DOKUN_DEBUG
+            #ifdef DOKUN_DEBUG0
 	            if(Edit::focused) std::cout << DOKUN_UI_TAG + String(String::no_digit(typeid(*this).name())).str() << ":" << String(Edit::focused) << " gained focus" << std::endl; // #include <typeinfo>
             #endif                
             //}
@@ -1079,7 +1079,7 @@ void Edit::on_key_press()
 			    if(sensative) { 
 			        secret.insert(string_index, String::to_string(key)); // save actual characters first//	    
 			        key = '*';
-				    std::cout << "secret string: " << secret << std::endl;		
+				    ////std::cout << "secret string: " << secret << std::endl;		
 				}
 				// store characters information (char, cursor_position, string_index) (for later use)
 			    int cursor_index = boundless_cursor_x + cursor_space;
@@ -1131,8 +1131,8 @@ void Edit::on_key_press()
 		            // only show last (n) characters
 		            label->set_string(text);
 		            // print cursor_x and boundless_cursor_x
-		            std::cout << "cursor_x (current): " << cursor_x << std::endl;
-		            std::cout << "boundless_cursor_x (current): " << boundless_cursor_x << std::endl;			        
+		            /*std::cout << "cursor_x (current): " << cursor_x << std::endl;
+		            std::cout << "boundless_cursor_x (current): " << boundless_cursor_x << std::endl;*/
 			        return;
 			    }
 			    if(character_data.size() > get_capacity()) {//if(splits_count > 0) { // same as: if(character_data.size() > get_capacity()) // if text goes past edit
@@ -1183,8 +1183,8 @@ void Edit::on_key_press()
 		            label->set_string(text);//(text_split);
 		            ////////////////////////////
 		            // print cursor_x and boundless_cursor_x
-		            std::cout << "cursor_x (current): " << cursor_x << std::endl;
-		            std::cout << "boundless_cursor_x (current): " << boundless_cursor_x << " (cursor_x(0) = starting_index * cursor_space)" << std::endl;
+		            /*std::cout << "cursor_x (current): " << cursor_x << std::endl;
+		            std::cout << "boundless_cursor_x (current): " << boundless_cursor_x << " (cursor_x(0) = starting_index * cursor_space)" << std::endl;*/
 			        return; // now secret string works :D
 			    }
 			}
@@ -1216,7 +1216,7 @@ void Edit::on_backspace() // bug: crashes everytime backspace is used when curso
 	        // remove character from label
 	        if(sensative) {
 	            secret.erase(secret.begin() + string_index); // erase secret string too //
-	            std::cout << "secret string: " << secret << std::endl;		
+	            ////std::cout << "secret string: " << secret << std::endl;		
 		    }
 		    // remove deleted character from vector (at a specific index, where the cursor is positioned)
 		    character_data.erase(character_data.begin() + string_index); // if string_index=5. deletes 6th element
@@ -1261,8 +1261,8 @@ void Edit::on_backspace() // bug: crashes everytime backspace is used when curso
                 // show only (n) characters
                 label->set_string(text);
                 ////////////////////////////        
-                std::cout << std::endl << "cursor_x (on_backspace): " << cursor_x << std::endl;
-                std::cout << "boundless_cursor_x (on_backspace): " << boundless_cursor_x << std::endl;         
+                /*std::cout << std::endl << "cursor_x (on_backspace): " << cursor_x << std::endl;
+                std::cout << "boundless_cursor_x (on_backspace): " << boundless_cursor_x << std::endl;*/
 			    return;
 			}
 			if(splits_count > 0) { // multiple splits // same as: if(character_data.size() > get_capacity())

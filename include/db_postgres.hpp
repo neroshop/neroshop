@@ -10,9 +10,12 @@
 #include "debug.hpp"
 // dokun-ui
 #include <string.hpp>
-// libpq (C interface to PostgreSQL)
+// libpq (C interface to PostgreSQL) - Debian/Ubuntu
 #include <postgresql/libpq-fe.h> // Linux // https://www.postgresql.org/download/linux/ubuntu/ // sudo apt install postgresql // sudo apt-get install libpq-dev // Ubuntu headers: /usr/include/postgresql
 #include <postgresql/libpq/libpq-fs.h> // for client interfaces such as lo-interfaces (large object interfaces)
+// libpq (C interface to PostgreSQL) - Arch
+////#include <libpq-fe.h>
+////#include <postgresql/server/libpq/libpq-fs.h>
 // https://zetcode.com/db/postgresqlc/
 // http://www.jancarloviray.com/blog/postgres-quick-start-and-best-practices/
 namespace neroshop {
