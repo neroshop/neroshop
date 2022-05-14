@@ -52,7 +52,7 @@ This is currently a work in progress. There is nothing to see here :)
 
 
 ### Compiling neroshop from source
-1. Install dependencies
+1. Install dependencies <br />
 Debian/Ubuntu
 ```sh
 sudo -s -- << EOF
