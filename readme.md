@@ -16,9 +16,8 @@ An attempt to create an online marketplace for [Monero](https://getmonero.org/) 
 
 
 ## About
-```
-This is currently a work in progress. There is nothing to see here ¯\_(ツ)_/¯
-```
+This is currently a work in progress. There is nothing to see here :shrug:
+
 
 
 ## Features
