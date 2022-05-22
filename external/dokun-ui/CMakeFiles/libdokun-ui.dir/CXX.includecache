@@ -701,6 +701,8 @@ lua.hpp
 /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/include/system.hpp
 platform.hpp
 /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/include/platform.hpp
+string.hpp
+/media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/include/string.hpp
 
 /media/sid/Elements/sid/media/other/code/more/neroshop/external/dokun-ui/include/tab.hpp
 ui.hpp

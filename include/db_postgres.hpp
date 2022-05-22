@@ -1,6 +1,4 @@
-// filename: db2.hpp
-//#pragma once // use #ifndef _HPP, #define _HPP, and #endif instead for portability?
-
+// filename: db_postgres.hpp
 #ifndef DATABASE_PSQL_HPP_NEROSHOP // recommended to add unique identifier like _NEROSHOP to avoid naming collision with other libraries
 #define DATABASE_PSQL_HPP_NEROSHOP
 #define POSTGRESQL_TAG "\033[1;94m[postgresql]:\033[0m "
@@ -11,16 +9,17 @@
 // dokun-ui
 #include <string.hpp>
 // libpq (C interface to PostgreSQL) - Debian/Ubuntu
-#include <postgresql/libpq-fe.h> // Linux // https://www.postgresql.org/download/linux/ubuntu/ // sudo apt install postgresql // sudo apt-get install libpq-dev // Ubuntu headers: /usr/include/postgresql
-#include <postgresql/libpq/libpq-fs.h> // for client interfaces such as lo-interfaces (large object interfaces)
+////#include <postgresql/libpq-fe.h>
+////#include <postgresql/libpq/libpq-fs.h> // for lo-interfaces (large object interfaces)
 // libpq (C interface to PostgreSQL) - Arch
 ////#include <libpq-fe.h>
 ////#include <postgresql/server/libpq/libpq-fs.h>
-// https://zetcode.com/db/postgresqlc/
-// http://www.jancarloviray.com/blog/postgres-quick-start-and-best-practices/
+// libpq (C interface to PostgreSQL) - custom (requires compiler flag: -I'/usr/include/postgresql/')
+#include <libpq-fe.h>
+#include <libpq/libpq-fs.h>
+
 namespace neroshop {
 namespace DB {
-//public:
 class Postgres { // DB is intended for client-server database engine. SQLite does not use a client-server architecture, so unfortunately we cannot solely use SQLite for this as its used for embedding into applications and becomes an integral part of the program
 public:
     Postgres();
@@ -80,6 +79,8 @@ private:
 };
 }
 }
+// https://zetcode.com/db/postgresqlc/
+// http://www.jancarloviray.com/blog/postgres-quick-start-and-best-practices/
 // JSONB actually turns PostgreSQL into a NoSQL database :D
 // NOTES: I just learned that connections can be opened for the entirety of the client application's life
 // edit: some are also saying closing the database as soon as I'm done with it is much better for scalability

@@ -318,6 +318,17 @@ int main() {
     std::string plain_text = Encryptor::private_decrypt(private_key, cipher_text_ss.str());
     std::cout << "message (decrypted): " << plain_text << std::endl;
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    std::cout << "current linux distro: " << System::get_current_distro() << std::endl;
+    std::cout << "based linux distro  : " << System::get_base_distro() << std::endl;
+    /*
+    on Ubuntu this will print:
+    current linux distro: You are currently using: ubuntu
+    Debian
+    
+    on Manjaro this will print:
+    current linux distro: You are currently using: manjaro
+    Arch
+    */
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////	
     // Monero	
     // get config: network_type, ip, port, data_dir, etc.
@@ -800,28 +811,6 @@ int main() {
     logout_button->set_size(50, 40);
     logout_button->set_color(214, 46, 46);
     logout_button->hide();// TEMPORARY
-    /*// status_icon
-    Box * status_icon = new Box();
-    status_icon->set_image( * new Image(Icon::get["trash"]->get_data(), 64, 64, 1, 4));
-    status_icon->set_as_icon(true);
-    status_icon->set_size(16, 16); //(32, 32);
-    status_icon->set_position(200, 10);
-    // test_icon
-    Box * test_icon = new Box();
-    test_icon->set_image( * new Image(Icon::get["circle_outline"]->get_data(), 64, 64, 1, 4));
-    test_icon->set_as_icon(true);
-    test_icon->set_size(16, 16);
-    test_icon->set_position(10, 250);
-    test_icon->get_image()->set_color(0, 35, 102);
-    bool test_activated = false;*/
-    /*// star_icon
-    Box * star_icon = new Box();
-    star_icon->set_image( * new Image( * Icon::get["star_outline"]));
-    star_icon->set_as_icon(true);
-    star_icon->set_size(16, 16);
-    star_icon->set_position(test_icon->get_x() + test_icon->get_width() + 5, 250);
-    star_icon->get_image()->set_color(255, 255, 0); // yellow
-    bool star_activated = false;*/
     // _icon
     /*Box * _icon = new Box();
     _icon->set_image(*new Image(*Icon::get[""]));

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.4.1)
 
-project(neroshop) # tested on Ubuntu 20.04 LTS (focal) with gcc (Ubuntu 9.3.0-17ubuntu1~20.04) 9.3.0, manjaro-xfce-21.2.6-220416-linux515 with gcc 11
+project(neroshop) # tested on Ubuntu 20.04 LTS (focal) with gcc (Ubuntu 9.3.0-17ubuntu1~20.04) 9.3.0, manjaro-xfce-21.2.6 (Qonos) with gcc (GCC) 11.2.0
 
 set(VERSION_MAJOR "0")
 set(VERSION_MINOR "1")
@@ -16,7 +16,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     option(NEROSHOP_GCC   "use gcc"   ON ) # gcc   - shipped with Ubuntu by default    
     set(CMAKE_C_COMPILER   /usr/bin/gcc)
     set(CMAKE_CXX_COMPILER /usr/bin/g++)
-    set(CMAKE_CXX_FLAGS    "-no-pie"   ) # no position independent executable (PIE) # NEROSHOP_GCC 
+    set(CMAKE_CXX_FLAGS    "-I'/usr/include/postgresql/' -no-pie"   ) # no position independent executable (PIE) # NEROSHOP_GCC 
     include_directories(/usr/include/          )
     link_directories(/usr/lib/x86_64-linux-gnu/) # Debian/Ubuntu
     link_directories(/usr/lib/                 ) # Arch
@@ -163,7 +163,7 @@ if(HIDAPI_Found)
     link_directories(${LIBHIDAPI_LIBRARY_DIRS})
 endif()
 if(NOT HIDAPI_Found)
-    message("HIDAPI.cmake not found!")
+    message("HIDAPI libraries not found. Will manually set libraries.")
     if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
         set(udev_src libudev.so)
         set(hidapi_src ${udev_src} libhidapi-libusb.so) # or libhidapi-hidraw.so # has to be dynamically linked or you'll get "undefined reference to `libusb_get_device_address'" error
@@ -298,21 +298,19 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/json/single_include) # 
 ######################################
 # curl
 find_package(CURL) # if curl is found on the system, use the system default shared library, otherwise use the curl that we've built from source
-if(CURL_FOUND)
-    message("-- Using CURL: ${CURL_LIBRARIES} (v${CURL_VERSION_STRING})")
+if(CURL_FOUND) #message("-- Using CURL: ${CURL_LIBRARIES} (v${CURL_VERSION_STRING})")
     include_directories(${CURL_INCLUDE_DIRS})
     set(curl_src ${CURL_LIBRARIES})
 endif()
 if(NOT CURL_FOUND)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/curl/include ${CMAKE_CURRENT_SOURCE_DIR}/external/curl/lib)
-    set(curl_src /usr/local/lib/libcurl.a) # or ${CMAKE_CURRENT_SOURCE_DIR}/external/curl/lib/.libs/libcurl.a)
+    set(curl_src ${CMAKE_CURRENT_SOURCE_DIR}/external/curl/lib/.libs/libcurl.a)
     add_definitions(-DCURL_STATICLIB)
     set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -lldap -llber -lnghttp2 -lpsl -lidn2 -lbrotlidec -lzstd -lrtmp") # I guess if we build curl statically we need all libs to also be static, which is unrealistic since most libs on linux-gnu are shared libs # https://stackoverflow.com/questions/68368557/linking-nghttp2-static-library#comment120830125_68368557
 endif()
 ######################################
 # postgresql
-include_directories(${PostgreSQL_INCLUDE_DIRS}) # v14.1
-set(postgresql_src ${PostgreSQL_LIBRARIES}) # /usr/lib/x86_64-linux-gnu/libpq.a  OR  /usr/lib/x86_64-linux-gnu/libpq.so
+include_directories(${PostgreSQL_INCLUDE_DIRS} ${PostgreSQL_INCLUDE_DIRS}/server)
 ######################################
 ######################################
 # dokun-ui_dependencies
@@ -362,10 +360,8 @@ target_link_libraries(neroshop ${monero_src})
 target_link_libraries(neroshop ${dokun_ui_src})
 ######################################
 # neroshop-daemon
-add_executable(daemon src/daemon.cpp src/server.cpp)
-#target_link_libraries(daemon ${curl_src} ${OPENSSL_LIBRARIES}) # curl requires both openssl(used in monero) and zlib(used in dokun-ui)
-target_link_libraries(daemon ${dokun_ui_src})
-#set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -ldl") # fixes undefined reference to symbol 'dlsym@@GLIBC_2.2.5' error
+add_executable(daemon src/daemon.cpp src/server.cpp)#target_link_libraries(daemon ${curl_src} ${OPENSSL_LIBRARIES}) # curl requires both openssl(used in monero) and zlib(used in dokun-ui)
+target_link_libraries(daemon ${dokun_ui_src})#set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -ldl") # fixes undefined reference to symbol 'dlsym@@GLIBC_2.2.5' error
 # change name to neromon (nero + daemon :D)
 set_target_properties(daemon PROPERTIES OUTPUT_NAME "neromon")
 ######################################
@@ -385,8 +381,7 @@ if(OPENGL_FOUND)
 	target_link_libraries(daemon ${OPENGL_LIBRARIES})
 endif()
 find_package(PostgreSQL) # -DPostgreSQL_TYPE_INCLUDE_DIR=/usr/include/postgresql/
-if(PostgreSQL_FOUND) #
-    message("-- Using PostgreSQL: ${PostgreSQL_LIBRARIES} (v${PostgreSQL_VERSION_STRING})")
+if(PostgreSQL_FOUND) #message("-- Using PostgreSQL: ${PostgreSQL_LIBRARIES} (v${PostgreSQL_VERSION_STRING})")
     target_link_libraries(neroshop ${PostgreSQL_LIBRARIES})
     target_link_libraries(daemon ${PostgreSQL_LIBRARIES})
 endif()

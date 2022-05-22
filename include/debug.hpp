@@ -1,6 +1,4 @@
-// filename: .hpp
-//#pragma once // use #ifndef _HPP, #define _HPP, and #endif instead
-
+// filename: debug.hpp
 #ifndef DEBUG_HPP_NEROSHOP
 #define DEBUG_HPP_NEROSHOP
 #define NEROSHOP_TAG_OUT neroshop::io_write("");
