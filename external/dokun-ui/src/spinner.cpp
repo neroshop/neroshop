@@ -163,6 +163,10 @@ void Spinner::set_color(const Vector3& color)
 	set_color(color.x, color.y, color.z);
 }
 /////////////
+void Spinner::set_color(const Vector3& color, double alpha) {
+    set_color(color.x, color.y, color.z, alpha);
+}
+/////////////
 void Spinner::set_color(const Vector4& color)
 {
 	set_color(color.x, color.y, color.z, color.w);

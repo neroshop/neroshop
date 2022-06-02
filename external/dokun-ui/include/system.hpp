@@ -62,17 +62,16 @@ public:
         // save release filenames
         std::vector<std::string> os_filenames = String::split(result, "\n");
         if(os_filenames.empty()) return "linux"; // defaults to linux
-    //#ifdef DOKUN_DEBUG
+    #ifdef DOKUN_DEBUG
         std::cout << "os_filenames " << "(" << os_filenames.size() << "): " << std::endl;
         for(int i = 0; i < os_filenames.size(); i++) std::cout << os_filenames[i] << std::endl;
-    //#endif
-        // check if vector contains a specific release filename
-        // https://serverfault.com/questions/422880/etc-release-files-examples
-        /*if(std::find(os_filenames.begin(), os_filenames.end(), "/etc/debian_version") != os_filenames.end()) return "debian";
+    #endif
+        // check if vector contains a specific release filename - https://serverfault.com/questions/422880/etc-release-files-examples
+        if(std::find(os_filenames.begin(), os_filenames.end(), "/etc/debian_version") != os_filenames.end()) return "debian";
         if(std::find(os_filenames.begin(), os_filenames.end(), "/etc/arch-release") != os_filenames.end()) return "arch"; // or Arch Linux
         if(std::find(os_filenames.begin(), os_filenames.end(), "/etc/fedora-release") != os_filenames.end()) return "fedora";
         if(std::find(os_filenames.begin(), os_filenames.end(), "/etc/SuSE-release") != os_filenames.end()) return "suse"; // or SUSE Linux // deprecated: https://en.opensuse.org/Etc_SuSE-release
-        if(std::find(os_filenames.begin(), os_filenames.end(), "/etc/redhat-release") != os_filenames.end()) return "rhel"; // or Red Hat Enterprise Linux (RHEL)*/
+        if(std::find(os_filenames.begin(), os_filenames.end(), "/etc/redhat-release") != os_filenames.end()) return "rhel";//return "fedora"; // or Red Hat Enterprise Linux (RHEL)
         //if(std::find(os_filenames.begin(), os_filenames.end(), "") != os_filenames.end()) return "";
         // fallback to lsb-release and os-release, if all else fails
         if(std::find(os_filenames.begin(), os_filenames.end(), "/etc/lsb-release") != os_filenames.end()) {}

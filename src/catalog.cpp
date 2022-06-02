@@ -36,7 +36,7 @@ void neroshop::Catalog::initialize() {
     view->set_columns(3);//(5)//(1);
     view->set_gap(5);//view->set_horizontal_gap(5);//view->set_vertical_gap(50);
     view->set_color(160, 160, 160, 1.0);
-    view->set_highlight(true); // for testing purposes ////view->set_outline(false);
+    view->set_highlight(true); // for testing purposes ////view->set_outline(false);//view->set_highlight_color(82, 70, 86, 1.0);
     //view->set_radius(5);
     set_box_size(220, 220);//(220, 250);//(250, 300);//(215, 210);// also applies size to grid (view) boxes
     ////////////////////
@@ -79,7 +79,7 @@ void neroshop::Catalog::initialize() {
     // deals
     // seller
     // availability: include out of stock [x]
-    ////sort_box->hide(); // only show when user looks up an item using the search bar
+    sort_box->hide(); // only show when user looks up an item using the search bar
     ////////////////////
 }
 ////////////////////
@@ -464,9 +464,9 @@ void neroshop::Catalog::setup_page() {
     //->add_component(*new Component("name", std::string("?")));
     //////current->add_gui(notif_button);*/
     // ADD TO CART BUTTON
-    Button * cart_add_button = new Button("Add to cart");
+    Button * cart_add_button = new Button("Add to cart");//("ADD TO CART");
     cart_add_button->set_width(500); // same width as product_image_box
-    cart_add_button->set_color(82, 70, 86); //(55, 25, 255);//bluish-purple//(42, 25, 255);//(50, 25, 255);//(30, 30, 255);
+    cart_add_button->set_color(107, 91, 149);//(82, 70, 86); //(55, 25, 255);//bluish-purple//(42, 25, 255);//(50, 25, 255);//(30, 30, 255);
     cart_add_button->add_component(*new Component("name", std::string("cart_add_button"))); // if you don't specificy the datatype of the component then you will run into some errors later on
     current->add_gui(*cart_add_button);
     // CLOSE BUTTON

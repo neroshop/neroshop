@@ -702,11 +702,17 @@ void dokun::Window::poll_events() {
         if (xce.width != Renderer::window_width || xce.height != Renderer::window_height) {
             Renderer::window_width = xce.width;
             Renderer::window_height = xce.height;
-#ifdef DOKUN_DEBUG0          
+#ifdef DOKUN_DEBUG0
             std::cout << "Renderer size updated: " << Vector2(Renderer::window_width, Renderer::window_height) << std::endl; // display size
 #endif
+            // callback function
+            if(callbacks["on_resize"]) callbacks["on_resize"]();
         }
 	}
+	//////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////
 	if(event.type == DestroyNotify) { // on destroying a window
 	    //XDestroyWindowEvent xdwe = event.xdestroywindow; // https://tronche.com/gui/x/xlib/events/window-state-change/destroy.html#XDestroyWindowEvent
@@ -1406,6 +1412,12 @@ int dokun::Window::set_cursor(lua_State *L)
 		}
 	}		
 	return 0;
+}
+////////////
+void dokun::Window::set_callback(const std::string& callback_name, std::function<void(void)> callback_function) {
+    if(String::contains(String::lower(callback_name), "resize")) {
+        callbacks["on_resize"] = callback_function;
+    }
 }
 ////////////
 // XSetWindowBorderWidth (display, w, width)

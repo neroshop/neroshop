@@ -24,10 +24,12 @@ public:
 		void set_foreground_color(unsigned int red, unsigned int green, unsigned int blue);
 		void set_foreground_color(unsigned int red, unsigned int green, unsigned int blue, double alpha);            static int set_foreground_color(lua_State *L);// beam color
 		void set_foreground_color(const Vector3& color);
+		void set_foreground_color(const Vector3& color, double alpha);
 		void set_foreground_color(const Vector4& color);
 		void set_background_color(unsigned int red, unsigned int green, unsigned int blue);
 		void set_background_color(unsigned int red, unsigned int green, unsigned int blue, double alpha);            static int set_background_color(lua_State *L);
 		void set_background_color(const Vector3& color);
+		void set_background_color(const Vector3& color, double alpha);
 		void set_background_color(const Vector4& color);
 		void set_range(double max_val, double min_val);                           static int set_range(lua_State *L);
 		void set_minimum_value(double min_val);                                   static int set_minimum_value(lua_State *L);
@@ -51,6 +53,7 @@ public:
 		void set_outline_color(unsigned int red, unsigned int green, unsigned int blue);
 		void set_outline_color(unsigned int red, unsigned int green, unsigned int blue, double alpha);    static int set_outline_color(lua_State *L);
 		void set_outline_color(const Vector3& color);                             // static int set_(lua_State *L);
+		void set_outline_color(const Vector3& color, double alpha);                             // static int set_(lua_State *L);
 		void set_outline_color(const Vector4& color);                             // static int set_(lua_State *L);
 		void set_outline_antialiased(bool antialised);                            static int set_outline_antialiased(lua_State *L);
 		// border properties

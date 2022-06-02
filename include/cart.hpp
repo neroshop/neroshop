@@ -56,6 +56,9 @@ public: // can be accessed by any class or function
 	unsigned int get_contents_count() const; // returns number of items in cart.contents
 	neroshop::Item * get_item(unsigned int index) const; //unsigned int get_id() const;//static std::string get_file();
 	std::vector<std::shared_ptr<neroshop::Item>> get_contents_list() const;
+	// added 2022-05-29
+	unsigned int get_max_items() const; // returns the maximum number of items (contents) a cart can hold
+	unsigned int get_max_quantity() const; // returns the maximum quantity of items a cart can hold
 	// boolean
 	bool is_empty() const;
     bool is_full() const; // cart is full (has reached max items)

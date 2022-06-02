@@ -160,6 +160,10 @@ void Progressbar::set_foreground_color(const Vector3& color)
 	set_foreground_color(color.x, color.y, color.z);
 }
 //////////////
+void Progressbar::set_foreground_color(const Vector3& color, double alpha) {
+    set_foreground_color(color.x, color.y, color.z, alpha);
+}
+//////////////
 void Progressbar::set_foreground_color(const Vector4& color)
 {
 	set_foreground_color(color.x, color.y, color.z, color.w);
@@ -195,6 +199,10 @@ void Progressbar::set_background_color(unsigned int red, unsigned int green, uns
 void Progressbar::set_background_color(const Vector3& color)
 {
 	set_background_color(color.x, color.y, color.z);
+}
+//////////////
+void Progressbar::set_background_color(const Vector3& color, double alpha) {
+    set_background_color(color.x, color.y, color.z, alpha);
 }
 //////////////
 void Progressbar::set_background_color(const Vector4& color)

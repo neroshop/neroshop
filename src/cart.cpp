@@ -396,7 +396,13 @@ unsigned int neroshop::Cart::get_owner_id(unsigned int cart_id) {
     return user_id;
 }
 ////////////////////
+unsigned int neroshop::Cart::get_max_items() const {
+    return max_items;
+}
 ////////////////////
+unsigned int neroshop::Cart::get_max_quantity() const {
+    return max_quantity;
+}
 ////////////////////
 ////////////////////
 ////////////////////

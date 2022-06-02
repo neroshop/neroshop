@@ -801,16 +801,14 @@ int main() {
     Label message_label("0");
     message_label.hide(); // hide label by default
     message_button.set_label(message_label);
-    // seller_hub_button
-    // login_button
-    Button * logout_button = new Button();
-    Image logout_icon(Icon::get["open_door"]->get_data(), 64, 64, 1, 4);
-    logout_button->set_image(logout_icon);
-    logout_button->get_image()->resize(24, 24);
-    logout_button->get_image()->set_alignment("center");
-    logout_button->set_size(50, 40);
-    logout_button->set_color(214, 46, 46);
-    logout_button->hide();// TEMPORARY
+    // seller_hub_button - for listing items, managing stock, and managing customer orders
+    Button seller_hub_button;
+    Image shop_icon(Icon::get["shop"]->get_data(), 64, 64, 1, 4);
+    seller_hub_button.set_image(shop_icon);
+    seller_hub_button.get_image()->resize(24, 24);
+    seller_hub_button.get_image()->set_alignment("center");
+    seller_hub_button.set_size(50, 40);
+    //seller_hub_button.set_color(, , );
     // _icon
     /*Box * _icon = new Box();
     _icon->set_image(*new Image(*Icon::get[""]));
@@ -832,6 +830,274 @@ int main() {
     hint->add_label(hint_label);
     hint->hide(); // hide tooltip by default    
     //----------------------------------  --------------------------------------	
+    // CART MENU - if cart button is pressed, show cart menu
+    Box cart_menu;
+    // cart menu checkout_button
+    // to-do: change text to "Checkout" later
+    Button checkout_button("Place Order");//("Buy Now");//("Place Order");//("Proceed to Checkout");//("Checkout");
+    checkout_button.get_label()->set_alignment("center");
+    checkout_button.set_color(95, 61, 196);//(64, 46, 247) - neroshop logo colors
+    checkout_button.set_size(200, 50);
+    cart_menu.add_gui(checkout_button);
+    // cart menu close button
+    Button cart_menu_close_button("X");
+    cart_menu_close_button.get_label()->set_alignment("center");
+    cart_menu_close_button.set_color(214, 31, 31, 1.0);
+    cart_menu_close_button.set_size(40, 36);//cart_menu_close_button.add_component(*new Component("name", std::string("cart_menu_close_button")));
+    cart_menu_close_button.add_component(*new Component("name", std::string("cart_menu_close_button")));
+    cart_menu.add_gui(cart_menu_close_button);
+    cart_menu.hide(); // hide by default
+    // cart menu cart slots
+    // to-do: create MAX_CART_ITEMS macro equal to 10
+    for(int i = 0; i < 10/*user->get_cart()->get_max_items()*/; i++) {
+                // create cart slots for easier cart item management
+                Box * cart_slot = new Box();
+                cart_slot->set_color(64, 64, 64, 0.1);
+                //cart_slot->set_size(0, 0); // comment this line and you'll get some wierd result
+                cart_slot->add_component(*new Component("name", std::string("cart_slot_" + std::to_string(i))));
+                cart_menu.add_gui(*cart_slot);
+                // create empty images
+                Image * product_image = new Image();
+                cart_slot->add_image(*product_image);
+                // create empty name labels
+                dokun::Label * product_name_label = new Label("");
+                product_name_label->add_component(*new Component("name", std::string("product_name_label_" + std::to_string(i))));
+                cart_slot->add_gui(*product_name_label);
+                // create quantity spinner
+                dokun::Label * product_quantity_spinner_label = new Label("");
+                Spinner * product_quantity_spinner = new Spinner();
+                product_quantity_spinner->set_color(product_quantity_spinner->get_color().xyz, 0.0);
+                product_quantity_spinner->set_range(0, 100); // from 1 to 100 // 0 = delete
+                product_quantity_spinner->set_value(static_cast<int>(0));
+                product_quantity_spinner->set_label(*product_quantity_spinner_label);
+                product_quantity_spinner->add_component(*new Component("name", std::string("product_quantity_spinner_" + std::to_string(i))));
+                // create and set "on_value_changed" callback function
+                /*std::function<void(void)> change_quantity = [&product_quantity_spinner, &user]() { 
+                    user->get_cart()->change_quantity(, static_cast<int>(product_quantity_spinner->get_value()));
+                }*/
+                ////product_quantity_spinner->set_callback("value changed", change_quantity);
+                cart_slot->add_gui(*product_quantity_spinner);
+                /*// create empty or placeholder price labels
+                dokun::Label * product_price_label = new Label("$0.00");
+                cart_menu.add_gui(*product_price_label);
+                std::cout << "empty price label: " << i << " has been added to cart menu\n";
+                */     
+                ////->add_component(*new Component("name", std::string("?_" + std::to_string(i))));
+                ////->set_relative_position(0, 0);           
+                // create empty or placeholder XMR price labels
+                //->add_component(*new Component("name", std::string("?_" + std::to_string(i))));
+                // create remove_from_cart button (trash icon)
+                ////->add_component(*new Component("name", std::string("?_" + std::to_string(i))));
+                ////->set_relative_position(0, 0);
+                // hide all cart slots until items are added to cart
+                cart_slot->hide();
+                //std::cout << i << " is_visible: " << cart_slot->is_visible() << std::endl;
+                //std::cout << "cart_slot_" << i << " image count: " << cart_slot->get_image_count() << std::endl;
+                //std::cout << "cart_slot_" << i << " label count: " << cart_slot->get_label_count() << std::endl;
+                //std::cout << "cart_slot_" << i << " gui count: " << cart_slot->get_gui_count() << std::endl;
+    }
+    std::cout << "cart_menu gui count: " << cart_menu.get_gui_count() << std::endl;
+    // set position of first image
+    ////dynamic_cast<Box *>(cart_menu.get_gui(2))->get_image(0)->set_relative_position(20, 20);
+    // set position of first cart_slot
+    GUI * cart_slot_0 = dynamic_cast<GUI *>(Entity::get_entity_by_name("cart_slot_0"));
+    cart_slot_0->set_relative_position(20, 20);//cart_slot_0->set_relative_position((cart_menu.get_width() - cart_slot_0->get_width()) / 2, 20);    
+    ////////////////////////////////////////////////
+    // if cart_button is hovered, show the hint (tooltip)
+    std::function<void(void)> show_cart_button_hint = [&cart_button, &hint]() { 
+        std::string message = "Cart";
+	    hint->get_label(0)->set_string(message);
+	    hint->get_label(0)->set_alignment("center");
+	    hint->set_size(hint->get_label(0)->get_width() + 20, 50);
+	    hint->set_position(cart_button->get_x() + (cart_button->get_width() - hint->get_width()) / 2, cart_button->get_y() + cart_button->get_height() + 5);//, ?->get_y() - (hint->get_height() + hint->get_tooltip_arrow_height()) - 5);	            
+	    hint->show();                
+    };
+    cart_button->set_callback("hover", show_cart_button_hint);
+    ////////////////////////////////////////////////
+    std::function<void(void)> update_cart_menu = [&cart_menu, &user, &checkout_button]() { 
+        // update cart menu (add items to the cart menu)
+        for(int i = 0; i < user->get_cart()->get_contents_count(); i++) {
+            std::cout << "cart item: ";
+            std::cout << user->get_cart()->get_item(i)->get_name() << " (x" << user->get_cart()->get_item(i)->get_quantity(user->get_cart()->get_id()) << ")" << std::endl;
+            // update cart_slots
+            std::string cart_slot_name = "cart_slot_" + std::to_string(i);
+            Box * cart_slots = dynamic_cast<Box *>(Entity::get_entity_by_name(cart_slot_name));
+            cart_slots->set_size(cart_menu.get_width() - 100, (cart_menu.get_height() - (20 * 2) - (checkout_button.get_height() + 20)/*20(gap b-t cart_menu and first and last cart_slot), 50 + 20 = 70(checkout_button height + gap b-t cart_menu height)*/) / std::min<int>(user->get_cart()->get_contents_count(), user->get_cart()->get_max_items())); // 10 is the total gap between each cart_slot
+            if(cart_slot_name != "cart_slot_0") {
+                Box * prev_cart_slots = dynamic_cast<Box *>(Entity::get_entity_by_name("cart_slot_" + std::to_string(i - 1)));
+                cart_slots->set_relative_position(prev_cart_slots->get_relative_x(), prev_cart_slots->get_relative_y() + prev_cart_slots->get_height() + 1);
+            }
+            // copy item image to cart menu
+            Image * product_image = user->get_cart()->get_item(i)->get_upload_image(1);
+            cart_slots->get_image(0)->copy(*product_image);
+            cart_slots->get_image(0)->scale_to_fit(cart_slots->get_height(), cart_slots->get_height());
+            cart_slots->get_image(0)->set_relative_position(20, (cart_slots->get_height() - cart_slots->get_image(0)->get_height()) / 2);//->set_relative_position(cart_slots->get_image(0)->get_relative_x(), prev_cart_slots->get_image(0)->get_relative_y() + prev_cart_slots->get_image(0)->get_height() + 1);
+            // update item name label in cart menu
+            std::string product_name = user->get_cart()->get_item(i)->get_name();
+            cart_slots->get_label(0)->set_string(product_name);//dynamic_cast<dokun::Label *>(Entity::get_entity_by_name("product_name_label_" + std::to_string(i)))->set_string(product_name);
+            cart_slots->get_label(0)->set_relative_position(cart_slots->get_image(0)->get_relative_x() + cart_slots->get_height() + 20, cart_slots->get_image(0)->get_relative_y() + (cart_slots->get_image(0)->get_height() - 10) / 2); // the 10 is a placeholder for the label's height
+            // update item quantity spinner in cart menu
+            unsigned int product_quantity = user->get_cart()->get_item(i)->get_quantity(user->get_cart()->get_id());
+            dynamic_cast<Spinner *>(cart_slots->get_gui(1))->set_value(product_quantity);
+            cart_slots->get_gui(1)->set_relative_position(cart_slots->get_gui(0)->get_relative_x() + cart_slots->get_height() + 40, cart_slots->get_gui(0)->get_relative_y() + (cart_slots->get_gui(0)->get_height() - cart_slots->get_gui(1)->get_height()) / 2);//center_x = (cart_slots->get_width() - cart_slots->get_gui(1)->get_width()) / 2, 
+            // to-do: add on_value_changed callback for quantity spinner which should call Cart::change_quantity
+            // update item price label in cart menu
+            double product_sales_price = user->get_cart()->get_item(i)->get_price(user->get_cart()->get_id());
+            // to-do: check if cart_item has already been added to the cart_menu
+            ////cart_slots->show(); // show a specific number of cart_slots
+            // we no longer need the product_image now that it has been copied so delete it then set it to nullptr
+            delete product_image;
+            product_image = nullptr;
+        }    
+    };
+    ////////////////////////////////////////////////
+    // if cart_button is pressed, show the cart_menu
+    std::function<void(void)> show_cart_menu = [&cart_menu, &update_cart_menu]() { 
+        // update cart menu (add items to the cart menu)
+        update_cart_menu();
+        // show the cart menu
+        cart_menu.show();
+    };
+    cart_button->set_callback("left press", show_cart_menu);
+    ////////////////////////////////////////////////
+    // if cart_menu_close_button is pressed, hide cart_menu
+    std::function<void(void)> hide_cart_menu = [&cart_menu]() { cart_menu.hide(); }; // lambda
+    cart_menu_close_button.set_callback("left press", hide_cart_menu);//std::bind(&GUI::hide, &static_cast<GUI&>(cart_menu)) );
+    ////////////////////////////////////////////////
+    // if checkout_button is pressed, proceed to checkout
+    std::function<void(void)> place_order = [&user]() {
+        user->create_order("");
+    };
+    checkout_button.set_callback("left press", place_order);
+    
+    // to-do: hide all other menus while current menu is visible including catalog page
+    // to-do: highlight the currently selected menu button (cart_button, etc.)
+    //--------------------------------------------------------------------------
+    // ACCOUNT MENU
+    Box account_menu;
+    // logout button
+    Button logout_button;
+    Image logout_icon(Icon::get["open_door"]->get_data(), 64, 64, 1, 4);
+    logout_button.set_image(logout_icon);
+    logout_button.get_image()->resize(24, 24);
+    logout_button.get_image()->set_alignment("center");
+    logout_button.set_size(50, 40);
+    logout_button.set_color(214, 46, 46);
+    account_menu.add_gui(logout_button);
+    // close button
+    Button account_menu_close_button("X");
+    account_menu_close_button.get_label()->set_alignment("center");
+    account_menu_close_button.set_color(214, 31, 31, 1.0);
+    account_menu_close_button.set_size(40, 36);//account_menu_close_button.add_component(*new Component("name", std::string("account_menu_close_button")));
+    account_menu.add_gui(account_menu_close_button);
+    account_menu.hide(); // hide by default
+    // if account/user_button is hovered, show the hint (tooltip)
+    std::function<void(void)> show_user_button_hint = [&user_button, &hint]() {
+        std::string message = "Account Settings";
+	    hint->get_label(0)->set_string(message);
+	    hint->get_label(0)->set_alignment("center");
+	    hint->set_size(hint->get_label(0)->get_width() + 20, 50);
+	    hint->set_position(user_button->get_x() + (user_button->get_width() - hint->get_width()) / 2, user_button->get_y() + user_button->get_height() + 5);//, ?->get_y() - (hint->get_height() + hint->get_tooltip_arrow_height()) - 5);	            
+	    hint->show();    
+    };
+    user_button->set_callback("hover", show_user_button_hint);
+    // if account/user_button is pressed, show the account_menu
+    std::function<void(void)> show_account_menu = [&account_menu]() { account_menu.show(); };
+    user_button->set_callback("left press", show_account_menu);
+    // hide account menu on close button press
+    std::function<void(void)> hide_account_menu = [&account_menu]() { account_menu.hide(); }; // lambda
+    account_menu_close_button.set_callback("left press", hide_account_menu);
+    //--------------------------------------------------------------------------
+    // ORDERS MENU
+    Box order_menu;
+    // close button
+    Button order_menu_close_button("X");
+    order_menu_close_button.get_label()->set_alignment("center");
+    order_menu_close_button.set_color(214, 31, 31, 1.0);
+    order_menu_close_button.set_size(40, 36);//order_menu_close_button.add_component(*new Component("name", std::string("order_menu_close_button")));
+    order_menu.add_gui(order_menu_close_button);
+    order_menu.hide(); // hide by default
+    // if order_button is hovered, show the hint (tooltip)
+    std::function<void(void)> show_order_button_hint = [&order_button, &hint]() {
+        std::string message = "Orders";
+	    hint->get_label(0)->set_string(message);
+	    hint->get_label(0)->set_alignment("center");
+	    hint->set_size(hint->get_label(0)->get_width() + 20, 50);
+	    hint->set_position(order_button->get_x() + (order_button->get_width() - hint->get_width()) / 2, order_button->get_y() + order_button->get_height() + 5);//, ?->get_y() - (hint->get_height() + hint->get_tooltip_arrow_height()) - 5);	            
+	    hint->show();    
+    };
+    order_button->set_callback("hover", show_order_button_hint);
+    // if order_button is pressed, show the order_menu
+    std::function<void(void)> show_order_menu = [&order_menu]() { order_menu.show(); };
+    order_button->set_callback("left press", show_order_menu);
+    // hide orders menu on close button press    
+    std::function<void(void)> hide_order_menu = [&order_menu]() { order_menu.hide(); }; // lambda
+    order_menu_close_button.set_callback("left press", hide_order_menu);
+    //--------------------------------------------------------------------------
+    // MESSAGES MENU (INBOX)
+    Box message_menu;
+    // close button
+    Button message_menu_close_button("X");
+    message_menu_close_button.get_label()->set_alignment("center");
+    message_menu_close_button.set_color(214, 31, 31, 1.0);
+    message_menu_close_button.set_size(40, 36);//message_menu_close_button.add_component(*new Component("name", std::string("message_menu_close_button")));
+    message_menu.add_gui(message_menu_close_button);
+    message_menu.hide(); // hide by default
+    // if message_button is hovered, show the hint (tooltip)
+    std::function<void(void)> show_message_button_hint = [&message_button, &hint]() {
+        std::string message = "Messages";
+	    hint->get_label(0)->set_string(message);
+	    hint->get_label(0)->set_alignment("center");
+	    hint->set_size(hint->get_label(0)->get_width() + 20, 50);
+	    hint->set_position(message_button.get_x() + (message_button.get_width() - hint->get_width()) / 2, message_button.get_y() + message_button.get_height() + 5);//, message_button.get_y() - (hint->get_height() + hint->get_tooltip_arrow_height()) - 5);	            
+	    hint->show();    
+    };
+    message_button.set_callback("hover", show_message_button_hint);
+    // if message_button is pressed, show the message_menu
+    std::function<void(void)> show_message_menu = [&message_menu]() { message_menu.show(); };
+    message_button.set_callback("left press", show_message_menu);
+    // hide messages menu on close button press    
+    std::function<void(void)> hide_message_menu = [&message_menu]() { message_menu.hide(); }; // lambda
+    message_menu_close_button.set_callback("left press", hide_message_menu);
+    //--------------------------------------------------------------------------
+    // SELLER HUB MENU
+    Box seller_hub_menu;
+    // close button
+    Button seller_hub_menu_close_button("X");
+    seller_hub_menu_close_button.get_label()->set_alignment("center");
+    seller_hub_menu_close_button.set_color(214, 31, 31, 1.0);
+    seller_hub_menu_close_button.set_size(40, 36);
+    seller_hub_menu.add_gui(seller_hub_menu_close_button);
+    seller_hub_menu.hide(); // menu will be hidden by default
+    // if seller_hub_button is hovered, show the hint (tooltip)
+    std::function<void(void)> show_seller_hub_button_hint = [&seller_hub_button, &hint]() {
+        std::string message = "Seller Hub";//"Sellers' Hub";
+	    hint->get_label(0)->set_string(message);
+	    hint->get_label(0)->set_alignment("center");
+	    hint->set_size(hint->get_label(0)->get_width() + 20, 50);
+	    hint->set_position(seller_hub_button.get_x() + (seller_hub_button.get_width() - hint->get_width()) / 2, seller_hub_button.get_y() + seller_hub_button.get_height() + 5);//, ?->get_y() - (hint->get_height() + hint->get_tooltip_arrow_height()) - 5);	            
+	    hint->show();    
+    };
+    seller_hub_button.set_callback("hover", show_seller_hub_button_hint);
+    // if seller_hub_button is pressed, show the seller_hub_menu
+    std::function<void(void)> show_seller_hub_menu = [&seller_hub_menu]() { seller_hub_menu.show(); };
+    seller_hub_button.set_callback("left press", show_seller_hub_menu);
+    // if seller_hub_menu_close_button is pressed, hide the seller_hub_menu
+    std::function<void(void)> hide_seller_hub_menu = [&seller_hub_menu]() { seller_hub_menu.hide(); }; // lambda
+    seller_hub_menu_close_button.set_callback("left press", hide_seller_hub_menu);
+    //--------------------------------------------------------------------------
+    // LOGOUT BUTTON MENU
+    // if logout_button is hovered, show the hint (tooltip)
+    std::function<void(void)> show_logout_button_hint = [&logout_button, &hint]() {
+        std::string message = "Logout";
+	    hint->get_label(0)->set_string(message);
+	    hint->get_label(0)->set_alignment("center");
+	    hint->set_size(hint->get_label(0)->get_width() + 20, 50);
+	    hint->set_position(logout_button.get_x() + (logout_button.get_width() - hint->get_width()) / 2, logout_button.get_y() + logout_button.get_height() + 5);//, ?->get_y() - (hint->get_height() + hint->get_tooltip_arrow_height()) - 5);	            
+	    hint->show();
+	};
+	logout_button.set_callback("hover", show_logout_button_hint);
+    //--------------------------------------------------------------------------
     // to-do:
     // refresh button
     // convert to seller button
@@ -931,7 +1197,7 @@ int main() {
     //grid->get_block(0, 0)->add_image(test_image);
     ////////////////
     Button test_button("Press Me");
-    test_button.set_callback("left_press", test_function);//nullptr);
+    test_button.set_callback("left press", test_function);//nullptr);
     test_button.set_callback("right_press", nullptr);
     test_button.set_position(100, 200);
     ////////////////
@@ -1167,8 +1433,8 @@ int main() {
                     //static_cast<Seller *>(user)->list_item(ring, 3, 1444.00, "jpy");//122.00, "usd");
                     //static_cast<Seller *>(user)->list_item(game, 7, 69.00, "usd");
                     /// 2. which users will be able to then add to cart
-                    user->add_to_cart(ball, 2);
-                    user->add_to_cart(candy, 10);
+                    ////user->add_to_cart(ball, 2);
+                    ////user->add_to_cart(candy, 10);
                     ////user->add_to_cart(ring, 1);
                     //user->add_to_cart(game, 1);
                     ////if(user->is_seller()) static_cast<Seller *>(user)->get_item_id_with_most_sales();//if(user->is_seller()) static_cast<Seller *>(user)->get_item_id_with_most_orders();
@@ -1176,11 +1442,7 @@ int main() {
                     std::string shipping_addr = "Lars Mars\n"
                     "12 Earth St.\n"
                     "Boston MA 02115";
-                    if(user->is_buyer()) user->create_order(shipping_addr);//, "larteyoh@protonmail.com");                    
-                    // for an online cart, you can retrieve your cart id like this:
-                    // cart_id = db.get_integer_params("SELECT user_id FROM cart WHERE user_id = $1", { user->get_id() });
-                    // then save by attaching it to the user
-                    // user->set_cart(cart_id);
+                    ////if(user->is_buyer()) user->create_order(shipping_addr);//, "larteyoh@protonmail.com");
                     // update cart qty everytime add, remove, or change_qty, is called
                     ////cart_button->get_label()->set_string(std::to_string(user->get_cart()->get_total_quantity(user->get_id())));                    
                     // set the wallet
@@ -1195,11 +1457,11 @@ int main() {
                     std::cout << "Ball star count (" << star_num << "): " << ball.get_star_count(star_num) << std::endl;
                     std::cout << "Ball average stars: " << ball.get_average_stars() << std::endl;*/
                     // rate seller (from 0-1)
-                    int seller_id = 4;
+                    ////int seller_id = 4;
                     /*if(user->get_name() == "jack") user->rate_seller(seller_id, 1, "This seller is awesome!");
                     if(user->get_name() == "dude") user->rate_seller(seller_id, 0, "This seller sucks!");//1, "This seller dope.");
                     if(user->get_name() == "mike") user->rate_seller(seller_id, 1, "This seller is rocks!");*/
-                    neroshop::Seller::get_top_rated_sellers();
+                    ////neroshop::Seller::get_top_rated_sellers();
                     //////////////////////////
                     // add an item to favorites
                     //user->add_to_favorites(ball);//(1); // item_id // index 0
@@ -1605,6 +1867,9 @@ int main() {
             window.poll_events(); // check for events
             window.set_viewport(window.get_client_width(), window.get_client_height()); // set to dimensions of render client rather than the entire window (for pixel coordinates)
             window.clear(16, 16, 16);////window.clear(color_slider_r.get_value(), color_slider_g.get_value(), color_slider_b.get_value());////(28, 33, 48);//(42, 44, 49);//(62, 65, 71);//(65, 62, 74);//(35,44,49);//(65, 69, 71); //(32, 32, 32);	    
+            /////////////////////////////////////
+            hint->hide(); // call this before drawing the buttons and GUIs that will be utilizing the tooltip
+            /////////////////////////////////////
             // neroshop label
             neroshop_label.draw();
             // monero icon
@@ -1614,20 +1879,11 @@ int main() {
             date_display.set_string(get_date("%Y-%m-%d  %l:%M:%S %p"));
             date_display.draw();
             /////////////////////////////////////
-            // DON'T open database in loop!!!
-            // each time an item is added or removed or qty_changed from the cart, update this string 
-            //cart_button->get_label()->set_string(std::to_string(user->get_cart()->get_total_quantity())); // causes crash
-            if(user != nullptr) { if(user->is_registered()) cart_button->get_label()->set_string(std::to_string(user->get_cart()->get_total_quantity(user->get_id()))); }
-            //cart_button->get_label()->set_color(); // (cart_qty >= 100) = red(255, 0, 0), (cart_qty >= (100 / 2)) = yellow(255,191,0), (cart_qty <= ((100 / 2) - 1)) = white);
-            cart_button->get_label()->set_relative_position(20, (cart_button->get_height() - cart_label.get_height()) / 2);
-            cart_button->get_image()->set_relative_position(cart_label.get_relative_x() + (cart_label.get_string().length() * 10) + 10, (cart_button->get_height() - cart_icon.get_height()) / 2);// "(cart_label.get_string().length() * 10)" could be replaced with the entire label's width
-            cart_button->draw(window.get_client_width() - cart_button->get_width() - 20, 20);//(search_bar->get_x() + (search_bar->get_width() + search_button->get_width()/* + 1*/) + 20, 20);//std::cout << "cart_button pos: " << cart_button->get_position() << std::endl;//600 + 20
-            /////////////////////////////////////
-            // if user is a seller, display customer orders
-            user_button->draw(cart_button->get_x() - user_button->get_width() - 1, 20); //(600, 250);                
-            /////////////////////////////////////
-            order_button->draw(user_button->get_x() - order_button->get_width() - 1, 20);            
-            /////////////////////////////////////
+            if(user->is_seller()) { 
+                seller_hub_button.draw(message_button.get_x() - seller_hub_button.get_width() - 1, 20);
+                //std::cout << "seller_hub_button position: " << seller_hub_button.get_position() << std::endl;
+            }
+            /////////////////////////////////////        
             if(std::stoi(message_label.get_string()) == 0) {
                 message_button.get_label()->hide();
                 message_button.get_image()->set_alignment("center");
@@ -1637,14 +1893,31 @@ int main() {
                 message_button.get_label()->set_relative_position(20, (message_button.get_height() - message_label.get_height()) / 2);
                 message_button.get_image()->set_alignment("none");
                 message_button.get_image()->set_relative_position(message_label.get_relative_x() + message_label.get_width() + 10, (message_button.get_height() - message_icon.get_height()) / 2);
-                message_button.set_size(100, 40);                
+                message_button.set_size(100, 40);
             }
-            message_button.draw(order_button->get_x() - message_button.get_width() - 1, 20);
+            message_button.draw(window.get_client_width() - message_button.get_width() - order_button->get_width() - user_button->get_width() - cart_button->get_width() - 20, 20);//(search_button->get_x() + (search_button->get_width() * 4) - 1, 20);//(order_button->get_x() - message_button.get_width() - 1, 20); // -1 is the distance between search_bar and search_button//std::cout << "message_button position: " << message_button.get_position() << std::endl;
             /////////////////////////////////////
+            order_button->draw(message_button.get_x() + order_button->get_width() + 1, 20);//(user_button->get_x() - order_button->get_width() - 1, 20);
+            /////////////////////////////////////
+            user_button->draw(order_button->get_x() + user_button->get_width() + 1, 20);//(cart_button->get_x() - user_button->get_width() - 1, 20);
+            /////////////////////////////////////
+            // DON'T open database in loop!!!
+            // each time an item is added or removed or qty_changed from the cart, update this string 
+            //cart_button->get_label()->set_string(std::to_string(user->get_cart()->get_total_quantity())); // causes crash
+            if(user != nullptr) { if(user->is_registered()) cart_button->get_label()->set_string(std::to_string(user->get_cart()->get_total_quantity(user->get_id()))); }
+            //cart_button->get_label()->set_color(); // (cart_qty >= 100) = red(255, 0, 0), (cart_qty >= (100 / 2)) = yellow(255,191,0), (cart_qty <= ((100 / 2) - 1)) = white);
+            cart_button->get_label()->set_relative_position(20, (cart_button->get_height() - cart_label.get_height()) / 2);
+            cart_button->get_image()->set_relative_position(cart_label.get_relative_x() + (cart_label.get_string().length() * 10) + 10, (cart_button->get_height() - cart_icon.get_height()) / 2);// "(cart_label.get_string().length() * 10)" could be replaced with the entire label's width
+            cart_button->draw(user_button->get_x() + user_button->get_width() + 1, 20);//(window.get_client_width() - cart_button->get_width() - 20, 20);//(search_bar->get_x() + (search_bar->get_width() + search_button->get_width() + 1) + 20, 20);// +1 is the gap between search bar and search button//std::cout << "cart_button pos: " << cart_button->get_position() << std::endl;//600 + 20
             /////////////////////////////////////
             /////////////////////////////////////
             // on logout_button pressed, return to the login menu
-            if(logout_button->is_pressed()) {
+            if(logout_button.is_pressed()) {
+                // hide all windows and menus
+                // hide catalog page
+                catalog->get_page()->hide();
+                // hide account settings menu
+                account_menu.hide();                
                 // clear all GUI focus
                 GUI::clear_all();
                 // set focus to username edit
@@ -1671,10 +1944,9 @@ int main() {
                 login_menu = true;
                 std::cout << "home_menu loop doesnt end here, sadly\n";
             }
-            logout_button->draw(message_button.get_x() - logout_button->get_width() - 1, 20);
             /////////////////////////////////////
             /////////////////////////////////////
-            daemon_button->draw(search_button->get_x() + search_button->get_width() + 10, search_button->get_y());
+            ////daemon_button->draw(search_button->get_x() + search_button->get_width() + 10, search_button->get_y());
             //wallet_button->draw(daemon_button->get_x() + daemon_button->get_width(), daemon_button->get_y());
             /////////////////////////////////////
             /////////////////////////////////////
@@ -1682,8 +1954,8 @@ int main() {
             color_slider_r.draw(); // temp
             color_slider_g.draw(); // temp
             color_slider_b.draw(); // temp
-            slider2->draw();// temp
-            slider3->draw(slider2->get_x(), slider2->get_y() + 50);
+            //slider2->draw();// temp
+            //slider3->draw(slider2->get_x(), slider2->get_y() + 50);
             //->set_color(color_slider_r.get_value(), color_slider_g.get_value(), color_slider_b.get_value());
             ////message_button.set_text(std::to_string(static_cast<int>(slider2->get_value())));
             ////////catalog->get_page()->get_gui(0/*add_cart_button*/)->set_color(color_slider_r.get_value(), color_slider_g.get_value(), color_slider_b.get_value());
@@ -1726,39 +1998,50 @@ int main() {
             ////catalog->center(window.get_client_width(), window.get_client_height());
             catalog->draw(window.get_client_width() - catalog->get_width() - 50, 90);//(50, 90);
             /////////////////////////////////////
-            hint->hide();
-            if(Mouse::is_over(order_button->get_rect()) && order_button->is_visible()) {
-            	std::string message = "orders";
-	            hint->get_label(0)->set_string(message);
-	            hint->get_label(0)->set_alignment("center");
-	            hint->set_size(hint->get_label(0)->get_width() + 20, 50);
-	            hint->set_position(order_button->get_x() + (order_button->get_width() - hint->get_width()) / 2, order_button->get_y() + order_button->get_height() + 5);//, ?->get_y() - (hint->get_height() + hint->get_tooltip_arrow_height()) - 5);	            
-	            hint->show();
-            }
-            if(Mouse::is_over(user_button->get_rect()) && user_button->is_visible()) {
-            	std::string message = "account";
-	            hint->get_label(0)->set_string(message);
-	            hint->get_label(0)->set_alignment("center");
-	            hint->set_size(hint->get_label(0)->get_width() + 20, 50);
-	            hint->set_position(user_button->get_x() + (user_button->get_width() - hint->get_width()) / 2, user_button->get_y() + user_button->get_height() + 5);//, ?->get_y() - (hint->get_height() + hint->get_tooltip_arrow_height()) - 5);	            
-	            hint->show();
-            }
-            if(Mouse::is_over(message_button.get_rect()) && message_button.is_visible()) {
-            	std::string message = "messages";
-	            hint->get_label(0)->set_string(message);
-	            hint->get_label(0)->set_alignment("center");
-	            hint->set_size(hint->get_label(0)->get_width() + 20, 50);
-	            hint->set_position(message_button.get_x() + (message_button.get_width() - hint->get_width()) / 2, message_button.get_y() + message_button.get_height() + 5);//, message_button.get_y() - (hint->get_height() + hint->get_tooltip_arrow_height()) - 5);	            
-	            hint->show();
-            }
-            if(Mouse::is_over(logout_button->get_rect()) && logout_button->is_visible()) {
-            	std::string message = "logout";
-	            hint->get_label(0)->set_string(message);
-	            hint->get_label(0)->set_alignment("center");
-	            hint->set_size(hint->get_label(0)->get_width() + 20, 50);
-	            hint->set_position(logout_button->get_x() + (logout_button->get_width() - hint->get_width()) / 2, logout_button->get_y() + logout_button->get_height() + 5);//, ?->get_y() - (hint->get_height() + hint->get_tooltip_arrow_height()) - 5);	            
-	            hint->show();
-            }
+            int menu_width = std::max<int>(850, window.get_width() - 40);
+            int menu_height = std::max<int>(500, window.get_height() - 100 - 10); // edge must line up with cart_button's edge
+            int menu_x = (window.get_width() / 2) - (menu_width / 2); // centered in window
+            int menu_y = catalog->get_view()->get_y() - 10;//90);
+            Vector4 menu_color = Vector4(32, 32, 32, 1.0);
+            // relative_position - _menu_close_button
+            //_menu_close_button.set_relative_position(_menu.get_width() - _menu_close_button.get_width() - 20, 20);
+            // seller hub menu
+            seller_hub_menu_close_button.set_relative_position(seller_hub_menu.get_width() - seller_hub_menu_close_button.get_width() - 20, 20);
+            seller_hub_menu.set_color(menu_color);
+            seller_hub_menu.set_size(menu_width, menu_height);
+            seller_hub_menu.draw(menu_x, menu_y);
+            // messages menu
+            message_menu_close_button.set_relative_position(message_menu.get_width() - message_menu_close_button.get_width() - 20, 20);
+            message_menu.set_color(menu_color);
+            message_menu.set_size(menu_width, menu_height);
+            message_menu.draw(menu_x, menu_y);
+            // orders menu
+            order_menu_close_button.set_relative_position(order_menu.get_width() - order_menu_close_button.get_width() - 20, 20);
+            order_menu.set_color(menu_color);
+            order_menu.set_size(menu_width, menu_height);
+            order_menu.draw(menu_x, menu_y);
+            // account menu
+            logout_button.set_relative_position((account_menu.get_width() - login_button->get_width()) / 2, account_menu.get_height() - logout_button.get_height() - 20);//.draw(message_button.get_x() - logout_button.get_width() - 1, 20);
+            account_menu_close_button.set_relative_position(account_menu.get_width() - account_menu_close_button.get_width() - 20, 20);            
+            account_menu.set_color(menu_color);
+            account_menu.set_size(menu_width, menu_height);
+            account_menu.draw(menu_x, menu_y);
+            // cart menu
+            // whenever the cart is empty (either after deleting a cart item or placing an order), hide all cart_menu guis then display "Your cart is empty" label
+            if(user->get_cart()->is_empty()) {
+                for(int i = 0; i < cart_menu.get_gui_count(); i++) {
+                    if(cart_menu.get_gui(i)->has_component("name")) {
+                        if(cart_menu.get_gui(i)->get_component("name")->to_string() == "cart_menu_close_button") continue; // skip close button
+                    }
+                    cart_menu.get_gui(i)->hide();
+                }//std::cout << "Your cart is empty\n"; // temporary
+            }            
+            checkout_button.set_relative_position(cart_menu.get_width() - checkout_button.get_width() - 20, cart_menu.get_height() - checkout_button.get_height() - 20);
+            cart_menu_close_button.set_relative_position(cart_menu.get_width() - cart_menu_close_button.get_width() - 20, 20);
+            cart_menu.set_color(menu_color);
+            cart_menu.set_size(menu_width, menu_height);
+            cart_menu.draw(menu_x, menu_y);
+            /////////////////////////////////////
             /*if(Mouse::is_over(?->get_rect()) && ?->is_visible()) {
             	std::string message = "";
 	            hint->get_label(0)->set_string(message);

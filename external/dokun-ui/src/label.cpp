@@ -279,6 +279,10 @@ int dokun::Label::set_font(lua_State *L)
 	return 0;
 }	
 /////////////
+void dokun::Label::set_color(unsigned int red, unsigned int green, unsigned int blue) {
+    color = Vector4(red, green, blue, color.w);
+}
+/////////////
 void dokun::Label::set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {
 	color = Vector4(red, green, blue, alpha);
@@ -286,12 +290,16 @@ void dokun::Label::set_color(unsigned int red, unsigned int green, unsigned int 
 /////////////
 void dokun::Label::set_color(const Vector3& color)
 {
-	this->color = Vector4(color, this->color.w);
+	set_color(color.x, color.y, color.z);
+}
+/////////////
+void dokun::Label::set_color(const Vector3& color, double alpha) {
+    set_color(color.x, color.y, color.z, alpha);
 }
 /////////////
 void dokun::Label::set_color(const Vector4& color)
 {
-	this->color = color;
+	set_color(color.x, color.y, color.z, color.w);
 }
 /////////////
 int dokun::Label::set_color(lua_State *L)

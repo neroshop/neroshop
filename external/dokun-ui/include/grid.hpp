@@ -20,18 +20,22 @@ public:
     void set_gap(int gap);
     void set_horizontal_gap(int gap_horz);
     void set_vertical_gap(int gap_vert);
-    void set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0);
+    void set_color(unsigned int red, unsigned int green, unsigned int blue);
+    void set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha);
     void set_color(const Vector3& color);
+    void set_color(const Vector3& color, double alpha);
     void set_color(const Vector4& color);	   static int set_color(lua_State *L);
     void set_highlight(bool highlight);
     void set_highlight_color(unsigned int red, unsigned int green, unsigned int blue);
     void set_highlight_color(unsigned int red, unsigned int green, unsigned int blue, double alpha);
     void set_highlight_color(const Vector3& color);
+    void set_highlight_color(const Vector3& color, double alpha);
     void set_highlight_color(const Vector4& color);
     void set_outline(bool outline);
     void set_outline_color(unsigned int red, unsigned int green, unsigned int blue);
     void set_outline_color(unsigned int red, unsigned int green, unsigned int blue, double alpha);
     void set_outline_color(const Vector3& color);
+    void set_outline_color(const Vector3& color, double alpha);
     void set_outline_color(const Vector4& color);
     void set_radius(float radius);
     // getters

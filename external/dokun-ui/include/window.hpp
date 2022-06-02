@@ -11,8 +11,12 @@
 #include "renderer.hpp"
 #include "keyboard.hpp"
 #include "logger.hpp"
-#include <iostream>
+// lua
 #include <lua.hpp>
+// stl
+#include <iostream>
+#include <map> // std::map
+#include <functional> // std::function
 
 namespace dokun {
 class Window {
@@ -51,6 +55,8 @@ class Window {
 		void set_icon(const std::string& file_name);     static int set_icon(lua_State *L);     
         void set_cursor(int cursor);              static int set_cursor(lua_State *L);	
         void set_cursor(std::string file_name, int width = 0, int height = 0);		
+		// callbacks
+		void set_callback(const std::string& callback_name, std::function<void(void)> callback_function); // on_resize, etc.
 		// vertical synchronization
 		void set_vertical_synchronization(bool);  static int set_vertical_synchronization(lua_State *L); // prevents refresh rate from exceeding window's refresh rate
 		static void set_viewport(int width, int height); static int set_viewport(lua_State *L);
@@ -137,7 +143,7 @@ private:
         unsigned int height;
         unsigned int mode;
         unsigned int x, y;
-        
+        std::map<std::string, std::function<void()>> callbacks;
 		//Event * event;
 		Vector4 color;
 		static std::string name;

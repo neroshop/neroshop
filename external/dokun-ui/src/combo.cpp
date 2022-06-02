@@ -172,6 +172,11 @@ int Combobox::set_image(lua_State *L)
     return 0;
 }
 /////////////
+void Combobox::set_color(unsigned int red, unsigned int green, unsigned int blue)
+{
+	color = Vector4(red, green, blue, color.w);
+}
+/////////////
 void Combobox::set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {
 	color = Vector4(red, green, blue, alpha);
@@ -180,6 +185,9 @@ void Combobox::set_color(const Vector3& color)
 {
 	set_color(color.x, color.y, color.z);
 }       
+void Combobox::set_color(const Vector3& color, double alpha) {
+    set_color(color.x, color.y, color.z, alpha);
+}
 void Combobox::set_color(const Vector4& color)
 {
 	this->color = color;

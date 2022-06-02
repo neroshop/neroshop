@@ -29,12 +29,15 @@ class Label : public GUI {
 		// setters
 		void set_string(const std::string& text);                                              static int set_string(lua_State *L);                     // void set_(); static int set_(lua_State *L);
 		void set_font(const dokun::Font& font);                                                       static int set_font(lua_State *L); // if no font set, use default (from resource)			
-		void set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0);             static int set_color(lua_State *L);
+		void set_color(unsigned int red, unsigned int green, unsigned int blue);             static int set_color(lua_State *L);
+		void set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha);
 		void set_color(const Vector3& color);
+		void set_color(const Vector3& color, double alpha);
 		void set_color(const Vector4& color);
 		void set_style(const int style);                                                       static int set_style(lua_State *L);
 		void set_background_color(unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0);              static int set_background_color(lua_State *L);
 		void set_background_color(const Vector3& color);
+		void set_background_color(const Vector3& color, double alpha);
 		void set_background_color(const Vector4& color);
 		void set_alignment(const std::string& alignment);                                      static int set_alignment(lua_State *L);
 		// getters

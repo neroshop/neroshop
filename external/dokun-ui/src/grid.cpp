@@ -205,15 +205,22 @@ void Grid::set_vertical_gap(int gap_vert) {
     this->gap_vert = gap_vert;
 }
 ////////////////////
+void Grid::set_color(unsigned int red, unsigned int green, unsigned int blue) {
+    color = Vector4(red, green, blue, color.w);
+}
+////////////////////
 void Grid::set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {
 	color = Vector4(red, green, blue, alpha);
-	// apply color to all blocks or blocks should have their own colors?
 }
 ////////////////////
 void Grid::set_color(const Vector3& color)
 {
 	set_color(color.x, color.y, color.z);
+}
+////////////////////
+void Grid::set_color(const Vector3& color, double alpha) {
+    set_color(color.x, color.y, color.z, alpha);
 }
 ////////////////////
 void Grid::set_color(const Vector4& color)

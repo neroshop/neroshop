@@ -24,6 +24,7 @@ public:
 	void set_color(unsigned int red, unsigned int green, unsigned int blue);
 	void set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha);  static int set_color(lua_State * L);
 	void set_color(const Vector3& color);
+	void set_color(const Vector3& color, double alpha);
 	void set_color(const Vector4& color);
 	void set_label(const dokun::Label& label);                             static int set_label(lua_State * L);
 	void set_disabled(bool disabled);

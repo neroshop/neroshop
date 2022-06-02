@@ -279,6 +279,10 @@ void Button::set_color(const Vector3& color) {
 	set_color(color.x, color.y, color.z);
 }
 /////////////
+void Button::set_color(const Vector3& color, double alpha) {
+    set_color(color.x, color.y, color.z, alpha);
+}
+/////////////
 void Button::set_color(const Vector4& color) {
 	set_color(color.x, color.y, color.z, color.w);
 }
@@ -589,6 +593,8 @@ void Button::on_mouse_interact()
 		    press_color.w = color.w;
             //std::cout << "press_color: " << press_color << std::endl;
 		    color = press_color;
+		    // callback function
+		    if(callback_list["on_left_press"]) callback_list["on_left_press"](); // left button pressed
 		}
 		else color = old_color;//set_color(old_color); // set to hover_color
 		
@@ -599,6 +605,8 @@ void Button::on_mouse_interact()
         hover_color.w = color.w;
         //std::cout << "hover_color: " << hover_color << std::endl;
 		color = hover_color;
+		// callback function
+		if(callback_list["on_hover"]) callback_list["on_hover"]();
 	} else color = old_color; // revert back to original color
 }
 /////////////

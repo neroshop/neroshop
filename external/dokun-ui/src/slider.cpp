@@ -120,6 +120,9 @@ void Slider::set_foreground_color(unsigned int red, unsigned int green, unsigned
 void Slider::set_foreground_color(const Vector3& color) {
     set_foreground_color(color.x, color.y, color.z);
 }
+void Slider::set_foreground_color(const Vector3& color, double alpha) {
+    set_foreground_color(color.x, color.y, color.z, alpha);
+}
 void Slider::set_foreground_color(const Vector4& color) {
     set_foreground_color(color.x, color.y, color.z, color.w);
 }
@@ -137,6 +140,9 @@ void Slider::set_background_color(unsigned int red, unsigned int green, unsigned
 }
 void Slider::set_background_color(const Vector3& color) {
     set_background_color(color.x, color.y, color.z);
+}
+void Slider::set_background_color(const Vector3& color, double alpha) {
+    set_background_color(color.x, color.y, color.z, alpha);
 }
 void Slider::set_background_color(const Vector4& color) {
     set_background_color(color.x, color.y, color.z, color.w);

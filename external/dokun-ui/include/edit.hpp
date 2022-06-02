@@ -26,6 +26,7 @@ class Edit : public GUI {// can be a line edit or text edit or search field
 		void set_color(unsigned int red, unsigned int green, unsigned int blue);
 		void set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha); static int set_color(lua_State *L);// base_color
 		void set_color(const Vector3& color);
+		void set_color(const Vector3& color, double alpha);
 		void set_color(const Vector4& color);
 		//void set_cursor(bool cursor); static int set_cursor(lua_State *L);// has text cursor?
 		// cursor positioning functions should be made private so that user does not mess up automated cursor positions
@@ -33,6 +34,7 @@ class Edit : public GUI {// can be a line edit or text edit or search field
 		void set_cursor_color(unsigned int red, unsigned int green, unsigned int blue);
 		void set_cursor_color(unsigned int red, unsigned int green, unsigned int blue, double alpha); // added 2021-12-14
 		void set_cursor_color(const Vector3& cursor_color); // added 2021-12-14
+		void set_cursor_color(const Vector3& cursor_color, double alpha);
 		void set_cursor_color(const Vector4& cursor_color); // added 2021-12-14
 		void set_cursor_advance(double cursor_advance); // sets the num ber of times a cursor should move its position forward
 		void set_label(const dokun::Label& label); static int set_label(lua_State *L);
@@ -46,6 +48,7 @@ class Edit : public GUI {// can be a line edit or text edit or search field
         void set_text_color(unsigned int red, unsigned int green, unsigned int blue);
         void set_text_color(unsigned int red, unsigned int green, unsigned int blue, double alpha); static int set_text_color(lua_State *L);
 	    void set_text_color(const Vector3& text_color);
+	    void set_text_color(const Vector3& text_color, double alpha);
 	    void set_text_color(const Vector4& text_color);
 		void set_text_size(int width, int height); static int set_text_size(lua_State *L);
 		void set_text_style(int style); static int set_text_style(lua_State *L); // italic, higlighted, underlined, bold
@@ -56,6 +59,7 @@ class Edit : public GUI {// can be a line edit or text edit or search field
 		void set_placeholder_text_color(unsigned int red, unsigned int green, unsigned int blue);
 		void set_placeholder_text_color(unsigned int red, unsigned int green, unsigned int blue, double alpha); // added 2021-12-17
 		void set_placeholder_text_color(const Vector3& color); // added 2021-12-17
+		void set_placeholder_text_color(const Vector3& color, double alpha); // added 2021-12-17
 		void set_placeholder_text_color(const Vector4& color); // added 2021-12-17
 		void set_placeholder_image(const Image& image); // placeholder image
 		void set_focus(bool focus); // or set_active(bool active); 

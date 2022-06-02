@@ -33,11 +33,13 @@ public:
 	void set_color(unsigned int red, unsigned int green, unsigned int blue);
 	void set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha); static int set_color(lua_State *L);
 	void set_color(const Vector3& color);
+	void set_color(const Vector3& color, double alpha);
 	void set_color(const Vector4& color);
 	void set_alpha(double alpha);   static int set_alpha(lua_State *L);
 	void set_outline(bool outline);
 	void set_outline_color(unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0);
 	void set_outline_color(const Vector3& color);
+	void set_outline_color(const Vector3& color, double alpha);
 	void set_outline_color(const Vector4& color);	
 	void set_radius(double radius);
 	void set_fill(bool fill); static int set_fill(lua_State *L);
@@ -45,8 +47,9 @@ public:
 	void set_gradient(bool gradient); static int set_gradient(lua_State *L);                             //  static int set_(lua_State *L);
 	void set_gradient_color(unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0); static int set_gradient_color(lua_State *L);
 	void set_gradient_color(const Vector3& color);
+	void set_gradient_color(const Vector3& color, double alpha);
 	void set_gradient_color(const Vector4& color);
-    // border functions
+    // border functions - deprecate this since outline is the same as border
 	void set_border(bool has_border);
 	void set_border_width(int width, int side = 0); // thickness
 	void set_border_size(int width, int height);

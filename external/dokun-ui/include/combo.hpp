@@ -20,8 +20,10 @@ public:
 	void set_text(const std::string& text);    static int set_text(lua_State *L);
 	void set_label(const dokun::Label& label);        static int set_label(lua_State *L);
 	void set_image(const Image& image);        static int set_image(lua_State *L);
-	void set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0);
+	void set_color(unsigned int red, unsigned int green, unsigned int blue);
+	void set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha);
 	void set_color(const Vector3& color);      static int set_color(lua_State *L);
+	void set_color(const Vector3& color, double alpha);
 	void set_color(const Vector4& color);
 	
     std::string get_text()const;               static int get_text(lua_State *L);

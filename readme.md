@@ -47,7 +47,7 @@ This is currently a work in progress. There is nothing to see here :shrug:
 | [curl](https://github.com/curl/curl)                               | ?               | `libcurl4-openssl-dev` | curl                               | currency conversion                                                    |
 | [openssl](https://github.com/openssl/openssl)                      | 1.1.1           | `libssl-dev`           | OpenSSL-SSLeay or Apache-2.0       | for curl, sha256 sum and message encryption                            |
 | [postgresql](https://www.postgresql.org/)                          | ?               | `libpq-dev`            | PostgreSQL                         | server-based database management                                       |
-| [dokun-ui](external/dokun-ui)                                      | —               |                        | MIT                                | graphical user interface                                               |
+| [dokun-ui](external/dokun-ui)                                      | n/a             |                        | MIT                                | graphical user interface                                               |
 
 
 ### Compiling neroshop from source
@@ -94,7 +94,7 @@ cd external/monero-cpp/external/monero-project && make release-static && make re
 cd ../../../../
 ```
 
-5. Build libcurl (skip this step if curl is already installed on your system)
+5. Build libcurl (skip this step if libcurl is already installed on your system)
 ```sh
 cd external/curl
 # build with ./configure (libcurl.a will be installed in both: neroshop/external/curl/lib/.libs/ and /usr/local/lib/)
@@ -150,6 +150,6 @@ CREATE DATABASE neroshoptest;
 > larteyoh@pm.me
 
 
-[//]: # (git add CMakeLists.txt external/ include/ readme.md res/neroshop-logo.png res/wallets src/ todo.txt res/ss res/tmp_images)
+[//]: # (git add CMakeLists.txt external/ include/ readme.md res/neroshop-logo.png res/ss res/tmp_images res/wallets src/ todo.txt)
 [//]: # (git commit -m"empty commit")
 [//]: # (git push -u origin main)

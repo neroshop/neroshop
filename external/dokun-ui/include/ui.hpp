@@ -61,6 +61,7 @@ class GUI: public Entity////, std::enable_shared_from_this<GUI> // note: public 
 		virtual void set_color(unsigned int red, unsigned int green, unsigned int blue);
 		virtual void set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha); static int set_color(lua_State *L);// base_color
 		virtual void set_color(const Vector3& color);
+		virtual void set_color(const Vector3& color, double alpha);
 		virtual void set_color(const Vector4& color);		
 		void set_parent(const GUI& gui);                static int set_parent(lua_State *L);
 		// state
@@ -122,12 +123,12 @@ class GUI: public Entity////, std::enable_shared_from_this<GUI> // note: public 
         virtual void on_focus();
         virtual void on_parent(); // label has its own implementation of on_parent() so this function must be virtual
 		virtual void on_disable();
-		// custom callbacks
-		void on_hover(); // when mouse is over GUI element
-		void on_press(); // when mouse is pressed, but never released
-        void on_release(); // when mouse is released
-		void on_click(); // click is for when GUI is both pressed and released by mouse (so basically, a complete click - press and release)
-		// on_press, on_click, on_hover // https://stackoverflow.com/questions/9451559/what-is-the-difference-between-clicked-and-pressed-in-qt
+		// custom callbacks - remove this ASAP!
+		//void on_hover(); // when mouse is over GUI element
+		//void on_press(); // when mouse is pressed, but never released
+        //void on_release(); // when mouse is released
+		//void on_click(); // click is for when GUI is both pressed and released by mouse (so basically, a complete click - press and release)
+		// on_press, on_click, on_hover
 		// interaction checks
 	    bool is_hovered(); static int is_hovered(lua_State * L);// mouse over
 	    bool is_pressed(); static int is_pressed(lua_State * L); // executes many times in loop
@@ -166,9 +167,9 @@ class GUI: public Entity////, std::enable_shared_from_this<GUI> // note: public 
 		bool resizeable; // can gui be resized?
 		bool sortable; // Reorder elements in a list or grid
 		////////////////
+	protected:	
 		// callback list // std::function<return_type(arg1, arg2, arg3, ...)>
 		std::map<std::string, std::function<void()>> callback_list;
-	protected:	
 	    // shader
 		static Shader * gui_shader; // all derived GUIs can access this member
 }; // widget=0, label=1, button=2, edit=3, progress_bar=4

@@ -519,6 +519,10 @@ void GUI::set_color(const Vector3& color) {
     set_color(color.x, color.y, color.z);
 }
 /////////////
+void GUI::set_color(const Vector3& color, double alpha) {
+    set_color(color.x, color.y, color.z, alpha);
+}
+/////////////
 void GUI::set_color(const Vector4& color) {
     set_color(color.x, color.y, color.z, color.w);
 }
@@ -734,22 +738,23 @@ int GUI::set_sortable(lua_State *L)
 void GUI::set_callback(const std::string& callback_name, std::function<void(void)> callback_function) {
     if(String::contains(String::lower(callback_name), "hover")) {
         callback_list["on_hover"] = callback_function;
-        //std::cout << DOKUN_UI_TAG "on_hover callback set\n";    
     }    
     //-------------------------------------------
     if(String::lower(callback_name) == "press") { // any button pressed
         callback_list["on_press"] = callback_function;
         //std::cout << DOKUN_UI_TAG "on_press callback set\n";    
     }
-    if(String::contains(String::lower(callback_name), "left_press")) { // left button pressed
+    if(String::contains(String::lower(callback_name), "left") && 
+       String::contains(String::lower(callback_name), "press")) { // left button pressed
         callback_list["on_left_press"] = callback_function;
-        //std::cout << DOKUN_UI_TAG "on_left_press callback set\n";
     }
-    if(String::contains(String::lower(callback_name), "middle_press")) { // middle button pressed
+    if(String::contains(String::lower(callback_name), "middle") && 
+       String::contains(String::lower(callback_name), "press")) { // middle button pressed
         callback_list["on_middle_press"] = callback_function;
         //std::cout << DOKUN_UI_TAG "on_middle_press callback set\n";    
     }    
-    if(String::contains(String::lower(callback_name), "right_press")) { // right button pressed
+    if(String::contains(String::lower(callback_name), "right") && 
+       String::contains(String::lower(callback_name), "press")) { // right button pressed
         callback_list["on_right_press"] = callback_function;
         //std::cout << DOKUN_UI_TAG "on_right_press callback set\n";
     }    
@@ -758,19 +763,23 @@ void GUI::set_callback(const std::string& callback_name, std::function<void(void
         callback_list["on_click"] = callback_function;
         //std::cout << DOKUN_UI_TAG "on_click callback set\n";
     }
-    if(String::contains(String::lower(callback_name), "left_click")) { // left button clicked
+    if(String::contains(String::lower(callback_name), "left") && 
+       String::contains(String::lower(callback_name), "click")) { // left button clicked
         callback_list["on_left_click"] = callback_function;
         //std::cout << DOKUN_UI_TAG "on_left_click callback set\n";    
     }
-    if(String::contains(String::lower(callback_name), "middle_click")) { // middle button clicked
+    if(String::contains(String::lower(callback_name), "middle") && 
+       String::contains(String::lower(callback_name), "click")) { // middle button clicked
         callback_list["on_middle_click"] = callback_function;
         //std::cout << DOKUN_UI_TAG "on_middle_click callback set\n";    
     }
-    if(String::contains(String::lower(callback_name), "right_click")) { // right button clicked
+    if(String::contains(String::lower(callback_name), "right") && 
+       String::contains(String::lower(callback_name), "click")) { // right button clicked
         callback_list["on_right_click"] = callback_function;
         //std::cout << DOKUN_UI_TAG "on_right_click callback set\n";    
     }        
 }
+// https://stackoverflow.com/questions/9451559/what-is-the-difference-between-clicked-and-pressed-in-qt
 /////////////  
 ///////////// 
 // GETTERS 
@@ -1450,51 +1459,6 @@ void GUI::on_disable() {
 //	}
 //}
 /////////////
-/////////////
-// Mouse input is slowed/lags because of these callback functions :/
-void GUI::on_hover() {
-    if(!is_visible() || is_disabled() || !is_active()) return;
-    if(!callback_list["on_hover"]) return;
-    if(Mouse::is_over(get_rect())) {
-        callback_list["on_hover"]();
-    }
-}
-/////////////
-void GUI::on_press() { // when mouse is pressed, but never released
-    if(!is_visible() || is_disabled() || !is_active()) return;
-    if(Mouse::is_over(get_rect())) {
-        if(Mouse::is_pressed(1) || Mouse::is_pressed(2) || Mouse::is_pressed(3)) {
-            if(callback_list["on_press"]) callback_list["on_press"](); // any button pressed
-        }
-    }
-    if(Mouse::is_over(get_rect()) && Mouse::is_pressed(1)) {
-        if(callback_list["on_left_press"]) callback_list["on_left_press"](); // left button pressed
-    }
-    if(Mouse::is_over(get_rect()) && Mouse::is_pressed(2)) {
-        if(callback_list["on_middle_press"]) callback_list["on_middle_press"](); // middle button pressed
-    }    
-    if(Mouse::is_over(get_rect()) && Mouse::is_pressed(3)) {
-        if(callback_list["on_right_press"]) callback_list["on_right_press"](); // right button pressed
-    }        
-}
-/////////////
-void GUI::on_click() { // when GUI element is both pressed and released by mouse (so basically, a complete click)
-    if(!is_visible() || is_disabled() || !is_active()) return;
-    if(Mouse::is_over(get_rect())) {
-        if(Mouse::is_clicked(1) || Mouse::is_clicked(2) || Mouse::is_clicked(3)) {
-            if(callback_list["on_click"]) callback_list["on_click"](); // any button clicked
-        }
-    }
-    if(Mouse::is_over(get_rect()) && Mouse::is_clicked(1)) {
-        if(callback_list["on_left_click"]) callback_list["on_left_click"](); // left button clicked
-    }
-    if(Mouse::is_over(get_rect()) && Mouse::is_clicked(2)) {
-        if(callback_list["on_middle_click"]) callback_list["on_middle_click"](); // middle button clicked
-    }    
-    if(Mouse::is_over(get_rect()) && Mouse::is_clicked(3)) {
-        if(callback_list["on_right_click"]) callback_list["on_right_click"](); // right button clicked
-    }        
-}
 /////////////
 /////////////
 /////////////

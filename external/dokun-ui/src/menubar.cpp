@@ -278,6 +278,10 @@ void Menubar::set_color(const Vector3& color)
     set_color(color.x, color.y, color.z);
 }
 ////////////
+void Menubar::set_color(const Vector3& color, double alpha) {
+    set_color(color.x, color.y, color.z, alpha);
+}
+////////////
 void Menubar::set_color(const Vector4& color)
 {
     set_color(color.x, color.y, color.z, color.w);

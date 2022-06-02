@@ -22,27 +22,32 @@ class Toggle : public GUI { // includes check_box, radio, and switch
 		void set_foreground_color(unsigned int red, unsigned int green, unsigned int blue);
 		void set_foreground_color(unsigned int red, unsigned int green, unsigned int blue, double alpha);
 		void set_foreground_color(const Vector3& color);
+		void set_foreground_color(const Vector3& color, double alpha);
 		void set_foreground_color(const Vector4& color);
 		
 		void set_background_color(unsigned int red, unsigned int green, unsigned int blue);
         void set_background_color(unsigned int red, unsigned int green, unsigned int blue, double alpha);
 		void set_background_color(const Vector3& color);
+		void set_background_color(const Vector3& color, double alpha);
 		void set_background_color(const Vector4& color);
 		
 		void set_on_color(unsigned int red, unsigned int green, unsigned int blue);		
 		void set_on_color(unsigned int red, unsigned int green, unsigned int blue, double alpha);
 		void set_on_color(const Vector3& color);
+		void set_on_color(const Vector3& color, double alpha);
 		void set_on_color(const Vector4& color);
 		
 		void set_off_color(unsigned int red, unsigned int green, unsigned int blue);
 		void set_off_color(unsigned int red, unsigned int green, unsigned int blue, double alpha);
 		void set_off_color(const Vector3& color);
+		void set_off_color(const Vector3& color, double alpha);
 		void set_off_color(const Vector4& color);			
 		// outline
 		void set_outline(bool outline);
 		void set_outline_width(double width);
 		void set_outline_color(unsigned int red, unsigned int green, unsigned int blue, double alpha);
 		void set_outline_color(const Vector3& color);
+		void set_outline_color(const Vector3& color, double alpha);
 		void set_outline_color(const Vector4& color);
 		void set_outline_antialiased(bool antialiased);
 		// radius

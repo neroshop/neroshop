@@ -331,6 +331,7 @@ void Box::draw_box() { // other boxes: list, grid
 			// Draw image (goes inside box) *******************************************
             if(!image_list.empty()) {
 			    for(auto images : image_list) { //Image * image = image_list[0].get();// temp
+                    if(!images.get()) continue; // skip nullptrs
                 //----------------------------------
 				    // get image size whether its original or resized or scaled
 				    int image_width = images->get_width();
@@ -523,6 +524,9 @@ void Box::set_color(unsigned int red, unsigned int green, unsigned int blue, dou
 }
 void Box::set_color(const Vector3& color) {
 	set_color(color.x, color.y, color.z);
+}
+void Box::set_color(const Vector3& color, double alpha) {
+    set_color(color.x, color.y, color.z, alpha);
 }
 void Box::set_color(const Vector4& color) {
 	set_color(color.x, color.y, color.z, color.w);
@@ -1100,7 +1104,7 @@ void Box::set_as_icon(bool icon)
 void Box::set_image(const Image& image, int index) // images are not GUIs so they do not require a parent
 {
     std::shared_ptr<Image> box_image (&const_cast<Image&>(image));
-	image_list.insert(image_list.begin() + index, box_image);//this->image = &const_cast<Image&>(image); // add image to box 
+	image_list.insert(image_list.begin() + index, box_image);//this->image = &const_cast<Image&>(image); // add image to box //image_list[index] = box_image;
 }
 /////////////
 int Box::set_image(lua_State *L)

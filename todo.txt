@@ -1,20 +1,19 @@
 [HIGH PRIORITY]
-- replace inappropriate doubles with floats                      []
-- discard all raw pointers and replace them with smart pointers  []
-- use delegating constructor for every class                     []
-- use unique_ptr for single class private member objects and stl containers whenever possible []
-- give orders a unique uuid with "ns" prepended to it            []
-- fix bug where server only reads once and then does not ever read again []
-- create a sorting box on the left side of the application and create PREVIOUS/NEXT or SHOW_MORE buttons for the catalog view []
-- improve currency conversion and use multiple sources to retrieve currency rates []
-- complete application back-end (functionality)                  []
-- complete application front-end (user interface)                []
-- create messages button and a seller hub/section button         []
-- make postgresql optional                                       []
-- create a node list of trusted and verified nodes so users (sellers) do not have to sync entire blockchain []
+- complete application back-end (functionality)
+- complete application front-end (user interface)
+- replace inappropriate doubles with floats
+- discard all raw pointer class members and replace them with smart pointers (unique_ptr over shared_ptr whenever possible)
+- use delegating constructor for every class
+- fix bug/issue where server only reads once and then does not ever read again
+- improve currency conversion by using multiple sources to retrieve currency rates
+- create messages button and a seller hub/section button (GUI-related)
+- create a sorting box on the left side of the application and create PREVIOUS/NEXT or SHOW_MORE buttons for the catalog view (GUI-related)
+- make postgresql optional by using a definition like "NEROSHOP_USE_POSTGRESQL"
+- create a node list of trusted and verified nodes so users (sellers) do not have to sync entire blockchain
 - fix mouse input functions and replace presses with clicks
-- If neroshop 1.0 ends up being centralized, work on a fully decentralized version called neroshop 2.0 
 - figure out how to generate an appimage
+- figure out how to sync monerod without the app freezing while in the home menu (this probably has to do with multithreading which I've no experience with)
+See [ISSUES] section for more "HIGH PRIORITY" todos
 
 [MID PRIORITY]
 - make table names plural ('cause select * from customer seems "grammatically" incorrect to me)
@@ -26,37 +25,44 @@
 - work on search engine
 - change network type to mainnet (when ready for release)
 - host database on self-hosted dedicated server or mutable decentralized database hosting network like sia (SkyDB), filecoin/ipfs, etc.
+- learn how peer-to-peer networking works
 - learn to encrypt and decrypt database
 - learn to backup database
 - add auction system
-- make neroshop p2p forever (every neroshop node (neromon) will maintain a copy of the "database" or "blockchain" or whatever it may be)
-- validate addresses before sending it out to buyer
-- add e2e encrypted chat/messaging
-- best-seller/best vendor sections
+- make neroshop p2p forever (every neroshop node AKA neromon will maintain a copy of the "database" or "blockchain" or whatever it may be)
+- validate seller's monero addresses before sending it out to buyer
+- add e2e encrypted chat/messaging for communications between buyer and seller
+- top seller/best vendor sections
 - dispute and report system
 - wipe orders (and their order_items) within a certain time frame (30 days)
 - multisignature wallet support
-- encrypt sensative data before storing it in database
-- create help/support section                                    []
-- offer big sum of bounty to hackers to hack and find bugs and other vulnerabilities within the code/software in order to make neroshop impossible to hack []
-- do some scalibality and stress testing of the code/software []
-- make neroshop quantum resistant []
-- allow all items to be sold on neroshop (there will be no restrictions for listing products and absolutely no censorship) []
+- encrypt sensative data on client-side before storing it in database
+- create help/support section
+- offer a decent sum of bounty to hackers to hack and find bugs and other vulnerabilities within the code/software in order to make neroshop impossible to hack
+- do some scalibality and stress testing of the code/software
+- make neroshop quantum resistant
+- allow all items to be sold on neroshop (there will be no restrictions for listing products and absolutely no censorship)
 - switch from RSA-2048 to RSA-3072 then RSA-4096 then RSA-7680 then RSA-15360 bit keys when most CPUs can handle and support it
 - switch from SHA-256 to SHA-512 then SHA-3 when most CPUs can handle and support it
 - increase bcrypt workfactor from 12 to 14 when most CPUs can handle and support it
-- tor integration                                                                []
+- tor integration
+- If neroshop 1.0 ends up being centralized, work on a fully decentralized version called neroshop 2.0
+- give orders a unique uuid with "ns" prepended to it
+
 
 [LOW PRIORITY]
 - keep number of source files in "neroshop/src" at no more than 20               [x]
 - keep number of external dependencies in "neroshop/external" at no more than 10 [x]
-- create neroshop domain name (.org preffered)                                   []
-- create neroshop onion address                                                  []
-- create neroshop matrix server                                                  [x]
-- host neroshop on gitlab or something more open-source                          []
-- transfer ownership of neroshop to a team github account                        []
-- allow contributors to create neroshop bindings for other C-based programming languages such as lua, python, ruby, etc. [-]
+- create neroshop domain name (.org preffered)
+- create neroshop onion address
+- create neroshop matrix server
+- host neroshop on gitlab or something more open-source
+- transfer ownership of neroshop to a team github account
 - revise neroshop logo
+- consider using premake as an alternative build system to cmake
+- allow contributors to create neroshop bindings for other C-based programming languages such as lua, python, ruby, etc.
+- add support for wownero (this would be perfect for tips too)
+- maybe deprecate tab class since box is sufficient enough for my needs
 - hire graphics programmer to fix and optimize rendering code in "renderer.cpp"
 - hire network programmer to implement communication between applications and servers or implement peer-to-peer system.
 - hire web developer to help develop website
@@ -80,20 +86,17 @@
 - created a new version of spinner                       [x] 2021-12-18
 - fix edit text and cursor when resized                  []
 - add eye icon to text edit to toggle sensative text visibility [x] 2022-04-08
-- work on list gui                                       []
-- work on combobox gui                                   []
 - work on scrollbar and scrollarea                       []
-- work on tab gui                                        []
 - create catalog combo_box next to search_bar (or maybe place it in filter/sorting box)           []
 - display monero price and exchange rate in home menu for all to see []
 
 [ISSUES]
-Font crashes when loading (only a small few fonts are immune from this)
-Keyboard input is received/triggered multiple times even with a single key press
+Font crashes when loading (only a few fonts are immune from this)
+Keyboard input is received/triggered multiple times even with a single key press (I need someone who is good at mouse/keyboard input programming)
 Server only reads once and then it does not ever read again
 Application crashes on logout (this is probably due to the deletion of the user object)
-EVP_PKEY_encrypt() and EVP_PKEY_decrypt() fail 50% of the time and succeeds 50% of the time (This may be caused by the encoding)
-
+EVP_PKEY_encrypt() and EVP_PKEY_decrypt() fail 50% of the time and succeeds 50% of the time (This may be caused by the encoding I dunno, man)
+Mouse presses affect all overlapping GUIs when it should ONLY affect the GUI on top
 
 [ENCRYPTION TOOLS AND ALGORITHMS]
 encryption libraries: [openssl], crypto++ (cryptopp), libsodium
@@ -104,7 +107,7 @@ symmetric encryption algorithms (key pairs): [AES]
 quantum-resistant encryption: ???
 DB/file hosting: siacoin / SkyDB, filecoin, ipfs, bittorent
 
-** [] = means that this algorithm is currently being used in neroshop
+** [] = means that this algorithm is currently being used or will be used in neroshop
 
 [NOTES]
 Since monero uses openssl as a dependency (https://github.com/monero-project/monero#dependencies), I will use openssl's sha-256 for hashing emails.

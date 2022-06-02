@@ -176,6 +176,10 @@ void Toggle::set_foreground_color(const Vector3& color)
 	set_foreground_color(color.x, color.y, color.z);
 }
 //////////////
+void Toggle::set_foreground_color(const Vector3& color, double alpha) {
+    set_foreground_color(color.x, color.y, color.z, alpha);
+}
+//////////////
 void Toggle::set_foreground_color(const Vector4& color)
 {
 	set_foreground_color(color.x, color.y, color.z, color.w);
@@ -194,6 +198,10 @@ void Toggle::set_background_color(unsigned int red, unsigned int green, unsigned
 void Toggle::set_background_color(const Vector3& color)
 {
 	set_background_color(color.x, color.y, color.z); 
+}
+/////////////
+void Toggle::set_background_color(const Vector3& color, double alpha) {
+    set_background_color(color.x, color.y, color.z, alpha);
 }
 /////////////
 void Toggle::set_background_color(const Vector4& color)

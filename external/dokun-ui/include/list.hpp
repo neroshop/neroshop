@@ -19,8 +19,10 @@ public:
 	void add_items(int items_count);
 	void add_item(const Box& item);       static int add_item(lua_State *L);// adds a new list obj
 	// setters (applies to all list items)
-	void set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0);
+	void set_color(unsigned int red, unsigned int green, unsigned int blue);
+	void set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha);
 	void set_color(const Vector3& color);
+	void set_color(const Vector3& color, double alpha);
 	void set_color(const Vector4& color);
 	void set_text(const std::string& text);
 	void set_label(const dokun::Label& label);
@@ -36,6 +38,7 @@ public:
 	void set_outline_width(double width);                                                      static int set_outline_width(lua_State * L);
 	void set_outline_color(unsigned int red, unsigned int green, unsigned int blue, double alpha = 1.0);         static int set_outline_color(lua_State * L);
 	void set_outline_color(const Vector3& color);
+	void set_outline_color(const Vector3& color, double alpha);
 	void set_outline_color(const Vector4& color);
 	void set_outline_antialiased(bool antialiased);		
 	// friend

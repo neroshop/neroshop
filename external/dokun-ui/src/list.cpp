@@ -146,18 +146,29 @@ int List::add_item(lua_State *L)
 	this->label->set_parent(*this);
 }*/
 ////////////////
+void List::set_color(unsigned int red, unsigned int green, unsigned int blue) {
+    color = Vector4(red, green, blue, color.w);
+}
+////////////////
 void List::set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha)
 {
 	color = Vector4(red, green, blue, alpha);
 }
+////////////////
 void List::set_color(const Vector3& color)
 {
 	set_color(color.x, color.y, color.z);
 }
+////////////////
+void List::set_color(const Vector3& color, double alpha) {
+    set_color(color.x, color.y, color.z, alpha);
+}
+////////////////
 void List::set_color(const Vector4& color)
 {
-	this->color = color;
+	set_color(color.x, color.y, color.z, color.w);
 }
+////////////////
 void List::set_selection(const Box& selection)
 {
 	this->selection = &const_cast<Box&>(selection);

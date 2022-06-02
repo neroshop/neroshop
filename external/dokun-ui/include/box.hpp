@@ -34,6 +34,7 @@ class Box : public GUI { // A box ui - ui element that can act as a container fo
 		void set_color(unsigned int red, unsigned int green, unsigned int blue);
 		void set_color(unsigned int red, unsigned int green, unsigned int blue, double alpha);                 static int set_color(lua_State * L);
 		void set_color(const Vector3& color);
+		void set_color(const Vector3& color, double alpha);
 		void set_color(const Vector4& color);
 		void set_alpha(double alpha);                                                  static int set_alpha(lua_State * L);
 		void set_fill(bool fill);                                                      static int set_fill(lua_State * L);
@@ -42,6 +43,7 @@ class Box : public GUI { // A box ui - ui element that can act as a container fo
 		void set_outline_width(double width);                                          static int set_outline_width(lua_State * L);
 		void set_outline_color(unsigned int red, unsigned int green, unsigned int blue, double alpha);         static int set_outline_color(lua_State * L);
 		void set_outline_color(const Vector3& color);
+		void set_outline_color(const Vector3& color, double alpha);
 		void set_outline_color(const Vector4& color);
 		void set_outline_style(int style);                                             static int set_outline_style(lua_State * L);
 		void set_outline_antialiased(bool antialiased);		                           static int set_outline_antialiased(lua_State * L);
@@ -64,6 +66,7 @@ class Box : public GUI { // A box ui - ui element that can act as a container fo
 		void set_gradient(bool gradient);                                              static int set_gradient(lua_State * L);
 		void set_gradient_color(unsigned int red, unsigned int green, unsigned int blue, double alpha);
 		void set_gradient_color(const Vector3& color);
+		void set_gradient_color(const Vector3& color, double alpha);
 		void set_gradient_color(const Vector4& color);
 		void set_gradient_color(const Vector3& color0, const Vector3& color1);
 		void set_gradient_color(const Vector4& color0, const Vector4& color1);

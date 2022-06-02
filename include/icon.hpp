@@ -36,6 +36,7 @@ private:
     static bool load_eye(); // show or hide (visibility)
     static bool load_mail(); // "mail", "send" (messages)
     static bool load_link(); // "external_link", "link"
+    static bool load_shop();
     //static bool load_();
     // not from icons8 yet
     static bool load_settings(); // cog//settings

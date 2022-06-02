@@ -14,7 +14,7 @@
 // libpq (C interface to PostgreSQL) - Arch
 ////#include <libpq-fe.h>
 ////#include <postgresql/server/libpq/libpq-fs.h>
-// libpq (C interface to PostgreSQL) - custom (requires compiler flag: -I'/usr/include/postgresql/')
+// libpq (C interface to PostgreSQL) - custom (requires compiler flag: -I'/usr/include/postgresql/' on Debian/Ubuntu)
 #include <libpq-fe.h>
 #include <libpq/libpq-fs.h>
 
