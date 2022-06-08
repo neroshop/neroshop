@@ -13,7 +13,7 @@
 #include "debug.hpp"
 #include "wallet.hpp" // causes error depending on where you place this header
 #include "config.hpp"
-#include "db.hpp"
+#include "database.hpp"
 #include "qr.hpp"
 #include "icon.hpp"
 #include "validator.hpp"

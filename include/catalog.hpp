@@ -5,7 +5,7 @@
 #define CATALOG_HPP_NEROSHOP
 // neroshop
 #include "debug.hpp"
-#include "db.hpp"
+#include "database.hpp"
 #include "icon.hpp"
 #include "item.hpp" // item price, details, and upload images
 #include "converter.hpp" // currency conversion

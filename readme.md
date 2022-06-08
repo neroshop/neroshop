@@ -149,7 +149,7 @@ CREATE DATABASE neroshoptest;
 ## Contact
 > larteyoh@pm.me
 
-
+[//]: # (rm -rf external/dokun-ui/CMakeFiles; rm -rf external/dokun-ui/CMakeCache.txt; rm -rf external/dokun-ui/cmake_install.cmake; rm -rf external/dokun-ui/Makefile)
 [//]: # (git add CMakeLists.txt external/ include/ readme.md res/neroshop-logo.png res/ss res/tmp_images res/wallets src/ todo.txt)
 [//]: # (git commit -m"empty commit")
 [//]: # (git push -u origin main)

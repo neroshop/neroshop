@@ -2,7 +2,7 @@
 #define DATABASE_HPP_NEROSHOP
 
 //#include "" // non-relational or NoSQL
-#include "db_postgres.hpp" // relational (server-based)
-#include "db_sqlite3.hpp" // relational (file-based)
+#include "database/postgres.hpp" // relational (server-based)
+#include "database/sqlite3.hpp" // relational (file-based)
 
 #endif

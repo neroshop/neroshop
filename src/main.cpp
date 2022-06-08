@@ -873,7 +873,7 @@ int main() {
                 product_quantity_spinner->add_component(*new Component("name", std::string("product_quantity_spinner_" + std::to_string(i))));
                 // create and set "on_value_changed" callback function
                 /*std::function<void(void)> change_quantity = [&product_quantity_spinner, &user]() { 
-                    user->get_cart()->change_quantity(, static_cast<int>(product_quantity_spinner->get_value()));
+                    user->get_cart()->change_quantity(user->get_cart()->get_item(i), static_cast<int>(product_quantity_spinner->get_value()));
                 }*/
                 ////product_quantity_spinner->set_callback("value changed", change_quantity);
                 cart_slot->add_gui(*product_quantity_spinner);
@@ -903,6 +903,15 @@ int main() {
     GUI * cart_slot_0 = dynamic_cast<GUI *>(Entity::get_entity_by_name("cart_slot_0"));
     cart_slot_0->set_relative_position(20, 20);//cart_slot_0->set_relative_position((cart_menu.get_width() - cart_slot_0->get_width()) / 2, 20);    
     ////////////////////////////////////////////////
+    // create and set "on_value_changed" callback function
+    /*std::function<void(void)> change_quantity = [&user]() { 
+        for(int i = 0; i < user->get_cart()->get_contents_count(); i++) {
+            std::string product_quantity_spinner_name = "product_quantity_spinner_" + std::to_string(i);
+            Spinner * product_quantity_spinner = dynamic_cast<Spinner *>(Entity::get_entity_by_name(product_quantity_spinner_name));
+            user->get_cart()->change_quantity(*user->get_cart()->get_item(i), static_cast<int>(product_quantity_spinner->get_value()));
+        }
+    };*/
+    ////////////////////////////////////////////////
     // if cart_button is hovered, show the hint (tooltip)
     std::function<void(void)> show_cart_button_hint = [&cart_button, &hint]() { 
         std::string message = "Cart";
@@ -919,7 +928,7 @@ int main() {
         for(int i = 0; i < user->get_cart()->get_contents_count(); i++) {
             std::cout << "cart item: ";
             std::cout << user->get_cart()->get_item(i)->get_name() << " (x" << user->get_cart()->get_item(i)->get_quantity(user->get_cart()->get_id()) << ")" << std::endl;
-            // update cart_slots
+            // update cart_slots - if I had a scrollbar/scrollarea, I would not have to worry about the size of the cart_slots. I'd only need to scroll while they are at a fixed size
             std::string cart_slot_name = "cart_slot_" + std::to_string(i);
             Box * cart_slots = dynamic_cast<Box *>(Entity::get_entity_by_name(cart_slot_name));
             cart_slots->set_size(cart_menu.get_width() - 100, (cart_menu.get_height() - (20 * 2) - (checkout_button.get_height() + 20)/*20(gap b-t cart_menu and first and last cart_slot), 50 + 20 = 70(checkout_button height + gap b-t cart_menu height)*/) / std::min<int>(user->get_cart()->get_contents_count(), user->get_cart()->get_max_items())); // 10 is the total gap between each cart_slot
@@ -1419,7 +1428,7 @@ int main() {
                     }*/
                     std::cout << "**********************************************************\n";
                     /// 0. Convert to a seller and register an item
-                    ////user->convert(); // convert to seller
+                    user->convert(); // convert to seller
                     //Item::register(...);
                     /// 1. Seller will list some items or increase stock (for already listed items)
                     //static_cast<Seller *>(user)->set_stock_quantity(1, 250);
