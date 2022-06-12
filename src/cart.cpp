@@ -16,9 +16,11 @@ neroshop::Cart::~Cart() {
 ////////////////////
 void neroshop::Cart::add(unsigned int item_id, int quantity) {
     // get the user_id from the cart
+#if defined(NEROSHOP_USE_POSTGRESQL)     
     int user_id = DB::Postgres::get_singleton()->get_integer_params("SELECT user_id FROM cart WHERE id = $1;", { std::to_string(this->id) });
     if(user_id == 0) { add_to_guest_cart(item_id, quantity); return; }
     add_to_registered_user_cart(user_id, item_id, quantity);
+#endif    
 }
 ////////////////////
 void neroshop::Cart::add(const neroshop::Item& item, int quantity) {
@@ -27,9 +29,11 @@ void neroshop::Cart::add(const neroshop::Item& item, int quantity) {
 ////////////////////
 void neroshop::Cart::remove(unsigned int item_id, int quantity) {
     // get the user_id from the cart
+#if defined(NEROSHOP_USE_POSTGRESQL)     
     int user_id = DB::Postgres::get_singleton()->get_integer_params("SELECT user_id FROM cart WHERE id = $1;", { std::to_string(this->id) });
     if(user_id == 0) { remove_from_guest_cart(item_id, quantity); return; }
     remove_from_registered_user_cart(user_id, item_id, quantity);
+#endif    
 }
 ////////////////////
 void neroshop::Cart::remove(const neroshop::Item& item, int quantity) {
@@ -102,6 +106,7 @@ void neroshop::Cart::load(const neroshop::Item& item, unsigned int quantity) { /
 ////////////////////
 void neroshop::Cart::add_to_guest_cart(unsigned int item_id, int quantity) {
     // get item name
+#if defined(NEROSHOP_USE_POSTGRESQL)     
     std::string item_name = DB::Postgres::get_singleton()->get_text_params("SELECT name FROM item WHERE id = $1", { std::to_string(item_id) });
     // check if item is in database
     bool item_registered = (DB::Postgres::get_singleton()->get_text_params("SELECT EXISTS(SELECT id FROM item WHERE id = $1);", { std::to_string(item_id) }) == "t") ? true : false;
@@ -164,7 +169,8 @@ void neroshop::Cart::add_to_guest_cart(unsigned int item_id, int quantity) {
     }
 #ifdef NEROSHOP_DEBUG
     NEROSHOP_TAG_OUT std::cout << "\033[0;97m" << "Total items in cart: " << get_items_count() << "\033[0m" << std::endl;
-#endif    
+#endif   
+#endif 
 }
 ////////////////////
 void neroshop::Cart::add_to_guest_cart(const neroshop::Item& item, int quantity) { // good!
@@ -384,16 +390,22 @@ unsigned int neroshop::Cart::get_id() const {
 ////////////////////
 unsigned int neroshop::Cart::get_owner_id() const {
     if(this->id == 0) return 0; // invalid cart_id means invalid user_id
+#if defined(NEROSHOP_USE_POSTGRESQL)     
     int user_id = DB::Postgres::get_singleton()->get_integer_params("SELECT user_id FROM cart WHERE id = $1;", { std::to_string(this->id) });
     std::cout << "cart belongs to user_id: " << user_id << std::endl; // temp
     return user_id;
+#endif    
+    return 0;
 }
 ////////////////////
 unsigned int neroshop::Cart::get_owner_id(unsigned int cart_id) {
     if(cart_id == 0) return 0;
+#if defined(NEROSHOP_USE_POSTGRESQL)     
     int user_id = DB::Postgres::get_singleton()->get_integer_params("SELECT user_id FROM cart WHERE id = $1;", { std::to_string(cart_id) });
     std::cout << "cart belongs to user_id: " << user_id << std::endl; // temp
     return user_id;
+#endif    
+    return 0;
 }
 ////////////////////
 unsigned int neroshop::Cart::get_max_items() const {
@@ -477,6 +489,7 @@ void neroshop::Cart::remove_db(unsigned int item_id) {
 // checks whether cart exists or not - should be changed to has_cart(int)
 bool neroshop::Cart::load_cart(int user_id) {
     // check whether cart exists or not
+#if defined(NEROSHOP_USE_POSTGRESQL)     
     int cart_id = DB::Postgres::get_singleton()->get_integer_params("SELECT id FROM cart WHERE user_id = $1", { std::to_string(user_id) });
     if(cart_id == 0) {
         // all users should have a cart at the time of registration
@@ -540,10 +553,13 @@ bool neroshop::Cart::load_cart(int user_id) {
     PQclear(result);
     /////////////////////////////
     return true;
+#endif    
+    return true;
 }
 ////////////////////
 ////////////////////
 void neroshop::Cart::add_to_registered_user_cart(int user_id, unsigned int item_id, int quantity) {
+#if defined(NEROSHOP_USE_POSTGRESQL)     
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
     ////////////////////    
     // if quantity is zero or negative then there's nothing to add
@@ -621,6 +637,7 @@ void neroshop::Cart::add_to_registered_user_cart(int user_id, unsigned int item_
 #endif    
     ////////////////////
     //DB::Postgres::get_singleton()->finish();
+#endif    
 }
 ////////////////////
 void neroshop::Cart::add_to_registered_user_cart(int user_id, const neroshop::Item& item, int quantity) {
@@ -637,6 +654,7 @@ void neroshop::Cart::remove_from_registered_user_cart(int user_id, const nerosho
 ////////////////////
 ////////////////////
 void neroshop::Cart::create_cart_item_table() {
+#if defined(NEROSHOP_USE_POSTGRESQL) 
     if(!DB::Postgres::get_singleton()->table_exists("cart_item")) {
         DB::Postgres::get_singleton()->create_table("cart_item");
         DB::Postgres::get_singleton()->execute("ALTER TABLE cart_item ADD COLUMN cart_id integer REFERENCES cart(id);");
@@ -645,6 +663,7 @@ void neroshop::Cart::create_cart_item_table() {
         DB::Postgres::get_singleton()->execute("ALTER TABLE cart_item ADD COLUMN item_price numeric;");// original price, not seller price
         DB::Postgres::get_singleton()->execute("ALTER TABLE cart_item ADD COLUMN item_weight real;");
     }
+#endif    
 }
 ////////////////////
 void neroshop::Cart::create_table() {
@@ -652,6 +671,7 @@ void neroshop::Cart::create_table() {
 }
 ////////////////////
 void neroshop::Cart::insert_into(int user_id, int item_id, int item_qty, double item_price, float item_weight) {
+#if defined(NEROSHOP_USE_POSTGRESQL)     
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
     ////////////////////
     // begin transaction
@@ -670,78 +690,97 @@ void neroshop::Cart::insert_into(int user_id, int item_id, int item_qty, double 
     ////DB::Postgres::get_singleton()->execute("COMMIT;");
     ////////////////////
     //DB::Postgres::get_singleton()->finish();
+#endif    
 }
 ////////////////////
 void neroshop::Cart::delete_from(int user_id, int item_id) {
+#if defined(NEROSHOP_USE_POSTGRESQL) 
     // fetch cart_id FROM cart WHERE user_id = $1
     int cart_id = DB::Postgres::get_singleton()->get_integer_params("SELECT id FROM cart WHERE user_id = $1", { std::to_string(user_id) });
-    
+#endif    
 }
 ////////////////////
 ////////////////////
 void neroshop::Cart::empty(int user_id) {
+#if defined(NEROSHOP_USE_POSTGRESQL) 
     // fetch cart_id FROM cart WHERE user_id = $1
     int cart_id = DB::Postgres::get_singleton()->get_integer_params("SELECT id FROM cart WHERE user_id = $1", { std::to_string(user_id) });
     // delete everything from user's cart
     DB::Postgres::get_singleton()->execute_params("DELETE FROM cart_item WHERE cart_id = $1;", { std::to_string(cart_id) });
+#endif    
     // clear the contents from the vector as well
     contents.clear();
 }
 ////////////////////
 ////////////////////
 int neroshop::Cart::get_total_quantity(int user_id) const {
+#if defined(NEROSHOP_USE_POSTGRESQL) 
     // fetch id FROM cart WHERE user_id = $1
     int cart_id = DB::Postgres::get_singleton()->get_integer_params("SELECT id FROM cart WHERE user_id = $1", { std::to_string(user_id) });    
     // get sum of all item_qty FROM cart_item WHERE cart_id = $1
     int total_qty = DB::Postgres::get_singleton()->get_integer_params("SELECT SUM(item_qty) FROM cart_item WHERE cart_id = $1", { std::to_string(cart_id) });
     return total_qty;
+#endif    
+    return 0;
 }
 ////////////////////
 double neroshop::Cart::get_subtotal_price(int user_id) const {
+#if defined(NEROSHOP_USE_POSTGRESQL) 
     // fetch id FROM cart WHERE user_id = $1
     int cart_id = DB::Postgres::get_singleton()->get_integer_params("SELECT id FROM cart WHERE user_id = $1", { std::to_string(user_id) });
     // get sum of all (item_price * item_qty)  FROM cart_item WHERE cart_id = $1
     double subtotal_price = DB::Postgres::get_singleton()->get_double_params("SELECT SUM(item_price * item_qty) FROM cart_item WHERE cart_id = $1", { std::to_string(cart_id) });    
     return subtotal_price;
+#endif    
+    return 0.0;
 }
 ////////////////////
 float neroshop::Cart::get_total_weight(int user_id) const {
+#if defined(NEROSHOP_USE_POSTGRESQL) 
     // fetch id FROM cart WHERE user_id = $1
     int cart_id = DB::Postgres::get_singleton()->get_integer_params("SELECT id FROM cart WHERE user_id = $1", { std::to_string(user_id) });
     // get sum of all (item_weight * item_qty) FROM cart_item WHERE cart_id = $1
     float total_weight = DB::Postgres::get_singleton()->get_real_params("SELECT SUM(item_weight * item_qty) FROM cart_item WHERE cart_id = $1", { std::to_string(cart_id) });
     return total_weight;
+#endif    
+    return 0.0f;
 }
 ////////////////////
 ////////////////////
 ////////////////////
 bool neroshop::Cart::is_empty(int user_id) const {
+#if defined(NEROSHOP_USE_POSTGRESQL) 
     // fetch id FROM cart WHERE user_id = $1
     int cart_id = DB::Postgres::get_singleton()->get_integer_params("SELECT id FROM cart WHERE user_id = $1", { std::to_string(user_id) });
     // count number of items in cart_item WHERE cart_id = $1
     int total_items = DB::Postgres::get_singleton()->get_integer_params("SELECT COUNT(*) FROM cart_item WHERE cart_id = $1", { std::to_string(cart_id) });
     return (total_items == 0);
+#endif    
+    return false;
 }
 ////////////////////
 bool neroshop::Cart::is_full(int user_id) const {
+#if defined(NEROSHOP_USE_POSTGRESQL) 
     // fetch id FROM cart WHERE user_id = $1
-    int cart_id = DB::Postgres::get_singleton()->get_integer_params("SELECT id FROM cart WHERE user_id = $1", { std::to_string(user_id) });
-    std::cout << "cart_id: " << cart_id << std::endl;
+    int cart_id = DB::Postgres::get_singleton()->get_integer_params("SELECT id FROM cart WHERE user_id = $1", { std::to_string(user_id) });//std::cout << "cart_id: " << cart_id << std::endl;
     // 100 item_qty max
-    int total_qty = DB::Postgres::get_singleton()->get_integer_params("SELECT SUM(item_qty) FROM cart_item WHERE cart_id = $1", { std::to_string(cart_id) });
-    std::cout << "total_cart_qty: " << total_qty << std::endl;
+    int total_qty = DB::Postgres::get_singleton()->get_integer_params("SELECT SUM(item_qty) FROM cart_item WHERE cart_id = $1", { std::to_string(cart_id) });//std::cout << "total_cart_qty: " << total_qty << std::endl;
     // 10 items max
-    int total_items = DB::Postgres::get_singleton()->get_integer_params("SELECT COUNT(*) FROM cart_item WHERE cart_id = $1", { std::to_string(cart_id) });
-    std::cout << "total_cart_items (rows): " << total_items << std::endl;
+    int total_items = DB::Postgres::get_singleton()->get_integer_params("SELECT COUNT(*) FROM cart_item WHERE cart_id = $1", { std::to_string(cart_id) });//std::cout << "total_cart_items (rows): " << total_items << std::endl;
     return (total_items >= max_items || total_qty >= max_quantity);
+#endif    
+    return false;
 }
 ////////////////////
 bool neroshop::Cart::in_cart(int user_id, unsigned int item_id) const {
+#if defined(NEROSHOP_USE_POSTGRESQL) 
     // fetch id FROM cart WHERE user_id = $1
     int cart_id = DB::Postgres::get_singleton()->get_integer_params("SELECT id FROM cart WHERE user_id = $1", { std::to_string(user_id) });   
     // check if item is in cart
     bool item_in_cart = (DB::Postgres::get_singleton()->get_text_params("SELECT EXISTS (SELECT item_id FROM cart_item WHERE cart_id = $1 AND item_id = $2)", { std::to_string(cart_id), std::to_string(item_id) }) == "t") ? true : false;
     return item_in_cart;
+#endif    
+    return false;
 }
 ////////////////////
 ////////////////////

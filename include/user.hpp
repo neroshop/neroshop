@@ -49,7 +49,7 @@ public:
     neroshop::Order * get_order(unsigned int index) const;
     unsigned int get_order_count() const;
     std::vector<neroshop::Order *> get_order_list() const;
-    neroshop::Item * get_favorites(unsigned int index) const;
+    neroshop::Item * get_favorite(unsigned int index) const;
     unsigned int get_favorites_count() const;
     std::vector<neroshop::Item *> get_favorites_list() const;
     // boolean

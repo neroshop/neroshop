@@ -165,6 +165,7 @@ void neroshop::Order::create_guest_order(const neroshop::Cart& cart, const std::
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     float weight = cart.get_total_weight();
     ////////////////////////////////
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
@@ -343,12 +344,14 @@ void neroshop::Order::create_guest_order(const neroshop::Cart& cart, const std::
     // notify seller // send seller notification for every order made that contains the item they have on sale: "You have received an order on neroshop for 1 items(s) totaling: 0.2 XMR ($107.50 at current rates)". Also include buyer's name and address and contact
     // seller receives the order made by the buyer - shipping address will be encrypted then sent to the seller
     // seller generates a unique subaddress when they accept the order, the stock_qty of item_id in table Inventory (seller can choose to either accept or deny the order, but they must give a reason for denying an order)
+#endif    
 }
 ////////////////////
 ////////////////////
 ////////////////////
 ////////////////////
 void neroshop::Order::create_registered_user_order(const neroshop::Cart& cart, const std::string& shipping_address, std::string contact_info) {
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     // check if order is already in the database
     if(id != 0) {
         neroshop::print("This order (id: " + std::to_string(id) + ") already exists"); 
@@ -538,6 +541,7 @@ void neroshop::Order::create_registered_user_order(const neroshop::Cart& cart, c
     // end transaction
     DB::Postgres::get_singleton()->execute("COMMIT;");
     ////////////////////////////////
+#endif    
 }
 ////////////////////
 void neroshop::Order::cancel_order()

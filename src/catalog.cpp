@@ -466,7 +466,7 @@ void neroshop::Catalog::setup_page() {
     // ADD TO CART BUTTON
     Button * cart_add_button = new Button("Add to cart");//("ADD TO CART");
     cart_add_button->set_width(500); // same width as product_image_box
-    cart_add_button->set_color(107, 91, 149);//(82, 70, 86); //(55, 25, 255);//bluish-purple//(42, 25, 255);//(50, 25, 255);//(30, 30, 255);
+    cart_add_button->set_color(72, 61, 139);//(107, 91, 149);//(82, 70, 86); //(55, 25, 255);//bluish-purple//(42, 25, 255);//(50, 25, 255);//(30, 30, 255);
     cart_add_button->add_component(*new Component("name", std::string("cart_add_button"))); // if you don't specificy the datatype of the component then you will run into some errors later on
     current->add_gui(*cart_add_button);
     // CLOSE BUTTON
@@ -521,12 +521,14 @@ void neroshop::Catalog::update_page(int item_id) {
     // update seller label
     // gets the seller_id with the most positive reviews
     int seller_id = product.get_seller_id();
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     std::string seller_name = DB::Postgres::get_singleton()->get_text_params("SELECT name FROM users WHERE id = $1", { std::to_string(seller_id) });
     int seller_count = product.get_seller_count();//Item::get_seller_ids(item_id);//product.get_seller_ids();// TEMPORARY DELETE SOON
     current->get_label(5)->set_string((seller_count > 1) ? "sold by: " + seller_name + " and " + std::to_string(seller_count - 1) + " other seller(s)" : "sold by: " + seller_name);
     // update condition label
     std::string condition = DB::Postgres::get_singleton()->get_text_params("SELECT condition FROM inventory WHERE item_id = $1 AND seller_id = $2", { std::to_string(item_id), std::to_string(seller_id) });
     current->get_label(6)->set_string("condition: " + condition);
+#endif
     // update quantity spinner
     quantity_spinner->set_value(1); // reset the quantity_spinner's value to the default: 1
     //////////////////////////////////////////////////////////////
@@ -614,6 +616,7 @@ void neroshop::Catalog::populate() {
 }
 ////////////////////
 void neroshop::Catalog::fetch_items() {
+#if defined(NEROSHOP_USE_POSTGRESQL)
     std::string command = "SELECT * FROM item ORDER BY id ASC LIMIT $1;"; // "ORDER BY id ASC" = place in ascending order by id (oldest to latest items). DESC would be from the latest to the oldest items
     int box_count = view->get_row_count() * view->get_column_count(); // rows x columns
     std::vector<const char *> param_values = { std::to_string(box_count).c_str() };
@@ -632,10 +635,12 @@ void neroshop::Catalog::fetch_items() {
         // draw contents here ...
     }
     ////////////////////
-    PQclear(result); // free result when done using it       
+    PQclear(result); // free result when done using it
+#endif    
 }
 ////////////////////
 void neroshop::Catalog::fetch_inventory() {
+#if defined(NEROSHOP_USE_POSTGRESQL)
     // here, we use DISTINCT ON to ignore duplicate items with the same item_id
     std::string command = "SELECT DISTINCT ON (item_id) * FROM inventory ORDER BY item_id ASC LIMIT $1;";//WHERE stock_qty > 0;";// "ORDER BY item_id ASC" = place in ascending order by item_id (lowest to highest). DESC would be from highest to lowest
     int box_count = view->get_row_count() * view->get_column_count(); // rows x columns
@@ -783,6 +788,7 @@ void neroshop::Catalog::fetch_inventory() {
     }
     ////////////////////
     PQclear(result); // free result
+#endif    
 }
 ////////////////////
 void neroshop::Catalog::fetch_items_and_inventory() {
@@ -790,6 +796,7 @@ void neroshop::Catalog::fetch_items_and_inventory() {
 }
 ////////////////////
 void neroshop::Catalog::fetch_best_sellers() {
+#if defined(NEROSHOP_USE_POSTGRESQL)
     // if an item has never been ordered at least once, then it will not appear in best-sellers
     std::string command = "SELECT item_id FROM order_item GROUP BY item_id ORDER BY SUM(item_qty) DESC LIMIT $1;"; // DESC (from highest to lowest sum of item_qty)
     int box_count = view->get_row_count() * view->get_column_count(); // rows x columns
@@ -821,10 +828,12 @@ void neroshop::Catalog::fetch_best_sellers() {
     }
     ////////////////////
     PQclear(result); // free result when done using it
+#endif    
 }
 ////////////////////
 // I don't know how to get the mode of unnest(item_ids) in table favorites :/
 void neroshop::Catalog::fetch_most_favorited() {
+#if defined(NEROSHOP_USE_POSTGRESQL)
     // if an item has never been favorited at least once, then it will not appear in most favorited
     std::string command = "";//"SELECT unnest(item_ids) FROM favorites;";
     /*SELECT count(*), UNNEST(item_ids) as item_id
@@ -847,6 +856,7 @@ void neroshop::Catalog::fetch_most_favorited() {
     }
     ////////////////////
     PQclear(result); // free result when done using it
+#endif    
 }
 ////////////////////
 // refresh content (when user logs in or performs an item search) without allocating new objects

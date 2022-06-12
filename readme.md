@@ -80,13 +80,13 @@ cd external
 git clone --recurse-submodules https://github.com/monero-ecosystem/monero-cpp.git
 git clone --recurse-submodules https://github.com/rg3/libbcrypt.git
 git clone --recurse-submodules https://github.com/nayuki/QR-Code-generator.git
+git clone --recurse-submodules https://github.com/nlohmann/json.git
 git clone --recurse-submodules https://github.com/curl/curl.git
 cd ../
 ```
 
 3. Modify external/monero-cpp/external/monero-project/CMakeLists.txt:
 `option(BUILD_GUI_DEPS "Build GUI dependencies." ON)`
-<!-- Step 2 is probably not necessary :U -->
 
 4. Build monero-project twice to create libwallet_merged.a and other .a libraries
 ```sh
@@ -114,7 +114,7 @@ cmake -G"Unix Makefiles"
 make
 cd ../../
 # Build neroshop
-cmake -G"Unix Makefiles" -DPostgreSQL_TYPE_INCLUDE_DIR=/usr/include/postgresql/
+cmake -G"Unix Makefiles" -DNEROSHOP_USE_POSTGRESQL=1 -DPostgreSQL_TYPE_INCLUDE_DIR=/usr/include/postgresql/
 make
 ```
 

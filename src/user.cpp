@@ -83,6 +83,7 @@ void neroshop::User::rate_seller(unsigned int seller_id, int score, std::string 
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
     // create table seller_ratings if it does not yet exist
     if(!DB::Postgres::get_singleton()->table_exists("seller_ratings")) {
@@ -134,7 +135,8 @@ void neroshop::User::rate_seller(unsigned int seller_id, int score, std::string 
     #endif
     }    
     
-    ////////////////////////////////    
+    ////////////////////////////////  
+#endif      
 } 
 // int seller_id = 2;
 // user->rate_seller(seller_id, 1, "This seller rocks!");
@@ -227,6 +229,7 @@ void neroshop::User::rate_item(unsigned int item_id, int stars, std::string comm
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
     // create table item_ratings if it does not yet exist
     if(!DB::Postgres::get_singleton()->table_exists("item_ratings")) {
@@ -299,6 +302,7 @@ void neroshop::User::rate_item(unsigned int item_id, int stars, std::string comm
     }    
     
     ////////////////////////////////    
+#endif    
 } 
 // user->rate_item(ball.get_id(), 5, "Very bouncy. I love it!");
 ////////////////////
@@ -312,12 +316,14 @@ void neroshop::User::convert() {
         return; 
     }
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
     ///DB::Postgres::get_singleton()->execute("BEGIN;"); // not necessary unless doing multiple operations
     DB::Postgres::get_singleton()->execute_params("UPDATE users SET account_type_id = $1 WHERE id = $2", { std::to_string(2), std::to_string(this->id) });
     neroshop::print("You have converted from a buyer to a seller", 3);    
     ////DB::Postgres::get_singleton()->execute("COMMIT;");
     ////////////////////////////////    
+#endif    
 }
 // if(user->is_buyer()) user->convert(); // convert buyer to seller
 ////////////////////
@@ -350,6 +356,7 @@ void neroshop::User::delete_account() {
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
     ////DB::Postgres::get_singleton()->execute("BEGIN;"); // not necessary unless doing multiple operations
     ////DB::Postgres::get_singleton()->execute("SAVEPOINT before_account_deletion_savepoint;");//ROLLBACK TO before_account_deletion_savepoint;
@@ -371,7 +378,8 @@ void neroshop::User::delete_account() {
     ////DB::Postgres::get_singleton()->execute("COMMIT;");
     
     ////////////////////////////////    
-} // username of deleted accounts cannot be reused ?? :O
+#endif    
+} // username of deleted accounts can be reused or nah?? :O
 ////////////////////
 ////////////////////
 ////////////////////
@@ -440,6 +448,7 @@ void neroshop::User::load_orders() {
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
     //if(!DB::Postgres::get_singleton()->table_exists("orders")) { return;} // user probably has no order history
     // first, check if user has any orders
@@ -465,6 +474,7 @@ void neroshop::User::load_orders() {
     ////////////////////////////////    
     
     ////////////////////////////////    
+#endif    
 }
 ////////////////////
 ////////////////////
@@ -472,6 +482,7 @@ void neroshop::User::load_orders() {
 // favorite-or-wishlist-related stuff
 ////////////////////
 void neroshop::User::add_to_favorites(unsigned int item_id) {
+#if defined(NEROSHOP_USE_POSTGRESQL)
     // check if item is already in favorites so that we do not add the same item more than once
     std::string item_name = DB::Postgres::get_singleton()->get_text_params("SELECT name FROM item WHERE id = $1", { std::to_string(item_id) });
     bool favorited = (DB::Postgres::get_singleton()->get_text_params("SELECT EXISTS(SELECT item_ids FROM favorites WHERE $1 = ANY(item_ids) AND user_id = $2)", { std::to_string(item_id), std::to_string(this->id) }) == "t") ? true : false;
@@ -481,6 +492,7 @@ void neroshop::User::add_to_favorites(unsigned int item_id) {
     // store in vector as well
     favorites_list.push_back(std::make_shared<neroshop::Item>(item_id));//(std::unique_ptr<neroshop::Item>(new neroshop::Item(item_id)));
     neroshop::print("\"" + item_name + "\" has been added to your favorites", 3);//if(std::find(favorites_list.begin(), favorites_list.end(), item_id) == favorites_list.end()) { favorites_list.push_back(item_id); neroshop::print("\"" + item_name + "\" has been added to your favorites", 3); }// this works for a favorite_list that stores integers (item_ids) rather than the item object itself
+#endif    
 }
 ////////////////////
 void neroshop::User::add_to_favorites(const neroshop::Item& item) {
@@ -488,6 +500,7 @@ void neroshop::User::add_to_favorites(const neroshop::Item& item) {
 }
 ////////////////////
 void neroshop::User::remove_from_favorites(unsigned int item_id) {
+#if defined(NEROSHOP_USE_POSTGRESQL)
     // check if item has already been removed from favorites so that we don't have to remove it more than once
     std::string item_name = DB::Postgres::get_singleton()->get_text_params("SELECT name FROM item WHERE id = $1", { std::to_string(item_id) });
     bool favorited = (DB::Postgres::get_singleton()->get_text_params("SELECT EXISTS(SELECT item_ids FROM favorites WHERE $1 = ANY(item_ids) AND user_id = $2)", { std::to_string(item_id), std::to_string(this->id) }) == "t") ? true : false;
@@ -502,6 +515,7 @@ void neroshop::User::remove_from_favorites(unsigned int item_id) {
         favorites_list.erase(favorites_list.begin() + item_index);
         if(std::find(favorites_list.begin(), favorites_list.end(), favorites) == favorites_list.end()) neroshop::print("\"" + item_name + "\" has been removed from your favorites", 1); // confirm that item has been removed from favorites_list
     }    
+#endif        
 }
 ////////////////////
 void neroshop::User::remove_from_favorites(const neroshop::Item& item) {
@@ -509,6 +523,7 @@ void neroshop::User::remove_from_favorites(const neroshop::Item& item) {
 }
 ////////////////////
 void neroshop::User::clear_favorites() {
+#if defined(NEROSHOP_USE_POSTGRESQL)
     // first check if array is empty
     int is_empty = DB::Postgres::get_singleton()->get_integer_params("SELECT COUNT(*) FROM favorites WHERE item_ids = '{}' AND user_id = $1", { std::to_string(this->id) });
     if(is_empty) return; // array is empty so that means there is nothing to delete, exit function
@@ -517,9 +532,11 @@ void neroshop::User::clear_favorites() {
     // clear favorites from vector as well
     favorites_list.clear();
     if(favorites_list.empty()) neroshop::print("your favorites have been cleared");// confirm that favorites_list has been cleared
+#endif        
 }
 ////////////////////
 void neroshop::User::load_favorites() {
+#if defined(NEROSHOP_USE_POSTGRESQL)
     std::string command = "SELECT unnest(item_ids) FROM favorites WHERE user_id = $1";
     std::vector<const char *> param_values = { std::to_string(this->id).c_str() };
     PGresult * result = PQexecParams(DB::Postgres::get_singleton()->get_handle(), command.c_str(), 1, nullptr, param_values.data(), nullptr, nullptr, 0);
@@ -535,6 +552,7 @@ void neroshop::User::load_favorites() {
         neroshop::print("Favorited item (id: " + std::to_string(item_id) + ") has been loaded");
     }
     PQclear(result);
+#endif    
 }
 ////////////////////
 ////////////////////
@@ -542,6 +560,7 @@ void neroshop::User::load_favorites() {
 // avatar-related stuff here
 ////////////////////
 void neroshop::User::upload_avatar(const std::string& filename) {
+#if defined(NEROSHOP_USE_POSTGRESQL)
     // before we upload a new avatar, we must first check if a VALID avatar already exists, if so delete it
     Oid avatar_oid = DB::Postgres::get_singleton()->get_integer_params("SELECT data FROM avatars WHERE user_id = $1;", { std::to_string(this->id) });//std::cout << avatar_oid << std::endl;
     if(avatar_oid != InvalidOid) { 
@@ -563,9 +582,11 @@ void neroshop::User::upload_avatar(const std::string& filename) {
     /////////////////////////////////////////////////
     // end transaction
     DB::Postgres::get_singleton()->execute("COMMIT;");        
+#endif    
 }
 ////////////////////
 void neroshop::User::delete_avatar() {
+#if defined(NEROSHOP_USE_POSTGRESQL)
     // begin transaction (required when dealing with large objects)
     DB::Postgres::get_singleton()->execute("BEGIN;");
     /////////////////////////////////////////////////
@@ -584,6 +605,7 @@ void neroshop::User::delete_avatar() {
     // end transaction
     DB::Postgres::get_singleton()->execute("COMMIT;");
     //return true;
+#endif    
 }
 ////////////////////
 ////////////////////
@@ -659,7 +681,7 @@ std::vector<neroshop::Order *> neroshop::User::get_order_list() const {
 }
 ////////////////////
 ////////////////////
-neroshop::Item * neroshop::User::get_favorites(unsigned int index) const {
+neroshop::Item * neroshop::User::get_favorite(unsigned int index) const {
     if(index > (favorites_list.size() - 1)) throw std::out_of_range("neroshop::User::get_favorites(): attempt to access invalid index");
     return favorites_list[index].get();
 }
@@ -695,12 +717,15 @@ bool neroshop::User::is_buyer() const// buyer and guests are not required to reg
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
     int account_type_id = DB::Postgres::get_singleton()->get_integer_params("SELECT account_type_id FROM users WHERE id = $1::int", { std::to_string(this->id) });
     if(account_type_id != 1) {return false;} // 1 = buyer //neroshop::print("User " + name + " is a buyer", 4); // only print when there's an error   
     
     ////////////////////////////////
     return true;
+#endif
+    return false;    
 }
 ////////////////////
 bool neroshop::User::is_seller() const
@@ -714,12 +739,15 @@ bool neroshop::User::is_seller() const
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
     int account_type_id = DB::Postgres::get_singleton()->get_integer_params("SELECT account_type_id FROM users WHERE id = $1::int", { std::to_string(this->id) });
     if(account_type_id != 2) {return false;} // 2 = seller //neroshop::print("User " + name + " is a seller", 4); // only print when there's an error
     
     ////////////////////////////////
     return true;
+#endif
+    return false;    
 }
 ////////////////////
 bool neroshop::User::is_online() const // a user is not created until they are logged so this function can only be called when a user is logged // guests can also use this function so its a bad idea to check if user is logged
@@ -738,6 +766,7 @@ bool neroshop::User::is_registered() const {
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
 	// if table Users does not exist, that means no accounts are registered
 	if(!DB::Postgres::get_singleton()->table_exists("users")) {
@@ -756,6 +785,8 @@ bool neroshop::User::is_registered() const {
     
     ////////////////////////////////	
     return true;
+#endif
+    return false;    
 }
 ////////////////////
 bool neroshop::User::is_registered(const std::string& name) { // no need to login to prove user is registered, just need to check the db
@@ -775,6 +806,7 @@ bool neroshop::User::is_registered(const std::string& name) { // no need to logi
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
 	// confirm that this user's name is in the db (to prove that they are registered)
 	std::string user = DB::Postgres::get_singleton()->get_text_params("SELECT name FROM users WHERE name = $1", { String::lower(name) });
@@ -793,6 +825,8 @@ bool neroshop::User::is_registered(const std::string& name) { // no need to logi
     
     ////////////////////////////////	
     return true;
+#endif
+    return false;    
 }
 ////////////////////
 bool neroshop::User::is_logged() const
@@ -812,6 +846,7 @@ bool neroshop::User::has_email() const {
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
     std::string email = DB::Postgres::get_singleton()->get_text_params("SELECT opt_email FROM users WHERE id = $1::int", { std::to_string(get_id()) });
     if(email.empty()) {
@@ -823,10 +858,13 @@ bool neroshop::User::has_email() const {
     
     ////////////////////////////////
     return true;
+#endif
+    return false;    
 }
 ////////////////////
 ////////////////////
 bool neroshop::User::has_purchased(unsigned int item_id) { // for registered users only//if(!is_logged()) { neroshop::print("You are not logged in", 2); return false; }
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     // check if user has previously ordered this item (we have the order_ids which we'll need to figure out which order_items belong to each order_id)
     std::vector<unsigned int> purchases_list = {};
     for(const auto & orders : order_list) { 
@@ -841,6 +879,8 @@ bool neroshop::User::has_purchased(unsigned int item_id) { // for registered use
         }
     }
     return (std::find(purchases_list.begin(), purchases_list.end(), item_id) != purchases_list.end());
+#endif
+    return false;    
 }
 ////////////////////
 bool neroshop::User::has_purchased(const neroshop::Item& item) {

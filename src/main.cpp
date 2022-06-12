@@ -44,6 +44,7 @@ void start_neromon_server() {
 ////////////////////
 //DB2 db2;
 void connect_database() { // this function is just for testing purposes
+#if defined(NEROSHOP_USE_POSTGRESQL)
     DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");// dbname=mydb");//("host=localhost port=1234 dbname=mydb connect_timeout=10");//("");//("user=sid dbname=neroshoptest");
     // psql -h localhost -p 5432 -U postgres -d neroshoptest       // or psql neroshoptest
     // Password for user postgres: postgres
@@ -118,6 +119,7 @@ void connect_database() { // this function is just for testing purposes
     //PQclear(res); // Should PQclear PGresult whenever it is no longer needed to avoid memory leaks
     //DB::Postgres::get_singleton()->finish(); // close the connection to the database and cleanup
     //if(!db2.get_handle()) std::cout << "conn set to nullptr (means connection closed)\n";
+#endif
 }
 ////////////////////////////////////////////////
 void create_local_database() {
@@ -214,7 +216,9 @@ namespace neroshop {
         delete server_process;
         server_process = nullptr;
         // close database server
+    #if defined(NEROSHOP_USE_POSTGRESQL)        
         DB::Postgres::get_singleton()->finish();
+    #endif
         neroshop::print("neroshop closed");
     }
     ////////////////////
@@ -429,7 +433,7 @@ int main() {
     //neroshop_label.set_scale(1.5, 1.5);
     //neroshop_label.get_font()->set_pixel_size(0, 20);
     Box * monero_icon = new Box();
-    Image monero_icon_img(Icon::get["monero_symbol"]->get_data(), 64, 64, 1, 4);
+    Image monero_icon_img(Icon::get["monero_symbol"/*"wownero_logo"*/]->get_data(), 64, 64, 1, 4);
     //monero_icon_img.set_outline(true);
     //monero_icon_img.set_outline_thickness(0.5);
     //monero_icon_img.set_outline_color(58, 33, 102);
@@ -583,7 +587,7 @@ int main() {
     daemon_icon.resize(32, 32);
     daemon_icon.set_alignment("center");
     daemon_button->set_image(daemon_icon);
-    daemon_button->set_color(128, 128, 128);
+    daemon_button->set_color(105, 105, 105);
     daemon_button->set_position(settings_button->get_x() + settings_button->get_width() + 10, settings_button->get_y());
     //daemon_button->hide();	
     // create_wallet button
@@ -593,7 +597,7 @@ int main() {
     wallet_image.resize(32, 32);
     wallet_button->set_image(wallet_image);
     wallet_button->get_image()->set_alignment("center");
-    wallet_button->set_color(186, 85, 211); //(72,61,139);//(240,255,240);//(192, 192, 192);
+    wallet_button->set_color(107, 91, 149);//(72, 61, 139);//(186, 85, 211); //(240,255,240);//(192, 192, 192);
     wallet_button->set_position(daemon_button->get_x() + daemon_button->get_width() + 10, daemon_button->get_y());
     //wallet_button->hide();	
     // wallet_edit
@@ -734,7 +738,7 @@ int main() {
     //search_bar->set_position((window.get_client_width() / 2) - (search_bar->get_width() / 2), 60);
     // search_button
     Button * search_button = new Button();//Box();
-    search_button->set_color(17,17,24);//(29,29,41);//(255, 102, 0);//255, 102, 0 = monero orange
+    search_button->set_color(64, 64, 79);//(17,17,24);//(29,29,41);//(255, 102, 0);//255, 102, 0 = monero orange
     Image search_icon(Icon::get["search"]->get_data(), 64, 64, 1, 4);
     search_button->set_image(search_icon);//(* new Image(Icon::get["search"]->get_data(), 64, 64, 1, 4));//search_button->get_image()->set_color(255,191,0);
     search_button->get_image()->resize(24, 24);
@@ -767,7 +771,7 @@ int main() {
     Button * cart_button = new Button();//Box();
     cart_button->set_size(100, 40);
     cart_button->set_color(50, 50, 50);// - dark charcoal
-    Label cart_label("0"); // cart_label
+    Label cart_label("0");//cart_label.set_color(218, 165, 32);
     cart_button->set_label(cart_label);
     Image cart_icon(Icon::get["cart"]->get_data(), 64, 64, 1, 4);
     cart_button->set_image(cart_icon); //("res/icons/white/cart-65-32.png");//"res/icons/white/.png"
@@ -832,6 +836,7 @@ int main() {
     //----------------------------------  --------------------------------------	
     // CART MENU - if cart button is pressed, show cart menu
     Box cart_menu;
+    // cart menu subtotal + (item count)
     // cart menu checkout_button
     // to-do: change text to "Checkout" later
     Button checkout_button("Place Order");//("Buy Now");//("Place Order");//("Proceed to Checkout");//("Checkout");
@@ -1363,7 +1368,10 @@ int main() {
                     /////////////////////////////////////////////
                     // check whether user is a buyer or seller
                     ////DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
-                    unsigned int account_type_id = DB::Postgres::get_singleton()->get_integer_params("SELECT account_type_id FROM users WHERE name = $1", { user_edit->get_text() });
+                    unsigned int account_type_id = 0;
+                #if defined(NEROSHOP_USE_POSTGRESQL)
+                    account_type_id = DB::Postgres::get_singleton()->get_integer_params("SELECT account_type_id FROM users WHERE name = $1", { user_edit->get_text() });
+                #endif
                     ////DB::Postgres::get_singleton()->finish();
                     // create user
                     if(account_type_id <= 0) {
@@ -1913,7 +1921,15 @@ int main() {
             // DON'T open database in loop!!!
             // each time an item is added or removed or qty_changed from the cart, update this string 
             //cart_button->get_label()->set_string(std::to_string(user->get_cart()->get_total_quantity())); // causes crash
-            if(user != nullptr) { if(user->is_registered()) cart_button->get_label()->set_string(std::to_string(user->get_cart()->get_total_quantity(user->get_id()))); }
+            if(user != nullptr) { 
+                if(user->is_registered()) {
+                    // update the quantity on the cart_button label string
+                    cart_button->get_label()->set_string(std::to_string(user->get_cart()->get_total_quantity(user->get_id()))); 
+                    // if cart is full, set the cart_button's label color to red
+                    if(user->get_cart()->is_full(user->get_id())) cart_button->get_label()->set_color(214, 31, 31);
+                    else cart_button->get_label()->set_color(255, 255, 255);//(218, 165, 32);
+                }
+            }
             //cart_button->get_label()->set_color(); // (cart_qty >= 100) = red(255, 0, 0), (cart_qty >= (100 / 2)) = yellow(255,191,0), (cart_qty <= ((100 / 2) - 1)) = white);
             cart_button->get_label()->set_relative_position(20, (cart_button->get_height() - cart_label.get_height()) / 2);
             cart_button->get_image()->set_relative_position(cart_label.get_relative_x() + (cart_label.get_string().length() * 10) + 10, (cart_button->get_height() - cart_icon.get_height()) / 2);// "(cart_label.get_string().length() * 10)" could be replaced with the entire label's width

@@ -1,8 +1,8 @@
 // filename: db.hpp
 //#pragma once // use #ifndef _HPP, #define _HPP, and #endif instead for portability
 
-#ifndef DATABASE_SQLITE3_HPP_NEROSHOP // recommended to add unique identifier like _NEROSHOP to avoid naming collision with other libraries
-#define DATABASE_SQLITE3_HPP_NEROSHOP
+#ifndef DATABASE_SQLITE_HPP_NEROSHOP // recommended to add unique identifier like _NEROSHOP to avoid naming collision with other libraries
+#define DATABASE_SQLITE_HPP_NEROSHOP
 #define SQLITE3_TAG "\033[1;36m[sqlite3]:\033[0m "
 #define SQLITE3_TAG_ERR "\033[1;36m[sqlite3]:\033[0;91m "
 #include <iostream>

@@ -355,9 +355,7 @@ link_directories(${CMAKE_CURRENT_SOURCE_DIR}/src) # sources (.cpp, .a)
 set(neroshop_src src/buyer.cpp #[[src/carrier.cpp]] src/cart.cpp src/catalog.cpp src/client.cpp src/converter.cpp src/database.cpp src/encryptor.cpp src/icon.cpp src/item.cpp src/main.cpp src/message.cpp src/order.cpp src/qr.cpp src/seller.cpp src/server.cpp src/user.cpp src/validator.cpp src/wallet.cpp)
 add_definitions(-DNEROSHOP_DEBUG) # for more detailed debugging, use -DNEROSHOP_DEBUG0
 add_executable(neroshop ${neroshop_src} ${monero_cpp_src} ${bcrypt_src} ${sqlite_src} ${qr_code_generator_src})
-target_link_libraries(neroshop ${curl_src})
-target_link_libraries(neroshop ${monero_src})
-target_link_libraries(neroshop ${dokun_ui_src})
+target_link_libraries(neroshop ${curl_src} ${monero_src} ${dokun_ui_src})
 ######################################
 # neroshop-daemon
 add_executable(daemon src/daemon.cpp src/server.cpp)#target_link_libraries(daemon ${curl_src} ${OPENSSL_LIBRARIES}) # curl requires both openssl(used in monero) and zlib(used in dokun-ui)
@@ -381,7 +379,11 @@ if(OPENGL_FOUND)
 	target_link_libraries(daemon ${OPENGL_LIBRARIES})
 endif()
 find_package(PostgreSQL) # -DPostgreSQL_TYPE_INCLUDE_DIR=/usr/include/postgresql/
-if(PostgreSQL_FOUND) #message("-- Using PostgreSQL: ${PostgreSQL_LIBRARIES} (v${PostgreSQL_VERSION_STRING})")
+if(PostgreSQL_FOUND)
+    if(DEFINED NEROSHOP_USE_POSTGRESQL) # -DNEROSHOP_USE_POSTGRESQL=1
+        message("-- Using PostgreSQL: ${PostgreSQL_LIBRARIES} (v${PostgreSQL_VERSION_STRING})")
+        target_compile_definitions(neroshop PUBLIC -DNEROSHOP_USE_POSTGRESQL)
+    endif() # end of NEROSHOP_USE_POSTGRESQL definition
     target_link_libraries(neroshop ${PostgreSQL_LIBRARIES})
     target_link_libraries(daemon ${PostgreSQL_LIBRARIES})
 endif()

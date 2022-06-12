@@ -15,6 +15,7 @@ public:
     static bool load_all(); // loads all images
 private:
     static bool load_monero(); // getmonero.org
+    static bool load_wownero(); // https://suchwowstuff.xyz/product/wownero-media-kit/
     // icons8    
     static bool load_cart(); // cart
     static bool load_search(); // search

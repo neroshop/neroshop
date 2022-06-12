@@ -6,9 +6,10 @@
 - use delegating constructor for every class
 - fix bug/issue where server only reads once and then does not ever read again
 - improve currency conversion by using multiple sources to retrieve currency rates
+- find a way to retrieve remote monero nodes
+- add the option to (graphically) connect to a full node and multiple remote nodes
 - create messages button and a seller hub/section button (GUI-related)
 - create a sorting box on the left side of the application and create PREVIOUS/NEXT or SHOW_MORE buttons for the catalog view (GUI-related)
-- make postgresql optional by using a definition like "NEROSHOP_USE_POSTGRESQL"
 - create a node list of trusted and verified nodes so users (sellers) do not have to sync entire blockchain
 - fix mouse input functions and replace presses with clicks
 - figure out how to generate an appimage
@@ -61,7 +62,7 @@ See [ISSUES] section for more "HIGH PRIORITY" todos
 - revise neroshop logo
 - consider using premake as an alternative build system to cmake
 - allow contributors to create neroshop bindings for other C-based programming languages such as lua, python, ruby, etc.
-- add support for wownero (this would be perfect for tips too)
+- add support for wownero (allow anyone to list/post memes and users could tip them in wownero)
 - maybe deprecate tab class since box is sufficient enough for my needs
 - hire graphics programmer to fix and optimize rendering code in "renderer.cpp"
 - hire network programmer to implement communication between applications and servers or implement peer-to-peer system.
@@ -130,7 +131,7 @@ MySQL's license.
 Also, I found out that Postgres has built-in NoSQL with JSON/JSONB so there may not be a need for an alternative NoSQL database.
 
 For the user interface, I will be using dokun-ui. "dokun-ui" is a custom-made user interface library that takes some inspiration from QT Creator and HTML/CSS and is forked from dokun, an abandoned project.
-The long-term goals that I am aiming for neroshop in order are privacy and decentralization then user-friendly UI/UX, and finally, scalability.
+The long-term goals that I am aiming for neroshop in order are privacy and decentralization then user-friendly UI/UX, then scalability and finally, marketing.
 
 In the future, I may consider supporting other private-by-default coins such as wownero and piratechain. Maybe I will even use dero for escrow smart contracts.
 

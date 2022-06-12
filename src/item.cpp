@@ -67,6 +67,7 @@ void neroshop::Item::register_item(const std::string& name, const std::string& d
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     // if an item in registry is branded then a seller cannot sell under that listing unless they sell the same brand
     // to-do: table "brand" and add a "brand_id" column to table item
     // in order for multiple sellers to share the same product detail page, each seller must be selling the exact same product from the exact same manufacturer with the exact same UPC (or whatever product ID code the product uses)
@@ -110,6 +111,7 @@ void neroshop::Item::register_item(const std::string& name, const std::string& d
     
     //DB::Postgres::get_singleton()->finish();
     ////////////////////////////////          
+#endif    
 }
 ////////////////////
 void neroshop::Item::deregister_item() {
@@ -122,6 +124,7 @@ void neroshop::Item::create_table(void) {
 }
 ////////////////////
 void neroshop::Item::create_categories_and_subcategories_table(void) {
+#if defined(NEROSHOP_USE_POSTGRESQL)
     // TIP: Keep categories simple by merging subcategories in order to make it easier for customers to find specific items
     // create table: categories
     if(!DB::Postgres::get_singleton()->table_exists("categories")) {
@@ -466,6 +469,7 @@ void neroshop::Item::create_categories_and_subcategories_table(void) {
              //---------------------------             */
          }
     }
+#endif    
 }
 ////////////////////
 void neroshop::Item::create_item_table(void) {
@@ -685,6 +689,7 @@ void neroshop::Item::register_item(const neroshop::Item& item) {
 ////////////////////
 // seller should have the option to upload videos too (when videos are supported)
 void neroshop::Item::upload(const std::string& filename) { 
+#if defined(NEROSHOP_USE_POSTGRESQL)
 /*#ifdef __gnu_linux__
     char file[1024];
     FILE * f = popen("zenity --file-selection", "r");
@@ -803,10 +808,12 @@ void neroshop::Item::upload(const std::string& filename) {
     ///////////////////////////
     DB::Postgres::get_singleton()->execute("COMMIT;");    
     //DB::Postgres::get_singleton()->finish();
+#endif    
 }    
 ////////////////////
 // the first image of an item will be used as the thumbnail
 Image * neroshop::Item::get_upload_image(int index) const {
+#if defined(NEROSHOP_USE_POSTGRESQL)
     // begin transaction
     DB::Postgres::get_singleton()->execute("BEGIN;");
     // open the existing large object (for reading)
@@ -852,9 +859,12 @@ Image * neroshop::Item::get_upload_image(int index) const {
     Image * image = new Image(image_export_path); // can't use shared_ptr here since it dies at the end of the scope :/
     return image;//->get_data();
     ///////////////////////////
+#endif    
+    return nullptr;
 }
 ////////////////////
 void neroshop::Item::delete_upload_image(int index) {
+#if defined(NEROSHOP_USE_POSTGRESQL)
     // begin transaction (required when dealing with large objects)
     DB::Postgres::get_singleton()->execute("BEGIN;");
     // get image oid (large object)
@@ -879,6 +889,7 @@ void neroshop::Item::delete_upload_image(int index) {
     }
     // end transaction
     DB::Postgres::get_singleton()->execute("COMMIT;");
+#endif    
 }
 ////////////////////
 void neroshop::Item::delete_all_upload_images(void) {
@@ -886,8 +897,11 @@ void neroshop::Item::delete_all_upload_images(void) {
 }
 ////////////////////
 int neroshop::Item::get_image_count() const {
+#if defined(NEROSHOP_USE_POSTGRESQL)
     int image_count = DB::Postgres::get_singleton()->get_integer_params("SELECT cardinality(data) FROM images WHERE item_id = $1", { std::to_string(this->id) });
     return image_count;
+#endif
+    return 0;    
 }
 ////////////////////
 ////////////////////
@@ -907,7 +921,9 @@ void neroshop::Item::set_quantity(unsigned int quantity, unsigned int cart_id) {
         return; // exit function
     }
     // registered_user cart
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     DB::Postgres::get_singleton()->execute_params("UPDATE cart_item SET item_qty = $1 WHERE cart_id = $2 AND item_id = $3", { std::to_string(quantity), std::to_string(cart_id), std::to_string(this->id) });
+#endif
 }
 ////////////////////
 void neroshop::Item::set_quantity(unsigned int item_id, unsigned int quantity, unsigned int cart_id) {
@@ -920,8 +936,10 @@ void neroshop::Item::set_quantity(unsigned int item_id, unsigned int quantity, u
         db.close();
         return; // exit function
     }
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     // registered_user cart
     DB::Postgres::get_singleton()->execute_params("UPDATE cart_item SET item_qty = $1 WHERE cart_id = $2 AND item_id = $3", { std::to_string(quantity), std::to_string(cart_id), std::to_string(item_id) });
+#endif
 }
 ////////////////////
 void neroshop::Item::set_name(const std::string& name) {
@@ -932,10 +950,12 @@ void neroshop::Item::set_name(const std::string& name) {
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
     
     //DB::Postgres::get_singleton()->finish();
     ////////////////////////////////    
+#endif    
 }
 ////////////////////
 void neroshop::Item::set_name(unsigned int item_id, const std::string& name) {
@@ -946,10 +966,12 @@ void neroshop::Item::set_name(unsigned int item_id, const std::string& name) {
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
     
     //DB::Postgres::get_singleton()->finish();
     ////////////////////////////////    
+#endif    
 }
 ////////////////////
 void neroshop::Item::set_description(const std::string& description) {
@@ -960,10 +982,12 @@ void neroshop::Item::set_description(const std::string& description) {
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
     
     //DB::Postgres::get_singleton()->finish();
     ////////////////////////////////    
+#endif    
 }
 ////////////////////
 void neroshop::Item::set_description(unsigned int item_id, const std::string& description) {
@@ -974,10 +998,12 @@ void neroshop::Item::set_description(unsigned int item_id, const std::string& de
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
     
     //DB::Postgres::get_singleton()->finish();
     ////////////////////////////////    
+#endif    
 }
 ////////////////////
 void neroshop::Item::set_price(double price) {
@@ -988,10 +1014,12 @@ void neroshop::Item::set_price(double price) {
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
     
     //DB::Postgres::get_singleton()->finish();
     ////////////////////////////////    
+#endif    
 }
 ////////////////////
 void neroshop::Item::set_price(unsigned int item_id, double price) {
@@ -1252,11 +1280,14 @@ std::string neroshop::Item::get_name() const {
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
     std::string item_name = DB::Postgres::get_singleton()->get_text_params("SELECT name FROM item WHERE id = $1", { std::to_string(this->id) });
     //DB::Postgres::get_singleton()->finish();
     ////////////////////////////////    
     return item_name;
+#endif
+    return "";    
 }
 ////////////////////
 std::string neroshop::Item::get_name(unsigned int item_id) {
@@ -1267,11 +1298,14 @@ std::string neroshop::Item::get_name(unsigned int item_id) {
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
     std::string item_name = DB::Postgres::get_singleton()->get_text_params("SELECT name FROM item WHERE id = $1", { std::to_string(item_id) });
     //DB::Postgres::get_singleton()->finish();
     ////////////////////////////////
     return item_name;     
+#endif
+    return "";    
 }
 ////////////////////
 std::string neroshop::Item::get_description() const {
@@ -1312,11 +1346,14 @@ double neroshop::Item::get_price() const {
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
     double item_price = DB::Postgres::get_singleton()->get_real_params("SELECT price FROM item WHERE id = $1", { std::to_string(this->id) });
     //DB::Postgres::get_singleton()->finish();
     ////////////////////////////////    
     return item_price;
+#endif    
+    return 0.0;
 }
 ////////////////////
 double neroshop::Item::get_price(unsigned int item_id) { // original price (list price)
@@ -1327,11 +1364,14 @@ double neroshop::Item::get_price(unsigned int item_id) { // original price (list
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
     double item_price = DB::Postgres::get_singleton()->get_real_params("SELECT price FROM item WHERE id = $1", { std::to_string(item_id) });
     //DB::Postgres::get_singleton()->finish();
     ////////////////////////////////    
     return item_price;
+#endif    
+    return 0.0;
 }
 ////////////////////
 unsigned int neroshop::Item::get_quantity(unsigned int cart_id) const {
@@ -1344,9 +1384,12 @@ unsigned int neroshop::Item::get_quantity(unsigned int cart_id) const {
         db.close();
         return quantity; // return item_qty then exit function
     }
-    // registered_user cart
+    // registered_user cart    
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     unsigned int quantity = DB::Postgres::get_singleton()->get_integer_params("SELECT item_qty FROM cart_item WHERE cart_id = $1 AND item_id = $2", { std::to_string(cart_id), std::to_string(this->id) });
     return quantity;
+#endif
+    return 0;    
 }
 ////////////////////
 unsigned int neroshop::Item::get_quantity(unsigned int item_id, unsigned int cart_id) {
@@ -1360,8 +1403,11 @@ unsigned int neroshop::Item::get_quantity(unsigned int item_id, unsigned int car
         return quantity; // return item_qty then exit function
     }
     // registered_user cart
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     unsigned int quantity = DB::Postgres::get_singleton()->get_integer_params("SELECT item_qty FROM cart_item WHERE cart_id = $1 AND item_id = $2", { std::to_string(cart_id), std::to_string(item_id) });
     return quantity;
+#endif    
+    return 0;
 }
 ////////////////////
 ////////////////////
@@ -1374,11 +1420,14 @@ double neroshop::Item::get_weight() const {
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
     double item_weight = DB::Postgres::get_singleton()->get_real_params("SELECT weight FROM item WHERE id = $1", { std::to_string(this->id) });
     //DB::Postgres::get_singleton()->finish();
     ////////////////////////////////    
     return item_weight;
+#endif
+    return 0.0;    
 }
 ////////////////////
 double neroshop::Item::get_weight(unsigned int item_id) {
@@ -1389,11 +1438,14 @@ double neroshop::Item::get_weight(unsigned int item_id) {
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
     double item_weight = DB::Postgres::get_singleton()->get_real_params("SELECT weight FROM item WHERE id = $1", { std::to_string(item_id) });
     //DB::Postgres::get_singleton()->finish();
     ////////////////////////////////    
     return item_weight;
+#endif
+    return 0.0;//0.0f;    
 }
 ////////////////////
 std::tuple<double, double, double> neroshop::Item::get_size() const {
@@ -1500,22 +1552,29 @@ std::string neroshop::Item::get_product_code(unsigned int item_id) {
 // ratings
 ////////////////////
 int neroshop::Item::get_ratings_count() const {
+#if defined(NEROSHOP_USE_POSTGRESQL)
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");	
     if(!DB::Postgres::get_singleton()->table_exists("item_ratings")) {/*//DB::Postgres::get_singleton()->finish();*/ return 0;}
     unsigned int ratings_count = DB::Postgres::get_singleton()->get_integer_params("SELECT COUNT(*) FROM item_ratings WHERE item_id = $1", { std::to_string(this->id) });    
 	//DB::Postgres::get_singleton()->finish();
     return ratings_count;
+#endif
+    return 0;    
 }
 ////////////////////
 int neroshop::Item::get_ratings_count(unsigned int item_id) {
+#if defined(NEROSHOP_USE_POSTGRESQL)
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");	
     if(!DB::Postgres::get_singleton()->table_exists("item_ratings")) {/*//DB::Postgres::get_singleton()->finish();*/ return 0;}
     unsigned int ratings_count = DB::Postgres::get_singleton()->get_integer_params("SELECT COUNT(*) FROM item_ratings WHERE item_id = $1", { std::to_string(item_id) });    
 	//DB::Postgres::get_singleton()->finish();
     return ratings_count;
+#endif
+    return 0;  
 }
 ////////////////////
 int neroshop::Item::get_star_count(int star_number) {
+#if defined(NEROSHOP_USE_POSTGRESQL)
     // star ratings must be between 1 and 5
     if(star_number > 5) star_number = 5;
     if(star_number < 1) star_number = 1;
@@ -1524,9 +1583,12 @@ int neroshop::Item::get_star_count(int star_number) {
     unsigned int star_count = DB::Postgres::get_singleton()->get_integer_params("SELECT COUNT(stars) FROM item_ratings WHERE item_id = $1 AND stars = $2", { std::to_string(this->id), std::to_string(star_number) });
     //DB::Postgres::get_singleton()->finish();
     return star_count;
+#endif
+    return 0;    
 }
 ////////////////////
 int neroshop::Item::get_star_count(unsigned int item_id, int star_number) {
+#if defined(NEROSHOP_USE_POSTGRESQL)
     // star ratings must be between 1 and 5
     if(star_number > 5) star_number = 5;
     if(star_number < 1) star_number = 1;
@@ -1535,9 +1597,12 @@ int neroshop::Item::get_star_count(unsigned int item_id, int star_number) {
     unsigned int star_count = DB::Postgres::get_singleton()->get_integer_params("SELECT COUNT(stars) FROM item_ratings WHERE item_id = $1 AND stars = $2", { std::to_string(item_id), std::to_string(star_number) });
     //DB::Postgres::get_singleton()->finish();
     return star_count;
+#endif
+    return 0;    
 }
 ////////////////////
 float neroshop::Item::get_average_stars() const {
+#if defined(NEROSHOP_USE_POSTGRESQL)
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
     if(!DB::Postgres::get_singleton()->table_exists("item_ratings")) { return 0.0f; }
     // get number of star ratings (for a specific item_id)
@@ -1560,9 +1625,12 @@ float neroshop::Item::get_average_stars() const {
     ////////////////////
     //DB::Postgres::get_singleton()->finish();
     return average_stars;
+#endif    
+    return 0.0f;
 }
 ////////////////////
 float neroshop::Item::get_average_stars(unsigned int item_id) {
+#if defined(NEROSHOP_USE_POSTGRESQL)
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
     if(!DB::Postgres::get_singleton()->table_exists("item_ratings")) { return 0.0f; }
     // get number of star ratings (for a specific item_id)
@@ -1585,6 +1653,8 @@ float neroshop::Item::get_average_stars(unsigned int item_id) {
     ////////////////////
     //DB::Postgres::get_singleton()->finish();
     return average_stars;
+#endif    
+    return 0.0f;
 }
 ////////////////////
 ////////////////////
@@ -1685,11 +1755,14 @@ std::string neroshop::Item::get_seller_condition(unsigned int item_id, unsigned 
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
     
     //DB::Postgres::get_singleton()->finish();
     ////////////////////////////////    
     return seller_condition;
+#endif
+    return "";
 }
 ////////////////////
 unsigned int neroshop::Item::get_stock_quantity() const {
@@ -1700,11 +1773,14 @@ unsigned int neroshop::Item::get_stock_quantity() const {
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
     int stock_qty = DB::Postgres::get_singleton()->get_integer_params("SELECT stock_qty FROM inventory WHERE item_id = $1 AND stock_qty > 0", { std::to_string(this->id) });
     //DB::Postgres::get_singleton()->finish();
     ////////////////////////////////    
     return stock_qty;
+#endif
+    return 0;    
 }
 //////////////////// 
 unsigned int neroshop::Item::get_stock_quantity(unsigned int item_id) {
@@ -1715,40 +1791,56 @@ unsigned int neroshop::Item::get_stock_quantity(unsigned int item_id) {
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
     int stock_qty = DB::Postgres::get_singleton()->get_integer_params("SELECT stock_qty FROM inventory WHERE item_id = $1 AND stock_qty > 0", { std::to_string(item_id) });
     //DB::Postgres::get_singleton()->finish();
     ////////////////////////////////
     return stock_qty;
+#endif
+    return 0;    
 }
 ////////////////////
 unsigned int neroshop::Item::get_seller_count() const {
+#if defined(NEROSHOP_USE_POSTGRESQL)
     int seller_count = DB::Postgres::get_singleton()->get_integer_params("SELECT COUNT(seller_id) FROM inventory WHERE item_id = $1;", { std::to_string(this->id) });
     return seller_count;
+#endif
+    return 0;    
 }
 ////////////////////
 unsigned int neroshop::Item::get_seller_count(unsigned int item_id) {
+#if defined(NEROSHOP_USE_POSTGRESQL)
     int seller_count = DB::Postgres::get_singleton()->get_integer_params("SELECT COUNT(seller_id) FROM inventory WHERE item_id = $1;", { std::to_string(item_id) });
     return seller_count;
+#endif
+    return 0;    
 }
 ////////////////////
 unsigned int neroshop::Item::get_seller_id() const { // might need a little more work
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     // prioritize the seller with the most positive (or good) ratings that sells this item
     int seller_id = DB::Postgres::get_singleton()->get_integer_params("SELECT inventory.seller_id FROM inventory JOIN seller_ratings ON inventory.seller_id = seller_ratings.seller_id WHERE inventory.item_id = $1 AND score = 1 GROUP BY inventory.seller_id ORDER BY COUNT(score) DESC LIMIT 1;", { std::to_string(this->id) });//int seller_id = DB::Postgres::get_singleton()->get_integer_params("SELECT seller_id FROM inventory WHERE item_id = $1 AND stock_qty > 0;", { std::to_string(this->id) });
     // if the seller_ratings table does not exist yet or the seller has not yet been rated then we can just get any random seller (or maybe I should get the first seller to list this item??)
     if(seller_id == 0) seller_id = DB::Postgres::get_singleton()->get_integer_params("SELECT seller_id FROM inventory WHERE item_id = $1;", { std::to_string(this->id) });//int seller_id = DB::Postgres::get_singleton()->get_integer_params("SELECT seller_id FROM inventory WHERE item_id = $1 AND stock_qty > 0;", { std::to_string(this->id) });
     return seller_id;
+#endif
+    return 0;    
 }
 ////////////////////
 unsigned int neroshop::Item::get_seller_id(unsigned int item_id) { // might need a little more work
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     // prioritize the seller with the most positive (or good) ratings that sells this item
     int seller_id = DB::Postgres::get_singleton()->get_integer_params("SELECT inventory.seller_id FROM inventory JOIN seller_ratings ON inventory.seller_id = seller_ratings.seller_id WHERE inventory.item_id = $1 AND score = 1 GROUP BY inventory.seller_id ORDER BY COUNT(score) DESC LIMIT 1;", { std::to_string(item_id) });//int seller_id = DB::Postgres::get_singleton()->get_integer_params("SELECT seller_id FROM inventory WHERE item_id = $1 AND stock_qty > 0;", { std::to_string(this->id) });
     // if the seller_ratings table does not exist yet or the seller has not yet been rated then we can just get any random seller (or maybe I should get the first seller to list this item??)
     if(seller_id == 0) seller_id = DB::Postgres::get_singleton()->get_integer_params("SELECT seller_id FROM inventory WHERE item_id = $1;", { std::to_string(item_id) });//int seller_id = DB::Postgres::get_singleton()->get_integer_params("SELECT seller_id FROM inventory WHERE item_id = $1 AND stock_qty > 0;", { std::to_string(item_id) });
     return seller_id;
+#endif
+    return 0;    
 }
 ////////////////////
 std::vector<unsigned int> neroshop::Item::get_seller_ids() const {
+#if defined(NEROSHOP_USE_POSTGRESQL)
     // DISTINCT is used here to make sure that each seller_id is unique (is stored only once)
     std::string command = "SELECT DISTINCT seller_id FROM inventory WHERE item_id = $1";// AND stock_qty > 0;";
     std::vector<const char *> param_values = { std::to_string(this->id).c_str() };
@@ -1766,9 +1858,12 @@ std::vector<unsigned int> neroshop::Item::get_seller_ids() const {
     }
     PQclear(result); // free result
     return seller_ids;
+#endif
+    return {};    
 }
 ////////////////////
 std::vector<unsigned int> neroshop::Item::get_seller_ids(unsigned int item_id) {
+#if defined(NEROSHOP_USE_POSTGRESQL)
     // DISTINCT is used here to make sure that each seller_id is unique (is stored only once)
     std::string command = "SELECT DISTINCT seller_id FROM inventory WHERE item_id = $1";// AND stock_qty > 0;";
     std::vector<const char *> param_values = { std::to_string(item_id).c_str() };
@@ -1786,6 +1881,8 @@ std::vector<unsigned int> neroshop::Item::get_seller_ids(unsigned int item_id) {
     }
     PQclear(result); // free result
     return seller_ids;
+#endif
+    return {};    
 }
 ////////////////////
 ////////////////////
@@ -1798,11 +1895,14 @@ bool neroshop::Item::is_registered() const {
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
     int id = DB::Postgres::get_singleton()->get_integer_params("SELECT id FROM item WHERE id = $1", { std::to_string(this->id) });
     //DB::Postgres::get_singleton()->finish();
     ////////////////////////////////
     return (id > 0);
+#endif
+    return false;    
 }
 ////////////////////
 bool neroshop::Item::is_registered(unsigned int item_id) {
@@ -1813,11 +1913,14 @@ bool neroshop::Item::is_registered(unsigned int item_id) {
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
     int id = DB::Postgres::get_singleton()->get_integer_params("SELECT id FROM item WHERE id = $1", { std::to_string(item_id) });
     //DB::Postgres::get_singleton()->finish();
     ////////////////////////////////    
     return (id > 0);
+#endif
+    return false;    
 }
 ////////////////////
 ////////////////////
@@ -1830,11 +1933,14 @@ bool neroshop::Item::in_stock() const {
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
     int stock_qty = DB::Postgres::get_singleton()->get_integer_params("SELECT stock_qty FROM inventory WHERE item_id = $1 AND stock_qty > 0", { std::to_string(this->id) }); // check stock_qty regardless of who is selling said item
     //DB::Postgres::get_singleton()->finish();
     ////////////////////////////////    
     return (stock_qty != 0);
+#endif
+    return false;    
 }
 ////////////////////
 bool neroshop::Item::in_stock(unsigned int item_id) {
@@ -1846,12 +1952,15 @@ bool neroshop::Item::in_stock(unsigned int item_id) {
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");    
     int stock_qty = DB::Postgres::get_singleton()->get_integer_params("SELECT stock_qty FROM inventory WHERE item_id = $1 AND stock_qty > 0", { std::to_string(item_id) }); // check stock_qty regardless of who is selling said item
     // if item is out of stock, look for other sellers that have the same exact item (but it MUST be in stock)
     //DB::Postgres::get_singleton()->finish();
     ////////////////////////////////
     return (stock_qty != 0);
+#endif
+    return false;    
 }
 ////////////////////
 ////////////////////

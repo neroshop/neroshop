@@ -69,6 +69,7 @@ void neroshop::Validator::save_user(const std::string& username, const char pw_h
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");////DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
     // begin transaction
     DB::Postgres::get_singleton()->execute("BEGIN;");
@@ -125,6 +126,7 @@ void neroshop::Validator::save_user(const std::string& username, const char pw_h
 	DB::Postgres::get_singleton()->execute("COMMIT;");
     ////DB::Postgres::get_singleton()->finish();
     ////////////////////////////////
+#endif    
 }
 ////////////////////
 bool neroshop::Validator::login(const std::string& username, const std::string& password)
@@ -142,6 +144,7 @@ bool neroshop::Validator::login(const std::string& username, const std::string& 
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     if(username.empty()) return false; // exit if username is empty -.-
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
     if(!DB::Postgres::get_singleton()->table_exists("users")) {NEROSHOP_TAG_OUT std::cout << "\033[0;33;49m" << "This account is not registered" << "\033[0m" << std::endl; /*DB::Postgres::get_singleton()->finish();*/ return false;}
@@ -169,6 +172,8 @@ bool neroshop::Validator::login(const std::string& username, const std::string& 
 #endif
     neroshop::print((!username.empty()) ? std::string("Welcome back, " + username) : "Welcome back", 4);
 	return true; // default value
+#endif
+    return false;	
 }
 ////////////////////
 bool neroshop::Validator::login_with_email(const std::string& email, const std::string& password) { // works! but won't be used since most users won't opt-in to use an email
@@ -190,6 +195,7 @@ bool neroshop::Validator::login_with_email(const std::string& email, const std::
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
     if(!DB::Postgres::get_singleton()->table_exists("users")) {NEROSHOP_TAG_OUT std::cout << "\033[0;33;49m" << "This account is not registered" << "\033[0m" << std::endl; /*DB::Postgres::get_singleton()->finish();*/ return false;}
 	// get email_hash (from email)
@@ -222,6 +228,8 @@ bool neroshop::Validator::login_with_email(const std::string& email, const std::
 #endif
     neroshop::print((!username.empty()) ? std::string("Welcome back, " + username) : "Welcome back", 4);
 	return true; // default value
+#endif
+    return false;	
 }
 ////////////////////
 void neroshop::Validator::change_pw(const std::string& old_pw, const std::string& new_pw/*, const std::string& confirm_new_pw*/) 
@@ -303,6 +311,7 @@ bool neroshop::Validator::validate_username(const std::string& username)
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     // check db to see if username is not already taken (last thing to worry about)
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
 	if(DB::Postgres::get_singleton()->table_exists("users")) 
@@ -326,6 +335,8 @@ bool neroshop::Validator::validate_username(const std::string& username)
     /*DB::Postgres::get_singleton()->finish();*/
     ////////////////////////////////    
     return true; // default return value
+#endif
+    return false;    
 }
 ////////////////////
 bool neroshop::Validator::validate_password(const std::string& password) 
@@ -391,6 +402,7 @@ bool neroshop::Validator::validate_email(const std::string& email) {
     ////////////////////////////////
     // postgresql
     ////////////////////////////////
+#if defined(NEROSHOP_USE_POSTGRESQL)    
     //DB::Postgres::get_singleton()->connect("host=127.0.0.1 port=5432 user=postgres password=postgres dbname=neroshoptest");
 	if(DB::Postgres::get_singleton()->table_exists("users")) {
 	    std::string email_taken = DB::Postgres::get_singleton()->get_text_params("SELECT opt_email FROM users WHERE opt_email = $1;", { email_hash });//+ DB::Postgres::to_psql_string(email_hash));
@@ -406,6 +418,8 @@ bool neroshop::Validator::validate_email(const std::string& email) {
     /*DB::Postgres::get_singleton()->finish();*/
     ////////////////////////////////
     return true;
+#endif
+    return false;    
 }
 ////////////////////
 bool neroshop::Validator::validate_bcrypt_hash(const std::string& password, const std::string& hash)

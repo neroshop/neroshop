@@ -29,4 +29,5 @@
 //#include "server.hpp" // for neroshop daemon to use
 #include "client.hpp"
 #include "encryptor.hpp"
+//#include "carrier.hpp" // not currently in use
 #endif
