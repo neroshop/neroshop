@@ -147,18 +147,17 @@ CREATE DATABASE neroshoptest;
 
 
 ## Contributions
-Bounty Program
 I can't do everything on my own with my current knowledge and programming skills, so I will need help with some things. Though I am poor as shit (recently got out of NEETdom so yeah ...), I will open a paid bounty program to encourage individuals who have at least some experience in c++ programming to contribute to my project and help bring this project to life.
 
 This is a one-time pay for each task. Payments will be in XMR.
 ```
 $1000 - implement peer-to-peer database or network using system APIs
-source files: daemon.cpp, server.cpp, client.cpp
+source files: src/daemon.cpp, src/server.cpp, src/client.cpp
 libraries used: System libraries (Linux Sockets, Winsock2, etc.)
 difficulty: hard
 job status: not filled
 
-$1000 - create a search engine that can search for item names, seller names and products, etc.
+$500 - create a search engine that can search for item names, seller names and products, etc.
 
 $500 - fix and optimize graphics and adding graphical user interface features (such as scrollbar and scrollarea) using opengl
 source files to work with: external/dokun-ui/src/renderer.cpp; external/dokun-ui/include/renderer.hpp
