@@ -12,8 +12,8 @@ An attempt to create an online marketplace for [Monero](https://getmonero.org/) 
   - [Dependencies](#dependencies)
   - [Compiling neroshop from source](#compiling-neroshop-from-source)
   - [Setting up PostgreSQL](#setting-up-postgresql) <!-- - [License](#license)-->
+- [Contributions](#contributions)  <!-- - [Bug Bounty Program]-->
 - [Contact information](#contact)
-
 
 ## About
 This is currently a work in progress. There is nothing to see here :shrug:
@@ -143,6 +143,41 @@ CREATE DATABASE neroshoptest;
 \q
 
 # You may restore the "pg_hba.conf" values back to the defaults if you wish
+```
+
+
+## Contributions
+Bounty Program
+I can't do everything on my own with my current knowledge and programming skills, so I will need help with some things. Though I am poor as shit (recently got out of NEETdom so yeah ...), I will open a paid bounty program to encourage individuals who have at least some experience in c++ programming to contribute to my project and help bring this project to life.
+
+This is a one-time pay for each task. Payments will be in XMR.
+```
+$1000 - implement peer-to-peer database or network using system APIs
+source files: daemon.cpp, server.cpp, client.cpp
+libraries used: System libraries (Linux Sockets, Winsock2, etc.)
+difficulty: hard
+job status: not filled
+
+$1000 - create a search engine that can search for item names, seller names and products, etc.
+
+$500 - fix and optimize graphics and adding graphical user interface features (such as scrollbar and scrollarea) using opengl
+source files to work with: external/dokun-ui/src/renderer.cpp; external/dokun-ui/include/renderer.hpp
+libraries used: opengl, vulkan (optional)
+difficulty: intermediate
+job status: not filled
+
+$250 - convert and export qr code data to PNG
+source files: src/qr.cpp; include/qr.hpp
+libraries used: libpng, QR Code generator
+difficulty: intermediate
+job status: not filled
+
+$100 - fix decoding error in functions using EVP_PKEY_encrypt() and EVP_PKEY_decrypt()
+source file(s): src/encryptor.cpp; include/encryptor.hpp
+libraries used: openssl
+difficulty: intermediate
+job status: not filled
+
 ```
 
 
