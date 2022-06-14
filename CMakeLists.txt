@@ -64,6 +64,9 @@ include_directories("${MONERO_PROJECT_SRC}/wallet")
 include_directories("${MONERO_PROJECT_SRC}/wallet/api")
 include_directories("${MONERO_PROJECT_SRC}/crypto/crypto_ops_builder/include/")
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/external/monero-cpp/cmake")
+message(STATUS "CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
+
 set(EXTERNAL_LIBS_DIR ${CMAKE_SOURCE_DIR}/monero-cpp/external-libs)
 message(STATUS EXTERNAL_LIBS_DIR : ${EXTERNAL_LIBS_DIR})
 ######################################
@@ -155,14 +158,13 @@ if (APPLE AND NOT IOS)
   endif()
 endif()
 
-find_package(HIDAPI) # this NEVER works :/
-if(HIDAPI_Found)
+find_package(HIDAPI)
+if(HIDAPI_FOUND)
     message(STATUS "Using HIDAPI include dir at ${HIDAPI_INCLUDE_DIR}")
     add_definitions(-DHAVE_HIDAPI)
     include_directories(${HIDAPI_INCLUDE_DIR})
     link_directories(${LIBHIDAPI_LIBRARY_DIRS})
-endif()
-if(NOT HIDAPI_Found)
+else()
     message("HIDAPI libraries not found. Will manually set libraries.")
     if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
         set(udev_src libudev.so)
