@@ -49,8 +49,6 @@ endif()
 ######################################
 if(LINUX)
   if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang") # clang-specific settings
-      include_directories(/usr/include/          )
-      link_directories(/usr/lib/x86_64-linux-gnu/)
       #add_compiler_flag("-Weverything")
       add_compiler_flag("-Wno-self-assign-field")
    elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")  # gcc-specific settings
