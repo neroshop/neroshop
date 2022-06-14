@@ -1,6 +1,23 @@
 cmake_minimum_required(VERSION 3.4.1)
 
-project(neroshop) # tested on Ubuntu 20.04 LTS (focal) with gcc (Ubuntu 9.3.0-17ubuntu1~20.04) 9.3.0, manjaro-xfce-21.2.6 (Qonos) with gcc (GCC) 11.2.0
+project(neroshop C CXX) # tested on Ubuntu 20.04 LTS (focal) with gcc (Ubuntu 9.3.0-17ubuntu1~20.04) 9.3.0, manjaro-xfce-21.2.6 (Qonos) with gcc (GCC) 11.2.0
+
+# setup cmake module paths
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/external/monero-cpp/cmake")
+message(STATUS "CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
+
+# Disallow in-source builds
+if("${CMAKE_CURRENT_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_BINARY_DIR}")
+  message(FATAL_ERROR "ERROR: In-source builds are not allowed!\n"
+  "Please create a separate directory and configure there; for example:\n"
+  "  mkdir build\n"
+  "  cd build\n"
+  "  cmake [OPTIONS] ...\n"
+  "NOTE: You must first delete the newly created CMakeCache.txt file and "
+  "CMakeFiles directory under the source directory or you will not be able to "
+  "configure correctly! For example:\n"
+  "  rm -rf CMakeCache.txt CMakeFiles")
+endif()
 
 set(VERSION_MAJOR "0")
 set(VERSION_MINOR "1")
@@ -10,13 +27,15 @@ set(PROJECT_VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
 if(WIN32)
     set(WINDOWS TRUE)
 endif()
+
+# Macro to add C++ compiler flags
+macro (add_compiler_flag flag)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}")
+endmacro (add_compiler_flag)
+
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     set(LINUX TRUE)
-    option(NEROSHOP_CLANG "use clang" OFF) # clang
-    option(NEROSHOP_GCC   "use gcc"   ON ) # gcc   - shipped with Ubuntu by default    
-    set(CMAKE_C_COMPILER   /usr/bin/gcc)
-    set(CMAKE_CXX_COMPILER /usr/bin/g++)
-    set(CMAKE_CXX_FLAGS    "-I'/usr/include/postgresql/' -no-pie"   ) # no position independent executable (PIE) # NEROSHOP_GCC 
+    #add_compiler_flag("-I'/usr/include/postgresql/'")
     include_directories(/usr/include/          )
     link_directories(/usr/lib/x86_64-linux-gnu/) # Debian/Ubuntu
     link_directories(/usr/lib/                 ) # Arch
@@ -28,27 +47,20 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Android")
     set(ANDROID TRUE)
 endif()
 ######################################
-if(LINUX) # if user chooses to compile with clang
-if(NEROSHOP_CLANG) # cmake -DNEROSHOP_CLANG=ON -G"Unix Makefiles"
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang") # check if clang is set as the current compiler
-    set(NEROSHOP_GCC OFF )  
-    set(NEROSHOP_CLANG ON) # use clang (if not using gcc)
-    set(CMAKE_C_COMPILER   /usr/bin/clang  )
-    set(CMAKE_CXX_COMPILER /usr/bin/clang++)
-    set(CMAKE_CXX_FLAGS    "-w"            ) #-w=ignores all warnings
-    #set(CMAKE_CXX_FLAGS    "-fno-PIE"      ) #-fPIE, -fno-PIE, -fPIC, -fno-PIC, -nopie, -no-pie
-    message("using clang")
-    include_directories(/usr/include/          )
-    link_directories(/usr/lib/x86_64-linux-gnu/)    
-else()
-    message(WARNING "clang is not set as the default compiler!")
-    message("using gcc/g++")
-endif()
-endif()
+if(LINUX)
+  if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang") # clang-specific settings
+      include_directories(/usr/include/          )
+      link_directories(/usr/lib/x86_64-linux-gnu/)
+      #add_compiler_flag("-Weverything")
+      add_compiler_flag("-Wno-self-assign-field")
+   elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")  # gcc-specific settings
+      #add_compiler_flag("-Wall")
+  endif()
 endif()
 ######################################
 # use C++11
 set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 ######################################
 ######################################
 set(MONERO_PROJECT "${CMAKE_SOURCE_DIR}/external/monero-cpp/external/monero-project")
@@ -63,9 +75,6 @@ include_directories("${MONERO_PROJECT_SRC}/")
 include_directories("${MONERO_PROJECT_SRC}/wallet")
 include_directories("${MONERO_PROJECT_SRC}/wallet/api")
 include_directories("${MONERO_PROJECT_SRC}/crypto/crypto_ops_builder/include/")
-
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/external/monero-cpp/cmake")
-message(STATUS "CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
 
 set(EXTERNAL_LIBS_DIR ${CMAKE_SOURCE_DIR}/monero-cpp/external-libs)
 message(STATUS EXTERNAL_LIBS_DIR : ${EXTERNAL_LIBS_DIR})
@@ -112,7 +121,8 @@ add_definitions(-DBOOST_BIND_GLOBAL_PLACEHOLDERS) # to ignore warnings
 ######################################
 # OpenSSL - sudo apt-get install libssl-dev
 if (APPLE AND NOT IOS)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=x86-64 -fvisibility=default -std=c++11")
+  add_compiler_flag("-march=x86-64")
+  add_compiler_flag("-fvisibility=default")
   if (NOT OPENSSL_ROOT_DIR)
       EXECUTE_PROCESS(COMMAND brew --prefix openssl
         OUTPUT_VARIABLE OPENSSL_ROOT_DIR
@@ -149,7 +159,8 @@ if(APPLE)
 endif()
 
 if (APPLE AND NOT IOS)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=x86-64 -fvisibility=default -std=c++11")
+  add_compiler_flag("-march=x86-64")
+  add_compiler_flag("-fvisibility=default")
   if (NOT OPENSSL_ROOT_DIR)
       EXECUTE_PROCESS(COMMAND brew --prefix openssl
         OUTPUT_VARIABLE OPENSSL_ROOT_DIR
@@ -163,7 +174,6 @@ if(HIDAPI_FOUND)
     message(STATUS "Using HIDAPI include dir at ${HIDAPI_INCLUDE_DIR}")
     add_definitions(-DHAVE_HIDAPI)
     include_directories(${HIDAPI_INCLUDE_DIR})
-    link_directories(${LIBHIDAPI_LIBRARY_DIRS})
 else()
     message("HIDAPI libraries not found. Will manually set libraries.")
     if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
@@ -311,10 +321,6 @@ if(NOT CURL_FOUND)
     set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -lldap -llber -lnghttp2 -lpsl -lidn2 -lbrotlidec -lzstd -lrtmp") # I guess if we build curl statically we need all libs to also be static, which is unrealistic since most libs on linux-gnu are shared libs # https://stackoverflow.com/questions/68368557/linking-nghttp2-static-library#comment120830125_68368557
 endif()
 ######################################
-# postgresql
-include_directories(${PostgreSQL_INCLUDE_DIRS} ${PostgreSQL_INCLUDE_DIRS}/server)
-######################################
-######################################
 # dokun-ui_dependencies
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/lua/lua-5.4.1/src) # lua
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/glew/include)
@@ -357,7 +363,7 @@ link_directories(${CMAKE_CURRENT_SOURCE_DIR}/src) # sources (.cpp, .a)
 set(neroshop_src src/buyer.cpp #[[src/carrier.cpp]] src/cart.cpp src/catalog.cpp src/client.cpp src/converter.cpp src/database.cpp src/encryptor.cpp src/icon.cpp src/item.cpp src/main.cpp src/message.cpp src/order.cpp src/qr.cpp src/seller.cpp src/server.cpp src/user.cpp src/validator.cpp src/wallet.cpp)
 add_definitions(-DNEROSHOP_DEBUG) # for more detailed debugging, use -DNEROSHOP_DEBUG0
 add_executable(neroshop ${neroshop_src} ${monero_cpp_src} ${bcrypt_src} ${sqlite_src} ${qr_code_generator_src})
-target_link_libraries(neroshop ${curl_src} ${monero_src} ${dokun_ui_src})
+target_link_libraries(neroshop ${curl_src} ${monero_src} ${dokun_ui_src} ${HIDAPI_LIBRARY})
 ######################################
 # neroshop-daemon
 add_executable(daemon src/daemon.cpp src/server.cpp)#target_link_libraries(daemon ${curl_src} ${OPENSSL_LIBRARIES}) # curl requires both openssl(used in monero) and zlib(used in dokun-ui)
@@ -380,7 +386,8 @@ if(OPENGL_FOUND)
 	target_link_libraries(neroshop ${OPENGL_LIBRARIES})
 	target_link_libraries(daemon ${OPENGL_LIBRARIES})
 endif()
-find_package(PostgreSQL) # -DPostgreSQL_TYPE_INCLUDE_DIR=/usr/include/postgresql/
+set(PostgreSQL_TYPE_INCLUDE_DIR "/usr/include/postgresql/")
+find_package(PostgreSQL)
 if(PostgreSQL_FOUND)
     if(DEFINED NEROSHOP_USE_POSTGRESQL) # -DNEROSHOP_USE_POSTGRESQL=1
         message("-- Using PostgreSQL: ${PostgreSQL_LIBRARIES} (v${PostgreSQL_VERSION_STRING})")
@@ -393,3 +400,6 @@ endif()
 # to set the current compiler manually, use the following commands:
 # sudo update-alternatives --config cc
 # sudo update-alternatives --config c++
+
+message(STATUS "C compiler flags: '${CMAKE_C_FLAGS}'")
+message(STATUS "C++ compiler flags: '${CMAKE_CXX_FLAGS}'")
