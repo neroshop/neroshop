@@ -29,7 +29,7 @@ void close_server() {
 void do_heartbeat()
 {
     // accept multiple connections - I noticed that new clients are only accepted when the primary client writes to the server
-    if(server->accept() != -1) // accepts any incoming connection
+    if(server->accept()) // accepts any incoming connection
     {
 	    //std::cout << "server's client_socket: " << server->get_client_socket() << std::endl;// returns 5
 	    //std::thread new_client(client); // create a new client thread each time it accepts

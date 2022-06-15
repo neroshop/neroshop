@@ -508,7 +508,7 @@ std::vector<std::string> neroshop::Wallet::get_transactions() const {
     std::vector<std::string> txs_list;
     /* ****
     // query incoming transfers to account 0
-    /*monero_transfer_query transfer_query;
+    monero_transfer_query transfer_query;
     transfer_query.m_is_incoming = true;
     transfer_query.m_account_index = 0;
     vector<shared_ptr<monero_transfer>> transfers = monero_wallet_obj->get_transfers(transfer_query);
