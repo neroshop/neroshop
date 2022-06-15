@@ -114,7 +114,8 @@ cmake -G"Unix Makefiles"
 make
 cd ../../
 # Build neroshop
-cmake -G"Unix Makefiles" -DNEROSHOP_USE_POSTGRESQL=1 -DPostgreSQL_TYPE_INCLUDE_DIR=/usr/include/postgresql/
+mkdir build && cd build
+cmake -DNEROSHOP_USE_POSTGRESQL=1 ..
 make
 ```
 
