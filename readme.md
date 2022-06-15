@@ -189,6 +189,10 @@ libraries used: libcurl, json
 difficulty: intermediate
 job status: not filled
 
+$100 - create an organized documentation on the neroshop codebase including functions, classes, etc.
+tools to use: doxygen or any other tools
+difficulty: easy
+job status: not filled
 ```
 
 
