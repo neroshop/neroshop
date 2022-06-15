@@ -1,12 +1,11 @@
 cmake_minimum_required(VERSION 3.4.1)
 
-project(neroshop C CXX) # tested on Ubuntu 20.04 LTS (focal) with gcc (Ubuntu 9.3.0-17ubuntu1~20.04) 9.3.0, manjaro-xfce-21.2.6 (Qonos) with gcc (GCC) 11.2.0
+project(neroshop C CXX)
 
 # setup cmake module paths
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/external/monero-cpp/cmake")
-message(STATUS "CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external/monero-cpp/cmake)
 
-# Disallow in-source builds
+# disallow in-source builds
 if("${CMAKE_CURRENT_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_BINARY_DIR}")
   message(FATAL_ERROR "ERROR: In-source builds are not allowed!\n"
   "Please create a separate directory and configure there; for example:\n"
@@ -19,65 +18,56 @@ if("${CMAKE_CURRENT_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_BINARY_DIR}")
   "  rm -rf CMakeCache.txt CMakeFiles")
 endif()
 
+# set version
 set(VERSION_MAJOR "0")
 set(VERSION_MINOR "1")
 set(VERSION_PATCH "0")
 set(PROJECT_VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
-######################################
-if(WIN32)
-    set(WINDOWS TRUE)
+
+# set a default build type
+if(NOT CMAKE_BUILD_TYPE)
+  message(STATUS "CMAKE_BUILD_TYPE not specified, setting to 'Release'")
+  set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type. Possible values: DEBUG | RELEASE | RELWITHDEBINFO | MINSIZEREL" FORCE)
+  # Set the possible values of build type for cmake-gui
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+else()
+  message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
 endif()
 
-# Macro to add C++ compiler flags
+# set default build: shared or static
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libraries. Possible values: ON | OFF")
+
+# macro to add C++ compiler flags
 macro (add_compiler_flag flag)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}")
 endmacro (add_compiler_flag)
 
+# OS-specific setup
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    set(LINUX TRUE)
-    #add_compiler_flag("-I'/usr/include/postgresql/'")
-    include_directories(/usr/include/          )
-    link_directories(/usr/lib/x86_64-linux-gnu/) # Debian/Ubuntu
-    link_directories(/usr/lib/                 ) # Arch
+  include_directories(/usr/include/          )
+  link_directories(/usr/lib/x86_64-linux-gnu/) # Debian/Ubuntu
+  link_directories(/usr/lib/                 ) # Arch
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+# ...
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Android")
+# ...
 endif()
-if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    set(MACOSX TRUE)
-endif()
-if(${CMAKE_SYSTEM_NAME} MATCHES "Android")
-    set(ANDROID TRUE)
-endif()
-######################################
-if(LINUX)
-  if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang") # clang-specific settings
+
+# language standard
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# compiler-specific setup
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
       #add_compiler_flag("-Weverything")
       add_compiler_flag("-Wno-self-assign-field")
-   elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")  # gcc-specific settings
+   elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
       #add_compiler_flag("-Wall")
   endif()
 endif()
-######################################
-# use C++11
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-######################################
-######################################
-set(MONERO_PROJECT "${CMAKE_SOURCE_DIR}/external/monero-cpp/external/monero-project")
-set(MONERO_PROJECT_SRC "${MONERO_PROJECT}/src")
 
-# header includes
-include_directories("${MONERO_PROJECT}/contrib/epee/include")
-include_directories("${MONERO_PROJECT}/external/")
-include_directories("${MONERO_PROJECT}/external/easylogging++")
-include_directories("${MONERO_PROJECT}/external/rapidjson/include")
-include_directories("${MONERO_PROJECT_SRC}/")
-include_directories("${MONERO_PROJECT_SRC}/wallet")
-include_directories("${MONERO_PROJECT_SRC}/wallet/api")
-include_directories("${MONERO_PROJECT_SRC}/crypto/crypto_ops_builder/include/")
-
-set(EXTERNAL_LIBS_DIR ${CMAKE_SOURCE_DIR}/monero-cpp/external-libs)
-message(STATUS EXTERNAL_LIBS_DIR : ${EXTERNAL_LIBS_DIR})
-######################################
-# Extra libraries
+# extra libraries
 if (APPLE)
   if (DEPENDS)
     list(APPEND EXTRA_LIBRARIES "-framework Foundation -framework IOKit -framework AppKit")
@@ -93,8 +83,9 @@ endif()
 if (WIN32)
   list(APPEND EXTRA_LIBRARIES setupapi)
 endif()
-
-message(STATUS EXTRA_LIBRARIES: ${EXTRA_LIBRARIES})
+if(EXTRA_LIBRARIES)
+  message(STATUS EXTRA_LIBRARIES: ${EXTRA_LIBRARIES})
+endif()
 
 ######################################
 # Protobuf (recent)
@@ -109,15 +100,16 @@ find_library(usb_LIBRARY NAMES usb-1.0 libusb usb)
 set(LibUSB_LIBRARIES ${usb_LIBRARY})
 
 ######################################
-# Boost - sudo apt install libboost-dev, sudo apt-get install libboost-all-dev
+## Boost
 set(Boost_NO_BOOST_CMAKE 1)
 set(Boost_USE_MULTITHREADED ON)
 find_package(Boost 1.58 QUIET REQUIRED COMPONENTS chrono date_time filesystem program_options regex serialization wserialization system thread)
 message(STATUS "Using Boost include dir at ${Boost_INCLUDE_DIR}")
 include_directories(${Boost_INCLUDE_DIR})
 add_definitions(-DBOOST_BIND_GLOBAL_PLACEHOLDERS) # to ignore warnings
+
 ######################################
-# OpenSSL - sudo apt-get install libssl-dev
+# OpenSSL
 if (APPLE AND NOT IOS)
   add_compiler_flag("-march=x86-64")
   add_compiler_flag("-fvisibility=default")
@@ -128,7 +120,6 @@ if (APPLE AND NOT IOS)
     message(STATUS "Using OpenSSL found at ${OPENSSL_ROOT_DIR}")
   endif()
 endif()
-
 find_package(OpenSSL REQUIRED)
 message(STATUS "Using OpenSSL include dir at ${OPENSSL_INCLUDE_DIR}")
 include_directories(${OPENSSL_INCLUDE_DIR})
@@ -138,17 +129,16 @@ if(STATIC AND NOT IOS)
     set(OPENSSL_LIBRARIES "${OPENSSL_LIBRARIES};${CMAKE_DL_LIBS};${CMAKE_THREAD_LIBS_INIT}")
   endif()
 endif()
+
 ######################################
 # libsodium
 include_directories(external/monero-cpp/external/libsodium/include)
 include_directories(external/monero-cpp/external/libsodium/include/sodium)
 find_library(SODIUM_LIBRARY sodium REQUIRED)
 message(STATUS "Using libsodium library at ${SODIUM_LIBRARY}")
-#[[include_directories(monero-cpp/external/libsodium/include/sodium) # export.h
-set(SODIUM_LIBRARIES monero-cpp/external/libsodium/src/crypto_verify/verify.c)]]
-#set(sodium_src /usr/lib/x86_64-linux-gnu/libsodium.so)
+
 ######################################
-# HIDAPI - https://github.com/libusb/hidapi/releases / sudo apt-get install libhidapi-dev / sudo apt-get install libusb-1.0-0-dev, sudo apt-get install libudev-dev (libudev.h)
+# HIDAPI
 if(APPLE)
   include_directories(SYSTEM /usr/include/malloc)
   if(POLICY CMP0042)
@@ -179,8 +169,22 @@ else()
         set(hidapi_src ${udev_src} libhidapi-libusb.so) # or libhidapi-hidraw.so # has to be dynamically linked or you'll get "undefined reference to `libusb_get_device_address'" error
     endif()
 endif()
+
 ######################################
-# Monero (monero-0.17.2.3 contents pasted in "monero-cpp/external/monero-project")
+# Monero
+
+# header includes
+set(MONERO_PROJECT "${CMAKE_SOURCE_DIR}/external/monero-cpp/external/monero-project")
+set(MONERO_PROJECT_SRC "${MONERO_PROJECT}/src")
+include_directories("${MONERO_PROJECT}/contrib/epee/include")
+include_directories("${MONERO_PROJECT}/external/")
+include_directories("${MONERO_PROJECT}/external/easylogging++")
+include_directories("${MONERO_PROJECT}/external/rapidjson/include")
+include_directories("${MONERO_PROJECT_SRC}/")
+include_directories("${MONERO_PROJECT_SRC}/wallet")
+include_directories("${MONERO_PROJECT_SRC}/wallet/api")
+include_directories("${MONERO_PROJECT_SRC}/crypto/crypto_ops_builder/include/")
+
 set(MONERO_PROJECT_BUILD "${MONERO_PROJECT}/build/release")
 message(STATUS "Using monero-project build" : ${MONERO_PROJECT_BUILD})
 
@@ -274,10 +278,12 @@ set_target_properties(version PROPERTIES IMPORTED_LOCATION
     
 add_library(randomx STATIC IMPORTED)
 set_target_properties(randomx PROPERTIES IMPORTED_LOCATION
-    ${MONERO_PROJECT_BUILD}/external/randomx/librandomx.a)   
+    ${MONERO_PROJECT_BUILD}/external/randomx/librandomx.a)
+
 ######################################
-set(monero_src wallet_merged wallet_crypto #[[wallet_api]] wallet lmdb epee unbound easylogging cryptonote_core cryptonote_basic cryptonote_format_utils_basic mnemonics ringct ringct_basic common cncrypto blockchain_db blocks checkpoints device device_trezor multisig version randomx 
-${Boost_LIBRARIES} ${Protobuf_LIBRARY} ${LibUSB_LIBRARIES} ${OPENSSL_LIBRARIES} ${SODIUM_LIBRARY} ${hidapi_src}#[[${HIDAPI_LIBRARIES}]] ${EXTRA_LIBRARIES})
+set(MONERO_LIBRARIES wallet_merged wallet_crypto wallet lmdb epee unbound easylogging cryptonote_core cryptonote_basic cryptonote_format_utils_basic mnemonics ringct ringct_basic common cncrypto blockchain_db blocks checkpoints device device_trezor multisig version randomx 
+${Boost_LIBRARIES} ${Protobuf_LIBRARY} ${LibUSB_LIBRARIES} ${OPENSSL_LIBRARIES} ${SODIUM_LIBRARY} ${HIDAPI_LIBRARY} ${EXTRA_LIBRARIES})
+
 ######################################
 # monero-cpp (wrapper) v0.5.1 => v0.5.5 => v0.5.10 => v0.6.4 => v0.7.0
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/monero-cpp/src/)
@@ -290,21 +296,26 @@ set(monero_cpp_src
     external/monero-cpp/src/wallet/monero_wallet_keys.cpp
     external/monero-cpp/src/wallet/monero_wallet_full.cpp
 )
+
 ######################################
 # libbcrypt
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/libbcrypt) # (wrapper for https://www.openwall.com/crypt/)
 set(bcrypt_src external/libbcrypt/crypt_blowfish/crypt_blowfish.c external/libbcrypt/crypt_blowfish/crypt_gensalt.c external/libbcrypt/crypt_blowfish/wrapper.c external/libbcrypt/bcrypt.c)
+
 ######################################
 # sqlite3
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/sqlite) # v3.36.0 (https://www.sqlite.org/download.html)
 set(sqlite_src ${CMAKE_CURRENT_SOURCE_DIR}/external/sqlite/sqlite3.c)
+
 ######################################
 # QR-Code-generator
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/QR-Code-generator/cpp) # v1.7.0
 set(qr_code_generator_src ${CMAKE_CURRENT_SOURCE_DIR}/external/QR-Code-generator/cpp/qrcodegen.cpp) # or ${CMAKE_CURRENT_SOURCE_DIR}/external/QR-Code-generator/c/qrcodegen.c
+
 ######################################
 # json
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/json/single_include) # v3.10.3
+
 ######################################
 # curl
 find_package(CURL) # if curl is found on the system, use the system default shared library, otherwise use the curl that we've built from source
@@ -318,6 +329,7 @@ if(NOT CURL_FOUND)
     add_definitions(-DCURL_STATICLIB)
     set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -lldap -llber -lnghttp2 -lpsl -lidn2 -lbrotlidec -lzstd -lrtmp") # I guess if we build curl statically we need all libs to also be static, which is unrealistic since most libs on linux-gnu are shared libs # https://stackoverflow.com/questions/68368557/linking-nghttp2-static-library#comment120830125_68368557
 endif()
+
 ######################################
 # dokun-ui_dependencies
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/lua/lua-5.4.1/src) # lua
@@ -342,17 +354,21 @@ include_directories(#[[${CMAKE_CURRENT_SOURCE_DIR}/external/flac]] # config.h
    ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/flac/include
    ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/flac/src/libFLAC/include) # for "private/cpu.h"
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/glm)
+
 if(WIN32)
 set(winsocket_src ws2_32.lib            ) # -lglfw3 -lgdi32 -lopengl32 -limm32
 endif()
-if(LINUX)
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 set(OpenGL_GL_PREFERENCE "LEGACY"                   ) # LEGACY(libGL.so) OR GLVND(libOpenGL.so and libGLX.so)
 set(posix_src  libpthread.so libdl.so libm.so       )
 endif() # -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo
+
 ######################################
 # dokun-ui
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/include)
 set(dokun_ui_src ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/src/libdokun-ui.a) # definitions added: DOKUN_OPENGL, DOKUN_BUILD_LIBRARY#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui)
+
 ######################################
 # neroshop
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external) # external dependencies (monero-cpp, dokun-ui, etc.)
@@ -360,44 +376,54 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include) # includes (.hpp)
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/src) # sources (.cpp, .a)
 set(neroshop_src src/buyer.cpp #[[src/carrier.cpp]] src/cart.cpp src/catalog.cpp src/client.cpp src/converter.cpp src/database.cpp src/encryptor.cpp src/icon.cpp src/item.cpp src/main.cpp src/message.cpp src/order.cpp src/qr.cpp src/seller.cpp src/server.cpp src/user.cpp src/validator.cpp src/wallet.cpp)
 add_definitions(-DNEROSHOP_DEBUG) # for more detailed debugging, use -DNEROSHOP_DEBUG0
-add_executable(neroshop ${neroshop_src} ${monero_cpp_src} ${bcrypt_src} ${sqlite_src} ${qr_code_generator_src})
-target_link_libraries(neroshop ${curl_src} ${monero_src} ${dokun_ui_src} ${HIDAPI_LIBRARY})
-######################################
-# neroshop-daemon
-add_executable(daemon src/daemon.cpp src/server.cpp)#target_link_libraries(daemon ${curl_src} ${OPENSSL_LIBRARIES}) # curl requires both openssl(used in monero) and zlib(used in dokun-ui)
-target_link_libraries(daemon ${dokun_ui_src})#set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -ldl") # fixes undefined reference to symbol 'dlsym@@GLIBC_2.2.5' error
-# change name to neromon (nero + daemon :D)
-set_target_properties(daemon PROPERTIES OUTPUT_NAME "neromon")
-######################################
-# linking
-if(LINUX) 
-    target_link_libraries(neroshop ${posix_src})
-    target_link_libraries(daemon ${posix_src})
-    find_package(X11 REQUIRED)
-    if(X11_FOUND)
-	    target_link_libraries(neroshop ${X11_LIBRARIES})
-	    target_link_libraries(daemon ${X11_LIBRARIES})
-    endif()
-endif()
+
+find_package(X11 REQUIRED)
 find_package(OpenGL REQUIRED)
-if(OPENGL_FOUND)
-	target_link_libraries(neroshop ${OPENGL_LIBRARIES})
-	target_link_libraries(daemon ${OPENGL_LIBRARIES})
-endif()
 set(PostgreSQL_TYPE_INCLUDE_DIR "/usr/include/postgresql/")
 find_package(PostgreSQL)
+
+# daemon executable
+set(DAEMON_EXECUTABLE "neromon")
+add_executable(${DAEMON_EXECUTABLE}
+               src/daemon.cpp
+               src/server.cpp
+)
+target_link_libraries(${DAEMON_EXECUTABLE}
+                      ${dokun_ui_src}
+                      ${posix_src}
+                      ${X11_LIBRARIES}
+                      ${OPENGL_LIBRARIES}
+                      ${PostgreSQL_LIBRARIES}
+)
+
+# neroshop executable
+set(NEROSHOP_EXECUTABLE "neroshop")
+add_executable(${NEROSHOP_EXECUTABLE}
+               ${neroshop_src}
+               ${monero_cpp_src}
+               ${bcrypt_src}
+               ${sqlite_src}
+               ${qr_code_generator_src}
+)
+target_link_libraries(${NEROSHOP_EXECUTABLE}
+                      ${curl_src}
+                      ${MONERO_LIBRARIES}
+                      ${dokun_ui_src}
+                      ${posix_src}
+                      ${X11_LIBRARIES}
+                      ${OPENGL_LIBRARIES}
+                      ${PostgreSQL_LIBRARIES}
+)
+
+set(EXECUTABLES ${DAEMON_EXECUTABLE}
+                ${NEROSHOP_EXECUTABLE})
+
 if(PostgreSQL_FOUND)
     if(DEFINED NEROSHOP_USE_POSTGRESQL) # -DNEROSHOP_USE_POSTGRESQL=1
         message("-- Using PostgreSQL: ${PostgreSQL_LIBRARIES} (v${PostgreSQL_VERSION_STRING})")
-        target_compile_definitions(neroshop PUBLIC -DNEROSHOP_USE_POSTGRESQL)
+        target_compile_definitions(${NEROSHOP_EXECUTABLE} PUBLIC -DNEROSHOP_USE_POSTGRESQL)
     endif() # end of NEROSHOP_USE_POSTGRESQL definition
-    target_link_libraries(neroshop ${PostgreSQL_LIBRARIES})
-    target_link_libraries(daemon ${PostgreSQL_LIBRARIES})
 endif()
-# cmake -G"Unix Makefiles"
-# to set the current compiler manually, use the following commands:
-# sudo update-alternatives --config cc
-# sudo update-alternatives --config c++
 
 message(STATUS "C compiler flags: '${CMAKE_C_FLAGS}'")
 message(STATUS "C++ compiler flags: '${CMAKE_CXX_FLAGS}'")
