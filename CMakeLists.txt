@@ -34,9 +34,6 @@ else()
   message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
 endif()
 
-# set default build: shared or static
-set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libraries. Possible values: ON | OFF")
-
 # macro to add C++ compiler flags
 macro (add_compiler_flag flag)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}")
