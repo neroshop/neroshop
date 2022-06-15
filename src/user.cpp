@@ -916,8 +916,6 @@ void neroshop::User::logout() {
     this->name.clear(); // clear name
     this->account_type = user_account_type::guest; // set account type to the default
     this->logged = false; // make sure user is no longer logged in
-    // delete this user
-    if(this) delete this;//this = nullptr;//fails
     // disconnect from server
     // print message    
     neroshop::print("You have logged out");
