@@ -56,14 +56,13 @@ See [ISSUES] section for more "HIGH PRIORITY" todos
 - keep number of external dependencies in "neroshop/external" at no more than 10 [x]
 - create neroshop domain name (.org preffered)
 - create neroshop onion address
-- create neroshop matrix server
+- create neroshop matrix server [x]
 - host neroshop on gitlab or something more open-source
-- transfer ownership of neroshop to a team github account
+- transfer ownership of neroshop to a team github account [x]
 - revise neroshop logo
 - consider using premake as an alternative build system to cmake
 - allow contributors to create neroshop bindings for other C-based programming languages such as lua, python, ruby, etc.
 - add support for wownero (allow anyone to list/post memes and users could tip them in wownero)
-- maybe deprecate tab class since box is sufficient enough for my needs
 - hire graphics programmer to fix and optimize rendering code in "renderer.cpp"
 - hire network programmer to implement communication between applications and servers or implement peer-to-peer system.
 - hire web developer to help develop website
