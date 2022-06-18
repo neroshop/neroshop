@@ -147,7 +147,16 @@ if(Renderer::get_current_API() == "OpenGL") {
     if (!fbc)
     {
         Logger("Failed to retrieve a framebuffer config");
-        exit (1);
+		Logger("Try a rescue solution");
+
+		PFNGLXGETFBCONFIGSPROC pfnglxGetFBConfig = (PFNGLXGETFBCONFIGSPROC)glXGetProcAddress((const GLubyte*)"glXGetFBConfigs");
+		fbc = pfnglxGetFBConfig(display, DefaultScreen(display), &fbcount);
+
+		if (!fbc) 
+		{
+			Logger("Sorry it doesn't works too");
+			exit (1);
+		}
     }
   // Retrieving visual information	
     visual_info = pfnglxGetVisualFromFBConfig(display, fbc[0]);//glXChooseVisual(display, 0, visual_attributes); //glXGetVisualFromFBConfig(display, fbc[0]);// Chosen visual_id = 0x << visual_info->visualid << std::endl;
