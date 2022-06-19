@@ -73,6 +73,16 @@ sudo pacman -Sy --needed libx11 lib32-mesa lib32-glu openssl postgresql
 # monero-cpp (monero)
 sudo pacman -Syu --needed boost openssl zeromq libpgm unbound libsodium libunwind xz readline ldns expat gtest python3 ccache doxygen graphviz qt5-tools hidapi libusb protobuf systemd
 ```
+Fedora
+```sh
+# prerequisites
+sudo dnf install gcc gcc-c++ make cmake git
+# neroshop, dokun-ui
+sudo dnf install mesa-libGL-devel mesa-libGLU-devel libcurl-devel openssl-devel libpq-devel
+# monero-cpp (monero)
+sudo dnf install boost-static libstdc++-static pkgconf boost-devel openssl-devel zeromq-devel openpgm-devel unbound-devel libsodium-devel libunwind-devel xz-devel readline-devel ldns-devel expat-devel gtest-devel ccache doxygen graphviz qt5-linguist hidapi-devel libusbx-devel protobuf-devel protobuf-compiler systemd-devel
+```
+
 
 2. Clone submodules and nested submodules
 ```sh
