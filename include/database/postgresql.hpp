@@ -17,6 +17,7 @@
 // libpq (C interface to PostgreSQL) - custom (requires compiler flag: -I'/usr/include/postgresql/' on Debian/Ubuntu)
 #include <libpq-fe.h>
 #include <libpq/libpq-fs.h>
+#include <memory> // std::unique_ptr 
 
 namespace neroshop {
 namespace DB {
