@@ -61,6 +61,8 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
       add_compiler_flag("-Wno-self-assign-field")
    elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
       #add_compiler_flag("-Wall")
+      add_compiler_flag("-I'/usr/include/postgresql/'") # Ubuntu 20.04 gcc cannot find libpq-fe.h -.-
+      #add_compiler_flag("-no-pie") # allows you to run neroshop detached from the terminal
   endif()
 endif()
 
