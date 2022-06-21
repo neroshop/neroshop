@@ -92,6 +92,7 @@ git clone --recurse-submodules https://github.com/rg3/libbcrypt.git
 git clone --recurse-submodules https://github.com/nayuki/QR-Code-generator.git
 git clone --recurse-submodules https://github.com/nlohmann/json.git
 git clone --recurse-submodules https://github.com/curl/curl.git
+git clone --recurse-submodules https://github.com/LMDB/lmdb.git
 cd ../
 ```
 
