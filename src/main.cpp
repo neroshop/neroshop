@@ -1,7 +1,7 @@
 #include <iostream>
 // neroshop
 #include "../include/neroshop.hpp"
-using namespace neroshop; // namespace comes after including the header files
+using namespace neroshop;
 // dokun-ui
 #include <build.hpp>
 #include DOKUN_HEADER
