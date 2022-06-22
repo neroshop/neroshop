@@ -51,7 +51,7 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Android")
 endif()
 
 # language standard
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # compiler-specific setup
@@ -61,6 +61,8 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
       add_compiler_flag("-Wno-self-assign-field")
    elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
       #add_compiler_flag("-Wall")
+      #add_compiler_flag("-no-pie")
+      add_compiler_flag("-I'/usr/include/postgresql/'") # Ubuntu 20.04 gcc cannot find libpq-fe.h -.-
   endif()
 endif()
 
@@ -282,7 +284,7 @@ set(MONERO_LIBRARIES wallet_merged wallet_crypto wallet lmdb epee unbound easylo
 ${Boost_LIBRARIES} ${Protobuf_LIBRARY} ${LibUSB_LIBRARIES} ${OPENSSL_LIBRARIES} ${SODIUM_LIBRARY} ${HIDAPI_LIBRARY} ${EXTRA_LIBRARIES})
 
 ######################################
-# monero-cpp (wrapper) v0.5.1 => v0.5.5 => v0.5.10 => v0.6.4 => v0.7.0
+# monero-cpp (wrapper)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/monero-cpp/src/)
 set(monero_cpp_src
     external/monero-cpp/src/utils/gen_utils.cpp
@@ -296,36 +298,41 @@ set(monero_cpp_src
 
 ######################################
 # libbcrypt
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/libbcrypt) # (wrapper for https://www.openwall.com/crypt/)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/libbcrypt)
 set(bcrypt_src external/libbcrypt/crypt_blowfish/crypt_blowfish.c external/libbcrypt/crypt_blowfish/crypt_gensalt.c external/libbcrypt/crypt_blowfish/wrapper.c external/libbcrypt/bcrypt.c)
 
 ######################################
 # sqlite3
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/sqlite) # v3.36.0 (https://www.sqlite.org/download.html)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/sqlite)
 set(sqlite_src ${CMAKE_CURRENT_SOURCE_DIR}/external/sqlite/sqlite3.c)
 
 ######################################
 # QR-Code-generator
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/QR-Code-generator/cpp) # v1.7.0
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/QR-Code-generator/cpp)
 set(qr_code_generator_src ${CMAKE_CURRENT_SOURCE_DIR}/external/QR-Code-generator/cpp/qrcodegen.cpp) # or ${CMAKE_CURRENT_SOURCE_DIR}/external/QR-Code-generator/c/qrcodegen.c
 
 ######################################
 # json
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/json/single_include) # v3.10.3
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/json/single_include)
 
 ######################################
 # curl
 find_package(CURL) # if curl is found on the system, use the system default shared library, otherwise use the curl that we've built from source
-if(CURL_FOUND) #message("-- Using CURL: ${CURL_LIBRARIES} (v${CURL_VERSION_STRING})")
+if(CURL_FOUND)
     include_directories(${CURL_INCLUDE_DIRS})
     set(curl_src ${CURL_LIBRARIES})
 endif()
 if(NOT CURL_FOUND)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/curl/include ${CMAKE_CURRENT_SOURCE_DIR}/external/curl/lib)
     set(curl_src ${CMAKE_CURRENT_SOURCE_DIR}/external/curl/lib/.libs/libcurl.a)
+    message("-- Using CURL: ${CURL_LIBRARIES} (v${CURL_VERSION_STRING})")
     add_definitions(-DCURL_STATICLIB)
     set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -lldap -llber -lnghttp2 -lpsl -lidn2 -lbrotlidec -lzstd -lrtmp") # I guess if we build curl statically we need all libs to also be static, which is unrealistic since most libs on linux-gnu are shared libs # https://stackoverflow.com/questions/68368557/linking-nghttp2-static-library#comment120830125_68368557
 endif()
+
+######################################
+# lmdb
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/monero-cpp/external/monero-project/external/db_drivers/liblmdb)
 
 ######################################
 # dokun-ui_dependencies
@@ -368,9 +375,9 @@ set(dokun_ui_src ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/src/libdokun-ui.a
 
 ######################################
 # neroshop
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external) # external dependencies (monero-cpp, dokun-ui, etc.)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include) # includes (.hpp)
-link_directories(${CMAKE_CURRENT_SOURCE_DIR}/src) # sources (.cpp, .a)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(neroshop_src src/buyer.cpp #[[src/carrier.cpp]] src/cart.cpp src/catalog.cpp src/client.cpp src/converter.cpp src/database.cpp src/encryptor.cpp src/icon.cpp src/item.cpp src/main.cpp src/message.cpp src/order.cpp src/qr.cpp src/seller.cpp src/server.cpp src/user.cpp src/validator.cpp src/wallet.cpp)
 add_definitions(-DNEROSHOP_DEBUG) # for more detailed debugging, use -DNEROSHOP_DEBUG0
 
