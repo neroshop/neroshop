@@ -69,6 +69,7 @@ double neroshop::Converter::convert_xmr(double quantity, const std::string curre
             return -1;
         }
         std::string response = get_json();
+        json_string.clear();
 
         auto json_response = nlohmann::json::parse(response);
         double price = json_response["monero"][currency];
