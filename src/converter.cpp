@@ -7,313 +7,6 @@
 std::string neroshop::Converter::json_string ("");
 ////////////////////
 ////////////////////
-double neroshop::Converter::from_xmr(double amount, const std::string& currency_code) {
-    if(!is_supported_currency(currency_code)) {std::cout << "(neroshop::Converter::from_xmr): This currency is not supported: " << currency_code << std::endl; return 0.00;};
-    std::string currency = String::lower(currency_code);
-    if(!request("https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=" + currency)) {
-        std::cout << "Request failed" << std::endl;
-    }
-    nlohmann::json monj;
-    monj = nlohmann::json::parse(json_string); // store json string // https://stackoverflow.com/questions/50011977/how-do-you-get-a-json-object-from-a-string-in-nlohmann-json
-    if(monj.is_null()) { std::cout << "\033[0;91m" << "json is null !" << "\033[0m" << std::endl; return 0.0;}
-    json_string.clear(); // clear json string when done
-    double rate =  monj["monero"][currency].get<double>();
-    return amount * rate;
-}
-////////////////////
-////////////////////
-////////////////////
-double neroshop::Converter::to_xmr(double amount, const std::string& currency_code) 
-{  
-    if(String::lower(currency_code) == "btc") {return btc_to_xmr(amount);}
-    if(String::lower(currency_code) == "eth") {return eth_to_xmr(amount);}
-    if(String::lower(currency_code) == "dai") {return dai_to_xmr(amount);} // :(
-    if(String::lower(currency_code) == "usd") {return usd_to_xmr(amount);}
-    if(String::lower(currency_code) == "eur") {return eur_to_xmr(amount);}
-    if(String::lower(currency_code) == "jpy") {return jpy_to_xmr(amount);}
-    if(String::lower(currency_code) == "gbp") {return gbp_to_xmr(amount);}
-    if(String::lower(currency_code) == "cad") {return cad_to_xmr(amount);}
-    if(String::lower(currency_code) == "chf") {return chf_to_xmr(amount);}
-    if(String::lower(currency_code) == "aud") {return aud_to_xmr(amount);}
-    if(String::lower(currency_code) == "cny") {return cny_to_xmr(amount);}
-    if(String::lower(currency_code) == "sek") {return sek_to_xmr(amount);}
-    if(String::lower(currency_code) == "nzd") {return nzd_to_xmr(amount);}
-    if(String::lower(currency_code) == "mxn") {return mxn_to_xmr(amount);}
-    //if(String::lower(currency_code) == "") {return _to_xmr(amount);}
-    std::cout << "(neroshop::Converter::to_xmr): This currency is not supported: " << currency_code << std::endl;
-    return 0.0;
-}
-////////////////////
-////////////////////
-double neroshop::Converter::btc_to_xmr(double btc) {
-    double xmr_amount = 0.0;
-    // get json from url
-    request("https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=btc");//("https://coincodex.com/api/coincodex/get_coin/xmr");
-#ifdef NEROSHOP_DEBUG0
-    std::cout << json_string << std::endl;
-#endif
-    // create a json object
-    nlohmann::json monj;
-    monj = nlohmann::json::parse( json_string ); // store json string // https://stackoverflow.com/questions/50011977/how-do-you-get-a-json-object-from-a-string-in-nlohmann-json
-    if(monj.is_null()) {
-        std::cout << "\033[0;91m" << "json is null !" << "\033[0m" << std::endl;
-        return 0.0;
-    }
-    json_string.clear(); // clear json string when done
-    double rate =  monj["monero"]["btc"].get<double>();
-    xmr_amount = btc / rate;
-    return xmr_amount;
-}
-////////////////////
-// coincodex: price_high_24_usd, last_price_usd, price_btc
-////////////////////
-double neroshop::Converter::eth_to_xmr(double eth) {
-    double xmr_amount = 0.0;
-    // get json from url
-    request("https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=eth");//("https://coincodex.com/api/coincodex/get_coin/xmr");
-#ifdef NEROSHOP_DEBUG0
-    std::cout << json_string << std::endl;
-#endif
-    // create a json object
-    nlohmann::json monj;
-    monj = nlohmann::json::parse( json_string ); // store json string // https://stackoverflow.com/questions/50011977/how-do-you-get-a-json-object-from-a-string-in-nlohmann-json
-    if(monj.is_null()) {
-        std::cout << "\033[0;91m" << "json is null !" << "\033[0m" << std::endl;
-        return 0.0;
-    }
-    json_string.clear(); // clear json string when done
-    double rate = monj["monero"]["eth"].get<double>(); // 1 xmr = ? eth
-    xmr_amount = eth / rate;
-    return xmr_amount;
-}
-////////////////////
-double neroshop::Converter::dai_to_xmr(double dai) {
-    double xmr_amount = 0.0;
-    // first, convert dai to usd
-    request("https://api.coingecko.com/api/v3/simple/price?ids=dai&vs_currencies=usd");
-    nlohmann::json monj;
-    monj = nlohmann::json::parse( json_string ); // store json string // https://stackoverflow.com/questions/50011977/how-do-you-get-a-json-object-from-a-string-in-nlohmann-json
-    if(monj.is_null()) { std::cout << "\033[0;91m" << "json is null !" << "\033[0m" << std::endl; return 0.0;}
-    json_string.clear(); // clear json string when done
-    double dai_to_usd = monj["dai"]["usd"].get<double>();
-    // now convert the dai-converted usd to xmr
-    request("https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=usd");
-    monj = nlohmann::json::parse( json_string ); // store json string // https://stackoverflow.com/questions/50011977/how-do-you-get-a-json-object-from-a-string-in-nlohmann-json
-    if(monj.is_null()) { std::cout << "\033[0;91m" << "json is null !" << "\033[0m" << std::endl; return 0.0;}
-    json_string.clear(); // clear json string when done
-    double xmr_to_usd = monj["monero"]["usd"].get<double>();
-    xmr_amount = (dai_to_usd * dai) / (xmr_to_usd / dai_to_usd);
-    return xmr_amount;
-}
-////////////////////
-double neroshop::Converter::usd_to_xmr(double usd) {
-    double xmr_amount = 0.0;
-    // get json from url
-    request("https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=usd");//("https://coincodex.com/api/coincodex/get_coin/xmr");
-#ifdef NEROSHOP_DEBUG0
-    std::cout << json_string << std::endl;
-#endif
-    // create a json object
-    nlohmann::json monj;
-    monj = nlohmann::json::parse( json_string ); // store json string // https://stackoverflow.com/questions/50011977/how-do-you-get-a-json-object-from-a-string-in-nlohmann-json
-    if(monj.is_null()) {
-        std::cout << "\033[0;91m" << "json is null !" << "\033[0m" << std::endl;
-        return 0.0;
-    }
-    json_string.clear(); // clear json string when done
-    double rate = monj["monero"]["usd"].get<double>(); // 1 xmr = ? usd
-    xmr_amount = usd / rate;
-    return xmr_amount;
-}
-////////////////////
-double neroshop::Converter::eur_to_xmr(double eur) {
-    double xmr_amount = 0.0;
-    // get json from url
-    request("https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=eur");//("https://coincodex.com/api/coincodex/get_coin/xmr");
-#ifdef NEROSHOP_DEBUG0
-    std::cout << json_string << std::endl;
-#endif
-    // create a json object
-    nlohmann::json monj;
-    monj = nlohmann::json::parse( json_string );
-    if(monj.is_null()) {
-        std::cout << "\033[0;91m" << "json is null !" << "\033[0m" << std::endl;
-        return 0.0;
-    }
-    json_string.clear(); // clear json string when done
-    double rate = monj["monero"]["eur"].get<double>(); // 1 xmr = ? eur
-    xmr_amount = eur / rate;
-    return xmr_amount;
-}
-////////////////////
-double neroshop::Converter::jpy_to_xmr(double jpy) {
-    double xmr_amount = 0.0;
-    // get json from url
-    request("https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=jpy");
-#ifdef NEROSHOP_DEBUG0
-    std::cout << json_string << std::endl;
-#endif
-    // create a json object
-    nlohmann::json monj;
-    monj = nlohmann::json::parse( json_string );
-    if(monj.is_null()) {
-        std::cout << "\033[0;91m" << "json is null !" << "\033[0m" << std::endl;
-        return 0.0;
-    }
-    json_string.clear(); // clear json string when done
-    double rate = monj["monero"]["jpy"].get<double>(); // 1 xmr = ? eur
-    xmr_amount = jpy / rate;
-    return xmr_amount;
-}
-////////////////////
-double neroshop::Converter::gbp_to_xmr(double gbp) {
-    double xmr_amount = 0.0;
-    // get json from url
-    request("https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=gbp");
-#ifdef NEROSHOP_DEBUG0
-    std::cout << json_string << std::endl;
-#endif
-    // create a json object
-    nlohmann::json monj;
-    monj = nlohmann::json::parse( json_string );
-    if(monj.is_null()) {
-        std::cout << "\033[0;91m" << "json is null !" << "\033[0m" << std::endl;
-        return 0.0;
-    }
-    json_string.clear(); // clear json string when done
-    double rate = monj["monero"]["gbp"].get<double>(); // 1 xmr = ? eur
-    xmr_amount = gbp / rate;
-    return xmr_amount;
-}
-////////////////////
-double neroshop::Converter::cad_to_xmr(double cad) {
-    double xmr_amount = 0.0;
-    // get json from url
-    request("https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=cad");
-#ifdef NEROSHOP_DEBUG0
-    std::cout << json_string << std::endl;
-#endif
-    // create a json object
-    nlohmann::json monj;
-    monj = nlohmann::json::parse( json_string );
-    if(monj.is_null()) {
-        std::cout << "\033[0;91m" << "json is null !" << "\033[0m" << std::endl;
-        return 0.0;
-    }
-    json_string.clear(); // clear json string when done
-    double rate = monj["monero"]["cad"].get<double>(); // 1 xmr = ? eur
-    xmr_amount = cad / rate;
-    return xmr_amount;
-}
-////////////////////
-double neroshop::Converter::chf_to_xmr(double chf) {
-    double xmr_amount = 0.0;
-    // get json from url
-    request("https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=chf");
-#ifdef NEROSHOP_DEBUG0
-    std::cout << json_string << std::endl;
-#endif
-    // create a json object
-    nlohmann::json monj;
-    monj = nlohmann::json::parse( json_string );
-    if(monj.is_null()) {
-        std::cout << "\033[0;91m" << "json is null !" << "\033[0m" << std::endl;
-        return 0.0;
-    }
-    json_string.clear(); // clear json string when done
-    double rate = monj["monero"]["chf"].get<double>(); // 1 xmr = ? eur
-    xmr_amount = chf / rate;
-    return xmr_amount;
-}
-////////////////////
-double neroshop::Converter::aud_to_xmr(double aud) {
-    double xmr_amount = 0.0;
-    // get json from url
-    request("https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=aud");
-#ifdef NEROSHOP_DEBUG0
-    std::cout << json_string << std::endl;
-#endif
-    // create a json object
-    nlohmann::json monj;
-    monj = nlohmann::json::parse( json_string );
-    if(monj.is_null()) {
-        std::cout << "\033[0;91m" << "json is null !" << "\033[0m" << std::endl;
-        return 0.0;
-    }
-    json_string.clear(); // clear json string when done
-    double rate = monj["monero"]["aud"].get<double>(); // 1 xmr = ? eur
-    xmr_amount = aud / rate;
-    return xmr_amount;
-}
-////////////////////
-double neroshop::Converter::cny_to_xmr(double cny) {
-    double xmr_amount = 0.0;
-    // get json from url
-    request("https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=cny");
-#ifdef NEROSHOP_DEBUG0
-    std::cout << json_string << std::endl;
-#endif
-    // create a json object
-    nlohmann::json monj;
-    monj = nlohmann::json::parse( json_string );
-    if(monj.is_null()) {
-        std::cout << "\033[0;91m" << "json is null !" << "\033[0m" << std::endl;
-        return 0.0;
-    }
-    json_string.clear(); // clear json string when done
-    double rate = monj["monero"]["cny"].get<double>(); // 1 xmr = ? eur
-    xmr_amount = cny / rate;
-    return xmr_amount;
-}
-////////////////////
-double neroshop::Converter::sek_to_xmr(double sek) {
-    double xmr_amount = 0.0;
-    request("https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=sek");
-#ifdef NEROSHOP_DEBUG0
-    std::cout << json_string << std::endl;
-#endif
-    nlohmann::json monj;
-    monj = nlohmann::json::parse( json_string );
-    if(monj.is_null()) { std::cout << "\033[0;91m" << "json is null !" << "\033[0m" << std::endl; return 0.0; }
-    json_string.clear(); // clear json string when done
-    double rate = monj["monero"]["sek"].get<double>(); // 1 xmr = ? eur
-    xmr_amount = sek / rate;
-    return xmr_amount;
-}
-////////////////////
-double neroshop::Converter::nzd_to_xmr(double nzd) {
-    double xmr_amount = 0.0;
-    request("https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=nzd");
-#ifdef NEROSHOP_DEBUG0
-    std::cout << json_string << std::endl;
-#endif
-    nlohmann::json monj;
-    monj = nlohmann::json::parse( json_string );
-    if(monj.is_null()) { std::cout << "\033[0;91m" << "json is null !" << "\033[0m" << std::endl; return 0.0; }
-    json_string.clear(); // clear json string when done
-    double rate = monj["monero"]["nzd"].get<double>(); // 1 xmr = ? eur
-    xmr_amount = nzd / rate;
-    return xmr_amount;
-}
-////////////////////
-double neroshop::Converter::mxn_to_xmr(double mxn)
-{
-    double xmr_amount = 0.0;
-    request("https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=mxn");
-#ifdef NEROSHOP_DEBUG0
-    std::cout << json_string << std::endl;
-#endif
-    nlohmann::json monj;
-    monj = nlohmann::json::parse( json_string );
-    if(monj.is_null()) { std::cout << "\033[0;91m" << "json is null !" << "\033[0m" << std::endl; return 0.0; }
-    json_string.clear(); // clear json string when done
-    double rate = monj["monero"]["mxn"].get<double>(); // 1 xmr = ? eur
-    xmr_amount = mxn / rate;
-    return xmr_amount;
-}
-////////////////////
-////////////////////
-////////////////////
 double neroshop::Converter::to_kg(double amount, const std::string& unit_name) const {
     if(String::lower(unit_name) == "lb" || String::lower(unit_name) == "lbs" || String::lower(unit_name) == "pound") {return lb_to_kg(amount);}
     return 0.0;
@@ -347,18 +40,46 @@ std::string neroshop::Converter::get_currency_symbol(const std::string& currency
 ////////////////////
 ////////////////////
 bool neroshop::Converter::is_supported_currency(const std::string& currency_code) {
-    if(String::lower(currency_code) == "usd") return true;
-    if(String::lower(currency_code) == "eur") return true;
-    if(String::lower(currency_code) == "jpy") return true;
-    if(String::lower(currency_code) == "gbp") return true;
-    if(String::lower(currency_code) == "cad") return true;
-    if(String::lower(currency_code) == "chf") return true;
-    if(String::lower(currency_code) == "aud") return true;
-    if(String::lower(currency_code) == "cny") return true;
-    if(String::lower(currency_code) == "sek") return true;
-    if(String::lower(currency_code) == "nzd") return true;
-    if(String::lower(currency_code) == "mxn") return true;
-    return false;
+    std::vector<std::string> supported_currency {"usd", "eur", "jpy", "gbp", "cad", "btc", "eth",
+                                                "chf", "aud", "cny", "sek", "nzd", "mxn"};
+
+    auto it = std::find(supported_currency.begin(), supported_currency.end(), currency_code);
+
+    if (it != supported_currency.end()) {
+        return true;
+    } 
+    else {
+        return false;
+    }
+}
+////////////////////
+////////////////////
+////////////////////
+////////////////////
+double neroshop::Converter::convert_xmr(double quantity, const std::string currency, bool to) { //to: if we want currency->xmr (true) or rather xmr->currency (false)
+    /*
+        Usage : 
+        std::cout << "100€ = " << convert_xmr(100, "eur", true) << "XMR" << endl;
+        std::cout << "10XMR = " << convert_xmr(10, "eur", false) << "€" << endl; 
+    */
+    if (is_supported_currency(currency) && quantity >= 0) {
+        std::string url = "https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=" + currency;
+
+        if (!request(url)) {
+            return -1;
+        }
+        std::string response = get_json();
+
+        auto json_response = nlohmann::json::parse(response);
+        double price = json_response["monero"][currency];
+
+        if (to) {
+            return quantity/price;
+        } else {
+            return price*quantity;
+        }
+    }
+    return -1;
 }
 ////////////////////
 ////////////////////
