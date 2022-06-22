@@ -13,6 +13,3 @@
 [submodule "external/curl"]
 	path = external/curl
 	url = https://github.com/curl/curl
-[submodule "external/lmdb"]
-	path = external/lmdb
-	url = https://github.com/LMDB/lmdb.git
