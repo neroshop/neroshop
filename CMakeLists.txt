@@ -51,7 +51,7 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Android")
 endif()
 
 # language standard
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # compiler-specific setup

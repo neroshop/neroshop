@@ -212,5 +212,5 @@ job status: not filled
 
 [//]: # (rm -rf external/dokun-ui/CMakeFiles; rm -rf external/dokun-ui/CMakeCache.txt; rm -rf external/dokun-ui/cmake_install.cmake; rm -rf external/dokun-ui/Makefile)
 [//]: # (git add CMakeLists.txt external/ include/ readme.md res/neroshop-logo.png res/ss res/tmp_images res/wallets src/ todo.txt)
-[//]: # (git commit -m"empty commit")
+[//]: # (git commit -m"")
 [//]: # (git push -u origin feature)
