@@ -21,17 +21,23 @@ This is currently a work in progress. There is nothing to see here :shrug:
 
 
 ## Features
-* pseudonymous economy (sellers are only identified by their usernames and trusted based on their reputation)
-* no registration required (for buyers only)
-* no KYC or AML
-* no listing fees
-* no sales tax (transaction fees will be paid to miners in place of sales tax. I mean, this is crypto LOL)
-* no other fees (except for miner transaction fees and shipping costs)
-* buy and sell products with monero (and possibly other private-by-default crypto in the near future)
-* seller reputation system
-* product rating system
-* centralized database (for now, since I don't know how to implement a decentralized database or p2p network)
-* and much more ...
+* Pseudonymous identities (sellers are only identified by their usernames and trusted based on their reputation)
+* No registration required (for buyers only)
+* No KYC or AML
+* No listing fees
+* No sales tax (transaction fees will be paid to miners in place of sales tax. This is crypto after all)
+* No other fees (except for miner transaction fees and shipping costs)
+* Buy and sell products with Monero [XMR] (and Wownero [WOW] in the near future)
+* Seller reputation system
+* Product rating system
+* Wishlist feature
+* End-to-end encrypted messaging system for communications between sellers and buyers
+* Distributed p2p network
+* Subaddress generator (a unique subaddresses will be generated from a seller's synced wallet account for each order placed by a customer)
+* Option to run a local Monero node or connect to remote Monero nodes (so that sellers will not have to sync the entire blockchain)
+* Option to choose between sending funds directly to a seller or using an escrow service.
+* Tor integration (Internet traffic can be optionally routed through tor for more added privacy)
+* And much more ...
 
 
 ## Building neroshop
@@ -132,28 +138,7 @@ make
 
 ### Setting up PostgreSQL
 ```
-# Open the configuration file (change the "14" to your current postgresql version)
-sudo gedit /etc/postgresql/14/main/pg_hba.conf
-
-# Edit "pg_hba.conf" (change authentication methods from "peer" to "trust"):
-"local   all             postgres                                trust"
-
-# Restart the server for the changes in "pg_hba.conf" to take effect: 
-sudo service postgresql restart
-
-# Login to the psql shell as user postgres:
-psql user=postgres
-    
-# Change the password of postgres (within the psql shell)
-ALTER USER postgres PASSWORD 'postgres';
-
-# Create a test database
-CREATE DATABASE neroshoptest;
-    
-# Leave the psql shell
-\q
-
-# You may restore the "pg_hba.conf" values back to the defaults if you wish
+PostgreSQL has been marked for deprecation and will be removed in future releases.
 ```
 
 
