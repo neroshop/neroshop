@@ -56,22 +56,117 @@ bool neroshop::Converter::is_supported_currency(const std::string& currency_code
 ////////////////////
 ////////////////////
 ////////////////////
-double neroshop::Converter::convert_xmr(double quantity, const std::string currency, bool to) { //to: if we want currency->xmr (true) or rather xmr->currency (false)
-    /*
-        Usage : 
-        std::cout << "100€ = " << convert_xmr(100, "eur", true) << "XMR" << endl;
-        std::cout << "10XMR = " << convert_xmr(10, "eur", false) << "€" << endl; 
-    */
-    if (is_supported_currency(currency) && quantity >= 0) {
-        std::string url = "https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=" + currency;
+double neroshop::Converter::convert_xmr(double quantity, std::string currency, bool to) { //to: if we want currency->xmr (true) or rather xmr->currency (false)
+    
+    std::map<std::string, std::string>  currency_to_id_coinmarketcap = {
+        {"usd", "2781"}, {"aud", "2782"}, {"cad", "2784"}, {"chf", "2785"}, {"cny", "2787"}, {"eur", "2790"},
+        {"gbp", "2791"}, {"jpy", "2797"}, {"mxn", "2799"}, {"nzd", "2802"}, {"sek", "2807"},  {"btc", "1"}, {"eth", "1027"},
+    }; //We can easily add new currencies, it must be added here in the coinmarketcap url that fetch usd prices
 
-        if (!request(url)) {
+    currency = String::lower(currency);
+
+    //Definition of variables that will be used later
+    std::vector<double> prices;
+    double price;
+    nlohmann::json json_response;
+    std::string url;
+    std::string response;
+    std::map<std::string, double> currencies_in_usd;
+
+    url = "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/quote/latest?id=2781,2782,2784,2785,2787,2790,2791,2797,2799,2802,2807,1,1027&convertId=2781";
+    if (request(url)) {
+        response = get_json();
+        json_response = nlohmann::json::parse(response);
+        auto currencies = json_response["data"];
+
+        for (int i = 0; i<currencies.size(); i++) {
+            std::string name = String::lower(currencies[i]["symbol"]);
+            currencies_in_usd[name] = currencies[i]["quotes"][0]["price"];
+        }
+    }
+    json_string.clear();
+
+    if (is_supported_currency(currency) && quantity >= 0) {
+
+        //From coingecko
+        url = "https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=" + currency;
+        if (request(url)) {
+            response = get_json();
+            json_response = nlohmann::json::parse(response);
+            price = json_response["monero"][currency];
+            prices.push_back(price);
+        }
+        json_string.clear();
+
+        //From coinmarketcap
+        url = "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/quote/latest?id=328&convertId=" + currency_to_id_coinmarketcap[currency];
+        if (request(url)) {
+            response = get_json();
+            json_response = nlohmann::json::parse(response);
+            price = json_response["data"][0]["quotes"][0]["price"];
+            prices.push_back(price);
+        }
+        json_string.clear();
+
+        //From cryptowatch
+        url = "https://billboard.service.cryptowat.ch/markets?sort=price&onlyBaseAssets=xmr&onlyQuoteAssets=usd";
+        if (request(url)) {
+            response = get_json();
+            json_response = nlohmann::json::parse(response);
+            auto list_exchanges = json_response["result"]["rows"];
+            for (int i = 0; i<list_exchanges.size(); i++) { //Prices are in usd only so we need to convert it
+                price = list_exchanges[i]["lastPriceByAsset"]["usd"];
+                prices.push_back(price/currencies_in_usd[currency]);
+            }
+        }
+        json_string.clear();
+
+        //From cointelegraph
+        url = "https://ticker-api.cointelegraph.com/rates/?full=true";
+        if (request(url)) {
+            response = get_json();
+            json_response = nlohmann::json::parse(response);
+            if (json_response["data"]["XMR"][String::upper(currency)] != nullptr) {
+                price = json_response["data"]["XMR"][String::upper(currency)]["price"];
+            } else {
+                price = (double)json_response["data"]["XMR"]["USD"]["price"]/currencies_in_usd[currency];
+            }
+            prices.push_back(price);
+        }
+        json_string.clear();
+
+        //From cryptorank
+        url = "https://api.cryptorank.io/v0/coins/monero?locale=en";
+        if (request(url)) {
+            response = get_json();
+            json_response = nlohmann::json::parse(response);
+            double price_usd = json_response["data"]["price"]["USD"];
+            price = price_usd/currencies_in_usd[currency];
+            prices.push_back(price);
+        }
+        json_string.clear();
+
+        //From coincodex
+        url = "https://coincodex.com/api/coincodex/get_coin/xmr";
+        if (request(url)) {
+            response = get_json();
+            json_response = nlohmann::json::parse(response);
+            double price_usd = json_response["last_price_usd"];
+            price = price_usd/currencies_in_usd[currency];
+            prices.push_back(price);
+        }
+        json_string.clear();
+
+        //Final computation of the price
+        if (prices.size() > 0) { //Check if at least one request worked
+            double sum_price = 0;
+            for (double p : prices) {
+                sum_price += p;
+            }
+            price = sum_price/prices.size();
+        } else {
             return -1;
         }
-        std::string response = get_json();
-
-        auto json_response = nlohmann::json::parse(response);
-        double price = json_response["monero"][currency];
 
         if (to) {
             return quantity/price;
@@ -94,6 +189,7 @@ bool neroshop::Converter::request(const std::string& url)
     if(curl) {
         CURLcode res;
         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+        curl_easy_setopt(curl, CURLOPT_USERAGENT, "curl/7.84.0-DEV"); //User aget needed for Cloudflare security from coinmarketcap
         //curl_easy_setopt(curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4); // opt - Don't bother trying IPv6, which would increase DNS resolution time.
         //curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10); // opt - don't wait forever, time out after 10 secs
         //curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L); // opt follow https redirects if necessary

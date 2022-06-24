@@ -23,7 +23,7 @@ public:
     static double lb_to_kg(double lb); //static double pound_to_kilogram(double pound); // The correct way of abbreviation in expressing singular or plural pounds is “lb.” though “lbs.”, which stands for libra, is the common abbreviation used in expressing pounds
     // getters
     
-    static double convert_xmr(double quantity, const std::string currency, bool to);
+    static double convert_xmr(double quantity, std::string currency, bool to);
     static std::string get_currency_symbol(const std::string& currency_code);
     // boolean
     static bool is_supported_currency(const std::string& currency_code);
