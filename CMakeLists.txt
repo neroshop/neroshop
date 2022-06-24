@@ -374,6 +374,10 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/include)
 set(dokun_ui_src ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/src/libdokun-ui.a) # definitions added: DOKUN_OPENGL, DOKUN_BUILD_LIBRARY#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui)
 
 ######################################
+# udp-discover-cpp
+set(udp_src ${CMAKE_CURRENT_SOURCE_DIR}/external/udp-discover-cpp/build/libudp-discover.a)
+
+######################################
 # neroshop
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -395,6 +399,7 @@ add_executable(${DAEMON_EXECUTABLE}
 target_link_libraries(${DAEMON_EXECUTABLE}
                       ${dokun_ui_src}
                       ${posix_src}
+		      ${udp_src}
                       ${X11_LIBRARIES}
                       ${OPENGL_LIBRARIES}
                       ${PostgreSQL_LIBRARIES}
