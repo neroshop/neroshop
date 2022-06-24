@@ -1,0 +1,34 @@
+Neroshop:
+
+  Server:
+    * Neroshop daemon (neromon)
+      - Read/write ad database
+      - Sync with peers (encrypted, tor, i2p)
+      - Verify data validity on receiver
+      - Store ads in local db
+      - Store disputes, reports in local db
+      - Store top seller, best vendor in local db
+      - Search engine queries local db, serves result to client
+      - Expose API to allow third-party interaction with daemon
+      - https://www.symas.com/lmdb
+      - https://github.com/ahupowerdns/lmdb-safe
+      - https://github.com/truvorskameikin/udp-discovery-cpp
+
+  Clients:
+    * All clients (share common code)
+      - Connect to local/remote daemon
+      - Alow querying XMR exchange rate for user-selected currencies
+      - Basics: create/save/delete ad, search db
+      - Allow messaging among users via matrix
+      - https://gitlab.com/kazv/libkazv
+
+    * Neroshop command-line client (nerocli)
+      - User interacts with daemon using a command-line interpreter, CLI
+      - https://github.com/daniele77/cli
+  
+    * Neroshop graphical user interface client (nerogui)
+      - User interacts with daemon using a GUI
+      - Basics: create and save ad, search db, message other users
+      - Convert QR code to PNG/JPEG
+      - https://github.com/idea4good/GuiLite
+      - https://www.glfw.org
