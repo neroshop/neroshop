@@ -54,7 +54,7 @@ This is currently a work in progress. There is nothing to see here :shrug:
 | [openssl](https://github.com/openssl/openssl)                      | 1.1.1           | `libssl-dev`           | OpenSSL-SSLeay or Apache-2.0       | for curl, sha256 sum and message encryption                            |
 | [postgresql](https://www.postgresql.org/)                          | ?               | `libpq-dev`            | PostgreSQL                         | server-based database management                                       |
 | [dokun-ui](external/dokun-ui)                                      | n/a             |                        | MIT                                | graphical user interface                                               |
-
+| [udp-discovery-cpp](https://github.com/truvorskameikin/udp-discovery-cpp)                                      | n/a             |                        | MIT                                | p2p discovery/networking                                               |
 
 ### Compiling neroshop from source
 1. Install dependencies
