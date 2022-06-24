@@ -2,10 +2,10 @@
 build/
 
 # To prevent build files from submodules being tracked
-externals/monero-cpp/*
-externals/libbcrypt/*
-externals/json/*
-externals/QR-Code-generator/*
-externals/curl/*
-externals/dokun-ui/*
-externals/udp-discovery-cpp/*
+external/monero-cpp/*
+external/libbcrypt/*
+external/json/*
+external/QR-Code-generator/*
+external/curl/*
+external/dokun-ui/*
+external/udp-discovery-cpp/*
