@@ -1,6 +1,6 @@
 # neroshop 
 
-An attempt to create an online marketplace for [Monero](https://getmonero.org/) users, which is likely to fail
+An attempt to create a p2p marketplace for [Monero](https://getmonero.org/) users, which is likely to fail
 
 [![alt text](res/neroshop-logo.png)](https://github.com/larteyoh/neroshop "neroshop logo")
 
