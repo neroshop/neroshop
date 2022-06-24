@@ -1,6 +1,6 @@
 # neroshop 
 
-An attempt to create an online marketplace for [Monero](https://getmonero.org/) users, which is likely to fail
+An attempt to create a p2p marketplace for [Monero](https://getmonero.org/) users, which is likely to fail
 
 [![alt text](res/neroshop-logo.png)](https://github.com/larteyoh/neroshop "neroshop logo")
 
@@ -10,8 +10,7 @@ An attempt to create an online marketplace for [Monero](https://getmonero.org/) 
 - [Features](#features) <!-- - [Documentation](#documentation)-->
 - [Building neroshop](#building-neroshop)
   - [Dependencies](#dependencies)
-  - [Compiling neroshop from source](#compiling-neroshop-from-source)
-  - [Setting up PostgreSQL](#setting-up-postgresql) <!-- - [License](#license)-->
+  - [Compiling neroshop from source](#compiling-neroshop-from-source) <!-- - [License](#license)-->
 - [Contributions](#contributions)  <!-- - [Bug Bounty Program]-->
 - [Contact information](#contact)
 
@@ -140,14 +139,8 @@ make
 cd ../../
 # Build neroshop
 mkdir build && cd build
-cmake -DNEROSHOP_USE_POSTGRESQL=1 ..
+cmake ..
 make
-```
-
-
-### Setting up PostgreSQL
-```
-PostgreSQL has been marked for deprecation and will be removed in future releases.
 ```
 
 
@@ -192,7 +185,7 @@ job status: not filled
 $250 - fetch a list of currency prices from various sources
 libraries used: libcurl, json
 difficulty: intermediate
-job status: not filled
+job status: taken
 
 $100 - create an organized documentation on the neroshop codebase including functions, classes, etc.
 tools to use: doxygen or any other tools
