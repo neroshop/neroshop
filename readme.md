@@ -121,7 +121,16 @@ sudo make install
 cd ../../
 ```
 
-6. Build neroshop (along with dokun-ui)
+6. Build udp-discover-cpp
+```sh
+cd external/udp-discover-cpp
+mkdir build
+cd build
+cmake
+make
+```
+
+7. Build neroshop (along with dokun-ui)
 ```sh
 # Build dokun-ui
 # make sure CMakeCache.txt, cmake_install.cmake, and Makefile have all been deleted if not
