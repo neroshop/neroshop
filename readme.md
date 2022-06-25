@@ -182,11 +182,6 @@ libraries used: ?
 difficulty: intermediate
 job status: not filled
 
-$250 - fetch a list of currency prices from various sources
-libraries used: libcurl, json
-difficulty: intermediate
-job status: taken
-
 $100 - create an organized documentation on the neroshop codebase including functions, classes, etc.
 tools to use: doxygen or any other tools
 difficulty: easy
