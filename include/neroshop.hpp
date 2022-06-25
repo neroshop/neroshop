@@ -30,48 +30,4 @@
 #include "client.hpp"
 #include "encryptor.hpp"
 //#include "carrier.hpp" // not currently in use
-#include <cassert> //all of these are for the "switch replacement" below
-#include <functional>
-#include <iostream>
-#include <set>
-#include <string>
-#include <unordered_map>
-#include <vector>
 #endif
-
-template<typename Key_t>
-void switch2(const Key_t& key,
-    const std::vector<std::pair<Key_t, std::function<void()>>>& pairs,
-    const std::function<void()>& def)
-{
-    std::unordered_map<Key_t, std::function<void()>> dict;
-    for (const auto& entry : pairs)
-        dict.insert(entry);
-    assert(dict.size() == pairs.size());
-    const auto it = dict.find(key);
-    if (it != dict.end())
-        it->second();
-    else
-        def();
-}
-
-template<typename F, typename... Args>
-std::function<void()> defer(F f, Args ... args)
-{
-    return [f, args...]()
-    {
-        f(args...);
-    };
-}
-
-void say(const std::string& text)
-{
-    std::cout << text << std::endl;
-}
-
-void quit(const std::string& msg, bool* running_flag)
-{
-    if (running_flag)
-        *running_flag = false;
-    say(msg);
-}
