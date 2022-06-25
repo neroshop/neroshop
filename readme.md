@@ -120,12 +120,12 @@ sudo make install
 cd ../../
 ```
 
-6. Build udp-discover-cpp
+6. Build udp-discovery-cpp
 ```sh
-cd external/udp-discover-cpp
+cd external/udp-discovery-cpp
 mkdir build
 cd build
-cmake
+cmake ../
 make
 ```
 
