@@ -1,0 +1,136 @@
+[HIGH PRIORITY]
+- complete application back-end (functionality)
+- complete application front-end (user interface)
+- replace inappropriate doubles with floats
+- discard all raw pointer class members and replace them with smart pointers (unique_ptr over shared_ptr whenever possible)
+- use delegating constructor for every class
+- fix bug/issue where server only reads once and then does not ever read again
+- improve currency conversion by using multiple sources to retrieve currency rates
+- find a way to retrieve remote monero nodes
+- add the option to (graphically) connect to a full node and multiple remote nodes
+- create messages button and a seller hub/section button (GUI-related)
+- create a sorting box on the left side of the application and create PREVIOUS/NEXT or SHOW_MORE buttons for the catalog view (GUI-related)
+- create a node list of trusted and verified nodes so users (sellers) do not have to sync entire blockchain
+- fix mouse input functions and replace presses with clicks
+- figure out how to generate an appimage
+- figure out how to sync monerod without the app freezing while in the home menu (this probably has to do with multithreading which I've no experience with)
+See [ISSUES] section for more "HIGH PRIORITY" todos
+
+[MID PRIORITY]
+- make table names plural ('cause select * from customer seems "grammatically" incorrect to me)
+- rewrite renderer.cpp from scratch (if I can't find an experienced graphics programmer)
+- figure out how to turn qrcode data into png and jpeg
+- change font
+- create product category table, simplify category list and create subcategories
+- create catalog with sorting by price, category, etc.
+- work on search engine
+- change network type to mainnet (when ready for release)
+- host database on self-hosted dedicated server or mutable decentralized database hosting network like sia (SkyDB), filecoin/ipfs, etc.
+- learn how peer-to-peer networking works
+- learn to encrypt and decrypt database
+- learn to backup database
+- add auction system
+- make neroshop p2p forever (every neroshop node AKA neromon will maintain a copy of the "database" or "blockchain" or whatever it may be)
+- validate seller's monero addresses before sending it out to buyer
+- add e2e encrypted chat/messaging for communications between buyer and seller
+- top seller/best vendor sections
+- dispute and report system
+- wipe orders (and their order_items) within a certain time frame (30 days)
+- multisignature wallet support
+- encrypt sensative data on client-side before storing it in database
+- create help/support section
+- offer a decent sum of bounty to hackers to hack and find bugs and other vulnerabilities within the code/software in order to make neroshop impossible to hack
+- do some scalibality and stress testing of the code/software
+- make neroshop quantum resistant
+- allow all items to be sold on neroshop (there will be no restrictions for listing products and absolutely no censorship)
+- switch from RSA-2048 to RSA-3072 then RSA-4096 then RSA-7680 then RSA-15360 bit keys when most CPUs can handle and support it
+- switch from SHA-256 to SHA-512 then SHA-3 when most CPUs can handle and support it
+- increase bcrypt workfactor from 12 to 14 when most CPUs can handle and support it
+- tor integration
+- If neroshop 1.0 ends up being centralized, work on a fully decentralized version called neroshop 2.0
+- give orders a unique uuid with "ns" prepended to it
+
+
+[LOW PRIORITY]
+- keep number of source files in "neroshop/src" at no more than 20               [x]
+- keep number of external dependencies in "neroshop/external" at no more than 10 [x]
+- create neroshop domain name (.org preffered)
+- create neroshop onion address
+- create neroshop matrix server [x]
+- host neroshop on gitlab or something more open-source
+- transfer ownership of neroshop to a team github account [x]
+- revise neroshop logo
+- consider using premake as an alternative build system to cmake
+- allow contributors to create neroshop bindings for other C-based programming languages such as lua, python, ruby, etc.
+- add support for wownero (allow anyone to list/post memes and users could tip them in wownero)
+- hire graphics programmer to fix and optimize rendering code in "renderer.cpp"
+- hire network programmer to implement communication between applications and servers or implement peer-to-peer system.
+- hire web developer to help develop website
+
+[UI]
+- prevent mouse press from affecting overlapped GUIs     []
+- fix on_hover [text edit]                               [x] 2022
+- make cursor follow mouse pointer on click              [x] 2021-12-14
+- blinking cursor [text edit]                            [x] 2021-12-15
+- copy to clipboard                                      [x] 2021-12-16
+- placeholder text [text edit]                           [x] 2021-12-17
+- add rounded corners [all]                              [x] 2022-03-07
+- get key combination input (e.g. shift + A) [text edit] [x] 2022-01-02
+- hide sensative text [text edit]                        [x] 2022-01-03
+- remove length restrictions and add scrolling text      [x] 2022-01-25
+- add unicode support [text edit]                        []
+- add multi-line label [text edit]                       []
+- change default alpha values to 1.0 [all]               [x] 2021-12-17
+- add namespace dokun to every dokun-ui class            []
+- fix scrollbar-mouse move                               []
+- created a new version of spinner                       [x] 2021-12-18
+- fix edit text and cursor when resized                  []
+- add eye icon to text edit to toggle sensative text visibility [x] 2022-04-08
+- work on scrollbar and scrollarea                       []
+- create catalog combo_box next to search_bar (or maybe place it in filter/sorting box)           []
+- display monero price and exchange rate in home menu for all to see []
+
+[ISSUES]
+Font crashes when loading (only a few fonts are immune from this)
+Keyboard input is received/triggered multiple times even with a single key press (I need someone who is good at mouse/keyboard input programming)
+Server only reads once and then it does not ever read again
+Application crashes on logout (this is probably due to the deletion of the user object)
+EVP_PKEY_encrypt() and EVP_PKEY_decrypt() fail 50% of the time and succeeds 50% of the time (This may be caused by the encoding I dunno, man)
+Mouse presses affect all overlapping GUIs when it should ONLY affect the GUI on top
+
+[ENCRYPTION TOOLS AND ALGORITHMS]
+encryption libraries: [openssl], crypto++ (cryptopp), libsodium
+slow cryptographic hash functions (pw): [bcrypt], scrypt, argon2, PBKDF2
+fast cryptographic hash functions (email): SHA2(SHA512, [SHA256]), MD5, SHA1
+asymmetric encryption algorithms (messages): [RSA], ECDSA
+symmetric encryption algorithms (key pairs): [AES]
+quantum-resistant encryption: ???
+DB/file hosting: siacoin / SkyDB, filecoin, ipfs, bittorent
+
+** [] = means that this algorithm is currently being used or will be used in neroshop
+
+[NOTES]
+Since monero uses openssl as a dependency (https://github.com/monero-project/monero#dependencies), I will use openssl's sha-256 for hashing emails.
+Passwords will be salted and hashed with bcrypt.
+RSA will be used for end-to-end encrypting short notes, messages, and mailing addresses.
+Though asymmetric encryption algorithms like RSA may be slower than symmetric encryption algorithms, they are more secure than symmetric encryption algorithms.
+PGP (Pretty Good Privacy) also uses RSA for asymmetric/public-and-private key encryption.
+* The RSA algorithm will generate a pair of public and private keys that are mathematically linked to each other.  Public keys are used to encrypt data, and only the corresponding private key can be used to decrypt it.
+Quantum computers are based on Shor's algorithm which can possibly break asymmetric cryptography in the future.
+RSA can possibly be broken with a Quantum computer that has about 4000 qubits. I will need to upgrade the encryption when that time comes.
+ECDSA which is used by Bitcoin would take 2500 qubits to break. ECDSA is smaller and faster than RSA while providing the same security as RSA.
+source: https://www.amarchenkova.com/posts/quantum-secure-cryptocurrencies-qrl-mochimo-iota-cardano
+reasons to use ECDSA: https://www.leaderssl.com/articles/484-rsa-ecc-ecdsa-which-algorithm-is-better-to-choose-when-ordering-a-digital-certificate-in-leaderssl
+                      https://security.stackexchange.com/questions/230708/should-i-be-using-ecdsa-keys-instead-of-rsa
+                      
+I realize that I need an online database that is scalable like MySQL or PostgreSQL 
+and I cannot use SQLite since its only for offline use :(
+I had to choose between MySQL and PostgreSQL so I went with PostgreSQL since the license is more free than
+MySQL's license.
+Also, I found out that Postgres has built-in NoSQL with JSON/JSONB so there may not be a need for an alternative NoSQL database.
+
+For the user interface, I will be using dokun-ui. "dokun-ui" is a custom-made user interface library that takes some inspiration from QT Creator and HTML/CSS and is forked from dokun, an abandoned project.
+The long-term goals that I am aiming for neroshop in order are privacy and decentralization then user-friendly UI/UX, then scalability and finally, marketing.
+
+In the future, I may consider supporting other private-by-default coins such as wownero and piratechain. Maybe I will even use dero for escrow smart contracts.
+

@@ -1,4 +1,4 @@
-#include "../include/qr.hpp"
+#include "qr.hpp"
 
 neroshop::QR::QR() {}
 ////////////////////

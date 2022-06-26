@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 // neroshop
-#include "../include/neroshop.hpp"
+#include "neroshop.hpp"
 using namespace neroshop;
 // dokun-ui
 #include <build.hpp>
@@ -15,8 +15,11 @@ int main() {
         std::cout << "neroshop>";
         std::cin >> shellinput;
 
-	if (shellinput == "help") {std::cout "Available commands:\n\n help  Display list of available commands\n\n exit  Exit CLI";}; else
-	if (shellinput == "exit") {break;}
+	if (shellinput == "help")
+          std::cout << "Available commands:\n\n help  Display list of available "
+                       "commands\n\n exit  Exit CLI";
+        else if (shellinput == "exit")
+          break;
     }
     return 0;
 }

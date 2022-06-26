@@ -1,7 +1,7 @@
 Neroshop:
 
   Server:
-    * Neroshop daemon (neromon)
+    * Neroshop daemon (neroshop-daemon)
       - Read/write ad database
       - Sync with peers (encrypted, tor, i2p)
       - Verify data validity on receiver
@@ -22,11 +22,11 @@ Neroshop:
       - Allow messaging among users via matrix
       - https://gitlab.com/kazv/libkazv
 
-    * Neroshop command-line client (nerocli)
+    * Neroshop command-line client (neroshop-cli)
       - User interacts with daemon using a command-line interpreter, CLI
       - https://github.com/daniele77/cli
   
-    * Neroshop graphical user interface client (nerogui)
+    * Neroshop graphical user interface client (neroshop-gui)
       - User interacts with daemon using a GUI
       - Basics: create and save ad, search db, message other users
       - Convert QR code to PNG/JPEG

@@ -1,4 +1,4 @@
-#include "../include/message.hpp"
+#include "message.hpp"
 
 neroshop::Message::Message() : box(nullptr), button_list({}), edit_list({}), label_list({}) {//, button0(nullptr), button1(nullptr), button2(nullptr), edit0(nullptr), edit1(nullptr) {
     initialize();

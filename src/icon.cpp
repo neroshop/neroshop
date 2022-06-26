@@ -1,4 +1,4 @@
-#include "../include/icon.hpp"
+#include "icon.hpp"
 
 neroshop::Icon::Icon() {}
 ////////////////////

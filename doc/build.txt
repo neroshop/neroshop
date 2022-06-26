@@ -1,0 +1,5 @@
+# vim: filetype=sh:
+
+# gnu
+mkdir -p external/build && cd external/build && cmake .. && make && cd -
+mkdir build && cd build && cmake .. && make
