@@ -1,6 +1,4 @@
 // filename: item.hpp
-//#pragma once // use #ifndef _HPP, #define _HPP, and #endif instead for portability
-
 #ifndef ITEM_HPP_NEROSHOP
 #define ITEM_HPP_NEROSHOP
 

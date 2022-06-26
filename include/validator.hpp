@@ -10,7 +10,10 @@
 #include <chrono> // std::chrono
 #include <iomanip> //std::put_time, std::setfill, std::setw
 // neroshop
+#include "debug.hpp"
 #include "database.hpp"
+// dokun-ui
+#include <string.hpp>
 ////extern "C" {
 // libbcrypt
 #include "bcrypt.h"

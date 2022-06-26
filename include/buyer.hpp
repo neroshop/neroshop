@@ -1,6 +1,4 @@
-// filename: .hpp
-//#pragma once // use #ifndef _HPP, #define _HPP, and #endif instead
-
+// filename: buyer.hpp
 #ifndef BUYER_HPP_NEROSHOP
 #define BUYER_HPP_NEROSHOP
 

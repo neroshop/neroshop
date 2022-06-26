@@ -46,12 +46,10 @@ This is currently a work in progress. There is nothing to see here :shrug:
 |--------------------------------------------------------------------|-----------------|------------------------|------------------------------------|------------------------------------------------------------------------|
 | [monero-cpp](https://github.com/monero-ecosystem/monero-cpp)       | latest          |                        | MIT                                | monero wallet and payment system                                       |
 | [libbcrypt](https://github.com/rg3/libbcrypt)                      | ?               |                        | public domain (CC0-1.0)            | password hashing                                                       |
-| [sqlite3](https://sqlite.org/)                                     | ?               |                        | public domain                      | database management                                                    |
 | [QR Code generator](https://github.com/nayuki/QR-Code-generator)   | ?               |                        | MIT                                | qr code generation                                                     |
 | [json](https://github.com/nlohmann/json/)                          | ?               |                        | MIT                                | json parsing                                                           |
 | [curl](https://github.com/curl/curl)                               | ?               | `libcurl4-openssl-dev` | curl                               | currency conversion                                                    |
 | [openssl](https://github.com/openssl/openssl)                      | 1.1.1           | `libssl-dev`           | OpenSSL-SSLeay or Apache-2.0       | for curl, sha256 sum and message encryption                            |
-| [postgresql](https://www.postgresql.org/)                          | ?               | `libpq-dev`            | PostgreSQL                         | server-based database management                                       |
 | [dokun-ui](external/dokun-ui)                                      | n/a             |                        | MIT                                | graphical user interface                                               |
 
 
@@ -64,7 +62,7 @@ sudo -s -- << EOF
 # prerequisites
 sudo apt install build-essential cmake git
 # neroshop, dokun-ui
-sudo apt install libx11-dev libgl1-mesa-dev libglu1-mesa-dev libssl-dev libpq-dev postgresql
+sudo apt install libx11-dev libgl1-mesa-dev libglu1-mesa-dev libcurl4-openssl-dev libssl-dev
 # monero-cpp (monero)
 sudo apt update && sudo apt install pkg-config libssl-dev libzmq3-dev libunbound-dev libsodium-dev libunwind8-dev liblzma-dev libreadline6-dev libldns-dev libexpat1-dev libpgm-dev qttools5-dev-tools libhidapi-dev libusb-1.0-0-dev libprotobuf-dev protobuf-compiler libudev-dev libboost-chrono-dev libboost-date-time-dev libboost-filesystem-dev libboost-locale-dev libboost-program-options-dev libboost-regex-dev libboost-serialization-dev libboost-system-dev libboost-thread-dev python3 ccache doxygen graphviz
 EOF
@@ -74,7 +72,7 @@ Arch
 # prerequisites
 sudo pacman -Sy --needed base-devel cmake git
 # neroshop, dokun-ui
-sudo pacman -Sy --needed libx11 lib32-mesa lib32-glu openssl postgresql
+sudo pacman -Sy --needed libx11 lib32-mesa lib32-glu curl openssl
 # monero-cpp (monero)
 sudo pacman -Syu --needed boost openssl zeromq libpgm unbound libsodium libunwind xz readline ldns expat gtest python3 ccache doxygen graphviz qt5-tools hidapi libusb protobuf systemd
 ```
@@ -83,7 +81,7 @@ Fedora
 # prerequisites
 sudo dnf install gcc gcc-c++ make cmake git
 # neroshop, dokun-ui
-sudo dnf install mesa-libGL-devel mesa-libGLU-devel libcurl-devel openssl-devel libpq-devel postgresql-server
+sudo dnf install mesa-libGL-devel mesa-libGLU-devel libcurl-devel openssl-devel
 # monero-cpp (monero)
 sudo dnf install boost-static libstdc++-static pkgconf boost-devel openssl-devel zeromq-devel openpgm-devel unbound-devel libsodium-devel libunwind-devel xz-devel readline-devel ldns-devel expat-devel gtest-devel ccache doxygen graphviz qt5-linguist hidapi-devel libusbx-devel protobuf-devel protobuf-compiler systemd-devel
 ```
@@ -96,7 +94,6 @@ git clone --recurse-submodules https://github.com/monero-ecosystem/monero-cpp.gi
 git clone --recurse-submodules https://github.com/rg3/libbcrypt.git
 git clone --recurse-submodules https://github.com/nayuki/QR-Code-generator.git
 git clone --recurse-submodules https://github.com/nlohmann/json.git
-git clone --recurse-submodules https://github.com/curl/curl.git
 cd ../
 ```
 
@@ -109,21 +106,9 @@ cd external/monero-cpp/external/monero-project && make release-static && make re
 cd ../../../../
 ```
 
-5. Build libcurl (skip this step if libcurl is already installed on your system)
-```sh
-cd external/curl
-# build with ./configure (libcurl.a will be installed in both: neroshop/external/curl/lib/.libs/ and /usr/local/lib/)
-autoreconf -fi
-./configure --with-openssl --disable-shared
-make
-sudo make install
-cd ../../
-```
-
-6. Build neroshop (along with dokun-ui)
+5. Build neroshop (along with dokun-ui)
 ```sh
 # Build dokun-ui
-# make sure CMakeCache.txt, cmake_install.cmake, and Makefile have all been deleted if not
 cd external/dokun-ui
 cmake -G"Unix Makefiles"
 make
@@ -183,7 +168,8 @@ job status: not filled
 ## Contact
 > larteyoh@pm.me
 
-[//]: # (rm -rf external/dokun-ui/CMakeFiles; rm -rf external/dokun-ui/CMakeCache.txt; rm -rf external/dokun-ui/cmake_install.cmake; rm -rf external/dokun-ui/Makefile)
-[//]: # (git add CMakeLists.txt external/ include/ readme.md res/neroshop-logo.png res/ss res/tmp_images res/wallets src/ todo.txt)
+[//]: # (rm -rf external/dokun-ui/CMakeFiles; rm -rf external/dokun-ui/CMakeCache.txt; rm -rf external/dokun-ui/cmake_install.cmake; rm -rf external/dokun-ui/Makefile; rm -rf external/dokun-ui/src/libdokun-ui.a)
+[//]: # (git checkout -b feature)
+[//]: # (git add CMakeLists.txt external/ include/ readme.md res/neroshop-logo.png res/ss res/tmp_images res/wallets src/ todo.txt .gitignore .gitmodules)
 [//]: # (git commit -m"")
 [//]: # (git push -u origin feature)

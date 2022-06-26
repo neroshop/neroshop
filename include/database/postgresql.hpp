@@ -1,4 +1,4 @@
-// filename: db_postgres.hpp
+// filename: db_postgresql.hpp
 #ifndef DATABASE_POSTGRESQL_HPP_NEROSHOP // recommended to add unique identifier like _NEROSHOP to avoid naming collision with other libraries
 #define DATABASE_POSTGRESQL_HPP_NEROSHOP
 #define POSTGRESQL_TAG "\033[1;94m[postgresql]:\033[0m "

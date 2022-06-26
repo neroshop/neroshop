@@ -1,5 +1,4 @@
-// filename: wallet.hpp - part of "neroshop" project
-//#pragma once // use #define _HPP instead
+// filename: wallet.hpp
 #ifndef WALLET_HPP_NEROSHOP
 #define WALLET_HPP_NEROSHOP
 
