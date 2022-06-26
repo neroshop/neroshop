@@ -169,6 +169,7 @@ job status: not filled
 > larteyoh@pm.me
 
 [//]: # (rm -rf external/dokun-ui/CMakeFiles; rm -rf external/dokun-ui/CMakeCache.txt; rm -rf external/dokun-ui/cmake_install.cmake; rm -rf external/dokun-ui/Makefile; rm -rf external/dokun-ui/src/libdokun-ui.a)
+[//]: # (git checkout -b feature)
 [//]: # (git add CMakeLists.txt external/ include/ readme.md res/neroshop-logo.png res/ss res/tmp_images res/wallets src/ todo.txt .gitignore .gitmodules)
 [//]: # (git commit -m"")
 [//]: # (git push -u origin feature)
