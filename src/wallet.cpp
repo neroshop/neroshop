@@ -75,8 +75,8 @@ std::string neroshop::Wallet::upload(bool open, std::string password) { // opens
     // open file dialog to retrieve walletfile path
     // reminder: use this function for an upload button instead
     //           then call neroshop::Wallet::open when user presses a "submit" button.
-#ifdef __gnu_linux__
     char file[1024];
+#ifdef __gnu_linux__
     FILE *f = popen("zenity --file-selection --title \"Select Wallet\"", "r");//--filename "/home/${USER}/"
     fgets(file, 1024, f);
     // consider https://github.com/AndrewBelt/osdialog/blob/master/osdialog_zenity.c

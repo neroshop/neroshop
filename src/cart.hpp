@@ -1,6 +1,4 @@
 // filename: cart.hpp
-//#pragma once // use #ifndef _HPP, #define _HPP, and #endif instead for portability
-
 #ifndef CART_HPP_NEROSHOP // recommended to add unique identifier like _NEROSHOP to avoid naming collision with other libraries
 #define CART_HPP_NEROSHOP
 
@@ -12,6 +10,7 @@
 #include <iomanip>   // std::put_time
 // neroshop
 #include "item.hpp"
+#include "debug.hpp"
 #include "database.hpp"
 
 

@@ -14,7 +14,7 @@
 // neroshop
 #include "server.hpp" // server // https://www.linuxhowtos.org/C_C++/socket.htm
 #include "debug.hpp"
-//#include "db2.hpp" // daemon should handle database server requests from the client ??
+//#include "database.hpp" // daemon should handle database server requests from the client ??
 #define NEROMON_TAG std::string("\033[1;95m[neromon]:\033[0m ") +
 
 using namespace neroshop;

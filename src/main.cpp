@@ -10,7 +10,7 @@ using namespace dokun;
 
 lua_State * neroshop::lua_state = luaL_newstate(); // lua_state should be initialized by default
 int main() {
-    while (True) {
+    while (true) {
 	std::string shellinput;
         std::cout << "neroshop>";
         std::cin >> shellinput;

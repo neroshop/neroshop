@@ -3,7 +3,8 @@
 #define USER_HPP_NEROSHOP
 
 #include <iostream>
-#include "validator.hpp" // db.hpp included here
+//#include "validator.hpp" // database.hpp included here
+#include "cart.hpp"
 #include "order.hpp"
 #include "client.hpp"
 
