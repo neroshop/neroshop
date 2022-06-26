@@ -62,7 +62,6 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
    elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
       #add_compiler_flag("-Wall")
       #add_compiler_flag("-no-pie")
-      add_compiler_flag("-I'/usr/include/postgresql/'") # Ubuntu 20.04 gcc cannot find libpq-fe.h -.-
   endif()
 endif()
 
@@ -302,11 +301,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/libbcrypt)
 set(bcrypt_src external/libbcrypt/crypt_blowfish/crypt_blowfish.c external/libbcrypt/crypt_blowfish/crypt_gensalt.c external/libbcrypt/crypt_blowfish/wrapper.c external/libbcrypt/bcrypt.c)
 
 ######################################
-# sqlite3
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/sqlite)
-set(sqlite_src ${CMAKE_CURRENT_SOURCE_DIR}/external/sqlite/sqlite3.c)
-
-######################################
 # QR-Code-generator
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/QR-Code-generator/cpp)
 set(qr_code_generator_src ${CMAKE_CURRENT_SOURCE_DIR}/external/QR-Code-generator/cpp/qrcodegen.cpp) # or ${CMAKE_CURRENT_SOURCE_DIR}/external/QR-Code-generator/c/qrcodegen.c
@@ -383,8 +377,6 @@ add_definitions(-DNEROSHOP_DEBUG) # for more detailed debugging, use -DNEROSHOP_
 
 find_package(X11 REQUIRED)
 find_package(OpenGL REQUIRED)
-set(PostgreSQL_TYPE_INCLUDE_DIR "/usr/include/postgresql/")
-find_package(PostgreSQL)
 
 # daemon executable
 set(DAEMON_EXECUTABLE "neromon")
@@ -397,7 +389,6 @@ target_link_libraries(${DAEMON_EXECUTABLE}
                       ${posix_src}
                       ${X11_LIBRARIES}
                       ${OPENGL_LIBRARIES}
-                      ${PostgreSQL_LIBRARIES}
 )
 
 # neroshop executable
@@ -406,7 +397,6 @@ add_executable(${NEROSHOP_EXECUTABLE}
                ${neroshop_src}
                ${monero_cpp_src}
                ${bcrypt_src}
-               ${sqlite_src}
                ${qr_code_generator_src}
 )
 target_link_libraries(${NEROSHOP_EXECUTABLE}
@@ -416,18 +406,10 @@ target_link_libraries(${NEROSHOP_EXECUTABLE}
                       ${posix_src}
                       ${X11_LIBRARIES}
                       ${OPENGL_LIBRARIES}
-                      ${PostgreSQL_LIBRARIES}
 )
 
 set(EXECUTABLES ${DAEMON_EXECUTABLE}
                 ${NEROSHOP_EXECUTABLE})
-
-if(PostgreSQL_FOUND)
-    if(DEFINED NEROSHOP_USE_POSTGRESQL) # -DNEROSHOP_USE_POSTGRESQL=1
-        message("-- Using PostgreSQL: ${PostgreSQL_LIBRARIES} (v${PostgreSQL_VERSION_STRING})")
-        target_compile_definitions(${NEROSHOP_EXECUTABLE} PUBLIC -DNEROSHOP_USE_POSTGRESQL)
-    endif() # end of NEROSHOP_USE_POSTGRESQL definition
-endif()
 
 message(STATUS "C compiler flags: '${CMAKE_C_FLAGS}'")
 message(STATUS "C++ compiler flags: '${CMAKE_CXX_FLAGS}'")
