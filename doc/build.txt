@@ -1,5 +1,6 @@
 # vim: filetype=sh:
 
-# gnu
+# build external libs
 mkdir -p external/build && cd external/build && cmake .. && make && cd -
+# build neroshop
 mkdir build && cd build && cmake .. && make
