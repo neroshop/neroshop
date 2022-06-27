@@ -1,0 +1,13 @@
+BusyBoredom￼
+18:27
+There's lots of ways to do escrow :) 
+
+Bisq has an interesting 2/2 multisig method where the funds are effectively locked into the multisig wallet until the buyer receives the goods and authorizes the payout. In the event of a dispute, neither party gets the money and a timelocked transaction sends it to a donation address instead. A centralized arbitrator can then authorize a payout from the donation address to reimburse either party if necessary. 
+
+Another method is to use a 2/3 multisig system where you select an arbitrator based off of their reputation, and then that arbitrator resolvs disputes as necessary (normally for a small fee).
+
+Localmonero generates new wallets where the seed is offset by the user's password so that only the user can authorize transactions, making impossible for localmonero to steal the funds but also inpossible for the user to unilaterally authorize a payment back to themselves.
+
+You can also bite the bullet and simply have a single centralized excrow service with custodial wallets like most DNMs have. 
+
+I am personally interested in the idea of federated marketplaces rather than p2p marketplaces, so that the instance owners can act as trusted escrow. I haven't fully thought through how to best handle cross-instance escrow though (where the buyer and seller are on different instances).  
