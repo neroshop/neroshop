@@ -1,3 +1,0 @@
-#ifndef MACOS_HEADER_HPP_DOKUN
-#define MACOS_HEADER_HPP_DOKUN
-#endif

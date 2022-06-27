@@ -141,3 +141,21 @@ ExternalProject_Add(
   LOG_CONFIGURE 1
   LOG_BUILD 1
 )
+
+# dokun-ui
+ExternalProject_Add(
+  dokunui
+  PREFIX dokunui
+  GIT_REPOSITORY https://github.com/larteyoh/dokun-ui
+  GIT_TAG main
+  GIT_SHALLOW 1
+  PATCH_COMMAND patch -p1 -t -i ${PROJECT_SOURCE_DIR}/../cmake/dokun-ui.patch
+  CMAKE_ARGS
+    -D CMAKE_C_COMPILER:PATH=${CMAKE_C_COMPILER}
+    -D CMAKE_CXX_COMPILER:PATH=${CMAKE_CXX_COMPILER}
+    -D BUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
+    -D CMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+  LOG_DOWNLOAD 1
+  LOG_CONFIGURE 1
+  LOG_BUILD 1
+)

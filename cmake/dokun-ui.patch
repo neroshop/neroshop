@@ -1,0 +1,45 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 5d81c46..5ebb553 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -329,3 +329,40 @@ if(ANDROID)
+ endif(ANDROID)
+ ]]
+ #############
++
++INSTALL(TARGETS libdokun-ui
++       RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Runtime
++       LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Runtime
++       ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Development
++)
++INSTALL(FILES include/dokun_ui.hpp
++              include/image.hpp
++              include/file.hpp
++              include/box.hpp
++              include/linux_header.hpp
++              include/platform.hpp
++              include/vector.hpp
++              include/string.hpp
++              include/factory.hpp
++              include/types.hpp
++              include/logger.hpp
++              include/utility.hpp
++              include/system.hpp
++              include/renderer.hpp
++              include/shader.hpp
++              include/texture.hpp
++              include/font.hpp
++              include/script.hpp
++              include/grid.hpp
++              include/ui.hpp
++              include/entity.hpp
++              include/component.hpp
++              include/mouse.hpp
++              include/window.hpp
++              include/timer.hpp
++              include/keyboard.hpp
++              include/label.hpp
++              include/spinner.hpp
++              include/button.hpp
++              include/toggle.hpp
++              DESTINATION include/dokun-ui)
