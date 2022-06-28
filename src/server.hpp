@@ -1,18 +1,14 @@
 #ifndef SERVER_HPP_NEROSHOP
 #define SERVER_HPP_NEROSHOP
 
-#ifdef  _WIN32
-#include "win32_header.hpp"
-#endif
-#ifdef __gnu_linux__
-#include "linux_header.hpp"
-#endif
-
 #include <iostream>
-#include <cstring> // memset
+#include <cstring>
 #include <thread>
 #include <mutex>
 #include <vector>
+#include <unistd.h>
+#include <arpa/inet.h>
+
 // neroshop
 #include "debug.hpp"
 

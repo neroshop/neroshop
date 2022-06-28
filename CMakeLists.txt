@@ -71,9 +71,7 @@ add_executable(${DAEMON_EXECUTABLE}
                src/daemon.cpp
                src/server.cpp)
 target_include_directories(${DAEMON_EXECUTABLE} PUBLIC
-                           ${CMAKE_CURRENT_SOURCE_DIR}/src
-                           # TODO: should not depend on UI
-                           ${DOKUNUI_INCLUDE_DIRS})
+                           ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_link_libraries(${DAEMON_EXECUTABLE})
 INSTALL(TARGETS ${DAEMON_EXECUTABLE}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Runtime
