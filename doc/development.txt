@@ -1,0 +1,4 @@
+Server
+
+https://www.linuxhowtos.org/C_C++/socket.htm
+https://stackoverflow.com/questions/10105591/is-it-possible-to-use-an-stdstring-for-read
