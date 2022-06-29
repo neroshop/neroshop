@@ -49,7 +49,33 @@ namespace neroshop {
 "neroshop[\"daemon\"][\"remote\"] = false; -- set to true if the node that you want to connect to is a remote node\n"//\n"
 "neroshop[\"wallet\"] = {};\n"
 "neroshop[\"wallet\"][\"file\"] = \"\"; -- include \".keys\" extension\n" // path or file
-"neroshop[\"wallet\"][\"restore_height\"] = \"2014-04-18\"; -- block height or date (YYYY-MM-DD)\n";
+"neroshop[\"wallet\"][\"restore_height\"] = \"2014-04-18\"; -- block height or date (YYYY-MM-DD)\n"
+"neroshop[\"nodes\"] = {}\n"
+"neroshop[\"nodes\"][\"mainnet\"] = {\n"
+"   \"node.community.rino.io:18081\",\n"
+"   \"node.sethforprivacy.com:18089\",\n"
+"   \"node2.sethforprivacy.com:18089\",\n"
+"   \"selsta1.featherwallet.net:18081\",\n"
+"   \"selsta2.featherwallet.net:18081\",\n"
+"   \"node.monerooutreach.org:18081\",\n"
+"   \"node.majesticbank.is:18089\",\n"
+"   \"node.majesticbank.su:18089\",\n"
+"   \"xmr-node-eu.cakewallet.com:18081\",\n"
+"   \"xmr-node-usa-east.cakewallet.com:18081\",\n"
+"   \"canada.node.xmr.pm:18089\",\n"
+"   \"singapore.node.xmr.pm:18089\",\n"
+"   \"nodes.hashvault.pro:18081\",\n"
+"   \"node.supportxmr.com:18081\",\n"
+"   \"node.xmr.ru:18081\"\n"
+"};\n"
+"neroshop[\"nodes\"][\"stagenet\"] = {\n"
+"   \"super.fast.node.xmr.pm:38089\",\n"
+"   \"stagenet.community.rino.io:38081\"\n"
+"};\n" 
+"neroshop[\"nodes\"][\"testnet\"] = {\n" 
+"   \"testnet.community.rino.io:28081\"\n"
+"};\n";
+
         // swap data_dir with user
     #ifdef __gnu_linux__ // works!    
         text = String::swap_first_of(text, "/home/<user>/.bitmonero", ("/home/" + user + "/.bitmonero"));
