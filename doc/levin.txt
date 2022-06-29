@@ -1,0 +1,4 @@
+plowsof
+8:58 AM
+reg the 'fetch a list of nodes' bounty. Why?
+remote nodes can't be trusted , especially for a shop (who should host its own) . if you really want to fetch a list of nodes , i've seen a python implementation (which sheds more light on how its done ehh 'officially' https://github.com/sanderfoobar/py-levin )
