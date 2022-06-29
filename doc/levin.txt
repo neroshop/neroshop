@@ -2,3 +2,8 @@ plowsof
 8:58 AM
 reg the 'fetch a list of nodes' bounty. Why?
 remote nodes can't be trusted , especially for a shop (who should host its own) . if you really want to fetch a list of nodes , i've seen a python implementation (which sheds more light on how its done ehh 'officially' https://github.com/sanderfoobar/py-levin )
+
+9:19 AM
+ah, i didn't read 'p2p market place' 👍️ so a node list would be supported as an option ( to be honest, public node list is a cess-pool of evil / annoying remote users. the official gui is moving toward a community list , just like feather wallet https://github.com/feather-wallet/feather/blob/b1c447519eab4824b9dba52bdb77f4dd5515dffd/src/assets/nodes.json#L20)
+
+example of the cess-pool here https://gui.xmr.pm/files/block.txt (most of these ip's are active , and appear in the monero gui, the attacker just has to 'use another ip' to avoid the bans)
