@@ -188,3 +188,16 @@ ExternalProject_Add(
   LOG_CONFIGURE 1
   LOG_BUILD 1
 )
+
+# daniele77/cli
+ExternalProject_Add(
+  cli
+  PREFIX cli
+  GIT_REPOSITORY https://github.com/daniele77/cli
+  GIT_TAG v2.0.1
+  GIT_SHALLOW 1
+  CMAKE_ARGS -D CMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+  LOG_DOWNLOAD 1
+  LOG_CONFIGURE 1
+  LOG_BUILD 1
+)

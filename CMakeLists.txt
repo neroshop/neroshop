@@ -59,11 +59,15 @@ endif()
 set(TPL_INCLUDE_DIRS ${TPL_DIR}/include
                      ${TPL_DIR}/include/common
                      ${TPL_DIR}/include/utils
+                     ${TPL_DIR}/include/cli
                      ${TPL_DIR}/include/crypto)
 set(QRCODEGEN_INCLUDE_DIRS ${TPL_DIR}/include/qrcodegen)
 set(BCRYPT_INCLUDE_DIRS ${TPL_DIR}/include/bcrypt)
 set(DOKUNUI_INCLUDE_DIRS ${TPL_DIR}/include/dokun-ui)
 message(STATUS "Third-party (external) libraries install directory: " ${TPL_DIR})
+
+set(cli_DIR ${TPL_DIR}/lib/cmake/cli)
+find_package(cli REQUIRED)
 
 #### Neroshop
 
@@ -98,6 +102,19 @@ install(TARGETS ${DAEMON_EXECUTABLE}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Runtime
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Development)
 message(STATUS "Target ${DAEMON_EXECUTABLE} configured")
+
+# configure neroshop cli executable
+set(CLI_EXECUTABLE "neroshop-cli")
+add_executable(${CLI_EXECUTABLE}
+               ${NEROSHOP_SOURCE_DIR}/cli.cpp)
+target_include_directories(${CLI_EXECUTABLE} PUBLIC ${NEROSHOP_SOURCE_DIR}
+                           ${TPL_INCLUDE_DIRS})
+target_link_libraries(${CLI_EXECUTABLE} PRIVATE cli::cli)
+install(TARGETS ${CLI_EXECUTABLE}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Runtime
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Runtime
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Development)
+message(STATUS "Target ${CLI_EXECUTABLE} configured")
 
 #### Testing
 
