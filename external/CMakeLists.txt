@@ -73,8 +73,6 @@ set(MONERO_PATCH_COMMAND "patch;-p1;-t;-i;${NEROSHOP_CMAKE_PATH}/monero-install-
 if (HOST_OS MATCHES "alpine")
   set(MONERO_ALPINE_DISABLE_STACK_TRACE "-D STACK_TRACE:BOOL=OFF")
   list(APPEND MONERO_PATCH_COMMAND "&&;patch;-p1;-t;-i;${NEROSHOP_CMAKE_PATH}/monero-alpine-easylogging.patch")
-  list(APPEND MONERO_PATCH_COMMAND "&&;patch;-p1;-t;-i;${NEROSHOP_CMAKE_PATH}/monero-alpine-system-miniupnpc.patch")
-  list(APPEND MONERO_PATCH_COMMAND "&&;patch;-p1;-t;-i;${NEROSHOP_CMAKE_PATH}/monero-alpine-version-string.patch")
 endif()
 ExternalProject_Add(
   monero
