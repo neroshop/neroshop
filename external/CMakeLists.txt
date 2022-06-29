@@ -45,6 +45,8 @@ if(PROCESSOR_COUNT EQUAL 0)     # if ncpus could not be determined, assign 1
 endif()
 message(STATUS "Found ${PROCESSOR_COUNT} PEs")
 
+set(NEROSHOP_CMAKE_PATH ${PROJECT_SOURCE_DIR}/../cmake)
+
 # Configure build for libraries
 
 # QrCodeGen
@@ -67,13 +69,21 @@ ExternalProject_Add(
 )
 
 # monero
+set(MONERO_PATCH_COMMAND "patch;-p1;-t;-i;${NEROSHOP_CMAKE_PATH}/monero-install-targets.patch")
+if (HOST_OS MATCHES "alpine")
+  set(MONERO_ALPINE_DISABLE_STACK_TRACE "-D STACK_TRACE:BOOL=OFF")
+  list(APPEND MONERO_PATCH_COMMAND "&&;patch;-p1;-t;-i;${NEROSHOP_CMAKE_PATH}/monero-alpine-easylogging.patch")
+  list(APPEND MONERO_PATCH_COMMAND "&&;patch;-p1;-t;-i;${NEROSHOP_CMAKE_PATH}/monero-alpine-system-miniupnp.patch")
+  list(APPEND MONERO_PATCH_COMMAND "&&;patch;-p1;-t;-i;${NEROSHOP_CMAKE_PATH}/monero-alpine-version-string.patch")
+endif()
+message("${MONERO_PATCH_COMMAND}")
 ExternalProject_Add(
   monero
   PREFIX monero
   GIT_REPOSITORY https://github.com/monero-project/monero
   GIT_TAG v0.17.3.2
   GIT_SHALLOW 1
-  PATCH_COMMAND patch -p1 -t -i ${PROJECT_SOURCE_DIR}/../cmake/monero.patch
+  PATCH_COMMAND ${MONERO_PATCH_COMMAND}
   CMAKE_ARGS
      -D CMAKE_C_COMPILER:PATH=${CMAKE_C_COMPILER}
      -D CMAKE_CXX_COMPILER:PATH=${CMAKE_CXX_COMPILER}
@@ -81,6 +91,7 @@ ExternalProject_Add(
      -D CMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
      -D BUILD_SHARED_LIBS:BOOL=false
      -D BUILD_GUI_DEPS:BOOL=true
+     ${MONERO_ALPINE_DISABLE_STACK_TRACE}
   LOG_DOWNLOAD 1
   LOG_CONFIGURE 1
   LOG_BUILD 1
@@ -94,7 +105,7 @@ ExternalProject_Add(
   GIT_REPOSITORY https://github.com/monero-ecosystem/monero-cpp
   GIT_TAG v0.7.1
   GIT_SHALLOW 1
-  PATCH_COMMAND patch -p1 -t -i ${PROJECT_SOURCE_DIR}/../cmake/monero-cpp.patch
+  PATCH_COMMAND patch -p1 -t -i ${NEROSHOP_CMAKE_PATH}/monero-cpp.patch
   CMAKE_ARGS
     -D CMAKE_C_COMPILER:PATH=${CMAKE_C_COMPILER}
     -D CMAKE_CXX_COMPILER:PATH=${CMAKE_CXX_COMPILER}
@@ -170,7 +181,7 @@ ExternalProject_Add(
   GIT_REPOSITORY https://github.com/larteyoh/dokun-ui
   GIT_TAG main
   GIT_SHALLOW 1
-  PATCH_COMMAND patch -p1 -t -i ${PROJECT_SOURCE_DIR}/../cmake/dokun-ui.patch
+  PATCH_COMMAND patch -p1 -t -i ${NEROSHOP_CMAKE_PATH}/dokun-ui.patch
   CMAKE_ARGS
     -D CMAKE_C_COMPILER:PATH=${CMAKE_C_COMPILER}
     -D CMAKE_CXX_COMPILER:PATH=${CMAKE_CXX_COMPILER}
