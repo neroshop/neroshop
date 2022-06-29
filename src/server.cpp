@@ -172,12 +172,6 @@ std::string Server::read()
     perror("socket read error: ");//std::cerr << "Client disconnected" << std::endl;
     shutdown();
     close();
-  } else if (read_result == 0) {
-    std::cerr << NEROSHOP_TAG "\033[0mClient orderly shut down the connection."
-              << std::endl;
-    shutdown();
-    close();
-    exit(0); //or wait for client to re-connect to server ?
   } else if(read_result > 0 && read_result < 511) {
     //std::cout << "Received less bytes than expected" << std::endl;
   }

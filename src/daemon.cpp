@@ -23,12 +23,12 @@ Server * server = new Server();
 
 void close_server() {
     server->shutdown();
-    delete server; // calls destructor which calls closesocket()
+    delete server;
     server = nullptr;
     std::cout << NEROMON_TAG "\033[1;91mdisconnected\033[0m" << std::endl;
 }
 
-void do_heartbeat() {
+void heartbeat() {
 
   if (server->accept()) {
     //std::cout << "server's client_socket: " << server->get_client_socket() << std::endl;
@@ -99,7 +99,7 @@ int main(void) {
   // Enter daemon loop
   while(true) {
     // Execute daemon heartbeat
-    do_heartbeat();
+    heartbeat();
     // Sleep for a period of time
     sleep(SLEEP_INTERVAL);
   }

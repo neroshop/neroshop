@@ -45,6 +45,8 @@ if(PROCESSOR_COUNT EQUAL 0)     # if ncpus could not be determined, assign 1
 endif()
 message(STATUS "Found ${PROCESSOR_COUNT} PEs")
 
+set(NEROSHOP_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
 #### Neroshop external libraries
 
 # Set external libraries install directory
@@ -65,16 +67,44 @@ message(STATUS "Third-party (external) libraries install directory: " ${TPL_DIR}
 
 #### Neroshop
 
+# server library
+add_library(server ${NEROSHOP_SOURCE_DIR}/server.cpp)
+target_include_directories(server PUBLIC ${NEROSHOP_SOURCE_DIR})
+set_target_properties(server PROPERTIES LIBRARY_OUTPUT_NAME neroshop_server)
+install(TARGETS server
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Runtime
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Runtime
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Development
+)
+
+# client library
+add_library(client ${NEROSHOP_SOURCE_DIR}/client.cpp)
+target_include_directories(client PUBLIC ${NEROSHOP_SOURCE_DIR})
+set_target_properties(client PROPERTIES LIBRARY_OUTPUT_NAME neroshop_client)
+install(TARGETS client
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Runtime
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Runtime
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Development
+)
+
 # configure neroshop daemon executable
 set(DAEMON_EXECUTABLE "neromon")
 add_executable(${DAEMON_EXECUTABLE}
-               src/daemon.cpp
-               src/server.cpp)
-target_include_directories(${DAEMON_EXECUTABLE} PUBLIC
-                           ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_link_libraries(${DAEMON_EXECUTABLE})
-INSTALL(TARGETS ${DAEMON_EXECUTABLE}
+               ${NEROSHOP_SOURCE_DIR}/daemon.cpp)
+target_include_directories(${DAEMON_EXECUTABLE} PUBLIC ${NEROSHOP_SOURCE_DIR})
+target_link_libraries(${DAEMON_EXECUTABLE} server)
+install(TARGETS ${DAEMON_EXECUTABLE}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Runtime
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Runtime
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Development)
 message(STATUS "Target ${DAEMON_EXECUTABLE} configured")
+
+#### Testing
+
+option(ENABLE_TESTS "Enable tests" ON)
+if (NOT ENABLE_TESTS)
+  message(STATUS "Tests disabled")
+else()
+  enable_testing()
+  add_subdirectory(${PROJECT_SOURCE_DIR}/test)
+endif()

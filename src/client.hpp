@@ -1,20 +1,19 @@
 #ifndef CLIENT_HPP_NEROSHOP
 #define CLIENT_HPP_NEROSHOP
 
-#ifdef  _WIN32
-#include "win32_header.hpp"
-#endif
-#ifdef __gnu_linux__
-#include "linux_header.hpp"
-#endif
-#include "debug.hpp"
-
 #include <iostream>
 #include <cstring>
 #include <thread>
 #include <mutex>
 
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <unistd.h>
+
+#include "debug.hpp"
+
 namespace neroshop {
+
 class Client {
 public:
     Client();
