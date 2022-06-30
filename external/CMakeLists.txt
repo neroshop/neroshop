@@ -137,6 +137,23 @@ ExternalProject_Add(
   LOG_BUILD 1
 )
 
+# lmdb from monero
+ExternalProject_Add(
+  lmdb
+  PREFIX lmdb
+  DEPENDS monero
+  BUILD_IN_SOURCE 1
+  CONFIGURE_COMMAND ""
+  DOWNLOAD_COMMAND ""
+  BUILD_COMMAND ""
+  INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory
+                  ${PROJECT_BINARY_DIR}/monero/src/monero/external/db_drivers/liblmdb
+                  ${CMAKE_INSTALL_PREFIX}/lmdb
+  LOG_DOWNLOAD 1
+  LOG_CONFIGURE 1
+  LOG_BUILD 1
+)
+
 # json
 ExternalProject_Add(
   json
