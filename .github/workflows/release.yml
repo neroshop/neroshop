@@ -1,0 +1,22 @@
+name: neroshop
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: jbakosi/neroshop:build
+      credentials:
+        username: jbakosi
+        password: ${{ secrets.DOCKERHUB }}
+    steps:
+    - uses: actions/checkout@v2
+      # Uncomment the lines below to set up a tmate session for debugging.
+      # See https://github.com/marketplace/actions/debugging-with-tmate for details.
+      #- name: Tmate session for debugging
+      #  uses: mxschmitt/action-tmate@v2
+    - name: build
+      run: mkdir build && cd build && cmake .. && make && cd -
+    - name: test
+      run: cd build && ctest -j2 --output-on-failure
