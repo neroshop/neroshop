@@ -19,7 +19,7 @@ void neroshop::Client::create() {
         WSACleanup();
     }
 #endif	
-#ifdef __gnu_linux__
+#ifdef __linux__
     if(socket) return; // socket must be null before a new one can be created (if socket is not null then it means it was never closed)
 	socket = ::socket(AF_INET, SOCK_STREAM, 0);
 	if(socket < 0) {
@@ -38,7 +38,7 @@ bool neroshop::Client::connect(unsigned int port, std::string address)
 	// connect to a server
     return (::connect(socket, (struct sockaddr *)(&socket_addr), sizeof(socket_addr)) == 0);
 #endif
-#ifdef __gnu_linux__
+#ifdef __linux__
 	host = gethostbyname(address.c_str());
 	if(host == nullptr) {
 		std::cerr << "No host to connect to" << std::endl;
@@ -63,7 +63,7 @@ void neroshop::Client::write(const std::string& text)
 #ifdef __windows__
     send(socket, text.c_str(), text.length(), 0);	
 #endif	
-#ifdef __gnu_linux__
+#ifdef __linux__
 	ssize_t write_result = ::write(socket, text.c_str(), text.length());
 	if(write_result < 0) { // -1 = error
 		std::cerr << "Could not write to server" << std::endl;
@@ -80,7 +80,7 @@ std::string neroshop::Client::read()
 	}
 	return static_cast<std::string>(buffer);
 #endif	
-#ifdef __gnu_linux__
+#ifdef __linux__
 	memset(buffer, 0, 256); // clear buffer (fills buffer with 0's) before reading into buffer//bzero(buffer, 256); // bzero is deprecated
 	ssize_t read_result = ::read(socket, buffer, 255);
 	if(read_result < 0) {
@@ -95,7 +95,7 @@ void neroshop::Client::close()
 #ifdef __windows__
     closesocket(socket);	
 #endif	
-#ifdef __gnu_linux__
+#ifdef __linux__
     if(socket == 0) return; // cannot close a socket that has already been closed (this is to prevent double closing)
 	::close(socket);
 	socket = 0; // nullify socket after closing it, so we know it's been deleted//std::cout << "client socket closed: 0\n";
@@ -107,7 +107,7 @@ void neroshop::Client::shutdown()
 #ifdef __windows__
 	::shutdown(socket, SD_BOTH); // SD_RECEIVE, SD_SEND, SD_BOTH
 #endif	
-#ifdef __gnu_linux__
+#ifdef __linux__
 	::shutdown(socket, SHUT_RDWR); // SHUT_RD, SHUT_WR, SHUT_RDWR
 #endif
 }
@@ -129,7 +129,7 @@ SOCKET neroshop::Client::get_socket() const {
 }
 #endif
 //////////
-#ifdef __gnu_linux__
+#ifdef __linux__
 int neroshop::Client::get_socket() const {
     return socket;
 }
@@ -165,7 +165,7 @@ bool neroshop::Client::is_connected() {//const { // https://stackoverflow.com/a/
 //////////
 bool neroshop::Client::test_socket() {//const { // testing socket to see if it is connected // https://stackoverflow.com/questions/1795193/check-connection-open-or-closed-in-c-in-linux
     // send message to server?
-#ifdef __gnu_linux__
+#ifdef __linux__
     const std::string& text = "";
 	ssize_t send_result = ::send(socket, text.c_str(), text.length(), MSG_NOSIGNAL); // only writes once to server?
 	if(send_result < 0) { // -1 = error

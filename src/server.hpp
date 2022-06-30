@@ -1,10 +1,6 @@
 #pragma once
 
-#include <iostream>
 #include <cstring>
-#include <thread>
-#include <mutex>
-#include <vector>
 #include <unistd.h>
 #include <arpa/inet.h>
 
@@ -26,7 +22,7 @@ class Server {
     void close();
     void shutdown();
 
-    #ifdef __gnu_linux__
+    #ifdef __linux__
     int get_socket() const { return socket; }
     int get_client_socket(int index = 0) const { return newsocket; }
     #endif
@@ -38,7 +34,7 @@ class Server {
     struct sockaddr_in server_addr, client_addr;
     socklen_t clilen;
     #endif
-    #ifdef __gnu_linux__
+    #ifdef __linux__
     int socket, newsocket;
     char buffer[512];
     std::string buffer_new;
