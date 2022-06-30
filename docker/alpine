@@ -15,12 +15,6 @@ FROM alpine
 # Install system-wide prerequisites
 RUN apk update && apk add patch gcc g++ make boost-dev git cmake unbound-dev czmq-dev libexecinfo-dev hidapi-dev libsodium-dev miniupnpc-dev openpgm-dev openssl-dev rapidjson-dev readline-dev unbound-dev zeromq-dev qtchooser protobuf-dev libusb-dev
 
-# Setup user
-#RUN addgroup neroshop && adduser -S neroshop neroshop && chown -R neroshop:neroshop /home/neroshop
-#USER neroshop
-#WORKDIR /home/neroshop
-#CMD ["/bin/sh"]
-
 # Clone neroshop
 RUN git clone https://github.com/neroshop/neroshop.git
 ARG COMMIT
