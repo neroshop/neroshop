@@ -28,16 +28,18 @@ void close_server() {
     std::cout << NEROMON_TAG "\033[1;91mdisconnected\033[0m" << std::endl;
 }
 
-void heartbeat() {
+void interpret_query( std::string&& query ) {
+  if (query.find("lmdb") != std::string::npos) {
+    std::cout << "lmdb query" << '\n';
+  }
+}
 
+void heartbeat() {
   if (server->accept()) {
-    //std::cout << "server's client_socket: " << server->get_client_socket() << std::endl;
-    //std::thread new_client(client); // create a new client thread each time it accepts
-    //new_client.join();
     server->write(NEROMON_TAG "\033[1;32mconnected\033[0m");
   }
 
-  std::cout << server->read() << std::flush << std::endl;
+  interpret_query( server->read() );
 }
 
 // neroshop daemon (neromon) main
