@@ -12,7 +12,7 @@ Server::Server()
     WSACleanup();
   }
   #endif
-  #ifdef __gnu_linux__
+  #ifdef __linux__
   socket = ::socket(AF_INET, SOCK_STREAM, 0);
   if (socket < 0) {
     std::cerr << "Could not create socket" << std::endl;
@@ -55,7 +55,7 @@ Server::bind(unsigned int port)
   }
   #endif
   
-  #ifdef __gnu_linux__
+  #ifdef __linux__
   bzero((char *) &server_addr, sizeof(server_addr));
   server_addr.sin_port = htons(port);
   server_addr.sin_family = AF_INET;
@@ -86,7 +86,7 @@ bool Server::listen()
     return false;
   }
   #endif
-  #ifdef __gnu_linux__
+  #ifdef __linux__
   // SOMAXCONN=4096 // number of requests to listen to at a time
   if (::listen(socket, SOMAXCONN) < 0) {
     std::cerr << "Cannot listen for a connection" << std::endl;
@@ -119,7 +119,7 @@ bool Server::accept()
             << " port " << ntohs(client_addr.sin_port) << std::endl;
   #endif
 
-  #ifdef __gnu_linux__
+  #ifdef __linux__
   clilen = sizeof(client_addr);
   newsocket = ::accept(socket, (struct sockaddr *) &client_addr, &clilen);
   if (newsocket < 0) {
@@ -144,7 +144,7 @@ void Server::write(const std::string& text)
   send(newsocket, text.c_str(), text.length(), 0);	
   #endif
 
-  #ifdef __gnu_linux__
+  #ifdef __linux__
   //bzero(buffer,256);
   //fgets(buffer,255,stdin);
   ssize_t write_result = ::write( newsocket, text.c_str(), text.length() );
@@ -165,7 +165,7 @@ std::string Server::read()
   }
   #endif
 
-  #ifdef __gnu_linux__
+  #ifdef __linux__
   memset(buffer, 0, 256);
   ssize_t read_result = ::read(newsocket, buffer, 255);
   if (read_result < 0) {
@@ -189,7 +189,7 @@ void Server::close()
   closesocket(newsocket);
   #endif
 
-  #ifdef __gnu_linux__
+  #ifdef __linux__
   ::close(socket);
   ::close(newsocket);
   #endif
@@ -203,7 +203,7 @@ void Server::shutdown()
   ::shutdown(newsocket, SD_BOTH);
   #endif
 
-  #ifdef __gnu_linux__
+  #ifdef __linux__
   ::shutdown(socket, SHUT_RDWR); // SHUT_RD, SHUT_WR, SHUT_RDWR
   ::shutdown(newsocket, SHUT_RDWR);
   #endif

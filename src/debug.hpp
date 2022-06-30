@@ -10,7 +10,7 @@
 #ifdef _WIN32
 #define NEROSHOP_PATH ""
 #endif
-#ifdef __gnu_linux__
+#ifdef __linux__
 #define NEROSHOP_PATH "/home/" + System::get_user() + "/.config/neroshop"
 #endif
 

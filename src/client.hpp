@@ -1,12 +1,8 @@
 #ifndef CLIENT_HPP_NEROSHOP
 #define CLIENT_HPP_NEROSHOP
 
-#include <iostream>
 #include <cstring>
-#include <thread>
-#include <mutex>
 
-#include <arpa/inet.h>
 #include <netdb.h>
 #include <unistd.h>
 
@@ -31,7 +27,7 @@ public:
 #ifdef _WIN32
 	SOCKET get_socket() const;
 #endif
-#ifdef __gnu_linux__
+#ifdef __linux__
 	int get_socket() const;
 #endif
     static Client * get_main_client();
@@ -43,7 +39,7 @@ private:
 	struct sockaddr_in socket_addr;	
     struct hostent * host;
 #endif
-#ifdef __gnu_linux__
+#ifdef __linux__
 	int socket;
 	char buffer[256]; //std::string buffer_new;
 	// struct sockaddr // universal endpoint type
