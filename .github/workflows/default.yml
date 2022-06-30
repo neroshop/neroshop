@@ -1,0 +1,18 @@
+name: neroshop-default
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: jbakosi/neroshop:build
+      credentials:
+        username: jbakosi
+        password: ${{ secrets.DOCKERHUB }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: build-default
+      run: mkdir build && cd build && cmake .. && make && cd -
+    - name: test
+      run: cd build && ctest -j2 --output-on-failure

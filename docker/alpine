@@ -4,20 +4,16 @@
 #
 # Basic usage:
 # * Build image:
-#   $ docker build -f alpine -t neroshop .
+#   docker build -f alpine -t neroshop .
 # * Run command shell inside image:
-#   $ docker run -ti neroshop
+#   docker run -ti neroshop
+# * Squash layers to reduce size:
+#   docker-squash --cleanup neroshop -t neroshop:build
 
 FROM alpine
 
 # Install system-wide prerequisites
 RUN apk update && apk add patch gcc g++ make boost-dev git cmake unbound-dev czmq-dev libexecinfo-dev hidapi-dev libsodium-dev miniupnpc-dev openpgm-dev openssl-dev rapidjson-dev readline-dev unbound-dev zeromq-dev qtchooser protobuf-dev libusb-dev
-
-# Setup user
-RUN addgroup neroshop && adduser -S neroshop neroshop && chown -R neroshop:neroshop /home/neroshop
-USER neroshop
-WORKDIR /home/neroshop
-CMD ["/bin/sh"]
 
 # Clone neroshop
 RUN git clone https://github.com/neroshop/neroshop.git
@@ -25,6 +21,9 @@ ARG COMMIT
 RUN cd neroshop && git checkout $COMMIT
 # Build external libs
 RUN cd neroshop && mkdir -p external/build && cd external/build && cmake .. && make -sj$(grep -c processor /proc/cpuinfo)
+
+# Clean up
+RUN rm -rf neroshop/external/build
 
 # The commands below can be used to build and test neroshop if anything
 # upstream is updated. They should remain commented so this image can be used
