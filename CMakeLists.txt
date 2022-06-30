@@ -62,7 +62,6 @@ set(TPL_INCLUDE_DIRS ${TPL_DIR}/include
                      ${TPL_DIR}/include/crypto)
 set(QRCODEGEN_INCLUDE_DIRS ${TPL_DIR}/include/qrcodegen)
 set(BCRYPT_INCLUDE_DIRS ${TPL_DIR}/include/bcrypt)
-set(DOKUNUI_INCLUDE_DIRS ${TPL_DIR}/include/dokun-ui)
 message(STATUS "Third-party (external) libraries install directory: " ${TPL_DIR})
 
 #### Neroshop
