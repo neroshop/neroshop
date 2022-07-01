@@ -28,11 +28,18 @@ include(TargetArch)
 # Set compiler id
 string(TOLOWER "${CMAKE_CXX_COMPILER_ID}" COMP)
 
+# Set compiler var (will be exported to the source)
+set(COMPILER "${CMAKE_CXX_COMPILER}")
+
 # set version
 set(VERSION_MAJOR "0")
 set(VERSION_MINOR "1")
 set(VERSION_PATCH "0")
 set(PROJECT_VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
+
+# Set build type (will be exported to the source)
+set(BUILD_TYPE ${CMAKE_BUILD_TYPE})
+string(TOLOWER "${BUILD_TYPE}" BUILD_TYPE)
 
 # Echo install prefix
 message(STATUS "CMAKE_INSTALL_PREFIX: " ${CMAKE_INSTALL_PREFIX})
@@ -105,10 +112,13 @@ message(STATUS "Target ${DAEMON_EXECUTABLE} configured")
 # configure neroshop cli executable
 set(CLI_EXECUTABLE "neroshop-cli")
 add_executable(${CLI_EXECUTABLE}
+               ${CMAKE_BINARY_DIR}/project_config.cpp
                ${NEROSHOP_SOURCE_DIR}/cli.cpp)
-target_include_directories(${CLI_EXECUTABLE} PUBLIC ${NEROSHOP_SOURCE_DIR}
+target_include_directories(${CLI_EXECUTABLE} PUBLIC
+                           ${NEROSHOP_SOURCE_DIR}
+                           ${PROJECT_BINARY_DIR}
                            ${TPL_INCLUDE_DIRS})
-target_link_libraries(${CLI_EXECUTABLE} PRIVATE cli::cli)
+target_link_libraries(${CLI_EXECUTABLE} PRIVATE client cli::cli)
 install(TARGETS ${CLI_EXECUTABLE}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Runtime
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Runtime
@@ -124,3 +134,20 @@ else()
   enable_testing()
   add_subdirectory(${PROJECT_SOURCE_DIR}/test)
 endif()
+
+# Grab current date to stick into the executables
+execute_process(COMMAND "date" "--utc" OUTPUT_VARIABLE BUILD_DATE)
+string(REGEX REPLACE "[\r\n]" "" BUILD_DATE "${BUILD_DATE}")
+
+# Save contents of license file and copyright info in cmake variables
+file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE" LICENSE)
+string(REGEX REPLACE "All rights reserved\.*" "All rights reserved. See LICENSE for details." COPYRIGHT "${LICENSE}")
+string(REGEX REPLACE ";" "\\\\n" COPYRIGHT "${COPYRIGHT}")
+string(REGEX REPLACE ";" "\\\\n" LICENSE "${LICENSE}")
+string(REGEX REPLACE "\"" "\\\\\"" LICENSE "${LICENSE}")
+
+# Configure cmake variables to pass to the build
+configure_file( "${NEROSHOP_SOURCE_DIR}/project_config.hpp.in"
+                "${PROJECT_BINARY_DIR}/project_config.hpp" )
+configure_file( "${NEROSHOP_SOURCE_DIR}/project_config.cpp.in"
+                "${PROJECT_BINARY_DIR}/project_config.cpp" )

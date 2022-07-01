@@ -35,10 +35,7 @@ void interpret_query( std::string&& query ) {
 }
 
 void heartbeat() {
-  if (server->accept()) {
-    server->write(NEROMON_TAG "\033[1;32mconnected\033[0m");
-  }
-
+  if (server->accept()) server->write("accept");
   interpret_query( server->read() );
 }
 
@@ -49,7 +46,12 @@ int main(void) {
   // greater than 0.  A process ID lower than 0 indicates a failure in either
   // process.
   pid_t pid = fork();
-  if (pid > 0) exit(EXIT_SUCCESS); else if (pid < 0) exit(EXIT_FAILURE);
+  if (pid > 0) {
+    std::cout << "Forked pid: " << pid << std::endl;
+    return EXIT_SUCCESS;
+  } else if (pid < 0) {
+    return EXIT_FAILURE;
+  }
 
   // TODO: I think we should log to ~/.config/neroshop/
 
@@ -65,10 +67,11 @@ int main(void) {
   // Generate a session ID for the child process and ensure it is valid.
   if(setsid() < 0) {
     // Log failure and exit
+    std::cout << "Could not generate session ID for child process" << std::endl;
     syslog(LOG_ERR, "Could not generate session ID for child process");
     // If a new session ID could not be generated, we must terminate the child
     // process or it will be orphaned.
-    exit(EXIT_FAILURE);
+    return EXIT_FAILURE;
   }
 
   // Change the current working directory to a directory guaranteed to exist
@@ -77,7 +80,7 @@ int main(void) {
     syslog(LOG_ERR, "Could not change working directory to /");
     // If our guaranteed directory does not exist, terminate the child process
     // to ensure the daemon has not been hijacked.
-    exit(EXIT_FAILURE);
+    return EXIT_FAILURE;
   }
 
   // A daemon cannot use the terminal, so close standard file descriptors for
@@ -86,17 +89,17 @@ int main(void) {
   close(STDOUT_FILENO);
   close(STDERR_FILENO);
 
-  // Daemon-specific intialization should go here
-  const int SLEEP_INTERVAL = 1;
-
   // Start server
   std::atexit(close_server);
   int server_port = 1234;
   if (server->bind(server_port)) {
-    std::cout << std::endl << NEROMON_TAG "\033[1;97mbinded to port "
+    std::cout << std::endl << NEROMON_TAG "\033[1;97mboud to port "
               << std::to_string(server_port) << "\033[0m" << std::endl;
   }
   server->listen(); // listens for any incoming connection
+
+  // Daemon-specific intialization should go here
+  const int SLEEP_INTERVAL = 1;
 
   // Enter daemon loop
   while(true) {
@@ -111,5 +114,5 @@ int main(void) {
   closelog();
 
   // Terminate the child process when the daemon completes
-  exit(EXIT_SUCCESS);	
+  return EXIT_SUCCESS;
 }

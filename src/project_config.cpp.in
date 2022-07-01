@@ -1,0 +1,31 @@
+// Project configuration inported from cmake
+
+#include <string>
+
+#include "project_config.hpp"
+
+namespace neroshop {
+
+#define DAEMON_EXECUTABLE    "@DAEMON_EXECUTABLE@"
+#define CLI_EXECUTABLE       "@CLI_EXECUTABLE@"
+
+#define PROJECT_VERSION      "@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@"
+#define COPYRIGHT            "@COPYRIGHT@"
+#define LICENSE              "@LICENSE@"
+#define COMPILER             "@COMPILER@"
+#define BUILD_TYPE           "@BUILD_TYPE@"
+#define BUILD_DATE           "@BUILD_DATE@"
+
+// Accessor definitions as strings of configuration values imported from cmake
+
+std::string daemon_executable() { return DAEMON_EXECUTABLE; }
+std::string cli_executable() { return CLI_EXECUTABLE; }
+
+std::string project_version() { return PROJECT_VERSION; }
+std::string copyright() { return COPYRIGHT; }
+std::string license() { return LICENSE; }
+std::string compiler() { return COMPILER; }
+std::string build_type() { return BUILD_TYPE; }
+std::string build_date() { return BUILD_DATE; }
+
+} // neroshop::
