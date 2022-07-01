@@ -59,7 +59,7 @@ int main() {
       std::cout << "Neroshop: " << neroshop::cli_executable() << " v"
                 << neroshop::project_version() << '-'
                 << neroshop::build_type() << '\n'
-                << "This is the command line client of neroshop. It needs to "
+                << "This is the command line client of neroshop.\nIt needs to "
                    "connect to a neroshop daemon to work correctly.\n"
                 << "Logging to ...\n"
                    "Type 'help' to list the available commands.\n";
@@ -124,9 +124,11 @@ int main() {
       auto welcomeCmd = rootMenu -> Insert(
         "welcome",
         [&](std::ostream& out) {
-          out << "Displaying welcome message ...\n";
-        },
-        "Display welcome message" );
+          out << "Welcome to Neroshop, a peer-to-peer marketplace for monero "
+                 "users. On Neroshop\nanyone can buy and sell products using "
+                 "the digital money, monero. For more\ninformation on monero, "
+                 "see https://getmonero.org.\n"; },
+          "Display welcome message" );
 
       auto versionCmd = rootMenu -> Insert(
         "version",
