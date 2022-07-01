@@ -1,4 +1,8 @@
 #pragma once
+// filename: qr.hpp
+#ifndef QR_HPP_NEROSHOP // recommended to add unique identifier like _NEROSHOP to avoid naming collision with other libraries
+#define QR_HPP_NEROSHOP
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -8,29 +12,33 @@
 using std::uint8_t;
 using qrcodegen::QrCode;
 using qrcodegen::QrSegment;
-// I would prefer to use fukuchi's libqrencode but its LGPL-2.1 License does not allow me to sublicense neroshop, which forces me to make my project open-source (LGPL) and requires me to include their code in my project
-// nayuki tinypngout-c (libpng is statically built into neroshop so TinyPngOut will be used for now until I find help from other programmers)
-//#include <TinyPngOut.hpp>
-// dokun-ui
-//#include <texture.hpp>
+
+#include <png.h>
+#include "debug.hpp"
+
+/*
+Use:
+neroshop::QR qr("qr.png", 400, "888tNkZrPN6JsEgekjMnABU4TBzc2Dt29EPAvkRxbANsAnjyPbb3iQ1YBRk1UXcdRsiKc9dhwMVgN5S9cQUiyoogDavup3H", true, QrCode::Ecc::LOW);
+qr.to_png();
+*/
 
 namespace neroshop {
 class QR {
 public:
     QR();
-    QR(std::string fileName, int imgSize, int minModulePixelSize, std::string text,
-            bool overwriteExistingFile, qrcodegen::QrCode::Ecc ecc);
+    QR(std::string fileName, int imgSize, std::string text,
+            bool overwriteExistingFile, QrCode::Ecc ecc);
     ~QR();
     bool to_png() const;
-    bool write_to_png(const qrcodegen::QrCode& qr_data) const;
-    unsigned int image_size(const qrcodegen::QrCode& qr_data) const;
-    unsigned int image_size_with_border(const qrcodegen::QrCode& qr_data) const;
+    bool write_to_png(const QrCode& qr_data, const int& multiplicator) const;
+    unsigned int image_size(const QrCode& qr_data) const;
+    unsigned int image_size_with_border(const QrCode& qr_data) const;
 private:
     std::string filename;
     int size;
-    int min_module_pixel_size;
     std::string text;
     bool overwrite_existing_file;
-    qrcodegen::QrCode::Ecc ecc; // to-do: change this to a unique_ptr
+    QrCode::Ecc ecc; // to-do: change this to a unique_ptr
 };
 }
+#endif
