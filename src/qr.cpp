@@ -1,12 +1,11 @@
-#include "../include/qr.hpp"
+#include "qr.hpp"
 
 neroshop::QR::QR() {}
 ////////////////////
-neroshop::QR::QR(std::string filename, int image_size, int min_module_pixel_size, std::string text,
+neroshop::QR::QR(std::string filename, int image_size, std::string text,
             bool overwrite, qrcodegen::QrCode::Ecc ecc) {
     this->filename = filename;
     this->size = image_size;
-    this->min_module_pixel_size = min_module_pixel_size;
     this->text = text;
     this->overwrite_existing_file = overwrite;
     this->ecc = ecc;
@@ -16,90 +15,110 @@ neroshop::QR::~QR() {}
 ////////////////////    
 ////////////////////    
 bool neroshop::QR::to_png() const {
-    if(text.empty()) return false; // text is required
+    if(text.empty()) return false; 
     std::ifstream file(filename.c_str());
     bool exists = file.good();
     file.close();
-    if(!overwrite_existing_file && exists) return false; // if overwrite is off
+    if(!overwrite_existing_file && exists) return false; 
     
     auto qr_code = qrcodegen::QrCode::encodeText(text.c_str(), ecc);
-    auto result = write_to_png(qr_code);
+
+    int multiplicator = size / qr_code.getSize();
+
+    auto result = write_to_png(qr_code, multiplicator);
     
     return result;
 }
 ////////////////////
-bool neroshop::QR::write_to_png(const qrcodegen::QrCode& qr_data) const {
-    std::ofstream out(filename.c_str(), std::ios::binary);
-    int pngWH = image_size_with_border(qr_data);
-    //TinyPngOut pngout(pngWH, pngWH, out);
 
-    auto qrSize = qr_data.getSize();
-    auto qrSizeWithBorder = qr_data.getSize() + 2;
-    if (qrSizeWithBorder > size)
-        return false; // qrcode doesn't fit
+bool neroshop::QR::write_to_png(const QrCode& qr, const int& multiplicator) const {
+	FILE *fp = NULL;
+	png_structp png_ptr = NULL;
+	png_infop info_ptr = NULL;
+	png_bytep row = NULL;
+	
+	// Open file for writing (binary mode)
+	fp = fopen(filename.c_str(), "wb");
+	if (fp == NULL) {
+		neroshop::print("Could not open file" + filename + "for writing", 1);
+		return false;
+	}
 
-    int qrSizeFitsInMaxImgSizeTimes = size / qrSizeWithBorder;
-    int pixelsWHPerModule = qrSizeFitsInMaxImgSizeTimes;
+	// Initialize write structure
+	png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+	if (png_ptr == NULL) {
+		neroshop::print("Could not allocate write struct", 1);
+		fclose(fp);
+        return false;
+	}
 
-    if (qrSizeFitsInMaxImgSizeTimes < min_module_pixel_size)
-        return false; // image would be to small to scan
+	// Initialize info structure
+	info_ptr = png_create_info_struct(png_ptr);
+	if (info_ptr == NULL) {
+		neroshop::print("Could not allocate info struct", 1);
+		fclose(fp);
+	    png_free_data(png_ptr, info_ptr, PNG_FREE_ALL, -1);
+        return false;
+	}
 
-    std::vector<uint8_t> tmpData;
-    const uint8_t blackPixel = 0x00;
-    const uint8_t whitePixel = 0xFF;
+	// Setup Exception handling
+	if (setjmp(png_jmpbuf(png_ptr))) {
+		neroshop::print("Error during png creation", 1);
+		
+		fclose(fp);
+	    png_free_data(png_ptr, info_ptr, PNG_FREE_ALL, -1);
+	    png_destroy_write_struct(&png_ptr, (png_infopp)NULL);
+        return false;
+	}
 
-    /* The below loop converts the qrData to RGB8.8.8 pixels and writes it with
-     * the tinyPNGoutput library. since we probably have requested a larger
-     * qr module pixel size we must transform the qrData modules to be larger
-     * pixels (than just 1x1). */
+	png_init_io(png_ptr, fp);
 
-    // border above
-    for (int i = 0; i < pngWH; i++) // row
-        for (int j = 0; j < pixelsWHPerModule; j++) // module pixel (height)
-            tmpData.insert(tmpData.end(), {whitePixel, whitePixel, whitePixel});
+	// Write header (8 bit colour depth)
+	png_set_IHDR(png_ptr, info_ptr, qr.getSize()*multiplicator, qr.getSize()*multiplicator,
+			8, PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
+			PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
 
-    //pngout.write(tmpData.data(), static_cast<size_t>(tmpData.size() / 3));
-    tmpData.clear();
+	png_write_info(png_ptr, info_ptr);
 
-    for (int qrModuleAtY = 0; qrModuleAtY < qrSize; qrModuleAtY++) {
-        for (int col = 0; col < pixelsWHPerModule; col++) {
-            // border left
-            for (int i = 0; i < qrSizeFitsInMaxImgSizeTimes; ++i)
-                tmpData.insert(tmpData.end(), {whitePixel, whitePixel, whitePixel});
+	// Allocate memory for one row (3 bytes per pixel)
+	row = (png_bytep) malloc(3 * multiplicator * qr.getSize() * sizeof(png_byte));
 
-            // qr module to pixel
-            for (int qrModuleAtX = 0; qrModuleAtX < (qrSize); qrModuleAtX++) {
-            for (int row = 0; row < qrSizeFitsInMaxImgSizeTimes; ++row) {
-                    if (qr_data.getModule(qrModuleAtX, qrModuleAtY)) {
-                        // insert saves us a for loop or 3 times the same line.
-                        tmpData.insert(tmpData.end(), {blackPixel, blackPixel, blackPixel});
-                    } else {
-                        tmpData.insert(tmpData.end(), {whitePixel, whitePixel, whitePixel});
-                    }
-                }
+	// Write image data
+    int offset_y = 0;
+    int offset_x = 0;
+	for (int y=0 ; y < qr.getSize() * multiplicator ; y++) {
+
+		for (int x=0 ; x < qr.getSize() * multiplicator; x++) {
+			
+            if(qr.getModule(offset_x, offset_y)) {
+                row[x*3] = row[x*3+1] = row[x*3+2] = 0;
+            } else {
+                row[x*3] = row[x*3+1] = row[x*3+2] = 255;
             }
-            // border right
-            for (int i = 0; i < qrSizeFitsInMaxImgSizeTimes; ++i)
-                tmpData.insert(tmpData.end(), {whitePixel, whitePixel, whitePixel});
 
-            // write the entire  row
-            //pngout.write(tmpData.data(), static_cast<size_t>(tmpData.size() / 3));
-            tmpData.clear();
+            if (x && x % multiplicator == 0) {
+                offset_x++;
+            }
+
+		}
+        offset_x = 0;
+        if (y && y % multiplicator == 0) {
+            offset_y++;
         }
-    }
+		png_write_row(png_ptr, row);
+	}
 
-    // border below
-    for (int i = 0; i < pngWH; i++) // row
-        for (int j = 0; j < pixelsWHPerModule; j++) // module pixel (height)
-            tmpData.insert(tmpData.end(), {whitePixel, whitePixel, whitePixel});
+	// End write
+	png_write_end(png_ptr, NULL);
 
-    //pngout.write(tmpData.data(), static_cast<size_t>(tmpData.size() / 3));
-    tmpData.clear();
+	if (fp != NULL) fclose(fp);
+	if (info_ptr != NULL) png_free_data(png_ptr, info_ptr, PNG_FREE_ALL, -1);
+	if (png_ptr != NULL) png_destroy_write_struct(&png_ptr, (png_infopp)NULL);
+	if (row != NULL) free(row);
 
-    std::ifstream file(filename.c_str());
-    bool exists = file.good();
-    return exists;
+	return true;
 }
+
 ////////////////////
 unsigned int neroshop::QR::image_size(const qrcodegen::QrCode& qr_data) const {
     return (size / qr_data.getSize()) * qr_data.getSize();
