@@ -67,13 +67,49 @@ set(TPL_INCLUDE_DIRS ${TPL_DIR}/include
                      ${TPL_DIR}/include/common
                      ${TPL_DIR}/include/utils
                      ${TPL_DIR}/include/cli
-                     ${TPL_DIR}/include/crypto)
-set(QRCODEGEN_INCLUDE_DIRS ${TPL_DIR}/include/qrcodegen)
-set(BCRYPT_INCLUDE_DIRS ${TPL_DIR}/include/bcrypt)
+                     ${TPL_DIR}/include/crypto
+                     ${TPL_DIR}/include/storages)
 message(STATUS "Third-party (external) libraries install directory: " ${TPL_DIR})
 
+# Find daniele77/cli
 set(cli_DIR ${TPL_DIR}/lib/cmake/cli)
 find_package(cli REQUIRED)
+
+# Find QrCodeGen
+find_path(QRCODEGEN_INCLUDE_DIR NAMES qrcodegen.hpp PATHS ${TPL_DIR}/qrcodegen)
+find_library(QRCODEGEN_LIBRARY libqrcodegencpp.a ${TPL_DIR}/qrcodegen)
+
+# Find Bcrypt
+find_path(BCRYPT_INCLUDE_DIR NAMES bcrypt.h PATHS ${TPL_DIR}/bcrypt)
+find_library(BCRYPT_LIBRARY bcrypt.a ${TPL_DIR}/bcrypt)
+
+# Find Lua
+find_package(Lua REQUIRED)
+# Find FreeType
+find_package(Freetype REQUIRED)
+# Find Curl
+find_package(CURL REQUIRED)
+# Find OpenSSL
+find_package(OpenSSL REQUIRED)
+# Find Threads
+set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+find_package(Threads REQUIRED)
+# Find OpenGL
+set(OpenGL_GL_PREFERENCE "LEGACY")
+find_package(X11 REQUIRED)
+find_package(OpenGL REQUIRED)
+
+# Find dokun-ui
+find_path(DOKUNUI_INCLUDE_DIR NAMES image.hpp PATHS ${TPL_DIR}/include/dokun-ui)
+find_library(DOKUNUI_LIBRARY libdokun-ui.a ${TPL_DIR}/lib)
+
+# Find Monero
+find_library(MONERO_LIBRARIES libwallet_merged.a ${TPL_DIR}/lib)
+find_library(MONEROCPP_LIBRARIES libmonero-cpp.so ${TPL_DIR}/lib)
+
+# Find Boost
+find_package(Boost REQUIRED COMPONENTS serialization)
 
 #### Neroshop
 
@@ -124,6 +160,55 @@ install(TARGETS ${CLI_EXECUTABLE}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Runtime
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Development)
 message(STATUS "Target ${CLI_EXECUTABLE} configured")
+
+# configure neroshop cli executable
+set(GUI_EXECUTABLE "neroshop-gui")
+add_executable(${GUI_EXECUTABLE}
+               ${CMAKE_BINARY_DIR}/project_config.cpp
+               ${NEROSHOP_SOURCE_DIR}/qr.cpp
+               ${NEROSHOP_SOURCE_DIR}/buyer.cpp
+               ${NEROSHOP_SOURCE_DIR}/cart.cpp
+               ${NEROSHOP_SOURCE_DIR}/catalog.cpp
+               ${NEROSHOP_SOURCE_DIR}/converter.cpp
+               ${NEROSHOP_SOURCE_DIR}/database.cpp
+               ${NEROSHOP_SOURCE_DIR}/encryptor.cpp
+               ${NEROSHOP_SOURCE_DIR}/icon.cpp
+               ${NEROSHOP_SOURCE_DIR}/item.cpp
+               ${NEROSHOP_SOURCE_DIR}/main.cpp
+               ${NEROSHOP_SOURCE_DIR}/message.cpp
+               ${NEROSHOP_SOURCE_DIR}/order.cpp
+               ${NEROSHOP_SOURCE_DIR}/qr.cpp
+               ${NEROSHOP_SOURCE_DIR}/seller.cpp
+               ${NEROSHOP_SOURCE_DIR}/server.cpp
+               ${NEROSHOP_SOURCE_DIR}/user.cpp
+               ${NEROSHOP_SOURCE_DIR}/validator.cpp
+               ${NEROSHOP_SOURCE_DIR}/wallet.cpp)
+target_include_directories(${GUI_EXECUTABLE} PUBLIC
+                           ${NEROSHOP_SOURCE_DIR}
+                           ${PROJECT_BINARY_DIR}
+                           ${TPL_INCLUDE_DIRS}
+                           ${QRCODEGEN_INCLUDE_DIR}
+                           ${BCRYPT_INCLUDE_DIR}
+                           ${DOKUNUI_INCLUDE_DIR}
+                           ${LUA_INCLUDE_DIR}
+                           ${FREETYPE_INCLUDE_DIRS})
+target_link_libraries(${GUI_EXECUTABLE}
+                      client
+                      ${QRCODEGEN_LIBRARY}
+                      ${CURL_LIBRARIES}
+                      ${DOKUNUI_LIBRARY}
+                      ${OPENSSL_CRYPTO_LIBRARIES}
+                      ${X11_LIBRARIES}
+                      ${OPENGL_LIBRARIES}
+                      ${MONEROCPP_LIBRARIES}
+                      ${Boost_LIBRARIES}
+                      ${BCRYPT_LIBRARY}
+                      Threads::Threads dl)
+install(TARGETS ${GUI_EXECUTABLE}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Runtime
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Runtime
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Development)
+message(STATUS "Target ${GUI_EXECUTABLE} configured")
 
 #### Testing
 

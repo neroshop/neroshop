@@ -1,6 +1,4 @@
-// filename: converter.hpp
-#ifndef CONVERTER_HPP_NEROSHOP // recommended to add unique identifier like _NEROSHOP to avoid naming collision with other libraries
-#define CONVERTER_HPP_NEROSHOP
+#pragma once
 
 #include <iostream>
 // curl
@@ -34,7 +32,6 @@ private:
     static std::string json_string;//std::string url;
 };
 }
-#endif
 
 /*Usage:
 	double pounds = 1;

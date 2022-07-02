@@ -1,8 +1,8 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 5d81c46..5ebb553 100644
+index 5d81c46..cd7f19b 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -329,3 +329,40 @@ if(ANDROID)
+@@ -329,3 +329,55 @@ if(ANDROID)
  endif(ANDROID)
  ]]
  #############
@@ -15,6 +15,21 @@ index 5d81c46..5ebb553 100644
 +INSTALL(FILES include/dokun_ui.hpp
 +              include/image.hpp
 +              include/file.hpp
++              include/edit.hpp
++              include/math.hpp
++              include/process.hpp
++              include/progressbar.hpp
++              include/build.hpp
++              include/engine.hpp
++              include/slider.hpp
++              include/scrollbar.hpp
++              include/list.hpp
++              include/menubar.hpp
++              include/combo.hpp
++              include/tab.hpp
++              include/console.hpp
++              include/plugin.hpp
++              include/browser.hpp
 +              include/box.hpp
 +              include/linux_header.hpp
 +              include/platform.hpp
@@ -43,3 +58,35 @@ index 5d81c46..5ebb553 100644
 +              include/button.hpp
 +              include/toggle.hpp
 +              DESTINATION include/dokun-ui)
+diff --git a/include/string.hpp b/include/string.hpp
+index 84672fa..b05a295 100644
+--- a/include/string.hpp
++++ b/include/string.hpp
+@@ -1,20 +1,13 @@
+-#ifndef STRING_HPP_DOKUN
+-#define STRING_HPP_DOKUN
+-
++#pragma once
+ #include "platform.hpp"
+ #include "vector.hpp"
+-#ifdef __cplusplus
+ #include <iostream>
+ #include <string>
+ #include <cctype> // tolower + toupper
+ #include <vector>
+-#ifdef __cplusplus
+ extern "C" {
+-#endif	
+ #include <string.h>
+-#ifdef __cplusplus
+ }
+-#endif
+ #include <sstream>
+ #include <fstream>
+ #include <algorithm>
+@@ -660,5 +653,3 @@ static std::string narrow( const std::wstring& str )
+ 	std::string value;
+ private:
+ };
+-#endif
+-#endif

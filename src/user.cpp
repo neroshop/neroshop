@@ -259,7 +259,7 @@ bool neroshop::User::is_seller() const
 ////////////////////
 bool neroshop::User::is_online() const // a user is not created until they are logged so this function can only be called when a user is logged // guests can also use this function so its a bad idea to check if user is logged
 {
-    return Client::get_main_client()->is_connected();// && is_logged()); // user must be both connected to the network and logged in
+    return Client::get_main_client()->connected();// && is_logged()); // user must be both connected to the network and logged in
 }
 ////////////////////
 bool neroshop::User::is_registered() const {

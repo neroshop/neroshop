@@ -1,8 +1,8 @@
 diff --git a/contrib/epee/src/CMakeLists.txt b/contrib/epee/src/CMakeLists.txt
-index 15e7687..17980e1 100644
+index 15e7687..3b056e9 100644
 --- a/contrib/epee/src/CMakeLists.txt
 +++ b/contrib/epee/src/CMakeLists.txt
-@@ -46,6 +46,66 @@ if (BUILD_GUI_DEPS)
+@@ -46,6 +46,69 @@ if (BUILD_GUI_DEPS)
      endif()
      install(TARGETS epee
          ARCHIVE DESTINATION ${lib_folder})
@@ -53,6 +53,7 @@ index 15e7687..17980e1 100644
 +                  ../include/storages/http_abstract_invoke.h
 +                  ../include/storages/portable_storage_template_helper.h
 +                  ../include/storages/portable_storage_template_helper.h
++                  ../include/warnings.h
 +                  DESTINATION include/storages)
 +    install(FILES ../include/hex.h
 +                  ../include/wipeable_string.h
@@ -61,26 +62,16 @@ index 15e7687..17980e1 100644
 +                  ../include/span.h
 +                  ../include/mlocker.h
 +                  DESTINATION include/crypto)
-+    install(FILES ../include/warnings.h
-+                  ../include/serialization/enableable.h
++    install(FILES ../include/serialization/enableable.h
 +                  ../include/serialization/keyvalue_serialization_overloads.h
 +                  ../include/serialization/keyvalue_serialization.h
 +                  DESTINATION include/serialization)
++    install(FILES ../../../external/easylogging++/easylogging++.h
++                  ../../../external/easylogging++/ea_config.h
++                  DESTINATION include/utils)
      if (USE_READLINE AND GNU_READLINE_FOUND)
        install(TARGETS epee_readline
            ARCHIVE DESTINATION ${lib_folder})
-diff --git a/external/easylogging++/CMakeLists.txt b/external/easylogging++/CMakeLists.txt
-index b5b6669..2cde5b8 100644
---- a/external/easylogging++/CMakeLists.txt
-+++ b/external/easylogging++/CMakeLists.txt
-@@ -57,6 +57,7 @@ if (BUILD_GUI_DEPS)
-     install(TARGETS easylogging
-         ARCHIVE DESTINATION ${lib_folder}
-         LIBRARY DESTINATION ${lib_folder})
-+    install(FILES easylogging++.h ea_config.h DESTINATION include/utils)
- endif()
- set_property(TARGET easylogging APPEND PROPERTY COMPILE_FLAGS "-fPIC")
- 
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
 index 07d4d58..a323de1 100644
 --- a/src/CMakeLists.txt
