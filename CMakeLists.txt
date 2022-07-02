@@ -105,7 +105,6 @@ find_path(DOKUNUI_INCLUDE_DIR NAMES image.hpp PATHS ${TPL_DIR}/include/dokun-ui)
 find_library(DOKUNUI_LIBRARY libdokun-ui.a ${TPL_DIR}/lib)
 
 # Find Monero
-find_library(MONERO_LIBRARIES libwallet_merged.a ${TPL_DIR}/lib)
 find_library(MONEROCPP_LIBRARIES libmonero-cpp.so ${TPL_DIR}/lib)
 
 # Find Boost
