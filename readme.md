@@ -182,13 +182,6 @@ Files: src/encryptor.cpp; include/encryptor.hpp
 Libraries/Tools: OpenSSL
 Difficulty: Easy-Intermediate
 Status: Not Filled
-
-
-Details: Create an organized documentation on the neroshop codebase including functions, classes, etc.
-Bounty Reward: $50
-Libraries/Tools: Doxygen or any other tools
-Difficulty: Easy
-Status: Not Filled
 ```
 
 
