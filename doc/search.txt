@@ -1,0 +1,11 @@
+Xapian:
+https://xapian.org
+
+Xapian getting started:
+https://getting-started-with-xapian.readthedocs.io/en/latest
+
+Xapian API:
+https://xapian.org/docs/apidoc/html/annotated.html
+
+C++ API exmaple:
+https://docs.huihoo.com/xapian/docs/quickstart.html
