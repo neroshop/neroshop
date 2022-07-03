@@ -93,7 +93,7 @@ int main(void) {
   std::atexit(close_server);
   int server_port = 1234;
   if (server->bind(server_port)) {
-    std::cout << std::endl << NEROMON_TAG "\033[1;97mboud to port "
+    std::cout << std::endl << NEROMON_TAG "\033[1;97mbound to port "
               << std::to_string(server_port) << "\033[0m" << std::endl;
   }
   server->listen(); // listens for any incoming connection
