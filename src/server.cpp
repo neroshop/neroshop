@@ -129,7 +129,7 @@ bool Server::accept()
     return false;
   }
 
-  std::cout << NEROSHOP_TAG "\033[0;37mReceived connection from "
+  std::cout << NEROMON_TAG "\033[0;37mReceived connection from "
             << inet_ntoa(client_addr.sin_addr) << ":\033[0;36m"
             << ntohs(client_addr.sin_port) << "\033[0m" << std::endl;
   #endif
@@ -172,8 +172,13 @@ std::string Server::read()
     perror("socket read error: ");//std::cerr << "Client disconnected" << std::endl;
     shutdown();
     close();
-  } else if(read_result > 0 && read_result < 511) {
+  } else if (read_result > 0 && read_result < 511) {
     //std::cout << "Received less bytes than expected" << std::endl;
+    if (strcmp(buffer, "disconnect") == 0) {
+      std::cout << NEROMON_TAG "\033[0;37mDisconnected from "
+              << inet_ntoa(client_addr.sin_addr) << ":\033[0;36m"
+              << ntohs(client_addr.sin_port) << "\033[0m" << std::endl;
+    }
   }
   //::write (STDOUT_FILENO, buffer, read_result);
   #endif

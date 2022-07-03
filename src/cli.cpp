@@ -150,6 +150,7 @@ int main() {
       Cli cli( std::move(rootMenu) );
       // global exit action
       cli.ExitAction( [](auto& out){
+        if (client->connected()) disconnect();
         out << "End " << neroshop::cli_executable() + '\n'; } );
 
       cli::LoopScheduler scheduler;

@@ -108,7 +108,10 @@ find_library(DOKUNUI_LIBRARY libdokun-ui.a ${TPL_DIR}/lib)
 find_library(MONEROCPP_LIBRARIES libmonero-cpp.so ${TPL_DIR}/lib)
 
 # Find Boost
-find_package(Boost REQUIRED COMPONENTS serialization)
+find_package(Boost REQUIRED COMPONENTS serialization program_options)
+
+# Find Xapian
+find_package(Xapian REQUIRED)
 
 #### Neroshop
 
@@ -135,9 +138,14 @@ install(TARGETS client
 # configure neroshop daemon executable
 set(DAEMON_EXECUTABLE "neromon")
 add_executable(${DAEMON_EXECUTABLE}
-               ${NEROSHOP_SOURCE_DIR}/daemon.cpp)
-target_include_directories(${DAEMON_EXECUTABLE} PUBLIC ${NEROSHOP_SOURCE_DIR})
-target_link_libraries(${DAEMON_EXECUTABLE} server)
+               ${NEROSHOP_SOURCE_DIR}/daemon.cpp
+               ${CMAKE_BINARY_DIR}/project_config.cpp)
+target_include_directories(${DAEMON_EXECUTABLE} PUBLIC ${NEROSHOP_SOURCE_DIR}
+                           ${PROJECT_BINARY_DIR})
+target_link_libraries(${DAEMON_EXECUTABLE} server
+                      ${Boost_LIBRARIES}
+                      ${XAPIAN_LIBRARIES}
+                      Threads::Threads)
 install(TARGETS ${DAEMON_EXECUTABLE}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Runtime
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Runtime

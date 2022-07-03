@@ -129,6 +129,7 @@ void Client::shutdown()
 
 // *****************************************************************************
 void Client::disconnect() {
+  write("disconnect");
   shutdown();
   close();
 }
