@@ -1,6 +1,6 @@
 # neroshop 
 
-An attempt to create a p2p marketplace for [Monero](https://getmonero.org/) users, which is likely to fail
+An attempt to create a P2P marketplace for [Monero](https://getmonero.org/) users, which is likely to fail
 
 [![alt text](res/neroshop-logo.png)](https://github.com/larteyoh/neroshop "neroshop logo")
 
@@ -24,7 +24,7 @@ This is currently a work in progress. There is nothing to see here :shrug:
 * No registration required (for buyers only)
 * No KYC or AML
 * No listing fees
-* No sales tax (transaction fees will be paid to miners in place of sales tax. This is crypto after all)
+* No sales tax
 * No other fees (except for miner transaction fees and shipping costs)
 * Buy and sell products with Monero [XMR] (and Wownero [WOW] in the near future)
 * Seller reputation system
@@ -34,7 +34,7 @@ This is currently a work in progress. There is nothing to see here :shrug:
 * Distributed p2p network
 * Subaddress generator (a unique subaddresses will be generated from a seller's synced wallet account for each order placed by a customer)
 * Option to run a local Monero node or connect to remote Monero nodes (so that sellers will not have to sync the entire blockchain)
-* Option to choose between sending funds directly to a seller or using an escrow service.
+* Option to choose between sending funds directly to a seller or using a multisignature escrow.
 * Tor integration (Internet traffic can be optionally routed through tor for more added privacy)
 * And much more ...
 
@@ -128,41 +128,60 @@ This is a one-time pay for each task. Payments will be in XMR.
 
 We can negotiate payment if you feel the bounty price is too low.
 ```
-$2000 - implement peer discovery system that connects to other peers that have synced the full copy of the database
-files to work with: src/daemon.cpp, src/server.cpp, src/client.cpp
-libraries used: System network libraries (Linux Sockets, Winsock2, etc.)
-difficulty: hard
-job status: not filled
+Details: Implement peer discovery system that broadcasts/multicasts messages to other peers, connects to other peers, stores their IP addresses and shares it with other neroshop nodes.
+Bounty Reward: $1000-$3000
+Files: src/daemon.cpp; src/server.cpp; src/client.cpp
+Libraries/Tools: System network libraries (Linux Sockets, Winsock2, etc.)
+Difficulty: Hard
+Status: Not Filled
 
-$1000 - create a search engine that can search for item names, seller names and products, etc.
 
-$1000 - fix and optimize graphics and add graphical user interface features (such as scrollbar and scrollarea)
-files to work with: external/dokun-ui/src/renderer.cpp; external/dokun-ui/include/renderer.hpp
-libraries used: opengl, vulkan (optional)
-difficulty: intermediate
-job status: not filled
+Details: Create an advance search engine using built-in LMDB database. More details will be discussed.
+Bounty Reward: $2000-$5000
+Files: src/database/lmdb.cpp; src/database/lmdb.hpp;
+Libraries/Tools: LMDB
+Difficulty: Extreme
+Status: Not Filled
 
-$500 - convert and export qr code data to PNG
-files to work with: src/qr.cpp; include/qr.hpp
-libraries used: libpng, QR Code generator
-difficulty: intermediate
-job status: not filled
 
-$250 - fix decoding error in functions using EVP_PKEY_encrypt() and EVP_PKEY_decrypt()
-files to work with: src/encryptor.cpp; include/encryptor.hpp
-libraries used: openssl
-difficulty: intermediate
-job status: not filled
+Details: Fix font loading issue where loading some fonts cause a crash
+Bounty Reward: $100
+Files: external/dokun-ui/src/font.cpp; external/dokun-ui/src/font.hpp
+Libraries/Tools: FreeType2
+Difficulty: Easy-Intermediate
+Status: Not Filled
 
-$250 - fetch a list of monero nodes
-libraries used: ?
-difficulty: intermediate
-job status: not filled
 
-$100 - create an organized documentation on the neroshop codebase including functions, classes, etc.
-tools to use: doxygen or any other tools
-difficulty: easy
-job status: not filled
+Details: Fix issue where Mouse presses affect all overlapping GUIs when it should ONLY affect the GUI on top
+Bounty Reward: $100
+Files: 
+Libraries/Tools: 
+Difficulty: Easy-Intermediate
+Status: Not Filled
+
+
+Details: Improve Input functions (Keyboard input is received/triggered multiple times even with a single key press on X11/Linux); Replace Mouse presses with complete clicks (Mouse press and release)
+Bounty Reward: $250
+Files: external/dokun-ui/src/mouse.cpp; external/dokun-ui/src/keyboard.cpp; external/dokun-ui/src/window.cpp
+Libraries/Tools: 
+Difficulty: Intermediate
+Status: Not Filled
+
+
+Details: Fix and optimize graphics and add graphical user interface features (such as scrollbar and scrollarea); Improve current GUI elements (specifically the text edit)
+Bounty Reward: $1000-$2000
+Files: external/dokun-ui/src/renderer.cpp; external/dokun-ui/include/renderer.hpp; 
+Libraries/Tools: OpenGL, Vulkan (optional)
+Difficulty: Intermediate-Hard
+Status: Not Filled
+
+
+Details: Fix decoding error in functions using EVP_PKEY_encrypt() and EVP_PKEY_decrypt()
+Bounty Reward: $100
+Files: src/encryptor.cpp; include/encryptor.hpp
+Libraries/Tools: OpenSSL
+Difficulty: Easy-Intermediate
+Status: Not Filled
 ```
 
 
