@@ -26,8 +26,8 @@ namespace neroshop {
 class QR {
 public:
     QR();
-    QR(std::string fileName, int imgSize, std::string text,
-            bool overwriteExistingFile, QrCode::Ecc ecc);
+    QR(const std::string& filename, int image_size, const std::string& text,
+            bool overwrite, QrCode::Ecc ecc);
     ~QR();
     bool to_png() const;
     bool write_to_png(const QrCode& qr_data, const int& multiplicator) const;

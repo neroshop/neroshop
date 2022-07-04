@@ -2,7 +2,7 @@
 
 neroshop::QR::QR() {}
 ////////////////////
-neroshop::QR::QR(std::string filename, int image_size, std::string text,
+neroshop::QR::QR(const std::string& filename, int image_size, const std::string& text,
             bool overwrite, qrcodegen::QrCode::Ecc ecc) {
     this->filename = filename;
     this->size = image_size;
