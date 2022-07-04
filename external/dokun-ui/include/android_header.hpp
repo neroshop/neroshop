@@ -1,3 +1,0 @@
-#ifndef ANDROID_HEADER_HPP_DOKUN
-#define ANDROID_HEADER_HPP_DOKUN
-#endif

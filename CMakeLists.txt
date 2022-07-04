@@ -1,22 +1,35 @@
-cmake_minimum_required(VERSION 3.4.1)
+# Build neroshop
+
+cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 
 project(neroshop C CXX)
+include(ExternalProject)
 
-# setup cmake module paths
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external/monero-cpp/cmake)
+# Set cmake modules directory
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-# disallow in-source builds
-if("${CMAKE_CURRENT_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_BINARY_DIR}")
-  message(FATAL_ERROR "ERROR: In-source builds are not allowed!\n"
-  "Please create a separate directory and configure there; for example:\n"
-  "  mkdir build\n"
-  "  cd build\n"
-  "  cmake [OPTIONS] ...\n"
-  "NOTE: You must first delete the newly created CMakeCache.txt file and "
-  "CMakeFiles directory under the source directory or you will not be able to "
-  "configure correctly! For example:\n"
-  "  rm -rf CMakeCache.txt CMakeFiles")
-endif()
+# Disallow in-source builds
+include(DisallowInSourceBuilds)
+# Set CMAKE_BUILD_TYPE
+include(BuildType)
+# Detect operating system type and version
+include(DetectOS)
+# Set BUILD_SHARED_LIBS
+include(BuildShared)
+# Sets CMAKE_INSTALL_{BIN,LIB}DIR needed for multilib support
+include(GNUInstallDirs)
+# Detect compiler version
+include(DetectCompilerVersion)
+# Get compiler flags
+include(get_compiler_flags)
+# Query target architecture
+include(TargetArch)
+
+# Set compiler id
+string(TOLOWER "${CMAKE_CXX_COMPILER_ID}" COMP)
+
+# Set compiler var (will be exported to the source)
+set(COMPILER "${CMAKE_CXX_COMPILER}")
 
 # set version
 set(VERSION_MAJOR "0")
@@ -24,392 +37,201 @@ set(VERSION_MINOR "1")
 set(VERSION_PATCH "0")
 set(PROJECT_VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
 
-# set a default build type
-if(NOT CMAKE_BUILD_TYPE)
-  message(STATUS "CMAKE_BUILD_TYPE not specified, setting to 'Release'")
-  set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type. Possible values: DEBUG | RELEASE | RELWITHDEBINFO | MINSIZEREL" FORCE)
-  # Set the possible values of build type for cmake-gui
-  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
-else()
-  message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
+# Set build type (will be exported to the source)
+set(BUILD_TYPE ${CMAKE_BUILD_TYPE})
+string(TOLOWER "${BUILD_TYPE}" BUILD_TYPE)
+
+# Echo install prefix
+message(STATUS "CMAKE_INSTALL_PREFIX: " ${CMAKE_INSTALL_PREFIX})
+
+# Echo number of PEs found
+include(ProcessorCount)
+ProcessorCount(PROCESSOR_COUNT)
+if(PROCESSOR_COUNT EQUAL 0)     # if ncpus could not be determined, assign 1
+  set(PROCESSOR_COUNT "1")
 endif()
+message(STATUS "Found ${PROCESSOR_COUNT} PEs")
 
-# macro to add C++ compiler flags
-macro (add_compiler_flag flag)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}")
-endmacro (add_compiler_flag)
+set(NEROSHOP_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
-# OS-specific setup
-if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-  include_directories(/usr/include/          )
-  link_directories(/usr/lib/x86_64-linux-gnu/) # Debian/Ubuntu
-  link_directories(/usr/lib/                 ) # Arch
-elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-# ...
-elseif(${CMAKE_SYSTEM_NAME} MATCHES "Android")
-# ...
+#### Neroshop external libraries
+
+# Set external libraries install directory
+if (NOT TPL_DIR)
+  set(REL_TPL_DIR ${PROJECT_SOURCE_DIR}/external/install/${COMP}-${ARCH})
+  get_filename_component(ABS_TPL_DIR ${REL_TPL_DIR} ABSOLUTE)
+  set(TPL_DIR ${ABS_TPL_DIR} CACHE
+      STRING "Third-party (external) libraries install directory.")
 endif()
+set(TPL_INCLUDE_DIRS ${TPL_DIR}/include
+                     ${TPL_DIR}/include/common
+                     ${TPL_DIR}/include/utils
+                     ${TPL_DIR}/include/cli
+                     ${TPL_DIR}/include/crypto
+                     ${TPL_DIR}/include/storages)
+message(STATUS "Third-party (external) libraries install directory: " ${TPL_DIR})
 
-# language standard
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# Find daniele77/cli
+set(cli_DIR ${TPL_DIR}/lib/cmake/cli)
+find_package(cli REQUIRED)
 
-# compiler-specific setup
-if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-  if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-      #add_compiler_flag("-Weverything")
-      add_compiler_flag("-Wno-self-assign-field")
-   elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-      #add_compiler_flag("-Wall")
-      #add_compiler_flag("-no-pie")
-  endif()
-endif()
+# Find QrCodeGen
+find_path(QRCODEGEN_INCLUDE_DIR NAMES qrcodegen.hpp PATHS ${TPL_DIR}/qrcodegen)
+find_library(QRCODEGEN_LIBRARY libqrcodegencpp.a ${TPL_DIR}/qrcodegen)
 
-# extra libraries
-if (APPLE)
-  if (DEPENDS)
-    list(APPEND EXTRA_LIBRARIES "-framework Foundation -framework IOKit -framework AppKit")
-  else()
-    find_library(COREFOUNDATION CoreFoundation)
-    find_library(IOKIT IOKit)
-    find_library(APPKIT AppKit)
-    list(APPEND EXTRA_LIBRARIES ${IOKIT})
-    list(APPEND EXTRA_LIBRARIES ${COREFOUNDATION})
-    list(APPEND EXTRA_LIBRARIES ${APPKIT})
-  endif()
-endif()
-if (WIN32)
-  list(APPEND EXTRA_LIBRARIES setupapi)
-endif()
-if(EXTRA_LIBRARIES)
-  message(STATUS EXTRA_LIBRARIES: ${EXTRA_LIBRARIES})
-endif()
+# Find Bcrypt
+find_path(BCRYPT_INCLUDE_DIR NAMES bcrypt.h PATHS ${TPL_DIR}/bcrypt)
+find_library(BCRYPT_LIBRARY bcrypt.a ${TPL_DIR}/bcrypt)
 
-######################################
-# Protobuf (recent)
-include(FindProtobuf)
-find_package(Protobuf)
-message(STATUS "Protobuf lib: ${Protobuf_LIBRARY}, inc: ${Protobuf_INCLUDE_DIR}, protoc: ${Protobuf_PROTOC_EXECUTABLE}")
-include_directories(${Protobuf_INCLUDE_DIR})
-
-######################################
-# LibUSB (recent)
-find_library(usb_LIBRARY NAMES usb-1.0 libusb usb)
-set(LibUSB_LIBRARIES ${usb_LIBRARY})
-
-######################################
-## Boost
-set(Boost_NO_BOOST_CMAKE 1)
-set(Boost_USE_MULTITHREADED ON)
-find_package(Boost 1.58 QUIET REQUIRED COMPONENTS chrono date_time filesystem program_options regex serialization wserialization system thread)
-message(STATUS "Using Boost include dir at ${Boost_INCLUDE_DIR}")
-include_directories(${Boost_INCLUDE_DIR})
-add_definitions(-DBOOST_BIND_GLOBAL_PLACEHOLDERS) # to ignore warnings
-
-######################################
-# OpenSSL
-if (APPLE AND NOT IOS)
-  add_compiler_flag("-march=x86-64")
-  add_compiler_flag("-fvisibility=default")
-  if (NOT OPENSSL_ROOT_DIR)
-      EXECUTE_PROCESS(COMMAND brew --prefix openssl
-        OUTPUT_VARIABLE OPENSSL_ROOT_DIR
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-    message(STATUS "Using OpenSSL found at ${OPENSSL_ROOT_DIR}")
-  endif()
-endif()
+# Find Lua
+find_package(Lua REQUIRED)
+# Find FreeType
+find_package(Freetype REQUIRED)
+# Find Curl
+find_package(CURL REQUIRED)
+# Find OpenSSL
 find_package(OpenSSL REQUIRED)
-message(STATUS "Using OpenSSL include dir at ${OPENSSL_INCLUDE_DIR}")
-include_directories(${OPENSSL_INCLUDE_DIR})
-
-if(STATIC AND NOT IOS)
-  if(UNIX)
-    set(OPENSSL_LIBRARIES "${OPENSSL_LIBRARIES};${CMAKE_DL_LIBS};${CMAKE_THREAD_LIBS_INIT}")
-  endif()
-endif()
-
-######################################
-# libsodium
-include_directories(external/monero-cpp/external/libsodium/include)
-include_directories(external/monero-cpp/external/libsodium/include/sodium)
-find_library(SODIUM_LIBRARY sodium REQUIRED)
-message(STATUS "Using libsodium library at ${SODIUM_LIBRARY}")
-
-######################################
-# HIDAPI
-if(APPLE)
-  include_directories(SYSTEM /usr/include/malloc)
-  if(POLICY CMP0042)
-    cmake_policy(SET CMP0042 NEW)
-  endif()
-endif()
-
-if (APPLE AND NOT IOS)
-  add_compiler_flag("-march=x86-64")
-  add_compiler_flag("-fvisibility=default")
-  if (NOT OPENSSL_ROOT_DIR)
-      EXECUTE_PROCESS(COMMAND brew --prefix openssl
-        OUTPUT_VARIABLE OPENSSL_ROOT_DIR
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-    message(STATUS "Using OpenSSL found at ${OPENSSL_ROOT_DIR}")
-  endif()
-endif()
-
-find_package(HIDAPI)
-if(HIDAPI_FOUND)
-    message(STATUS "Using HIDAPI include dir at ${HIDAPI_INCLUDE_DIR}")
-    add_definitions(-DHAVE_HIDAPI)
-    include_directories(${HIDAPI_INCLUDE_DIR})
-else()
-    message("HIDAPI libraries not found. Will manually set libraries.")
-    if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-        set(udev_src libudev.so)
-        set(hidapi_src ${udev_src} libhidapi-libusb.so) # or libhidapi-hidraw.so # has to be dynamically linked or you'll get "undefined reference to `libusb_get_device_address'" error
-    endif()
-endif()
-
-######################################
-# Monero
-
-# header includes
-set(MONERO_PROJECT "${CMAKE_SOURCE_DIR}/external/monero-cpp/external/monero-project")
-set(MONERO_PROJECT_SRC "${MONERO_PROJECT}/src")
-include_directories("${MONERO_PROJECT}/contrib/epee/include")
-include_directories("${MONERO_PROJECT}/external/")
-include_directories("${MONERO_PROJECT}/external/easylogging++")
-include_directories("${MONERO_PROJECT}/external/rapidjson/include")
-include_directories("${MONERO_PROJECT_SRC}/")
-include_directories("${MONERO_PROJECT_SRC}/wallet")
-include_directories("${MONERO_PROJECT_SRC}/wallet/api")
-include_directories("${MONERO_PROJECT_SRC}/crypto/crypto_ops_builder/include/")
-
-set(MONERO_PROJECT_BUILD "${MONERO_PROJECT}/build/release")
-message(STATUS "Using monero-project build" : ${MONERO_PROJECT_BUILD})
-
-add_library(wallet_merged STATIC IMPORTED)
-set_target_properties(wallet_merged PROPERTIES IMPORTED_LOCATION
-    ${MONERO_PROJECT_BUILD}/lib/libwallet_merged.a)
-    
-add_library(wallet STATIC IMPORTED)
-set_target_properties(wallet PROPERTIES IMPORTED_LOCATION
-    ${MONERO_PROJECT_BUILD}/lib/libwallet.a)
-    
-add_library(wallet_crypto STATIC IMPORTED)
-set_target_properties(wallet_crypto PROPERTIES IMPORTED_LOCATION
-    ${MONERO_PROJECT_BUILD}/src/crypto/wallet/libwallet-crypto.a)
-    
-add_library(lmdb STATIC IMPORTED)
-set_target_properties(lmdb PROPERTIES IMPORTED_LOCATION
-    ${MONERO_PROJECT_BUILD}/external/db_drivers/liblmdb/liblmdb.a)
-    
-add_library(epee STATIC IMPORTED)
-set_target_properties(epee PROPERTIES IMPORTED_LOCATION
-    ${MONERO_PROJECT_BUILD}/contrib/epee/src/libepee.a)
-    
-add_library(unbound STATIC IMPORTED)
-set_target_properties(unbound PROPERTIES IMPORTED_LOCATION
-    ${MONERO_PROJECT_BUILD}/external/unbound/libunbound.a)
-    
-add_library(easylogging STATIC IMPORTED)
-set_target_properties(easylogging PROPERTIES IMPORTED_LOCATION
-    ${MONERO_PROJECT_BUILD}/external/easylogging++/libeasylogging.a)
-
-add_library(cryptonote_core STATIC IMPORTED)
-set_target_properties(cryptonote_core PROPERTIES IMPORTED_LOCATION
-    ${MONERO_PROJECT_BUILD}/src/cryptonote_core/libcryptonote_core.a)
-
-add_library(cryptonote_basic STATIC IMPORTED)
-set_target_properties(cryptonote_basic PROPERTIES IMPORTED_LOCATION
-    ${MONERO_PROJECT_BUILD}/src/cryptonote_basic/libcryptonote_basic.a)
-# new addition [2021-10-02]
-add_library(cryptonote_format_utils_basic STATIC IMPORTED)
-set_target_properties(cryptonote_format_utils_basic PROPERTIES IMPORTED_LOCATION
-    ${MONERO_PROJECT_BUILD}/src/cryptonote_basic/libcryptonote_format_utils_basic.a)
-    
-add_library(mnemonics STATIC IMPORTED)
-set_target_properties(mnemonics PROPERTIES IMPORTED_LOCATION
-    ${MONERO_PROJECT_BUILD}/src/mnemonics/libmnemonics.a)
-
-add_library(common STATIC IMPORTED)
-set_target_properties(common PROPERTIES IMPORTED_LOCATION
-    ${MONERO_PROJECT_BUILD}/src/common/libcommon.a)
-
-add_library(cncrypto STATIC IMPORTED)
-set_target_properties(cncrypto PROPERTIES IMPORTED_LOCATION
-    ${MONERO_PROJECT_BUILD}/src/crypto/libcncrypto.a)
-
-add_library(ringct STATIC IMPORTED)
-set_target_properties(ringct PROPERTIES IMPORTED_LOCATION
-    ${MONERO_PROJECT_BUILD}/src/ringct/libringct.a)
-
-add_library(ringct_basic STATIC IMPORTED)
-set_target_properties(ringct_basic PROPERTIES IMPORTED_LOCATION
-    ${MONERO_PROJECT_BUILD}/src/ringct/libringct_basic.a)
-
-add_library(blockchain_db STATIC IMPORTED)
-set_target_properties(blockchain_db PROPERTIES IMPORTED_LOCATION
-    ${MONERO_PROJECT_BUILD}/src/blockchain_db/libblockchain_db.a)
-
-add_library(blocks STATIC IMPORTED)
-set_target_properties(blocks PROPERTIES IMPORTED_LOCATION
-    ${MONERO_PROJECT_BUILD}/src/blocks/libblocks.a)
-
-add_library(checkpoints STATIC IMPORTED)
-set_target_properties(checkpoints PROPERTIES IMPORTED_LOCATION
-    ${MONERO_PROJECT_BUILD}/src/checkpoints/libcheckpoints.a)
-
-add_library(device STATIC IMPORTED)
-set_target_properties(device PROPERTIES IMPORTED_LOCATION
-    ${MONERO_PROJECT_BUILD}/src/device/libdevice.a)
-    
-add_library(device_trezor STATIC IMPORTED)
-set_target_properties(device_trezor PROPERTIES IMPORTED_LOCATION
-    ${MONERO_PROJECT_BUILD}/src/device_trezor/libdevice_trezor.a)
-
-add_library(multisig STATIC IMPORTED)
-set_target_properties(multisig PROPERTIES IMPORTED_LOCATION
-    ${MONERO_PROJECT_BUILD}/src/multisig/libmultisig.a)
-
-add_library(version STATIC IMPORTED)
-set_target_properties(version PROPERTIES IMPORTED_LOCATION
-    ${MONERO_PROJECT_BUILD}/src/libversion.a)
-    
-add_library(randomx STATIC IMPORTED)
-set_target_properties(randomx PROPERTIES IMPORTED_LOCATION
-    ${MONERO_PROJECT_BUILD}/external/randomx/librandomx.a)
-
-######################################
-set(MONERO_LIBRARIES wallet_merged wallet_crypto wallet lmdb epee unbound easylogging cryptonote_core cryptonote_basic cryptonote_format_utils_basic mnemonics ringct ringct_basic common cncrypto blockchain_db blocks checkpoints device device_trezor multisig version randomx 
-${Boost_LIBRARIES} ${Protobuf_LIBRARY} ${LibUSB_LIBRARIES} ${OPENSSL_LIBRARIES} ${SODIUM_LIBRARY} ${HIDAPI_LIBRARY} ${EXTRA_LIBRARIES})
-
-######################################
-# monero-cpp (wrapper)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/monero-cpp/src/)
-set(monero_cpp_src
-    external/monero-cpp/src/utils/gen_utils.cpp
-    external/monero-cpp/src/utils/monero_utils.cpp
-    external/monero-cpp/src/daemon/monero_daemon_model.cpp
-    external/monero-cpp/src/daemon/monero_daemon.cpp
-    external/monero-cpp/src/wallet/monero_wallet_model.cpp
-    external/monero-cpp/src/wallet/monero_wallet_keys.cpp
-    external/monero-cpp/src/wallet/monero_wallet_full.cpp
-)
-
-######################################
-# libbcrypt
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/libbcrypt)
-set(bcrypt_src external/libbcrypt/crypt_blowfish/crypt_blowfish.c external/libbcrypt/crypt_blowfish/crypt_gensalt.c external/libbcrypt/crypt_blowfish/wrapper.c external/libbcrypt/bcrypt.c)
-
-######################################
-# QR-Code-generator
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/QR-Code-generator/cpp)
-set(qr_code_generator_src ${CMAKE_CURRENT_SOURCE_DIR}/external/QR-Code-generator/cpp/qrcodegen.cpp) # or ${CMAKE_CURRENT_SOURCE_DIR}/external/QR-Code-generator/c/qrcodegen.c
-
-######################################
-# json
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/json/single_include)
-
-######################################
-# curl
-find_package(CURL) # if curl is found on the system, use the system default shared library, otherwise use the curl that we've built from source
-if(CURL_FOUND)
-    include_directories(${CURL_INCLUDE_DIRS})
-    set(curl_src ${CURL_LIBRARIES})
-endif()
-if(NOT CURL_FOUND)
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/curl/include ${CMAKE_CURRENT_SOURCE_DIR}/external/curl/lib)
-    set(curl_src ${CMAKE_CURRENT_SOURCE_DIR}/external/curl/lib/.libs/libcurl.a)
-    message("-- Using CURL: ${CURL_LIBRARIES} (v${CURL_VERSION_STRING})")
-    add_definitions(-DCURL_STATICLIB)
-    set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -lldap -llber -lnghttp2 -lpsl -lidn2 -lbrotlidec -lzstd -lrtmp") # I guess if we build curl statically we need all libs to also be static, which is unrealistic since most libs on linux-gnu are shared libs # https://stackoverflow.com/questions/68368557/linking-nghttp2-static-library#comment120830125_68368557
-endif()
-
-######################################
-# lmdb
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/monero-cpp/external/monero-project/external/db_drivers/liblmdb)
-
-######################################
-# dokun-ui_dependencies
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/lua/lua-5.4.1/src) # lua
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/glew/include)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/png ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/zlib)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/freetype/include                   # public headers - ft2build.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/freetype/include/freetype           # public headers
-   ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/freetype/include/freetype/config    # public config headers
-   ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/freetype/include/freetype/internal) # private headers - added 2019-07-29
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/ogg/include)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/vorbis/include
-   ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/vorbis/lib)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/theora/include)
-#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/utf8/source)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/openal/include
-   ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/openal-soft/include)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/jpeg
-   ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/jpeg/jpeg-6b)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/tiff/libtiff)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/gif/lib)
-include_directories(#[[${CMAKE_CURRENT_SOURCE_DIR}/external/flac]] # config.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/flac/include
-   ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/flac/src/libFLAC/include) # for "private/cpu.h"
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/external/glm)
-
-if(WIN32)
-set(winsocket_src ws2_32.lib            ) # -lglfw3 -lgdi32 -lopengl32 -limm32
-endif()
-
-if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-set(OpenGL_GL_PREFERENCE "LEGACY"                   ) # LEGACY(libGL.so) OR GLVND(libOpenGL.so and libGLX.so)
-set(posix_src  libpthread.so libdl.so libm.so       )
-endif() # -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo
-
-######################################
-# dokun-ui
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/include)
-set(dokun_ui_src ${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui/src/libdokun-ui.a) # definitions added: DOKUN_OPENGL, DOKUN_BUILD_LIBRARY#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/dokun-ui)
-
-######################################
-# neroshop
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-link_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
-set(neroshop_src src/buyer.cpp #[[src/carrier.cpp]] src/cart.cpp src/catalog.cpp src/client.cpp src/converter.cpp src/database.cpp src/encryptor.cpp src/icon.cpp src/item.cpp src/main.cpp src/message.cpp src/order.cpp src/qr.cpp src/seller.cpp src/server.cpp src/user.cpp src/validator.cpp src/wallet.cpp)
-add_definitions(-DNEROSHOP_DEBUG) # for more detailed debugging, use -DNEROSHOP_DEBUG0
-
+# Find Threads
+set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+find_package(Threads REQUIRED)
+# Find OpenGL
+set(OpenGL_GL_PREFERENCE "LEGACY")
 find_package(X11 REQUIRED)
 find_package(OpenGL REQUIRED)
 
-# daemon executable
+# Find dokun-ui
+find_path(DOKUNUI_INCLUDE_DIR NAMES image.hpp PATHS ${TPL_DIR}/include/dokun-ui)
+find_library(DOKUNUI_LIBRARY libdokun-ui.a ${TPL_DIR}/lib)
+
+# Find Monero
+find_library(MONEROCPP_LIBRARIES libmonero-cpp.so ${TPL_DIR}/lib)
+
+# Find Boost
+find_package(Boost REQUIRED COMPONENTS serialization)
+
+#### Neroshop
+
+# server library
+add_library(server ${NEROSHOP_SOURCE_DIR}/server.cpp)
+target_include_directories(server PUBLIC ${NEROSHOP_SOURCE_DIR})
+set_target_properties(server PROPERTIES LIBRARY_OUTPUT_NAME neroshop_server)
+install(TARGETS server
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Runtime
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Runtime
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Development
+)
+
+# client library
+add_library(client ${NEROSHOP_SOURCE_DIR}/client.cpp)
+target_include_directories(client PUBLIC ${NEROSHOP_SOURCE_DIR})
+set_target_properties(client PROPERTIES LIBRARY_OUTPUT_NAME neroshop_client)
+install(TARGETS client
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Runtime
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Runtime
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Development
+)
+
+# configure neroshop daemon executable
 set(DAEMON_EXECUTABLE "neromon")
 add_executable(${DAEMON_EXECUTABLE}
-               src/daemon.cpp
-               src/server.cpp
-)
-target_link_libraries(${DAEMON_EXECUTABLE}
-                      ${dokun_ui_src}
-                      ${posix_src}
+               ${NEROSHOP_SOURCE_DIR}/daemon.cpp)
+target_include_directories(${DAEMON_EXECUTABLE} PUBLIC ${NEROSHOP_SOURCE_DIR})
+target_link_libraries(${DAEMON_EXECUTABLE} server)
+install(TARGETS ${DAEMON_EXECUTABLE}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Runtime
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Runtime
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Development)
+message(STATUS "Target ${DAEMON_EXECUTABLE} configured")
+
+# configure neroshop cli executable
+set(CLI_EXECUTABLE "neroshop-cli")
+add_executable(${CLI_EXECUTABLE}
+               ${CMAKE_BINARY_DIR}/project_config.cpp
+               ${NEROSHOP_SOURCE_DIR}/cli.cpp)
+target_include_directories(${CLI_EXECUTABLE} PUBLIC
+                           ${NEROSHOP_SOURCE_DIR}
+                           ${PROJECT_BINARY_DIR}
+                           ${TPL_INCLUDE_DIRS})
+target_link_libraries(${CLI_EXECUTABLE} PRIVATE client cli::cli)
+install(TARGETS ${CLI_EXECUTABLE}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Runtime
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Runtime
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Development)
+message(STATUS "Target ${CLI_EXECUTABLE} configured")
+
+# configure neroshop cli executable
+set(GUI_EXECUTABLE "neroshop-gui")
+add_executable(${GUI_EXECUTABLE}
+               ${CMAKE_BINARY_DIR}/project_config.cpp
+               ${NEROSHOP_SOURCE_DIR}/qr.cpp
+               ${NEROSHOP_SOURCE_DIR}/buyer.cpp
+               ${NEROSHOP_SOURCE_DIR}/cart.cpp
+               ${NEROSHOP_SOURCE_DIR}/catalog.cpp
+               ${NEROSHOP_SOURCE_DIR}/converter.cpp
+               ${NEROSHOP_SOURCE_DIR}/database.cpp
+               ${NEROSHOP_SOURCE_DIR}/encryptor.cpp
+               ${NEROSHOP_SOURCE_DIR}/icon.cpp
+               ${NEROSHOP_SOURCE_DIR}/item.cpp
+               ${NEROSHOP_SOURCE_DIR}/main.cpp
+               ${NEROSHOP_SOURCE_DIR}/message.cpp
+               ${NEROSHOP_SOURCE_DIR}/order.cpp
+               ${NEROSHOP_SOURCE_DIR}/qr.cpp
+               ${NEROSHOP_SOURCE_DIR}/seller.cpp
+               ${NEROSHOP_SOURCE_DIR}/server.cpp
+               ${NEROSHOP_SOURCE_DIR}/user.cpp
+               ${NEROSHOP_SOURCE_DIR}/validator.cpp
+               ${NEROSHOP_SOURCE_DIR}/wallet.cpp)
+target_include_directories(${GUI_EXECUTABLE} PUBLIC
+                           ${NEROSHOP_SOURCE_DIR}
+                           ${PROJECT_BINARY_DIR}
+                           ${TPL_INCLUDE_DIRS}
+                           ${QRCODEGEN_INCLUDE_DIR}
+                           ${BCRYPT_INCLUDE_DIR}
+                           ${DOKUNUI_INCLUDE_DIR}
+                           ${LUA_INCLUDE_DIR}
+                           ${FREETYPE_INCLUDE_DIRS})
+target_link_libraries(${GUI_EXECUTABLE}
+                      client
+                      ${QRCODEGEN_LIBRARY}
+                      ${CURL_LIBRARIES}
+                      ${DOKUNUI_LIBRARY}
+                      ${OPENSSL_CRYPTO_LIBRARIES}
                       ${X11_LIBRARIES}
                       ${OPENGL_LIBRARIES}
-)
+                      ${MONEROCPP_LIBRARIES}
+                      ${Boost_LIBRARIES}
+                      ${BCRYPT_LIBRARY}
+                      Threads::Threads dl)
+install(TARGETS ${GUI_EXECUTABLE}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Runtime
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Runtime
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Development)
+message(STATUS "Target ${GUI_EXECUTABLE} configured")
 
-# neroshop executable
-set(NEROSHOP_EXECUTABLE "neroshop")
-add_executable(${NEROSHOP_EXECUTABLE}
-               ${neroshop_src}
-               ${monero_cpp_src}
-               ${bcrypt_src}
-               ${qr_code_generator_src}
-)
-target_link_libraries(${NEROSHOP_EXECUTABLE}
-                      ${curl_src}
-                      ${MONERO_LIBRARIES}
-                      ${dokun_ui_src}
-                      ${posix_src}
-                      ${X11_LIBRARIES}
-                      ${OPENGL_LIBRARIES}
-)
+#### Testing
 
-set(EXECUTABLES ${DAEMON_EXECUTABLE}
-                ${NEROSHOP_EXECUTABLE})
+option(ENABLE_TESTS "Enable tests" ON)
+if (NOT ENABLE_TESTS)
+  message(STATUS "Tests disabled")
+else()
+  enable_testing()
+  add_subdirectory(${PROJECT_SOURCE_DIR}/test)
+endif()
 
-message(STATUS "C compiler flags: '${CMAKE_C_FLAGS}'")
-message(STATUS "C++ compiler flags: '${CMAKE_CXX_FLAGS}'")
+# Grab current date to stick into the executables
+execute_process(COMMAND "date" "--utc" OUTPUT_VARIABLE BUILD_DATE)
+string(REGEX REPLACE "[\r\n]" "" BUILD_DATE "${BUILD_DATE}")
+
+# Save contents of license file and copyright info in cmake variables
+file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE" LICENSE)
+string(REGEX REPLACE "All rights reserved\.*" "All rights reserved. See LICENSE for details." COPYRIGHT "${LICENSE}")
+string(REGEX REPLACE ";" "\\\\n" COPYRIGHT "${COPYRIGHT}")
+string(REGEX REPLACE ";" "\\\\n" LICENSE "${LICENSE}")
+string(REGEX REPLACE "\"" "\\\\\"" LICENSE "${LICENSE}")
+
+# Configure cmake variables to pass to the build
+configure_file( "${NEROSHOP_SOURCE_DIR}/project_config.hpp.in"
+                "${PROJECT_BINARY_DIR}/project_config.hpp" )
+configure_file( "${NEROSHOP_SOURCE_DIR}/project_config.cpp.in"
+                "${PROJECT_BINARY_DIR}/project_config.cpp" )

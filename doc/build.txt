@@ -1,0 +1,10 @@
+# vim: filetype=sh:
+
+# clone neroshop
+git clone https://github.com/neroshop/neroshop.git && cd neroshop
+# build external libs
+mkdir -p external/build && cd external/build && cmake .. && make && cd -
+# build neroshop
+mkdir build && cd build && cmake .. && make && cd -
+# test neroshop (optional)
+cd build && ctest

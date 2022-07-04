@@ -1,4 +1,4 @@
-#include "../include/wallet.hpp"
+#include "wallet.hpp"
 ////////////////////
 ////////////////////
 // constructors and destructors

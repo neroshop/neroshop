@@ -1,11 +1,4 @@
-# Build files
+*~
+*sw?
 build/
-
-# To prevent build files from submodules being tracked
-external/monero-cpp/*
-external/libbcrypt/*
-external/json/*
-external/QR-Code-generator/*
-external/curl/*
-external/dokun-ui/*
-external/udp-discovery-cpp/*
+install/

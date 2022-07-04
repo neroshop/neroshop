@@ -1,0 +1,36 @@
+# vim: filetype=dockerfile:
+#
+# Install neroshop external libraries and build neroshop on debian linux
+#
+# Basic usage:
+# * Build image: docker build -f debian -t neroshop .
+# * Run command shell inside image: docker run -ti neroshop
+# * Squash layers: docker-squash --cleanup neroshop -t neroshop:build
+
+FROM debian:bullseye
+
+# Install system-wide prerequisites
+RUN apt-get update -y && apt-get install -y git cmake g++ pkg-config libssl-dev libminiupnpc-dev libboost-chrono-dev libboost-date-time-dev libboost-filesystem-dev libboost-locale-dev libboost-program-options-dev libboost-regex-dev libboost-serialization-dev libboost-system-dev libboost-thread-dev libzmq3-dev libhidapi-dev libprotobuf-dev libusb-dev libglu1-mesa-dev liblua5.3-dev libfreetype-dev libcurl4-openssl-dev libjpeg-dev libgif-dev libtiff-dev libglm-dev
+
+# Clone neroshop
+RUN git clone https://github.com/neroshop/neroshop.git
+ARG COMMIT
+RUN cd neroshop && git checkout $COMMIT && git log -1 HEAD
+
+# Build external libs
+RUN cd neroshop && mkdir -p external/build && cd external/build && cmake .. && make -sj$(grep -c processor /proc/cpuinfo)
+
+# Clean up
+RUN rm -rf neroshop/external/build
+
+# The commands below can be used to build and test neroshop if anything
+# upstream is updated. After no error, they should remain commented so this
+# image can be used in continuous integration (1) to a generate docker image
+# with only the external libraries installed using this file, followed by (2)
+# running only a neroshop build/test cycle on top of this pre-build image. See
+# also <neroshop>/.github/workflows/debug.yml.
+
+# Build neroshop
+#RUN cd neroshop && mkdir -p build && cd build && cmake .. && make -sj$(grep -c processor /proc/cpuinfo)
+# Run tests
+#RUN cd neroshop/build && ctest -j$(grep -c processor /proc/cpuinfo)
