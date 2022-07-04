@@ -12,7 +12,7 @@ https://docs.huihoo.com/xapian/docs/quickstart.html
 
 Advertisement document fields:
 ------------------------------
-* Category (select from existing list or add new category)
+* Category (select from existing list (including "digital product or service), add new category)
 * Title (text)
 * Description (text)
 * Price (number)
