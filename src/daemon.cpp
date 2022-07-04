@@ -60,10 +60,12 @@ int main( int argc, char **argv ) {
 
   std::string welcome( "This is the daemon of neroshop. It can run standalone "
     "or as a daemon in the\nbackground using --detach. You can use " +
-     neroshop::cli_executable() + " to interact with it.\n" );
+     neroshop::cli_executable() + " to interact with it." );
+
+  std::string usage( "Usage: " + neroshop::daemon_executable() + " [OPTIONS]" );
 
   // Supported command line arguments
-  po::options_description desc("Arguments");
+  po::options_description desc("Options");
   desc.add_options()
     ("help", "Show help message")
     ("version", "Show version information")
@@ -77,12 +79,14 @@ int main( int argc, char **argv ) {
   po::store( po::parse_command_line(argc, argv, desc), vm );
   po::notify( vm );
 
+  // Defaults
   int server_port = 1234;
-  std::string db_name;
+  std::string db_name( "neroshop_test" );
 
   if (vm.count( "help" )) {
 
-    std::cout << version << '\n' << welcome << '\n' << desc << '\n';
+    std::cout << version << "\n\n" << welcome << "\n\n" << usage << "\n\n"
+              << desc << '\n';
     return 1;
 
   } else if (vm.count( "version" )) {
@@ -103,7 +107,16 @@ int main( int argc, char **argv ) {
 
     db_name = vm[ "db" ].as< std::string >();
 
-  } else if (vm.count( "detach" )) {
+  }
+
+  if (db_name.empty()) {
+    std::cerr << "Need a database name\n";
+    return -1;
+  }
+
+  std::cout << version << '\n';
+
+  if (vm.count( "detach" )) {
 
     std::cout << "Running in daemon mode.\n";
 
@@ -161,10 +174,7 @@ int main( int argc, char **argv ) {
 
   }
 
-  if (db_name.empty()) {
-    std::cerr << "Need a database name\n";
-    return -1;
-  }
+  std::cout << "Using database: " << db_name << '\n';
 
   // Start server
   std::atexit(close_server);
