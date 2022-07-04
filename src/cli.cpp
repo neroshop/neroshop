@@ -94,15 +94,14 @@ int main() {
         "Disable colors" );
 
       auto connectCmd = rootMenu -> Insert(
-        "connect",
+        "connect", { "hostname", "port" },
         [&](std::ostream& out, const std::string& host, int port ) {
           connect( host, port );
         },
-        "Connect to a neroshop daemon. The first argument <string> specifies\n"
-        "\ta hostname or an IPv4 address in standard dot notation. The default\n"
-        "\thostname is 'localhost'. See also 'man gethostbyname'. The second\n"
-        "\targument <int> is an integer specifying a port. The default port is\n"
-        "\t1234." );
+        "Connect to a neroshop daemon. The first argument specifies a\n"
+        "\thostname or an IPv4 address in standard dot notation. The default\n"
+        "\tis 'localhost'. See also 'man gethostbyname'. The second argument\n"
+        "\tis an integer specifying a port. The default port is 1234." );
 
       auto disconnectCmd = rootMenu -> Insert(
         "disconnect",
