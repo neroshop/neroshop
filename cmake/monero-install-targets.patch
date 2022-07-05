@@ -1,8 +1,8 @@
 diff --git a/contrib/epee/src/CMakeLists.txt b/contrib/epee/src/CMakeLists.txt
-index 15e7687..3b056e9 100644
+index 15e7687..13e42ea 100644
 --- a/contrib/epee/src/CMakeLists.txt
 +++ b/contrib/epee/src/CMakeLists.txt
-@@ -46,6 +46,69 @@ if (BUILD_GUI_DEPS)
+@@ -46,6 +46,70 @@ if (BUILD_GUI_DEPS)
      endif()
      install(TARGETS epee
          ARCHIVE DESTINATION ${lib_folder})
@@ -67,6 +67,7 @@ index 15e7687..3b056e9 100644
 +                  ../include/serialization/keyvalue_serialization.h
 +                  DESTINATION include/serialization)
 +    install(FILES ../../../external/easylogging++/easylogging++.h
++                  ../../../external/easylogging++/easylogging++.cc
 +                  ../../../external/easylogging++/ea_config.h
 +                  DESTINATION include/utils)
      if (USE_READLINE AND GNU_READLINE_FOUND)

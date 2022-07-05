@@ -37,6 +37,11 @@ set(VERSION_MINOR "1")
 set(VERSION_PATCH "0")
 set(PROJECT_VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
 
+# Set the requirement for the C++ standard
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+message(STATUS "Required language standard: C++${CMAKE_CXX_STANDARD}")
+
 # Set build type (will be exported to the source)
 set(BUILD_TYPE ${CMAKE_BUILD_TYPE})
 string(TOLOWER "${BUILD_TYPE}" BUILD_TYPE)
@@ -85,16 +90,21 @@ find_library(BCRYPT_LIBRARY bcrypt.a ${TPL_DIR}/bcrypt)
 
 # Find Lua
 find_package(Lua REQUIRED)
+
 # Find FreeType
 find_package(Freetype REQUIRED)
+
 # Find Curl
 find_package(CURL REQUIRED)
+
 # Find OpenSSL
 find_package(OpenSSL REQUIRED)
+
 # Find Threads
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 find_package(Threads REQUIRED)
+
 # Find OpenGL
 set(OpenGL_GL_PREFERENCE "LEGACY")
 find_package(X11 REQUIRED)
@@ -115,6 +125,10 @@ find_package(ZMQ REQUIRED)
 
 # Find Xapian
 find_package(Xapian REQUIRED)
+
+# Find easylogging++
+find_package(EASYLOGGINGPP REQUIRED)
+add_definitions(-DAUTO_INITIALIZE_EASYLOGGINGPP)
 
 #### Neroshop
 
@@ -142,10 +156,13 @@ install(TARGETS client
 set(DAEMON_EXECUTABLE "neromon")
 add_executable(${DAEMON_EXECUTABLE}
                ${NEROSHOP_SOURCE_DIR}/daemon.cpp
+               ${TPL_DIR}/include/utils/easylogging++.cc
                ${CMAKE_BINARY_DIR}/project_config.cpp)
-target_include_directories(${DAEMON_EXECUTABLE} PUBLIC ${NEROSHOP_SOURCE_DIR}
-                           ${PROJECT_BINARY_DIR})
-target_link_libraries(${DAEMON_EXECUTABLE} server
+target_include_directories(${DAEMON_EXECUTABLE} PUBLIC
+                           ${NEROSHOP_SOURCE_DIR}
+                           ${PROJECT_BINARY_DIR}
+                           ${TPL_INCLUDE_DIRS})
+target_link_libraries(${DAEMON_EXECUTABLE}
                       ${Boost_LIBRARIES}
                       ${XAPIAN_LIBRARIES}
                       ${ZMQ_LIBRARIES}
@@ -166,7 +183,7 @@ target_include_directories(${CLI_EXECUTABLE} PUBLIC
                            ${PROJECT_BINARY_DIR}
                            ${TPL_INCLUDE_DIRS})
 target_link_libraries(${CLI_EXECUTABLE} PRIVATE
-                      client cli::cli
+                      cli::cli
                       ${ZMQ_LIBRARIES})
 install(TARGETS ${CLI_EXECUTABLE}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Runtime

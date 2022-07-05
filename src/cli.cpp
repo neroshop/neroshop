@@ -51,7 +51,7 @@ void db_query( bool connected, zmq::socket_t& socket, const std::string& query )
 
   // wait for reply from server
   zmq::message_t reply{};
-  socket.recv( reply, zmq::recv_flags::none );
+  auto res = socket.recv( reply, zmq::recv_flags::none );
   std::cout << reply.to_string() << std::endl;
 }
 
