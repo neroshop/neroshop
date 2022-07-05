@@ -1,169 +1,184 @@
-#include "cli/cli.h"
-#include "cli/clilocalsession.h"
-#include "cli/loopscheduler.h"
+#include <cli/cli.h>
+#include <cli/clilocalsession.h>
+#include <cli/loopscheduler.h>
+#include <zmq.hpp>
 
 #include "project_config.hpp"
-#include "client.hpp"
 
-neroshop::Client * client = neroshop::Client::get_main_client();
+using namespace neroshop;
 
 // *****************************************************************************
-void connect( const std::string& host, int port )
+void connect( zmq::socket_t& socket, const std::string& host, int port )
 {
-  using namespace neroshop;
-
-  if (client->connected()) {
-    std::cout << "Alredy connected." << std::endl;
-    return;
-  }
-
-  std::cout << "Client connecting to neroshop daemon " << host << ':' << port
-            << " ... ";
-
-  if (not client->connect( port, host ))
-    std::cout << "failed." << std::endl;
-  else
-    if (client->read() == "accept") std::cout << "connected." << std::endl;
+  std::cout << "Connecting to neroshop daemon " << host << ':' << port << '\n';
+  socket.connect( "tcp://" + host + ':' + std::to_string(port) );
 }
 
 // *****************************************************************************
-void status()
+void disconnect( bool& connected, zmq::socket_t& socket,
+                 const std::string& host, int port )
 {
-  using namespace neroshop;
+  if (connected) {
+    socket.disconnect( "tcp://" + host + ':' + std::to_string(port) );
+    std::cout << "Disconnected." << std::endl;
+  } else {
+    std::cout << "Not connected." << std::endl;
+  }
+  connected = false;
+}
 
-  if (client->connected())
+// *****************************************************************************
+void status( bool connected )
+{
+  if (connected)
     std::cout << "Connected." << std::endl;
   else
     std::cout << "Not connected." << std::endl;
 }
 
 // *****************************************************************************
-void disconnect()
+void db_query( bool connected, zmq::socket_t& socket, const std::string& query )
 {
-  using namespace neroshop;
-
-  if (client->connected()) {
-    client->disconnect();
-    std::cout << "Disconnected." << std::endl;
-  } else {
-    std::cout << "Not connected." << std::endl;
+  if (not connected) {
+    std::cout << "Not connected. Use 'connect' to connect to a "
+                 "neroshop daemon." << std::endl;
+    return;
   }
+
+  // send message
+  const std::string q( "db " + query );
+  socket.send( zmq::message_t(q), zmq::send_flags::none );
+
+  // wait for reply from server
+  zmq::message_t reply{};
+  socket.recv( reply, zmq::recv_flags::none );
+  std::cout << reply.to_string() << std::endl;
 }
+
 
 using namespace cli;
 
 // *****************************************************************************
 int main() {
   try {
-      // Display initial info
-      std::cout << "Neroshop: " << neroshop::cli_executable() << " v"
-                << neroshop::project_version() << '-'
-                << neroshop::build_type() << '\n'
-                << "This is the command line client of neroshop.\nIt needs to "
-                   "connect to a neroshop daemon to work correctly.\n"
-                << "Logging to ...\n"
-                   "Type 'help' to list the available commands.\n";
+    // Display initial info
+    std::cout << "Neroshop: " << cli_executable() << " v"
+              << project_version() << '-'
+              << build_type() << '\n'
+              << "This is the command line client of neroshop.\nIt needs to "
+                 "connect to a neroshop daemon to work correctly.\n"
+              << "Logging to ...\n"
+                 "Type 'help' to list the available commands.\n";
 
-      // Setup neroshop cli commands
-      CmdHandler colorCmd;
-      CmdHandler nocolorCmd;
+    // Setup neroshop cli commands
+    CmdHandler colorCmd;
+    CmdHandler nocolorCmd;
 
-      std::string default_hostname = "localhost";
-      int default_port = 1234;
+    std::string host = "localhost";
+    int port = 1234;
+    bool connected = false;
 
-      auto rootMenu = std::make_unique< Menu >( "neroshop" );
+    // initialize the zmq context with a single IO thread
+    zmq::context_t context{ 1 };
 
-      colorCmd = rootMenu -> Insert(
-        "color",
-        [&](std::ostream& out) {
-          out << "Colors ON\n";
-          SetColor();
-          colorCmd.Disable();
-          nocolorCmd.Enable();
-        },
-        "Enable colors" );
+    // construct a REQ (request) socket and connect to interface
+    zmq::socket_t socket{ context, zmq::socket_type::req };
 
-      nocolorCmd = rootMenu -> Insert(
-        "nocolor",
-        [&](std::ostream& out) {
-          out << "Colors OFF\n";
-          SetNoColor();
-          colorCmd.Enable();
-          nocolorCmd.Disable();
-        },
-        "Disable colors" );
+    auto rootMenu = std::make_unique< Menu >( "neroshop" );
 
-      auto connectCmd = rootMenu -> Insert(
-        "connect", { "hostname", "port" },
-        [&](std::ostream& out, const std::string& host, int port ) {
-          connect( host, port );
-        },
-        "Connect to a neroshop daemon. The first argument specifies a\n"
-        "\thostname or an IPv4 address in standard dot notation. The default\n"
-        "\tis 'localhost'. See also 'man gethostbyname'. The second argument\n"
-        "\tis an integer specifying a port. The default port is 1234." );
+    colorCmd = rootMenu -> Insert(
+      "color",
+      [&](std::ostream& out) {
+        out << "Colors ON\n";
+        SetColor();
+        colorCmd.Disable();
+        nocolorCmd.Enable();
+      },
+      "Enable colors" );
 
-      auto disconnectCmd = rootMenu -> Insert(
-        "disconnect",
-        [&](std::ostream& out ) { disconnect(); },
-        "Disconnect from a neroshop daemon." );
+    nocolorCmd = rootMenu -> Insert(
+      "nocolor",
+      [&](std::ostream& out) {
+        out << "Colors OFF\n";
+        SetNoColor();
+        colorCmd.Enable();
+        nocolorCmd.Disable();
+      },
+      "Disable colors" );
 
-      auto dbCmd = rootMenu -> Insert(
-        "db",
-        [&](std::ostream& out) {
-          out << "Querying neroshop database ...\n";
-        },
-        "You must have connected to a neroshop daemon first.",
-        { "query command" } );
-      auto statusCmd = rootMenu -> Insert(
-        "status",
-        [&](std::ostream& out) { status(); },
-        "Query " + neroshop::cli_executable() + " status" );
+    auto connectCmd = rootMenu -> Insert(
+      "connect", { "hostname", "port" },
+      [&](std::ostream& out, const std::string& h, int p ) {
+        host = h;
+        port = p;
+        connected = true;
+        connect( socket, host, port );
+      },
+      "Connect to a neroshop daemon. The first argument specifies a\n"
+      "\thostname or an IPv4 address in standard dot notation. See also \n"
+      "\t'man gethostbyname'. The second argument is an integer specifying\n"
+      "\t a port." );
 
-      auto welcomeCmd = rootMenu -> Insert(
-        "welcome",
-        [&](std::ostream& out) {
-          out << "Welcome to Neroshop, a peer-to-peer marketplace for monero "
-                 "users. On Neroshop\nanyone can buy and sell products using "
-                 "the digital money, monero. For more\ninformation on monero, "
-                 "see https://getmonero.org.\n"; },
-          "Display welcome message" );
+    auto disconnectCmd = rootMenu -> Insert(
+      "disconnect",
+      [&](std::ostream& out ) { disconnect( connected, socket, host, port ); },
+      "Disconnect from a neroshop daemon." );
 
-      auto versionCmd = rootMenu -> Insert(
-        "version",
-        [&](std::ostream& out) {
-          out << neroshop::cli_executable() << " v"
-              << neroshop::project_version() << '-'
-              << neroshop::build_type() << '\n'
-              << neroshop::copyright() << '\n';
-        },
-        "Display neroshop-cli version" );
+    auto dbCmd = rootMenu -> Insert(
+      "db", { "command" },
+      [&](std::ostream& out, const std::string& query) {
+        db_query( connected, socket, query );
+      },
+      "Send database command to server.\n"
+      "\tYou must have connected to a neroshop daemon first." );
 
-      auto licenseCmd = rootMenu -> Insert(
-        "license",
-        [&](std::ostream& out) {
-          out << neroshop::license() << '\n';
-        },
-        "Display neroshop-cli license" );
+    auto statusCmd = rootMenu -> Insert(
+      "status",
+      [&](std::ostream& out) { status( connected ); },
+      "Query " + cli_executable() + " status" );
 
-      Cli cli( std::move(rootMenu) );
-      // global exit action
-      cli.ExitAction( [](auto& out){
-        if (client->connected()) disconnect();
-        out << "End " << neroshop::cli_executable() + '\n'; } );
+    auto welcomeCmd = rootMenu -> Insert(
+      "welcome",
+      [&](std::ostream& out) {
+        out << "Welcome to Neroshop, a peer-to-peer marketplace for monero "
+               "users. On Neroshop\nanyone can buy and sell products using "
+               "the digital money, monero. For more\ninformation on monero, "
+               "see https://getmonero.org.\n"; },
+        "Display welcome message" );
 
-      cli::LoopScheduler scheduler;
-      CliLocalTerminalSession localSession(cli, scheduler, std::cout, 200);
-      localSession.ExitAction(
-        [&scheduler](auto& out) // session exit action
-        {
-          scheduler.Stop();
-        }
-      );
+    auto versionCmd = rootMenu -> Insert(
+      "version",
+      [&](std::ostream& out) {
+        out << cli_executable() << " v" << project_version() << '-'
+            << build_type() << '\n'
+            << copyright() << '\n';
+      },
+      "Display neroshop-cli version" );
 
-      scheduler.Run();
+    auto licenseCmd = rootMenu -> Insert(
+      "license",
+      [&](std::ostream& out) {
+        out << license() << '\n';
+      },
+      "Display neroshop-cli license" );
 
-      return EXIT_SUCCESS;
+    // Turn on colors by default
+    SetColor();
+    colorCmd.Disable();
+    nocolorCmd.Enable();
+
+    Cli cli( std::move(rootMenu) );
+    // global exit action
+    cli.ExitAction( [&](auto& out){
+      disconnect( connected, socket, host, port );
+      out << "End " << cli_executable() + '\n'; } );
+
+    cli::LoopScheduler scheduler;
+    CliLocalTerminalSession localSession(cli, scheduler, std::cout, 200);
+    localSession.ExitAction( [&scheduler](auto& out) { scheduler.Stop(); } );
+    scheduler.Run();
+
+    return EXIT_SUCCESS;
   }
   catch (const std::exception& e) {
     std::cerr << "Exception caugth in neroshop-cli main: " << e.what()

@@ -16,7 +16,7 @@ class Client {
     ~Client();
     void create(); // creates a new socket
     bool connect( unsigned int port, std::string address );
-    void write( const std::string& text );
+    bool write( const std::string& text );
     std::string read();
     void close();
     void shutdown();

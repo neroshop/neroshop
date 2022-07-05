@@ -110,6 +110,9 @@ find_library(MONEROCPP_LIBRARIES libmonero-cpp.so ${TPL_DIR}/lib)
 # Find Boost
 find_package(Boost REQUIRED COMPONENTS serialization program_options)
 
+# Find ZeroMQ
+find_package(ZMQ REQUIRED)
+
 # Find Xapian
 find_package(Xapian REQUIRED)
 
@@ -145,6 +148,7 @@ target_include_directories(${DAEMON_EXECUTABLE} PUBLIC ${NEROSHOP_SOURCE_DIR}
 target_link_libraries(${DAEMON_EXECUTABLE} server
                       ${Boost_LIBRARIES}
                       ${XAPIAN_LIBRARIES}
+                      ${ZMQ_LIBRARIES}
                       Threads::Threads)
 install(TARGETS ${DAEMON_EXECUTABLE}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Runtime
@@ -161,7 +165,9 @@ target_include_directories(${CLI_EXECUTABLE} PUBLIC
                            ${NEROSHOP_SOURCE_DIR}
                            ${PROJECT_BINARY_DIR}
                            ${TPL_INCLUDE_DIRS})
-target_link_libraries(${CLI_EXECUTABLE} PRIVATE client cli::cli)
+target_link_libraries(${CLI_EXECUTABLE} PRIVATE
+                      client cli::cli
+                      ${ZMQ_LIBRARIES})
 install(TARGETS ${CLI_EXECUTABLE}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Runtime
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Runtime

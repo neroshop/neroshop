@@ -5,36 +5,35 @@
 #include <thread>
 #include <boost/program_options.hpp>
 #include <xapian.h>
+#include <zmq.hpp>
 
-#include "server.hpp"
 #include "debug.hpp"
 #include "project_config.hpp"
 
 using namespace neroshop;
 
-Server * server = new Server();
-
-// *****************************************************************************
-void close_server() {
-    server->shutdown();
-    delete server;
-    server = nullptr;
-    std::cout << NEROMON_TAG "\033[1;91mdisconnected\033[0m" << std::endl;
-}
+#define NEROMON_TAG std::string("\033[1;95m[neromon]: \033[0m")
 
 // *****************************************************************************
 void interpret_query( std::string&& query ) {
-  if (query.find("lmdb") != std::string::npos) {
-    std::cout << "lmdb query" << '\n';
+  if (query[0] == 'd' && query[1] == 'b') {
+     query.erase( 0, 3 );
+     std::cout << "db '" << query << "'\n";
   }
 }
 
 // *****************************************************************************
-void run_server() {
+void run_server( zmq::socket_t&& socket ) {
+
+  using namespace std::chrono_literals;
+
   while(true) {
-    if (server->accept()) server->write("accept");
-    interpret_query( server->read() );
-    sleep(1);
+    zmq::message_t request;
+    socket.recv( request, zmq::recv_flags::none );
+    std::cout << NEROMON_TAG << "\033[1;97mReceived \033[0m"
+            << request.to_string() << "\033[0m" << std::endl;
+    socket.send( zmq::buffer("accept"), zmq::send_flags::none );
+    interpret_query( request.to_string() );
   }
 }
 
@@ -64,24 +63,27 @@ int main( int argc, char **argv ) {
 
   std::string usage( "Usage: " + neroshop::daemon_executable() + " [OPTIONS]" );
 
+  // Defaults
+  int server_port = 1234;
+  std::string db_name( "neroshop_test" );
+
   // Supported command line arguments
-  po::options_description desc("Options");
+  po::options_description desc( "Options" );
+  std::string port_help( "Listen on custom port, default: " );
+  port_help += std::to_string( server_port );
+  std::string db_help( "Use database, default: " + db_name );
   desc.add_options()
     ("help", "Show help message")
     ("version", "Show version information")
     ("license", "Show license information")
     ("detach", "Run as a daemon in the background")
-    ("port", po::value<int>(), "Listen on custom port given")
-    ("db", po::value<std::string>(), "Use database given")
+    ("port", po::value<int>(), port_help.c_str())
+    ("db", po::value<std::string>(), db_help.c_str())
   ;
 
   po::variables_map vm;
   po::store( po::parse_command_line(argc, argv, desc), vm );
   po::notify( vm );
-
-  // Defaults
-  int server_port = 1234;
-  std::string db_name( "neroshop_test" );
 
   if (vm.count( "help" )) {
 
@@ -125,14 +127,14 @@ int main( int argc, char **argv ) {
     // process.
     pid_t pid = fork();
     if (pid > 0) {
-      std::cout << NEROMON_TAG "\033[1;97mForked PID: \033[0;32m" << pid
+      std::cout << NEROMON_TAG << "\033[1;97mForked PID: \033[0;32m" << pid
                 << "\033[0m" << std::endl;
       return EXIT_SUCCESS;
     } else if (pid < 0) {
       return EXIT_FAILURE;
     }
 
-    // TODO: I think we should log to ~/.config/neroshop/
+    // TODO: I think we should log to ~/.config/neroshop/ instead of syslog
 
     // The parent process has now terminated, and the forked child process will
     // continue (the pid of the child process was 0).  Since the child process is
@@ -176,17 +178,18 @@ int main( int argc, char **argv ) {
 
   std::cout << "Using database: " << db_name << '\n';
 
-  // Start server
-  std::atexit(close_server);
-  if (server->bind(server_port)) {
-    std::cout << NEROMON_TAG "\033[1;97mServer bound to port \033[0;36m"
-              << std::to_string(server_port) << "\033[0m" << std::endl;
-  }
-  server->listen(); // listens for any incoming connection
+  // initialize the zmq context with a single IO thread
+  zmq::context_t context{ 1 };
+  // construct a REP (reply) socket and bind to interface
+  zmq::socket_t socket{ context, zmq::socket_type::rep };
+  socket.bind( "tcp://*:" + std::to_string(server_port) );
+
+  std::cout << NEROMON_TAG << "\033[1;97mServer bound to port \033[0;36m"
+            << std::to_string(server_port) << "\033[0m" << std::endl;
 
   // start some threads
   std::vector< std::thread > daemon_threads;
-  daemon_threads.emplace_back( run_server );
+  daemon_threads.emplace_back( run_server, std::move(socket) );
   daemon_threads.emplace_back( run_database, db_name );
 
   // wait for all threads to finish
