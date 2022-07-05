@@ -1,5 +1,3 @@
-#include <sys/stat.h>
-#include <syslog.h>
 #include <vector>
 #include <iostream>
 #include <thread>
@@ -134,33 +132,12 @@ int main( int argc, char **argv ) {
       return EXIT_FAILURE;
     }
 
-    // TODO: I think we should log to ~/.config/neroshop/ instead of syslog
-
-    // The parent process has now terminated, and the forked child process will
-    // continue (the pid of the child process was 0).  Since the child process is
-    // a daemon, the umask needs to be set so files and logs can be written.
-    umask(0);
-
-    // Open system logs for the child process
-    openlog("neromon", LOG_NOWAIT | LOG_PID, LOG_USER);
-    syslog(LOG_NOTICE, "Successfully started neromon");
-
     // Generate a session ID for the child process and ensure it is valid.
     if(setsid() < 0) {
       // Log failure and exit
-      std::cout << "Could not generate session ID for child process" << std::endl;
-      syslog(LOG_ERR, "Could not generate session ID for child process");
+      std::cerr << "Could not generate session ID for child process\n";
       // If a new session ID could not be generated, we must terminate the child
       // process or it will be orphaned.
-      return EXIT_FAILURE;
-    }
-
-    // Change the current working directory to a directory guaranteed to exist
-    if (chdir("/") < 0) {
-      // Log failure and exit
-      syslog(LOG_ERR, "Could not change working directory to /");
-      // If our guaranteed directory does not exist, terminate the child process
-      // to ensure the daemon has not been hijacked.
       return EXIT_FAILURE;
     }
 
@@ -194,10 +171,6 @@ int main( int argc, char **argv ) {
 
   // wait for all threads to finish
   for (auto& t : daemon_threads) t.join();
-
-  // Close system logs for the child process
-  syslog(LOG_NOTICE, "Stopping neroshop-daemon");
-  closelog();
 
   // Terminate the child process when the daemon completes
   return EXIT_SUCCESS;
