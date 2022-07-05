@@ -16,35 +16,113 @@ using namespace neroshop;
 #define NEROMON_TAG std::string("\033[1;95m[neromon]: \033[0m")
 
 // *****************************************************************************
-void interpret_query( std::string&& query ) {
-  if (query[0] == 'd' && query[1] == 'b') {
-     query.erase( 0, 3 );
-     LOG(DEBUG) << "Processing db '" << query << "'";
+std::string query_db( const std::string& db_name, std::string&& query_string) {
+  if (query_string[0] == 'd' && query_string[1] == 'b') {
+    try {
+      query_string.erase( 0, 3 );
+      LOG(DEBUG) << "Query db '" << query_string << "'";
+      // Open the database for searching
+      Xapian::Database db( db_name );
+      // Start an enquire session
+      Xapian::Enquire enquire( db );
+      // Parse the query string to produce a Xapian::Query object
+      Xapian::QueryParser qp;
+      Xapian::Stem stemmer("english");
+      qp.set_stemmer( stemmer );
+      qp.set_database( db );
+      qp.set_stemming_strategy( Xapian::QueryParser::STEM_SOME );
+      Xapian::Query query = qp.parse_query( query_string );
+      LOG(DEBUG) << "Parsed query is: " << query.get_description();
+      // Find the top 10 results for the query
+      enquire.set_query( query );
+      Xapian::MSet matches = enquire.get_mset( 0, 10 );
+      // Construct the results
+      std::stringstream results;
+      results << matches.get_matches_estimated() << " results found.\n";
+      results << "Matches 1-" << matches.size() << ":\n" << std::endl;
+      for (Xapian::MSetIterator i = matches.begin(); i != matches.end(); ++i) {
+        results << i.get_rank() + 1 << ": " << i.get_weight() << " docid=" << *i
+                 << " [" << i.get_document().get_data() << "]" << std::endl;
+      }
+      LOG(DEBUG) << "Results: " << results.str();
+      return results.str();
+    } catch ( const Xapian::Error &e ) {
+      LOG(ERROR) << e.get_description();
+    }
+  }
+  return {};
+}
+
+// *****************************************************************************
+void index_db( const std::string& db_name, const std::string& input_filename ) {
+  if (input_filename.empty()) return;
+  LOG(DEBUG) << "Indexing " << input_filename;
+  Xapian::WritableDatabase db( db_name, Xapian::DB_CREATE_OR_OPEN );
+  Xapian::TermGenerator indexer;
+  Xapian::Stem stemmer( "english" );
+  indexer.set_stemmer( stemmer );
+  indexer.set_stemming_strategy( indexer.STEM_SOME_FULL_POS );
+  std::ifstream cin( input_filename );
+  try {
+    std::string para;
+    std::size_t lcnt = 0, pcnt = 0;
+    while (true) {
+      std::string line;
+      if (cin.eof()) {
+        if (para.empty()) break;
+      } else {
+        getline( cin, line );
+        cin.ignore();
+        ++lcnt;
+      }
+      if (line.empty()) {
+        if (!para.empty()) {
+          // We've reached the end of a paragraph, so index it
+          Xapian::Document doc;
+          doc.set_data(para);
+          indexer.set_document( doc );
+          indexer.index_text( para );
+          // Add the document to the database
+          db.add_document( doc );
+          para.resize( 0 );
+          ++pcnt;
+        }
+      } else {
+        if (!para.empty()) para += '\n';
+        para += line;
+      }
+    }
+    LOG(DEBUG) << "Finished indexing " + std::to_string(lcnt) << " lines and "
+               << std::to_string(pcnt) << " paragraphs, commit to db";
+    // Explicitly commit so that we get to see any errors. WritableDatabase's
+    // destructor will commit implicitly (unless we're in a transaction) but
+    // will swallow any exceptions produced.
+    db.commit();
+  } catch ( const Xapian::Error &e ) {
+    LOG(ERROR) << e.get_description();
   }
 }
 
 // *****************************************************************************
-void run_server( zmq::socket_t&& socket ) {
+void run_database( const std::string& db_name, const std::string& input_filename ) {
+  el::Helpers::setThreadName("db");
+  LOG(INFO) << el::Helpers::getThreadName() << " thread initialized";
+  if (not input_filename.empty())
+    index_db( db_name, input_filename );
+}
+
+// *****************************************************************************
+void run_server( zmq::socket_t&& socket, const std::string& db_name ) {
   el::Helpers::setThreadName("server");
   LOG(INFO) << el::Helpers::getThreadName() << " thread initialized";
   while(true) {
     zmq::message_t request;
     auto res = socket.recv( request, zmq::recv_flags::none );
     LOG(DEBUG) << "Received " << request.to_string();
-    socket.send( zmq::buffer("accept"), zmq::send_flags::none );
-    interpret_query( request.to_string() );
+    //socket.send( zmq::buffer("accept"), zmq::send_flags::none );
+    auto result = query_db( db_name, request.to_string() );
+    socket.send( zmq::buffer(result), zmq::send_flags::none );
   }
-}
-
-// *****************************************************************************
-void run_database( const std::string& db_name ) {
-  el::Helpers::setThreadName("db");
-  LOG(INFO) << el::Helpers::getThreadName() << " thread initialized";
-  Xapian::WritableDatabase db( db_name, Xapian::DB_CREATE_OR_OPEN );
-  Xapian::TermGenerator indexer;
-  Xapian::Stem stemmer( "english" );
-  indexer.set_stemmer( stemmer );
-  indexer.set_stemming_strategy( indexer.STEM_SOME_FULL_POS );
 }
 
 void crash_handler( int sig ) {
@@ -89,7 +167,8 @@ int main( int argc, char **argv ) {
 
   // Defaults
   int server_port = 1234;
-  std::string db_name( "neroshop_test" );
+  std::string db_name( "neroshop.db" );
+  std::string input_filename;
 
   // Supported command line arguments
   namespace po = boost::program_options;
@@ -97,6 +176,8 @@ int main( int argc, char **argv ) {
   std::string port_help( "Listen on custom port, default: " );
   port_help += std::to_string( server_port );
   std::string db_help( "Use database, default: " + db_name );
+  std::string input_help( "Database input filename, default: '"
+                         + input_filename );
   desc.add_options()
     ("help", "Show help message")
     ("version", "Show version information")
@@ -104,6 +185,7 @@ int main( int argc, char **argv ) {
     ("detach", "Run as a daemon in the background")
     ("port", po::value<int>(), port_help.c_str())
     ("db", po::value<std::string>(), db_help.c_str())
+    ("input", po::value<std::string>(), input_help.c_str())
   ;
 
   po::variables_map vm;
@@ -126,13 +208,17 @@ int main( int argc, char **argv ) {
     std::cout << version << '\n' << neroshop::license() << '\n';
     return 1;
 
-  } if (vm.count( "port" )) {
+  } else if (vm.count( "port" )) {
 
     server_port = vm[ "port" ].as< int >();
 
-  } if (vm.count( "db" )) {
+  } else if (vm.count( "db" )) {
 
     db_name = vm[ "db" ].as< std::string >();
+
+  } else if (vm.count( "input" )) {
+
+    input_filename = vm[ "input" ].as< std::string >();
 
   }
 
@@ -175,6 +261,7 @@ int main( int argc, char **argv ) {
   }
 
   LOG(INFO) << "Using database: " << db_name;
+  LOG(INFO) << "Using input filename to database: " << input_filename;
 
   // initialize the zmq context with a single IO thread
   zmq::context_t context{ 1 };
@@ -186,8 +273,8 @@ int main( int argc, char **argv ) {
 
   // start some threads
   std::vector< std::thread > daemon_threads;
-  daemon_threads.emplace_back( run_server, std::move(socket) );
-  daemon_threads.emplace_back( run_database, db_name );
+  daemon_threads.emplace_back( run_server, std::move(socket), db_name );
+  daemon_threads.emplace_back( run_database, db_name, input_filename );
 
   // wait for all threads to finish
   for (auto& t : daemon_threads) t.join();
