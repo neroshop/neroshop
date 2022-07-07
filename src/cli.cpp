@@ -3,14 +3,14 @@
 #include <cli/loopscheduler.h>
 #include <zmq.hpp>
 
+#include "logging.hpp"
 #include "project_config.hpp"
-
-using namespace neroshop;
 
 // *****************************************************************************
 void connect( zmq::socket_t& socket, const std::string& host, int port )
 {
-  std::cout << "Connecting to neroshop daemon " << host << ':' << port << '\n';
+  NLOG(DEBUG) << "connect";
+  NLOG(INFO) << "Connecting to neroshop daemon " << host << ':' << port;
   socket.connect( "tcp://" + host + ':' + std::to_string(port) );
 }
 
@@ -18,11 +18,12 @@ void connect( zmq::socket_t& socket, const std::string& host, int port )
 void disconnect( bool& connected, zmq::socket_t& socket,
                  const std::string& host, int port )
 {
+  NLOG(DEBUG) << "disconnect";
   if (connected) {
     socket.disconnect( "tcp://" + host + ':' + std::to_string(port) );
-    std::cout << "Disconnected." << std::endl;
+    NLOG(INFO) << "Disconnected";
   } else {
-    std::cout << "Not connected." << std::endl;
+    NLOG(INFO) << "Not connected";
   }
   connected = false;
 }
@@ -30,18 +31,20 @@ void disconnect( bool& connected, zmq::socket_t& socket,
 // *****************************************************************************
 void status( bool connected )
 {
+  NLOG(DEBUG) << "status";
   if (connected)
-    std::cout << "Connected." << std::endl;
+    NLOG(INFO) << "Connected";
   else
-    std::cout << "Not connected." << std::endl;
+    NLOG(INFO) << "Not connected";
 }
 
 // *****************************************************************************
 void db_query( bool connected, zmq::socket_t& socket, const std::string& query )
 {
+  NLOG(DEBUG) << "db";
   if (not connected) {
-    std::cout << "Not connected. Use 'connect' to connect to a "
-                 "neroshop daemon." << std::endl;
+    NLOG(INFO) << "Not connected. Use 'connect' to connect to a "
+                 "neroshop daemon.";
     return;
   }
 
@@ -52,27 +55,44 @@ void db_query( bool connected, zmq::socket_t& socket, const std::string& query )
   // wait for reply from server
   zmq::message_t reply{};
   auto res = socket.recv( reply, zmq::recv_flags::none );
-  std::cout << reply.to_string();
+  NLOGINFO( reply.to_string() );
 }
 
-
-using namespace cli;
+void crash_handler( int sig ) {
+  if (sig == SIGINT) {
+    NLOG(INFO) << "Ctrl-C pressed, " << neroshop::cli_executable()
+               << " exiting";
+  } else {
+    NLOG(ERROR) << "Crashed!";
+    el::Helpers::logCrashReason( sig, true );
+  }
+  // FOLLOWING LINE IS ABSOLUTELY NEEDED TO ABORT APPLICATION
+  el::Helpers::crashAbort( sig );
+}
 
 // *****************************************************************************
-int main() {
+int main( int argc, char **argv ) {
   try {
-    // Display initial info
-    std::cout << "Neroshop: " << cli_executable() << " v"
-              << project_version() << '-'
-              << build_type() << '\n'
-              << "This is the command line client of neroshop.\nIt needs to "
-                 "connect to a neroshop daemon to work correctly.\n"
-              << "Logging to ...\n"
-                 "Type 'help' to list the available commands.\n";
+    // Setup logging
+    std::string logfile( neroshop::cli_executable() + ".log" );
+    setup_logging( neroshop::cli_executable(), crash_handler, logfile,
+                   /* file_logging = */ true, /* console_logging = */ true );
 
-    // Setup neroshop cli commands
-    CmdHandler colorCmd;
-    CmdHandler nocolorCmd;
+    std::string version( "Neroshop: " + neroshop::cli_executable() + " v"
+                         + neroshop::project_version() + "-"
+                         + neroshop::build_type() );
+
+    std::string welcome( "Welcome to Neroshop, a peer-to-peer marketplace for "
+      "monero users. On Neroshop anyone can buy and sell products using "
+      "the digital money, monero. For more information on monero, see "
+      "https://getmonero.org. This is the command line client of Neroshop. "
+      "It needs to connect to a Neroshop daemon to work correctly. "
+      "Type 'help' to list the available commands." );
+
+    // Display initial info
+    NLOG(INFO) << version;
+    NLOGINFO( welcome );
+    NLOG(INFO) << "Logging to " << logfile;
 
     std::string host = "localhost";
     int port = 1234;
@@ -84,27 +104,7 @@ int main() {
     // construct a REQ (request) socket and connect to interface
     zmq::socket_t socket{ context, zmq::socket_type::req };
 
-    auto rootMenu = std::make_unique< Menu >( "neroshop" );
-
-    colorCmd = rootMenu -> Insert(
-      "color",
-      [&](std::ostream& out) {
-        out << "Colors ON\n";
-        SetColor();
-        colorCmd.Disable();
-        nocolorCmd.Enable();
-      },
-      "Enable colors" );
-
-    nocolorCmd = rootMenu -> Insert(
-      "nocolor",
-      [&](std::ostream& out) {
-        out << "Colors OFF\n";
-        SetNoColor();
-        colorCmd.Enable();
-        nocolorCmd.Disable();
-      },
-      "Disable colors" );
+    auto rootMenu = std::make_unique< cli::Menu >( "neroshop" );
 
     auto connectCmd = rootMenu -> Insert(
       "connect", { "hostname", "port" },
@@ -135,46 +135,42 @@ int main() {
     auto statusCmd = rootMenu -> Insert(
       "status",
       [&](std::ostream& out) { status( connected ); },
-      "Query " + cli_executable() + " status" );
+      "Query " + neroshop::cli_executable() + " status" );
 
     auto welcomeCmd = rootMenu -> Insert(
       "welcome",
       [&](std::ostream& out) {
-        out << "Welcome to Neroshop, a peer-to-peer marketplace for monero "
-               "users. On Neroshop\nanyone can buy and sell products using "
-               "the digital money, monero. For more\ninformation on monero, "
-               "see https://getmonero.org.\n"; },
-        "Display welcome message" );
+        NLOG(DEBUG) << "welcome";
+        NLOGINFO( welcome );
+      },
+      "Display welcome message" );
 
     auto versionCmd = rootMenu -> Insert(
       "version",
       [&](std::ostream& out) {
-        out << cli_executable() << " v" << project_version() << '-'
-            << build_type() << '\n'
-            << copyright() << '\n';
+        NLOG(DEBUG) << "version";
+        NLOG(INFO) << version;
+        NLOGINFO( neroshop::copyright(), 100 );
       },
       "Display neroshop-cli version" );
 
     auto licenseCmd = rootMenu -> Insert(
       "license",
       [&](std::ostream& out) {
-        out << license() << '\n';
+        NLOG(DEBUG) << "license";
+        NLOGINFO( neroshop::license(), 100 );
       },
       "Display neroshop-cli license" );
 
-    // Turn on colors by default
-    SetColor();
-    colorCmd.Disable();
-    nocolorCmd.Enable();
-
-    Cli cli( std::move(rootMenu) );
+    cli::SetColor();
+    cli::Cli cli( std::move(rootMenu) );
     // global exit action
     cli.ExitAction( [&](auto& out){
       disconnect( connected, socket, host, port );
-      out << "End " << cli_executable() + '\n'; } );
+      NLOG(DEBUG) << "End " << neroshop::cli_executable() + '\n'; } );
 
     cli::LoopScheduler scheduler;
-    CliLocalTerminalSession localSession(cli, scheduler, std::cout, 200);
+    cli::CliLocalTerminalSession localSession(cli, scheduler, std::cout, 200);
     localSession.ExitAction( [&scheduler](auto& out) { scheduler.Stop(); } );
     scheduler.Run();
 

@@ -128,7 +128,7 @@ find_package(Xapian REQUIRED)
 
 # Find easylogging++
 find_package(EASYLOGGINGPP REQUIRED)
-add_definitions(-DAUTO_INITIALIZE_EASYLOGGINGPP)
+add_definitions(-DAUTO_INITIALIZE_EASYLOGGINGPP -DELPP_FEATURE_CRASH_LOG -DELPP_THREAD_SAFE -DELPP_NO_CHECK_MACROS -DELPP_NO_DEBUG_MACROS)
 
 #### Neroshop
 
@@ -155,13 +155,12 @@ install(TARGETS client
 # configure neroshop daemon executable
 set(DAEMON_EXECUTABLE "neromon")
 add_executable(${DAEMON_EXECUTABLE}
+               ${CMAKE_BINARY_DIR}/project_config.cpp
                ${NEROSHOP_SOURCE_DIR}/daemon.cpp
-               ${TPL_DIR}/include/utils/easylogging++.cc
-               ${CMAKE_BINARY_DIR}/project_config.cpp)
+               ${EASYLOGGINGPP_INCLUDE_DIR}/easylogging++.cc)
 target_include_directories(${DAEMON_EXECUTABLE} PUBLIC
                            ${NEROSHOP_SOURCE_DIR}
-                           ${PROJECT_BINARY_DIR}
-                           ${TPL_INCLUDE_DIRS})
+                           ${PROJECT_BINARY_DIR})
 target_link_libraries(${DAEMON_EXECUTABLE}
                       ${Boost_LIBRARIES}
                       ${XAPIAN_LIBRARIES}
@@ -177,11 +176,11 @@ message(STATUS "Target ${DAEMON_EXECUTABLE} configured")
 set(CLI_EXECUTABLE "neroshop-cli")
 add_executable(${CLI_EXECUTABLE}
                ${CMAKE_BINARY_DIR}/project_config.cpp
-               ${NEROSHOP_SOURCE_DIR}/cli.cpp)
+               ${NEROSHOP_SOURCE_DIR}/cli.cpp
+               ${EASYLOGGINGPP_INCLUDE_DIR}/easylogging++.cc)
 target_include_directories(${CLI_EXECUTABLE} PUBLIC
                            ${NEROSHOP_SOURCE_DIR}
-                           ${PROJECT_BINARY_DIR}
-                           ${TPL_INCLUDE_DIRS})
+                           ${PROJECT_BINARY_DIR})
 target_link_libraries(${CLI_EXECUTABLE} PRIVATE
                       cli::cli
                       ${ZMQ_LIBRARIES})
