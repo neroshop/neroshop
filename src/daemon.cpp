@@ -28,19 +28,23 @@ std::string query_db( const std::string& db_name, std::string&& query_string) {
       NLOG(DEBUG) << "Parsed query: '" << query.get_description() << "'";
       // Find the top 10 results for the query
       enquire.set_query( query );
+      NLOG(DEBUG) << "Set query: '" << query.get_description() << "'";
       Xapian::MSet matches = enquire.get_mset( 0, 10 );
+      NLOG(DEBUG) << "Got matches";
       // Construct the results
       auto nr = matches.get_matches_estimated();
+      NLOG(DEBUG) << "Got estimated matches: " << nr;
       std::stringstream result;
       result << nr << " results found.";
       if (nr) {
         result << "\nMatches 1-" << matches.size() << ":\n\n";
         for (Xapian::MSetIterator i = matches.begin(); i != matches.end(); ++i) {
+          NLOG(DEBUG) << "Getting match: " << i.get_rank();
           result << i.get_rank() + 1 << ": " << i.get_weight() << " docid=" << *i
                    << " [" << i.get_document().get_data() << "]\n";
         }
       }
-      NLOGINFO( "Results: " + result.str() );
+      NLOG(DEBUG) << "Results: " + result.str();
       return result.str();
     } catch ( const Xapian::Error &e ) {
       NLOG(ERROR) << e.get_description();
@@ -139,8 +143,8 @@ void run_server( zmq::socket_t&& socket, const std::string& db_name ) {
 
 void crash_handler( int sig ) {
   if (sig == SIGINT) {
-    NLOG(INFO) << "Ctrl-C pressed, " << neroshop::daemon_executable()
-              << " exiting";
+    NLOG(DEBUG) << "Ctrl-C pressed, " << neroshop::daemon_executable()
+                << " exiting";
   } else {
     NLOG(ERROR) << "Crashed!";
     el::Helpers::logCrashReason( sig, true );
@@ -163,7 +167,7 @@ int main( int argc, char **argv ) {
                        + neroshop::build_type() );
 
   std::string welcome( "This is the daemon of neroshop. It can run standalone "
-    "or as a daemon in the background using --detach. You can use " +
+    "or as a daemon in the\nbackground using --detach. You can use " +
      neroshop::cli_executable() + " to interact with it." );
 
   std::string usage( "Usage: " + neroshop::daemon_executable() + " [OPTIONS]" );
@@ -175,7 +179,7 @@ int main( int argc, char **argv ) {
 
   // Display initial info
   NLOG(INFO) << version;
-  NLOGINFO( welcome, 73 );
+  std::cout << welcome << std::endl;
 
   // Supported command line arguments
   namespace po = boost::program_options;
@@ -201,22 +205,22 @@ int main( int argc, char **argv ) {
   if (vm.count( "help" )) {
 
     NLOG(DEBUG) << "help";
-    NLOGINFO( usage );
+    NLOG(INFO) << usage;
     std::stringstream ss;
     ss << desc;
-    NLOGINFO( ss.str() );
+    NLOG(INFO) << ss.str();
     return 1;
 
   } else if (vm.count( "version" )) {
 
     NLOG(DEBUG) << "version";
-    NLOGINFO( neroshop::copyright(), 100 );
+    NLOG(INFO) << neroshop::copyright();
     return 1;
 
   } else if (vm.count( "license" )) {
 
     NLOG(DEBUG) << "license";
-    NLOGINFO( neroshop::license(), 100 );
+    NLOG(INFO) << neroshop::license();
     return 1;
 
   } else if (vm.count( "port" )) {
@@ -247,7 +251,7 @@ int main( int argc, char **argv ) {
     // process.
     pid_t pid = fork();
     if (pid > 0) {
-      NLOG(DEBUG) << "Forked PID: " << pid;
+      NLOG(INFO) << "Forked PID: " << pid;
       return EXIT_SUCCESS;
     } else if (pid < 0) {
       return EXIT_FAILURE;

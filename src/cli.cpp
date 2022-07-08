@@ -55,9 +55,10 @@ void db_query( bool connected, zmq::socket_t& socket, const std::string& query )
   // wait for reply from server
   zmq::message_t reply{};
   auto res = socket.recv( reply, zmq::recv_flags::none );
-  NLOGINFO( reply.to_string() );
+  NLOG(INFO) << reply.to_string();
 }
 
+// *****************************************************************************
 void crash_handler( int sig ) {
   if (sig == SIGINT) {
     NLOG(INFO) << "Ctrl-C pressed, " << neroshop::cli_executable()
@@ -83,15 +84,15 @@ int main( int argc, char **argv ) {
                          + neroshop::build_type() );
 
     std::string welcome( "Welcome to Neroshop, a peer-to-peer marketplace for "
-      "monero users. On Neroshop anyone can buy and sell products using "
-      "the digital money, monero. For more information on monero, see "
-      "https://getmonero.org. This is the command line client of Neroshop. "
-      "It needs to connect to a Neroshop daemon to work correctly. "
+      "monero users. On Neroshop\nanyone can buy and sell products using "
+      "the private digital cash, monero. For more\ninformation on monero, see "
+      "https://getmonero.org. This is the command line\nclient of Neroshop. "
+      "It needs to connect to a Neroshop daemon to work correctly.\n"
       "Type 'help' to list the available commands." );
 
     // Display initial info
     NLOG(INFO) << version;
-    NLOGINFO( welcome );
+    std::cout << welcome << std::endl;
     NLOG(INFO) << "Logging to " << logfile;
 
     std::string host = "localhost";
@@ -141,7 +142,7 @@ int main( int argc, char **argv ) {
       "welcome",
       [&](std::ostream& out) {
         NLOG(DEBUG) << "welcome";
-        NLOGINFO( welcome );
+        std::cout << welcome << std::endl;
       },
       "Display welcome message" );
 
@@ -150,7 +151,7 @@ int main( int argc, char **argv ) {
       [&](std::ostream& out) {
         NLOG(DEBUG) << "version";
         NLOG(INFO) << version;
-        NLOGINFO( neroshop::copyright(), 100 );
+        NLOG(INFO) << neroshop::copyright();
       },
       "Display neroshop-cli version" );
 
@@ -158,7 +159,7 @@ int main( int argc, char **argv ) {
       "license",
       [&](std::ostream& out) {
         NLOG(DEBUG) << "license";
-        NLOGINFO( neroshop::license(), 100 );
+        NLOG(INFO) << neroshop::license();
       },
       "Display neroshop-cli license" );
 
