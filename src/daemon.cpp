@@ -150,6 +150,7 @@ void run_server( const std::string& db_name, int server_port ) {
   // construct a REP (reply) socket and bind to interface
   zmq::socket_t socket{ context, zmq::socket_type::rep };
   socket.bind( "tcp://*:" + std::to_string(server_port) );
+  NLOG(INFO) << "Server bound to port " << server_port;
   // listen for messages
   while(true) {
     zmq::message_t request;
@@ -191,7 +192,7 @@ int main( int argc, char **argv ) {
   std::string usage( "Usage: " + neroshop::daemon_executable() + " [OPTIONS]" );
 
   // Defaults
-  int server_port = 1234;
+  int server_port = 55090;
   std::string db_name( "neroshop.db" );
   std::string input_filename;
 
@@ -227,19 +228,19 @@ int main( int argc, char **argv ) {
     std::stringstream ss;
     ss << desc;
     NLOG(INFO) << ss.str();
-    return 1;
+    return EXIT_SUCCESS;
 
   } else if (vm.count( "version" )) {
 
     NLOG(DEBUG) << "version";
     NLOG(INFO) << neroshop::copyright();
-    return 1;
+    return EXIT_SUCCESS;
 
   } else if (vm.count( "license" )) {
 
     NLOG(DEBUG) << "license";
     NLOG(INFO) << neroshop::license();
-    return 1;
+    return EXIT_SUCCESS;
 
   } else if (vm.count( "port" )) {
 
@@ -284,13 +285,18 @@ int main( int argc, char **argv ) {
       return EXIT_FAILURE;
     }
 
+    // A daemon cannot use the terminal, so close standard file descriptors for
+    // security reasons and also because ctest hangs in daemon mode waiting for
+    // stdout and stderr to be closed.
+    close( STDIN_FILENO );
+    close( STDOUT_FILENO );
+    close( STDERR_FILENO );
+
   } else {
 
     NLOG(INFO) << "Running in standalone mode";
 
   }
-
-  NLOG(INFO) << "Server bound to port " << std::to_string(server_port);
 
   // start some threads
   std::vector< std::thread > daemon_threads;

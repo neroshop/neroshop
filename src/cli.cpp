@@ -102,7 +102,7 @@ int main( int argc, char **argv ) {
     NLOG(INFO) << "Logging to " << logfile;
 
     std::string host = "localhost";
-    int port = 1234;
+    int port = 55090;
     bool connected = false;
 
     // initialize the zmq context with a single IO thread

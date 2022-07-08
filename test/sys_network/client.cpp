@@ -9,7 +9,7 @@ int main()
 {
   // Connect client to server
   Client * client = Client::get_main_client();
-  int client_port = 1234;
+  int client_port = 55080;
   std::string client_ip = "localhost";
   std::cout << "Client connecting to server ..." << std::endl;
   client->connect( client_port, client_ip );
