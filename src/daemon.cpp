@@ -10,45 +10,43 @@
 
 // *****************************************************************************
 std::string query_db( const std::string& db_name, std::string&& query_string) {
-  if (query_string[0] == 'd' && query_string[1] == 'b') {
-    try {
-      query_string.erase( 0, 3 );
-      NLOG(DEBUG) << "Search db user query '" << query_string << "'";
-      // Open the database for searching
-      Xapian::Database db( db_name );
-      // Start an enquire session
-      Xapian::Enquire enquire( db );
-      // Parse the query string to produce a Xapian::Query object
-      Xapian::QueryParser qp;
-      Xapian::Stem stemmer("english");
-      qp.set_stemmer( stemmer );
-      qp.set_database( db );
-      qp.set_stemming_strategy( Xapian::QueryParser::STEM_SOME );
-      Xapian::Query query = qp.parse_query( query_string );
-      NLOG(DEBUG) << "Parsed query: '" << query.get_description() << "'";
-      // Find the top 10 results for the query
-      enquire.set_query( query );
-      NLOG(DEBUG) << "Set query: '" << query.get_description() << "'";
-      Xapian::MSet matches = enquire.get_mset( 0, 10 );
-      NLOG(DEBUG) << "Got matches";
-      // Construct the results
-      auto nr = matches.get_matches_estimated();
-      NLOG(DEBUG) << "Got estimated matches: " << nr;
-      std::stringstream result;
-      result << nr << " results found.";
-      if (nr) {
-        result << "\nMatches 1-" << matches.size() << ":\n\n";
-        for (Xapian::MSetIterator i = matches.begin(); i != matches.end(); ++i) {
-          NLOG(DEBUG) << "Getting match: " << i.get_rank();
-          result << i.get_rank() + 1 << ": " << i.get_weight() << " docid=" << *i
-                   << " [" << i.get_document().get_data() << "]\n";
-        }
+  try {
+    query_string.erase( 0, 3 );
+    NLOG(DEBUG) << "Search db user query '" << query_string << "'";
+    // Open the database for searching
+    Xapian::Database db( db_name );
+    // Start an enquire session
+    Xapian::Enquire enquire( db );
+    // Parse the query string to produce a Xapian::Query object
+    Xapian::QueryParser qp;
+    Xapian::Stem stemmer("english");
+    qp.set_stemmer( stemmer );
+    qp.set_database( db );
+    qp.set_stemming_strategy( Xapian::QueryParser::STEM_SOME );
+    Xapian::Query query = qp.parse_query( query_string );
+    NLOG(DEBUG) << "Parsed query: '" << query.get_description() << "'";
+    // Find the top 10 results for the query
+    enquire.set_query( query );
+    NLOG(DEBUG) << "Set query: '" << query.get_description() << "'";
+    Xapian::MSet matches = enquire.get_mset( 0, 10 );
+    NLOG(DEBUG) << "Got matches";
+    // Construct the results
+    auto nr = matches.get_matches_estimated();
+    NLOG(DEBUG) << "Got estimated matches: " << nr;
+    std::stringstream result;
+    result << nr << " results found.";
+    if (nr) {
+      result << "\nMatches 1-" << matches.size() << ":\n\n";
+      for (Xapian::MSetIterator i = matches.begin(); i != matches.end(); ++i) {
+        NLOG(DEBUG) << "Getting match: " << i.get_rank();
+        result << i.get_rank() + 1 << ": " << i.get_weight() << " docid=" << *i
+                 << " [" << i.get_document().get_data() << "]\n";
       }
-      NLOG(DEBUG) << "Results: " + result.str();
-      return result.str();
-    } catch ( const Xapian::Error &e ) {
-      NLOG(ERROR) << e.get_description();
     }
+    NLOG(DEBUG) << "Results: " + result.str();
+    return result.str();
+  } catch ( const Xapian::Error &e ) {
+    NLOG(ERROR) << e.get_description();
   }
   return {};
 }
@@ -129,15 +127,35 @@ void run_database( const std::string& db_name,
 }
 
 // *****************************************************************************
-void run_server( zmq::socket_t&& socket, const std::string& db_name ) {
+void run_server( const std::string& db_name, int server_port ) {
+  // query switch
+  auto interpret_query = [&]( zmq::socket_t& socket, std::string&& q ){
+    NLOG(DEBUG) << "Interpreting message: '" << q << "'";
+    if (q[0]=='c' && q[1]=='o') {
+      const std::string q( "accept" );
+      NLOG(DEBUG) << "Sending message: '" << q << "'";
+      socket.send( zmq::buffer(q), zmq::send_flags::none );
+    } else if (q[0]=='d' && q[1]=='b') {
+      auto result = query_db( db_name, std::move(q) );
+      socket.send( zmq::buffer(result), zmq::send_flags::none );
+   } else {
+      NLOG(ERROR) << "unknown command";
+      socket.send( zmq::buffer("unknown command"), zmq::send_flags::none );
+   }
+  };
   el::Helpers::setThreadName( "server" );
   NLOG(INFO) << el::Helpers::getThreadName() << " thread initialized";
+  // initialize zmq context with a single IO thread
+  zmq::context_t context{ 1 };
+  // construct a REP (reply) socket and bind to interface
+  zmq::socket_t socket{ context, zmq::socket_type::rep };
+  socket.bind( "tcp://*:" + std::to_string(server_port) );
+  // listen for messages
   while(true) {
     zmq::message_t request;
     auto res = socket.recv( request, zmq::recv_flags::none );
-    NLOG(DEBUG) << "Received command: '" << request.to_string() << "'";
-    auto result = query_db( db_name, request.to_string() );
-    socket.send( zmq::buffer(result), zmq::send_flags::none );
+    NLOG(DEBUG) << "Received message: '" << request.to_string() << "'";
+    interpret_query( socket, request.to_string() );
   }
 }
 
@@ -272,17 +290,11 @@ int main( int argc, char **argv ) {
 
   }
 
-  // initialize the zmq context with a single IO thread
-  zmq::context_t context{ 1 };
-  // construct a REP (reply) socket and bind to interface
-  zmq::socket_t socket{ context, zmq::socket_type::rep };
-  socket.bind( "tcp://*:" + std::to_string(server_port) );
-
   NLOG(INFO) << "Server bound to port " << std::to_string(server_port);
 
   // start some threads
   std::vector< std::thread > daemon_threads;
-  daemon_threads.emplace_back( run_server, std::move(socket), db_name );
+  daemon_threads.emplace_back( run_server, db_name, server_port );
   daemon_threads.emplace_back( run_database, db_name, input_filename );
 
   // wait for all threads to finish

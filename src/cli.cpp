@@ -10,8 +10,15 @@
 void connect( zmq::socket_t& socket, const std::string& host, int port )
 {
   NLOG(DEBUG) << "connect";
-  NLOG(INFO) << "Connecting to neroshop daemon " << host << ':' << port;
+  NLOG(INFO) << "Connecting to neroshop daemon " << host << ':' << port
+             << " ... ";
   socket.connect( "tcp://" + host + ':' + std::to_string(port) );
+  socket.send( zmq::message_t("connect"), zmq::send_flags::none );
+  // wait for reply from server
+  zmq::message_t reply{};
+  auto res = socket.recv( reply, zmq::recv_flags::none );
+  NLOG(DEBUG) << reply.to_string();
+  if (reply.to_string() == "accept") NLOG(INFO) << "Connected.";
 }
 
 // *****************************************************************************
@@ -51,7 +58,6 @@ void db_query( bool connected, zmq::socket_t& socket, const std::string& query )
   // send message
   const std::string q( "db " + query );
   socket.send( zmq::message_t(q), zmq::send_flags::none );
-
   // wait for reply from server
   zmq::message_t reply{};
   auto res = socket.recv( reply, zmq::recv_flags::none );
