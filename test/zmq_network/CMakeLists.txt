@@ -40,6 +40,12 @@ add_test(NAME cli_badarg COMMAND ${CLI_EXECUTABLE} asdf)
 set_tests_properties(cli_badarg PROPERTIES
                      PASS_REGULAR_EXPRESSION "No command line arguments")
 
+file(TO_NATIVE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cli.help" _in)
+add_test(NAME cli_help
+         COMMAND sh -c "$<TARGET_FILE:${CLI_EXECUTABLE}> < ${_in}")
+set_tests_properties(cli_help PROPERTIES
+                     PASS_REGULAR_EXPRESSION "Commands available")
+
 # configure helper executable to kill daemon
 add_executable(kill_daemon kill_daemon.cpp)
 
@@ -47,12 +53,6 @@ add_executable(kill_daemon kill_daemon.cpp)
 add_test(NAME daemon_detach COMMAND ${DAEMON_EXECUTABLE} --detach --port 55091)
 set_tests_properties(daemon_detach PROPERTIES
                      PASS_REGULAR_EXPRESSION "Forked PID")
-
-file(TO_NATIVE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cli.help" _in)
-add_test(NAME cli_help
-         COMMAND sh -c "$<TARGET_FILE:${CLI_EXECUTABLE}> < ${_in}")
-set_tests_properties(cli_help PROPERTIES
-                     PASS_REGULAR_EXPRESSION "Commands available")
 
 file(TO_NATIVE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cli.connect.55091" _in)
 add_test(NAME cli_connect
@@ -71,7 +71,6 @@ set_tests_properties(kill_daemon_connect PROPERTIES
                      PASS_REGULAR_EXPRESSION "Killing PID")
 
 set_property(TEST daemon_detach PROPERTY FIXTURES_SETUP daemon_connect)
-set_tests_properties(cli_help PROPERTIES FIXTURES_REQUIRED daemon_connect)
 set_tests_properties(cli_connect PROPERTIES FIXTURES_REQUIRED daemon_connect)
 set_tests_properties(cli_status_connected
                      PROPERTIES FIXTURES_REQUIRED daemon_connect)
