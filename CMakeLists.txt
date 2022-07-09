@@ -152,6 +152,15 @@ install(TARGETS client
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Development
 )
 
+add_library(db ${NEROSHOP_SOURCE_DIR}/db.cpp)
+target_include_directories(db PUBLIC ${NEROSHOP_SOURCE_DIR})
+set_target_properties(db PROPERTIES LIBRARY_OUTPUT_NAME neroshop_db)
+install(TARGETS db
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Runtime
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Runtime
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Development
+)
+
 # configure neroshop daemon executable
 set(DAEMON_EXECUTABLE "neromon")
 add_executable(${DAEMON_EXECUTABLE}
@@ -162,6 +171,7 @@ target_include_directories(${DAEMON_EXECUTABLE} PUBLIC
                            ${NEROSHOP_SOURCE_DIR}
                            ${PROJECT_BINARY_DIR})
 target_link_libraries(${DAEMON_EXECUTABLE}
+                      db
                       ${Boost_LIBRARIES}
                       ${XAPIAN_LIBRARIES}
                       ${ZMQ_LIBRARIES}
