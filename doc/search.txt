@@ -9,3 +9,14 @@ https://xapian.org/docs/apidoc/html/annotated.html
 
 C++ API exmaple:
 https://docs.huihoo.com/xapian/docs/quickstart.html
+
+Advertisement document fields:
+------------------------------
+* Category (select from existing list (including "digital product or service), add new category)
+* Title (text)
+* Description (text)
+* Price (number)
+* Condition (list: new, other(see details), seller refurbished, used, for parts or not working)
+* Shipping (list: local pickup, delivery, mail, TBD)
+* Buying format (list: accepts offers, auction, buy it now)
+* Item location (list: city, state, country, continent)

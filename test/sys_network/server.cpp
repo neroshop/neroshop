@@ -69,7 +69,7 @@ int main( int argc, char** argv )
 
   // Start server
   std::atexit( close_server );
-  int server_port = 1234;
+  int server_port = 55080;
   std::cout << "Starting server on port " << server_port << std::endl;
   if (server->bind(server_port)) {
     std::cout << "Server bound to port " << std::to_string(server_port)

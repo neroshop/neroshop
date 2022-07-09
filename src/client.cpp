@@ -70,14 +70,14 @@ bool Client::connect(unsigned int port, std::string address) {
 }
 
 // *****************************************************************************
-void Client::write(const std::string& text)
+bool Client::write(const std::string& text)
 {
   #ifdef __windows__
   send(socket, text.c_str(), text.length(), 0);	
   #endif	
   #ifdef __linux__
   ssize_t write_result = ::write(socket, text.c_str(), text.length());
-  if (write_result < 0) std::cerr << "Could not write to server" << std::endl;
+  if (write_result < 0) return false; else return true;
   #endif
 }
 
@@ -129,6 +129,7 @@ void Client::shutdown()
 
 // *****************************************************************************
 void Client::disconnect() {
+  write("disconnect");
   shutdown();
   close();
 }

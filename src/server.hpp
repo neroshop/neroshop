@@ -7,6 +7,8 @@
 // neroshop
 #include "debug.hpp"
 
+#define NEROMON_TAG std::string("\033[1;95m[neromon]: \033[0m") +
+
 namespace neroshop {
 
 class Server {
