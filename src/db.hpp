@@ -39,6 +39,8 @@ Xapian::doccount get_doccount( const std::string db_name );
 
 void index_db( const std::string& db_name, const std::string& input_filename );
 
-std::string query_db( const std::string& db_name, std::string&& query_string );
+std::string db_query( const std::string& db_name, std::string&& query_string );
+
+std::string db_add( const std::string& db_name, std::string&& cmd_string );
 
 } // neroshop::

@@ -68,10 +68,10 @@ neroshop::index_db( const std::string& db_name,
 
 // *****************************************************************************
 std::string
-neroshop::query_db( const std::string& db_name, std::string&& query_string) {
+neroshop::db_query( const std::string& db_name, std::string&& query_string) {
   try {
-    query_string.erase( 0, 3 );
-    NLOG(DEBUG) << "Search db user query '" << query_string << "'";
+    query_string.erase( 0, 5 );
+    NLOG(DEBUG) << "Search db, query '" << query_string << "'";
     // Open the database for searching
     Xapian::Database db( db_name );
     // Start an enquire session
@@ -108,4 +108,13 @@ neroshop::query_db( const std::string& db_name, std::string&& query_string) {
     NLOG(ERROR) << e.get_description();
   }
   return {};
+}
+
+// *****************************************************************************
+std::string
+neroshop::db_add( const std::string& db_name, std::string&& cmd_string) {
+  cmd_string.erase( 0, 5 );
+  NLOG(DEBUG) << "Add db, cmd '" << cmd_string << "'";
+  // add to db ...
+  return cmd_string;
 }

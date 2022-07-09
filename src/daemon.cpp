@@ -29,22 +29,30 @@ void run_database( const std::string& db_name,
 }
 
 // *****************************************************************************
-void run_server( const std::string& db_name, int server_port ) {
-  // query switch
-  auto interpret_query = [&]( zmq::socket_t& socket, std::string&& q ){
-    NLOG(DEBUG) << "Interpreting message: '" << q << "'";
-    if (q[0]=='c' && q[1]=='o') {
-      const std::string q( "accept" );
-      NLOG(DEBUG) << "Sending message: '" << q << "'";
-      socket.send( zmq::buffer(q), zmq::send_flags::none );
-    } else if (q[0]=='d' && q[1]=='b') {
-      auto result = neroshop::query_db( db_name, std::move(q) );
+void interpret_query( const std::string& db_name, zmq::socket_t& socket,
+                      std::string&& q )
+{
+  NLOG(DEBUG) << "Interpreting message: '" << q << "'";
+  if (q[0]=='c' && q[1]=='o') {
+    const std::string q( "accept" );
+    NLOG(DEBUG) << "Sending message: '" << q << "'";
+    socket.send( zmq::buffer(q), zmq::send_flags::none );
+  } else if (q[0]=='d' && q[1]=='b') {
+    if (q[2]==' ' && q[3]=='q') {
+      auto result = neroshop::db_query( db_name, std::move(q) );
       socket.send( zmq::buffer(result), zmq::send_flags::none );
-   } else {
-      NLOG(ERROR) << "unknown command";
-      socket.send( zmq::buffer("unknown command"), zmq::send_flags::none );
-   }
-  };
+    } else if (q[2]==' ' && q[3]=='a') {
+      auto result = neroshop::db_add( db_name, std::move(q) );
+      socket.send( zmq::buffer(result), zmq::send_flags::none );
+    }
+  } else {
+    NLOG(ERROR) << "unknown command";
+    socket.send( zmq::buffer("unknown command"), zmq::send_flags::none );
+  }
+}
+
+// *****************************************************************************
+void run_server( const std::string& db_name, int server_port ) {
   el::Helpers::setThreadName( "server" );
   NLOG(INFO) << el::Helpers::getThreadName() << " thread initialized";
   // initialize zmq context with a single IO thread
@@ -58,7 +66,7 @@ void run_server( const std::string& db_name, int server_port ) {
     zmq::message_t request;
     auto res = socket.recv( request, zmq::recv_flags::none );
     NLOG(DEBUG) << "Received message: '" << request.to_string() << "'";
-    interpret_query( socket, request.to_string() );
+    interpret_query( db_name, socket, request.to_string() );
   }
 }
 
