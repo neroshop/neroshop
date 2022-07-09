@@ -85,20 +85,23 @@ int main( int argc, char **argv ) {
     setup_logging( neroshop::cli_executable(), crash_handler, logfile,
                    /* file_logging = */ true, /* console_logging = */ true );
 
+    if (argc > 1) {
+      NLOG(ERROR) << "No command line arguments allowed";
+      return EXIT_FAILURE;
+    }
+
     std::string version( "Neroshop: " + neroshop::cli_executable() + " v"
                          + neroshop::project_version() + "-"
                          + neroshop::build_type() );
 
-    std::string welcome( "Welcome to Neroshop, a peer-to-peer marketplace for "
+    // Display initial info
+    NLOG(INFO) << version;
+    std::cout << "Welcome to Neroshop, a peer-to-peer marketplace for "
       "monero users. On Neroshop\nanyone can buy and sell products using "
       "the private digital cash, monero. For more\ninformation on monero, see "
       "https://getmonero.org. This is the command line\nclient of Neroshop. "
       "It needs to connect to a Neroshop daemon to work correctly.\n"
-      "Type 'help' to list the available commands." );
-
-    // Display initial info
-    NLOG(INFO) << version;
-    std::cout << welcome << std::endl;
+      "Type 'help' to list the available commands.\n";
     NLOG(INFO) << "Logging to " << logfile;
 
     std::string host = "localhost";
@@ -144,14 +147,6 @@ int main( int argc, char **argv ) {
       [&](std::ostream& out) { status( connected ); },
       "Query " + neroshop::cli_executable() + " status" );
 
-    auto welcomeCmd = rootMenu -> Insert(
-      "welcome",
-      [&](std::ostream& out) {
-        NLOG(DEBUG) << "welcome";
-        std::cout << welcome << std::endl;
-      },
-      "Display welcome message" );
-
     auto versionCmd = rootMenu -> Insert(
       "version",
       [&](std::ostream& out) {
@@ -184,12 +179,12 @@ int main( int argc, char **argv ) {
     return EXIT_SUCCESS;
   }
   catch (const std::exception& e) {
-    std::cerr << "Exception caugth in neroshop-cli main: " << e.what()
-              << std::endl;
+    NLOG(ERROR) << "Exception in " + neroshop::cli_executable() + ':'
+                << e.what();
   }
   catch (...) {
-    std::cerr << "Unknown exception caugth in neroshop-cli main." << std::endl;
+    NLOG(ERROR) << "Unknown exception in " + neroshop::cli_executable();
   }
 
-  return -1;
+  return EXIT_FAILURE;
 }

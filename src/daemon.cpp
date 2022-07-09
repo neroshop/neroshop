@@ -218,7 +218,17 @@ int main( int argc, char **argv ) {
   ;
 
   po::variables_map vm;
-  po::store( po::parse_command_line(argc, argv, desc), vm );
+  try {
+    po::store(po::command_line_parser(argc, argv).
+              options(desc).positional({}).run(),
+              vm);
+  } catch (po::too_many_positional_options_error &e) {
+    NLOG(ERROR) << "Command line only accepts options with '--': " << e.what();
+    return EXIT_FAILURE;
+  } catch (po::error_with_option_name &e) {
+    NLOG(ERROR) << "Command line: " << e.what();
+    return EXIT_FAILURE;
+  }
   po::notify( vm );
 
   if (vm.count( "help" )) {
