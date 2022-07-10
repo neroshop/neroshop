@@ -46,7 +46,7 @@ void status( bool connected )
 }
 
 // *****************************************************************************
-void db_query( bool connected, zmq::socket_t& socket, const std::string& query )
+void db_cmd( bool connected, zmq::socket_t& socket, const std::string& cmd )
 {
   NLOG(DEBUG) << "db";
   if (not connected) {
@@ -55,8 +55,8 @@ void db_query( bool connected, zmq::socket_t& socket, const std::string& query )
     return;
   }
 
-  // send message
-  const std::string q( "db " + query );
+  // send message with db command
+  const std::string q( "db " + cmd );
   socket.send( zmq::message_t(q), zmq::send_flags::none );
   // wait for reply from server
   zmq::message_t reply{};
@@ -137,10 +137,10 @@ int main( int argc, char **argv ) {
     auto dbCmd = rootMenu -> Insert(
       "db", { "command" },
       [&](std::ostream& out, const std::string& query) {
-        db_query( connected, socket, query );
+        db_cmd( connected, socket, query );
       },
-      "Send database command to server.\n"
-      "\tYou must have connected to a neroshop daemon first." );
+      "Send database command to server. You must have connected to a\n"
+      "\tneroshop daemon first. See 'connect'." );
 
     auto statusCmd = rootMenu -> Insert(
       "status",
@@ -152,17 +152,8 @@ int main( int argc, char **argv ) {
       [&](std::ostream& out) {
         NLOG(DEBUG) << "version";
         NLOG(INFO) << version;
-        NLOG(INFO) << neroshop::copyright();
       },
       "Display neroshop-cli version" );
-
-    auto licenseCmd = rootMenu -> Insert(
-      "license",
-      [&](std::ostream& out) {
-        NLOG(DEBUG) << "license";
-        NLOG(INFO) << neroshop::license();
-      },
-      "Display neroshop-cli license" );
 
     cli::SetColor();
     cli::Cli cli( std::move(rootMenu) );

@@ -12,8 +12,6 @@ std::string daemon_executable();
 std::string cli_executable();
 
 std::string project_version();
-std::string copyright();
-std::string license();
 std::string compiler();
 std::string build_type();
 std::string build_date();

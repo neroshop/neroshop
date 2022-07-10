@@ -5,7 +5,7 @@
 # ZMQ_LIBRARIES - The libraries needed to use ZMQ
 # ZMQ_DEFINITIONS - Compiler switches required for using ZMQ
 
-find_path ( ZMQ_INCLUDE_DIR zmq.h )
+find_path ( ZMQ_INCLUDE_DIR zmq.hpp )
 find_library ( ZMQ_LIBRARY NAMES zmq )
 
 set ( ZMQ_LIBRARIES ${ZMQ_LIBRARY} )

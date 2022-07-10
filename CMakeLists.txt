@@ -152,6 +152,15 @@ install(TARGETS client
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Development
 )
 
+add_library(db ${NEROSHOP_SOURCE_DIR}/db.cpp)
+target_include_directories(db PUBLIC ${NEROSHOP_SOURCE_DIR})
+set_target_properties(db PROPERTIES LIBRARY_OUTPUT_NAME neroshop_db)
+install(TARGETS db
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Runtime
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Runtime
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Development
+)
+
 # configure neroshop daemon executable
 set(DAEMON_EXECUTABLE "neromon")
 add_executable(${DAEMON_EXECUTABLE}
@@ -162,6 +171,7 @@ target_include_directories(${DAEMON_EXECUTABLE} PUBLIC
                            ${NEROSHOP_SOURCE_DIR}
                            ${PROJECT_BINARY_DIR})
 target_link_libraries(${DAEMON_EXECUTABLE}
+                      db
                       ${Boost_LIBRARIES}
                       ${XAPIAN_LIBRARIES}
                       ${ZMQ_LIBRARIES}
@@ -252,13 +262,6 @@ endif()
 # Grab current date to stick into the executables
 execute_process(COMMAND "date" "--utc" OUTPUT_VARIABLE BUILD_DATE)
 string(REGEX REPLACE "[\r\n]" "" BUILD_DATE "${BUILD_DATE}")
-
-# Save contents of license file and copyright info in cmake variables
-file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE" LICENSE)
-string(REGEX REPLACE "All rights reserved\.*" "All rights reserved. See LICENSE for details." COPYRIGHT "${LICENSE}")
-string(REGEX REPLACE ";" "\\\\n" COPYRIGHT "${COPYRIGHT}")
-string(REGEX REPLACE ";" "\\\\n" LICENSE "${LICENSE}")
-string(REGEX REPLACE "\"" "\\\\\"" LICENSE "${LICENSE}")
 
 # Configure cmake variables to pass to the build
 configure_file( "${NEROSHOP_SOURCE_DIR}/project_config.hpp.in"
