@@ -2,7 +2,7 @@
 
 _A peer-to-peer marketplace for [monero](https://getmonero.org) users_
 
-This project is work-in-progress. Contact us on
+This project is work-in-progress. Questions? Contact us on
 [matrix](https://matrix.to/#/#neroshop:matrix.org).
 
 ## Planned Features
@@ -53,3 +53,7 @@ cd neroshop/build
 ## Contributing
 
 Contact us on [matrix](https://matrix.to/#/#neroshop:matrix.org).
+
+## License
+
+GPL v3.
