@@ -1,0 +1,14 @@
+matrix:
+  BUILDTYPE:
+    - Debug
+    - Release
+
+pipeline:
+  build:
+    image: jbakosi/neroshop:debian-build
+    commands:
+     - mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=${BUILDTYPE} -DTPL_DIR=/neroshop/external/install/gnu-x86_64 .. && make -sj$(grep -c processor /proc/cpuinfo)
+  test:
+    image: jbakosi/neroshop
+    commands:
+      - cd build && ctest -j$(grep -c processor /proc/cpuinfo)
