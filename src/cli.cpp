@@ -152,17 +152,8 @@ int main( int argc, char **argv ) {
       [&](std::ostream& out) {
         NLOG(DEBUG) << "version";
         NLOG(INFO) << version;
-        NLOG(INFO) << neroshop::copyright();
       },
       "Display neroshop-cli version" );
-
-    auto licenseCmd = rootMenu -> Insert(
-      "license",
-      [&](std::ostream& out) {
-        NLOG(DEBUG) << "license";
-        NLOG(INFO) << neroshop::license();
-      },
-      "Display neroshop-cli license" );
 
     cli::SetColor();
     cli::Cli cli( std::move(rootMenu) );

@@ -263,13 +263,6 @@ endif()
 execute_process(COMMAND "date" "--utc" OUTPUT_VARIABLE BUILD_DATE)
 string(REGEX REPLACE "[\r\n]" "" BUILD_DATE "${BUILD_DATE}")
 
-# Save contents of license file and copyright info in cmake variables
-file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE" LICENSE)
-string(REGEX REPLACE "All rights reserved\.*" "All rights reserved. See LICENSE for details." COPYRIGHT "${LICENSE}")
-string(REGEX REPLACE ";" "\\\\n" COPYRIGHT "${COPYRIGHT}")
-string(REGEX REPLACE ";" "\\\\n" LICENSE "${LICENSE}")
-string(REGEX REPLACE "\"" "\\\\\"" LICENSE "${LICENSE}")
-
 # Configure cmake variables to pass to the build
 configure_file( "${NEROSHOP_SOURCE_DIR}/project_config.hpp.in"
                 "${PROJECT_BINARY_DIR}/project_config.hpp" )

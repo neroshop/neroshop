@@ -120,7 +120,6 @@ int main( int argc, char **argv ) {
   desc.add_options()
     ("help", "Show help message")
     ("version", "Show version information")
-    ("license", "Show license information")
     ("detach", "Run as a daemon in the background")
     ("port", po::value<int>(), port_help.c_str())
     ("db", po::value<std::string>(), db_help.c_str())
@@ -153,13 +152,6 @@ int main( int argc, char **argv ) {
   } else if (vm.count( "version" )) {
 
     NLOG(DEBUG) << "version";
-    NLOG(INFO) << neroshop::copyright();
-    return EXIT_SUCCESS;
-
-  } else if (vm.count( "license" )) {
-
-    NLOG(DEBUG) << "license";
-    NLOG(INFO) << neroshop::license();
     return EXIT_SUCCESS;
 
   } else if (vm.count( "port" )) {

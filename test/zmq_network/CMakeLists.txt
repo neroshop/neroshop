@@ -9,10 +9,6 @@ add_test(NAME daemon_arg_version COMMAND ${DAEMON_EXECUTABLE} --version)
 set_tests_properties(daemon_arg_version PROPERTIES
                      PASS_REGULAR_EXPRESSION "${DAEMON_EXECUTABLE} v")
 
-add_test(NAME daemon_arg_license COMMAND ${DAEMON_EXECUTABLE} --license)
-set_tests_properties(daemon_arg_license PROPERTIES
-                     PASS_REGULAR_EXPRESSION "Copyright.*Neroshop")
-
 add_test(NAME daemon_badarg COMMAND ${DAEMON_EXECUTABLE} asdf)
 set_tests_properties(daemon_badarg PROPERTIES
                      PASS_REGULAR_EXPRESSION "too many positional options")
@@ -29,12 +25,6 @@ add_test(NAME cli_version
          COMMAND sh -c "$<TARGET_FILE:${CLI_EXECUTABLE}> < ${_in}")
 set_tests_properties(cli_version PROPERTIES
                      PASS_REGULAR_EXPRESSION "${CLI_EXECUTABLE} v")
-
-file(TO_NATIVE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cli.license" _in)
-add_test(NAME cli_license
-         COMMAND sh -c "$<TARGET_FILE:${CLI_EXECUTABLE}> < ${_in}")
-set_tests_properties(cli_license PROPERTIES
-                     PASS_REGULAR_EXPRESSION "Copyright.*Neroshop")
 
 add_test(NAME cli_badarg COMMAND ${CLI_EXECUTABLE} asdf)
 set_tests_properties(cli_badarg PROPERTIES
